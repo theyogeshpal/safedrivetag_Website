@@ -22,16 +22,18 @@ export default function Home() {
       <section className="relative flex items-center lg:items-start pt-24 lg:pt-28 pb-12 px-6 overflow-hidden bg-black">
         
         {/* Car Background Video */}
-        <div className="absolute inset-0 z-0">
-          <video 
-            src="/hero-video.mp4" 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="w-full h-full object-cover opacity-100"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+        <div className="absolute inset-0 z-0 flex justify-end">
+          <div className="w-full lg:w-[60%] h-full relative flex items-center justify-center p-6 lg:p-0">
+            <video 
+              src="/hero-video.mp4" 
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              className="w-full h-[80%] object-contain object-right lg:object-center opacity-100 rounded-2xl lg:rounded-none"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/50 to-transparent"></div>
+          </div>
         </div>
 
         {/* Abstract Glowing Orbs (Light Mode Adjusted) */}
