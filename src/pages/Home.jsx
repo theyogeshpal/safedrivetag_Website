@@ -106,34 +106,10 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Floating Premium Card */}
+          {/* Hero Side Image */}
           <div className="relative hidden lg:flex justify-center items-center animate-fade-up" style={{ animationDelay: '200ms' }}>
             <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-green-500/20 rounded-full blur-3xl opacity-60 animate-pulse"></div>
-            
-            <div className="relative w-72 bg-white/90 backdrop-blur-xl border border-white rounded-[2rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.1)] transform hover:-translate-y-2 transition-transform duration-500">
-              <div className="flex justify-between items-center mb-6">
-                <span className="font-black text-lg text-black tracking-tight">SafeDrive<span className="text-orange-500">TAG</span></span>
-                <QrCode className="w-6 h-6 text-black/40" />
-              </div>
-              
-              {/* Card Background image added back as requested earlier */}
-              <div className="relative bg-gradient-to-br from-green-400 to-green-600 rounded-2xl p-5 text-center mb-6 shadow-inner overflow-hidden group">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503371476106-049f3e3e232f?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center opacity-30 mix-blend-overlay group-hover:scale-110 transition-transform duration-700"></div>
-                <p className="relative z-10 font-black text-white/90 text-xs mb-3 uppercase tracking-widest drop-shadow-md">Scan to contact</p>
-                <div className="relative z-10 bg-white rounded-xl p-2.5 inline-block shadow-xl transform group-hover:scale-105 transition-transform duration-500 border border-white/50">
-                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://safedrivetag.com" alt="QR" className="w-24 h-24 rounded-lg" />
-                </div>
-              </div>
-              
-              <div className="space-y-2.5">
-                <div className="flex items-center gap-2.5 text-[11px] font-bold text-black/80 bg-white rounded-lg px-3 py-2.5 border border-black/5">
-                  <Lock className="w-3.5 h-3.5 text-green-500" /> 256-bit Encrypted
-                </div>
-                <div className="flex items-center gap-2.5 text-[11px] font-bold text-black/80 bg-white rounded-lg px-3 py-2.5 border border-black/5">
-                  <BellRing className="w-3.5 h-3.5 text-orange-500" /> Instant Alerts
-                </div>
-              </div>
-            </div>
+            <img src="/hero-car.png" alt="SafeDriveTag on Car" className="relative z-10 w-full max-w-xl object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500" />
           </div>
         </div>
       </section>
