@@ -21,11 +21,14 @@ export default function Home() {
       {/* --- HERO SECTION --- */}
       <section className="relative flex items-center lg:items-start pt-24 lg:pt-28 pb-12 px-6 overflow-hidden bg-black">
         
-        {/* Car Background Image */}
+        {/* Car Background Video */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=2000&q=80" 
-            alt="Car Background" 
+          <video 
+            src="/hero-video.mp4" 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
             className="w-full h-full object-cover opacity-100"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
