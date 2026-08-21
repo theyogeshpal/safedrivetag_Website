@@ -51,7 +51,7 @@ export default function Navbar() {
         {/* Right Actions */}
         <div className="hidden md:flex items-center">
           <Link to="/shop" className="bg-green-500 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_4px_15px_rgba(34,197,94,0.3)] hover:bg-green-600 transition-colors">
-            Buy Safe Tag
+            Buy Safety Tag
           </Link>
         </div>
 
@@ -78,7 +78,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link to="/shop" className="bg-green-500 text-white px-6 py-3 rounded-full font-bold text-sm text-center mt-2 shadow-[0_4px_15px_rgba(34,197,94,0.3)]">
-            Buy Safe Tag
+            Buy Safety Tag
           </Link>
         </div>
       )}
