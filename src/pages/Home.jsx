@@ -38,14 +38,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-[1fr_0.8fr] gap-10 items-center relative z-10 w-full">
           <div className="space-y-6 animate-fade-up">
             
-            <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-600 text-[11px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-              </span>
-              🚨 Prevent Towing & Parking Fines
-            </div>
-
+            
             <h1 className="text-[2.5rem] font-black text-black leading-[1.1] tracking-tighter">
               Stay reachable in emergencies, stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">private.</span>
             </h1>
@@ -54,24 +47,61 @@ export default function Home() {
               SafeDriveTag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. 🚗 Shielding vehicles in wrong parking & emergency situations.
             </p>
 
+            <div className="flex flex-wrap items-center gap-3 py-2">
+              <span className="flex items-center gap-2 bg-[#fdf8d5] border border-[#f4e28e] text-[#6d5516] px-4 py-2 rounded-full text-sm font-bold shadow-sm">
+                <span className="text-base leading-none">🚫</span> No spamming
+              </span>
+              <span className="flex items-center gap-2 bg-[#fdf8d5] border border-[#f4e28e] text-[#6d5516] px-4 py-2 rounded-full text-sm font-bold shadow-sm">
+                <span className="text-base leading-none">📲</span> No app needed
+              </span>
+              <span className="flex items-center gap-2 bg-[#fdf8d5] border border-[#f4e28e] text-[#6d5516] px-4 py-2 rounded-full text-sm font-bold shadow-sm">
+                <span className="text-base leading-none">🔒</span> No number shared
+              </span>
+            </div>
+
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link to="/shop" className="group relative inline-flex items-center justify-center gap-2 bg-green-500 text-white px-8 py-4 rounded-full font-black text-base overflow-hidden transition-all hover:scale-105 hover:shadow-[0_10px_30px_rgba(34,197,94,0.3)]">
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-br from-green-400 to-green-600"></span>
                 <span className="relative flex items-center gap-2">
-                  Buy Safe Tag <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  Buy Safety Tag <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
+              
+              <button className="group inline-flex items-center justify-center gap-2 bg-white text-black border-2 border-black/10 px-8 py-3.5 rounded-full font-black text-base transition-all hover:bg-black/5 hover:border-black/20 hover:scale-105">
+                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                  <Play className="w-4 h-4 text-orange-600 ml-0.5" fill="currentColor" />
+                </div>
+                Watch Video
+              </button>
             </div>
             
-            <div className="flex items-center gap-6 pt-6 border-t border-black/10 mt-4">
-              <div>
-                <div className="text-2xl font-black text-black">9.5L+</div>
-                <div className="text-xs font-bold text-black/50 uppercase tracking-wider">Tags Sold</div>
+            <div className="flex flex-wrap items-center gap-3 pt-6 border-t border-black/10 mt-4">
+              <div className="bg-orange-50/80 border border-orange-200/60 px-4 py-2 rounded-xl flex flex-col justify-center cursor-default hover:bg-orange-100 transition-colors">
+                <span className="text-orange-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Trusted Customers</span>
+                <span className="text-orange-700 font-black text-lg leading-none">9.5L+</span>
               </div>
-              <div className="w-px h-10 bg-black/10"></div>
-              <div>
-                <div className="flex items-center gap-1 text-2xl font-black text-black">4.8 <Star className="w-5 h-5 fill-orange-500 text-orange-500 -mt-0.5" /></div>
-                <div className="text-xs font-bold text-black/50 uppercase tracking-wider">2M+ Scans</div>
+              
+              <div className="bg-yellow-50/80 border border-yellow-200/60 px-4 py-2 rounded-xl flex flex-col justify-center cursor-default hover:bg-yellow-100 transition-colors">
+                <span className="text-yellow-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Rating</span>
+                <span className="text-yellow-700 font-black text-lg leading-none flex items-center gap-1">
+                  4.8 <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                </span>
+              </div>
+
+              <div className="bg-blue-50/80 border border-blue-200/60 px-4 py-2 rounded-xl flex flex-col justify-center cursor-default hover:bg-blue-100 transition-colors">
+                <span className="text-blue-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Total QR Scans</span>
+                <span className="text-blue-700 font-black text-lg leading-none">2,450,892</span>
+              </div>
+              
+              <div className="bg-green-50 border border-green-200 px-4 py-2 rounded-xl flex flex-col justify-center shadow-sm cursor-default hover:shadow-md transition-all">
+                <span className="text-green-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Today's Scans</span>
+                <span className="text-green-700 font-black text-lg leading-none flex items-center gap-2">
+                  1,204 
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
+                </span>
               </div>
             </div>
           </div>
@@ -129,6 +159,99 @@ export default function Home() {
         </div>
       </div>
 
+      {/* --- WHAT IS SAFEDRIVETAG --- */}
+      <section className="py-24 px-6 bg-[#fcfaf5]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-orange-500 font-bold tracking-widest text-sm uppercase mb-3 block">About</span>
+            <h2 className="text-4xl md:text-5xl font-black text-black">What is SafeDriveTag?</h2>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content */}
+            <div>
+              <p className="text-lg text-black/70 leading-relaxed mb-10 font-medium">
+                SafeDriveTag is a weatherproof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
+              </p>
+              
+              {/* Stat Boxes */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { val: "1200+", lbl: "Vehicles Protected" },
+                  { val: "5000+", lbl: "Scans Completed" },
+                  { val: "4.9★", lbl: "User Rating" },
+                  { val: "100%", lbl: "Privacy Guaranteed" }
+                ].map((stat, i) => (
+                  <div key={i} className="bg-[#fdf8d5] border border-[#f4e28e] rounded-xl p-4 text-center shadow-sm">
+                    <div className="text-2xl font-black text-black mb-1">{stat.val}</div>
+                    <div className="text-xs font-bold text-[#6d5516] leading-tight">{stat.lbl}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Right Content: The Visual Tag with Pointers */}
+            <div className="relative flex justify-center items-center py-10 lg:py-0">
+              
+              {/* The Tag Itself */}
+              <div className="relative bg-[#fcd34d] rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col border-4 border-[#fcd34d]">
+                {/* Yellow/Black striped border top */}
+                <div className="w-full h-3 bg-[repeating-linear-gradient(45deg,#000,#000_10px,#fcd34d_10px,#fcd34d_20px)]"></div>
+                
+                {/* Tag Content */}
+                <div className="flex-1 p-6 flex items-center gap-4 bg-white rounded-xl mx-1 my-1">
+                  <div className="flex-1">
+                    <div className="font-black text-2xl mb-1 flex items-center">SafeDrive<span className="bg-black text-white px-1.5 ml-1 rounded text-lg py-0.5">Tag</span></div>
+                    <div className="text-[9px] text-gray-500 mb-4 font-bold tracking-wide">Vehicle alert sticker • safedrivetag.com</div>
+                    <h3 className="font-black text-xl leading-tight mb-4">Scan to contact<br/><span className="border-b-4 border-[#fcd34d] pb-1">the owner.</span></h3>
+                    
+                    <div className="space-y-2 text-xs font-bold text-black/80">
+                      <div className="flex items-center gap-2"><span className="bg-black text-white w-5 h-5 rounded flex items-center justify-center text-[10px]">P</span> Wrong Parking</div>
+                      <div className="flex items-center gap-2"><span className="bg-black text-white w-5 h-5 rounded flex items-center justify-center text-[12px]">!</span> Vehicle Issue</div>
+                      <div className="flex items-center gap-2"><span className="bg-red-500 text-white px-1.5 h-5 rounded flex items-center justify-center text-[9px] tracking-widest">SOS</span> Emergency</div>
+                    </div>
+                    <div className="text-[8px] text-gray-400 mt-6 font-bold uppercase tracking-wider">Use phone camera or any QR scanner app to scan</div>
+                  </div>
+                  <div className="w-32 flex flex-col items-center bg-[#fcd34d] p-3 rounded-2xl">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://safedrivetag.com" alt="QR Code" className="w-full aspect-square bg-white rounded-xl p-2" />
+                    <div className="mt-2 text-[10px] font-black tracking-widest text-black">▲ SCAN ME ▲</div>
+                  </div>
+                </div>
+
+                {/* Yellow/Black striped border bottom */}
+                <div className="w-full h-3 bg-[repeating-linear-gradient(45deg,#000,#000_10px,#fcd34d_10px,#fcd34d_20px)]"></div>
+              </div>
+
+              {/* Pointers (absolute positioned) - Hidden on mobile, visible on lg */}
+              <div className="absolute -top-2 left-[15%] hidden lg:flex flex-col items-center animate-fade-up">
+                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-black/20">Unique QR per vehicle</div>
+                <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
+                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+              </div>
+
+              <div className="absolute -top-2 right-[15%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '100ms' }}>
+                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-black/20">Scan without app</div>
+                <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
+                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+              </div>
+
+              <div className="absolute -bottom-2 left-[20%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '200ms' }}>
+                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+                <div className="w-0.5 h-8 bg-[#fcd34d] mt-0.5"></div>
+                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-black/20">SOS / Emergency label</div>
+              </div>
+
+              <div className="absolute -bottom-2 right-[20%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '300ms' }}>
+                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+                <div className="w-0.5 h-8 bg-[#fcd34d] mt-0.5"></div>
+                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-black/20">Weather-proof sticker</div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* --- HOW IT WORKS --- */}
       <section className="py-24 px-6 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
@@ -178,6 +301,40 @@ export default function Home() {
                 <p className="text-black/60">They choose an option (e.g., Wrong Parking) and contact you via WhatsApp or Masked Call.</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- FOR EVERY VEHICLE --- */}
+      <section className="py-24 px-6 bg-[#fcfaf5]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 animate-fade-up">
+            <span className="text-[#c29623] font-bold tracking-widest text-sm uppercase mb-3 block">For Every Vehicle</span>
+            <h2 className="text-4xl md:text-5xl font-black text-black mb-6">Bikes. Autos. Cars. SUVs. Trucks.</h2>
+            <p className="text-lg text-black/60 max-w-2xl mx-auto font-medium">
+              With Digital E-Tag, SafeDriveTag now supports every vehicle type in India — from your daily commute bike to a fleet of trucks.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[
+              { icon: <Bike size={40} className="text-orange-500 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters. Digital E-Tag only.", price: "E-Tag ₹299", highlight: false },
+              { icon: <Car size={40} className="text-green-600 mb-2" />, title: "3-Wheelers", desc: "Autos & e-rickshaws. Digital E-Tag only.", price: "E-Tag ₹299", highlight: false },
+              { icon: <Car size={40} className="text-blue-500 mb-2" />, title: "Cars & Hatchbacks", desc: "Physical tag or Digital E-Tag.", price: "From ₹299", highlight: true },
+              { icon: <Car size={40} className="text-purple-600 mb-2" />, title: "SUVs & MUVs", desc: "Physical tag or Digital E-Tag.", price: "From ₹299", highlight: false },
+              { icon: <Truck size={40} className="text-yellow-600 mb-2" />, title: "Trucks & Commercial", desc: "Physical tag or Digital E-Tag.", price: "From ₹299", highlight: false }
+            ].map((v, i) => (
+              <div key={i} className={`bg-[#fdf8d5] rounded-2xl p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1 ${v.highlight ? 'border-2 border-[#fcd34d] shadow-[0_10px_30px_rgba(252,211,77,0.3)] scale-105 z-10' : 'border border-[#f4e28e] shadow-sm'}`}>
+                <div>
+                  <div className="text-4xl mb-4">{v.icon}</div>
+                  <h3 className="font-black text-black text-base md:text-lg mb-2">{v.title}</h3>
+                  <p className="text-[11px] md:text-xs text-black/60 font-medium mb-6 leading-relaxed">{v.desc}</p>
+                </div>
+                <div className="bg-black text-[#fcd34d] text-[10px] font-black px-4 py-1.5 rounded-full tracking-wide">
+                  {v.price}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

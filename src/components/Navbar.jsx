@@ -31,13 +31,7 @@ export default function Navbar() {
         
         {/* Brand / Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 border-2 border-black/10 rounded-lg flex items-center justify-center relative bg-white">
-            <div className="w-4 h-4 border-2 border-orange-500 rounded-sm transform rotate-45"></div>
-            <div className="absolute w-2 h-2 bg-black/90 rounded-full"></div>
-          </div>
-          <div>
-            <div className="font-black text-xl text-black leading-none tracking-tight">SafeDrive<span className="text-orange-500">TAG</span></div>
-          </div>
+          <img src="/logo.jpg" alt="SafeDriveTag Logo" className="h-10 sm:h-12 w-auto object-contain" />
         </Link>
 
         {/* Desktop Links */}

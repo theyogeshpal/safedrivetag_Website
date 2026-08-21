@@ -110,9 +110,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  background-color: rgba(0, 0, 0, 0.9);
-  color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 12px;
   font-weight: 700;
   padding: 8px 16px;
@@ -134,7 +134,7 @@
 }
 
 .stats-desc {
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 18px;
   line-height: 1.6;
   margin-bottom: 40px;
@@ -160,7 +160,7 @@
 
 .stat-label {
   font-size: 14px;
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .stats-img-wrapper {
@@ -329,7 +329,7 @@
 }
 
 .cta-desc {
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 18px;
   margin-bottom: 32px;
 }
