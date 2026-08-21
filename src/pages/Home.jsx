@@ -21,19 +21,14 @@ export default function Home() {
       {/* --- HERO SECTION --- */}
       <section className="relative flex items-center lg:items-start pt-24 lg:pt-28 pb-12 px-6 overflow-hidden bg-black">
         
-        {/* Car Background Video */}
-        <div className="absolute inset-0 z-0 flex justify-end">
-          <div className="w-full lg:w-[60%] h-full relative flex items-center justify-center p-6 lg:p-0">
-            <video 
-              src="/hero-video.mp4" 
-              autoPlay 
-              loop 
-              muted 
-              playsInline
-              className="w-full h-[80%] object-contain object-right lg:object-center opacity-100 rounded-2xl lg:rounded-none"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/50 to-transparent"></div>
-          </div>
+        {/* Car Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=2000&q=80" 
+            alt="Car Background" 
+            className="w-full h-full object-cover opacity-100"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
         </div>
 
         {/* Abstract Glowing Orbs (Light Mode Adjusted) */}
@@ -235,7 +230,7 @@ export default function Home() {
               </div>
 
               <div className="absolute -top-2 right-[15%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '100ms' }}>
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-black/20">Scan without app</div>
+                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-black/20">Scan with any camera</div>
                 <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
                 <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
               </div>
