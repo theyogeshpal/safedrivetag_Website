@@ -12,6 +12,7 @@ import Checkout from './pages/Checkout';
 import Legal from './pages/Legal';
 
 import QRScan from './pages/QRScan';
+import NotFound from './pages/NotFound';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -42,6 +43,7 @@ function App() {
             <Route path="/refund" element={<Legal />} />
             <Route path="/shipping" element={<Legal />} />
             <Route path="/scan/:id" element={<QRScan />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
         <Footer />
