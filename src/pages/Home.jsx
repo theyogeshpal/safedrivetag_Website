@@ -19,16 +19,11 @@ export default function Home() {
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex items-center lg:items-start pt-24 lg:pt-28 pb-12 px-6 overflow-hidden bg-black">
+      <section className="relative flex items-center lg:items-start pt-24 lg:pt-28 pb-12 px-6 overflow-hidden bg-white">
         
-        {/* Car Background Image */}
+        {/* Clean Background */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=2000&q=80" 
-            alt="Car Background" 
-            className="w-full h-full object-cover opacity-100"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-orange-50/50 to-green-50/30"></div>
         </div>
 
         {/* Abstract Glowing Orbs (Light Mode Adjusted) */}
@@ -107,9 +102,9 @@ export default function Home() {
           </div>
 
           {/* Hero Side Image */}
-          <div className="relative hidden lg:flex justify-center items-center animate-fade-up" style={{ animationDelay: '200ms' }}>
-            <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-green-500/20 rounded-full blur-3xl opacity-60 animate-pulse"></div>
-            <img src="/hero-car.png" alt="SafeDriveTag on Car" className="relative z-10 w-full max-w-xl object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500" />
+          <div className="relative hidden lg:flex justify-center items-center animate-fade-up w-full h-full" style={{ animationDelay: '200ms' }}>
+            <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-green-500/20 rounded-full blur-[100px] opacity-80 animate-pulse"></div>
+            <img src="/hero-car.png" alt="SafeDriveTag on Car" className="relative z-10 w-full max-w-[125%] xl:max-w-[140%] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500 translate-x-12" />
           </div>
         </div>
       </section>
