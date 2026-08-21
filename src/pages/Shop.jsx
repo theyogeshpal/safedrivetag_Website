@@ -54,7 +54,7 @@ export default function Shop() {
             <div
               key={p.id}
               onClick={() => navigate(`/shop/product/${p.id}`)}
-              className={`relative bg-white border rounded-3xl overflow-hidden flex flex-col hover:-translate-y-1.5 transition-all duration-500 group shadow-sm hover:shadow-xl cursor-pointer ${p.bestSeller ? 'border-orange-200 ring-2 ring-orange-500/20' : 'border-black/10'}`}
+              className="relative bg-white rounded-3xl overflow-hidden flex flex-col hover:-translate-y-1.5 transition-all duration-500 group shadow-md hover:shadow-xl cursor-pointer"
             >
               {/* Image */}
               <div className="relative h-48 overflow-hidden bg-black/5">
