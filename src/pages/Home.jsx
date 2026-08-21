@@ -21,16 +21,9 @@ export default function Home() {
       {/* --- HERO SECTION --- */}
       <section className="relative flex items-center lg:items-start pt-24 lg:pt-28 pb-12 px-6 overflow-hidden bg-white">
         
-        {/* Clean Background */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-orange-50/50 to-green-50/30"></div>
-        </div>
-
-        {/* Abstract Glowing Orbs (Light Mode Adjusted) */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-500/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none z-0" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-green-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none z-0" />
+        {/* Abstract Glowing Orbs Removed */}
         
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-[1fr_0.8fr] gap-10 items-center relative z-10 w-full">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center relative z-10 w-full">
           <div className="space-y-6 animate-fade-up">
             
             
@@ -103,7 +96,6 @@ export default function Home() {
 
           {/* Hero Side Image */}
           <div className="relative hidden lg:flex justify-center items-center animate-fade-up w-full h-full" style={{ animationDelay: '200ms' }}>
-            <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-green-500/20 rounded-full blur-[100px] opacity-80 animate-pulse"></div>
             <img src="/hero-car.png" alt="SafeDriveTag on Car" className="relative z-10 w-full max-w-[125%] xl:max-w-[140%] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500 translate-x-12" />
           </div>
         </div>
