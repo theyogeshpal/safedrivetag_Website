@@ -1,8 +1,9 @@
 import React from 'react';
 import { Star, Truck, CreditCard, RefreshCcw, ShieldCheck, Award, CheckCircle, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Shop() {
+  const navigate = useNavigate();
   const products = [
     {
       id: 'car',
@@ -52,7 +53,8 @@ export default function Shop() {
           {products.map((p) => (
             <div
               key={p.id}
-              className={`relative bg-white border rounded-3xl overflow-hidden flex flex-col hover:-translate-y-1.5 transition-all duration-500 group shadow-sm hover:shadow-xl ${p.bestSeller ? 'border-orange-200 ring-2 ring-orange-500/20' : 'border-black/10'}`}
+              onClick={() => navigate(`/shop/product/${p.id}`)}
+              className={`relative bg-white border rounded-3xl overflow-hidden flex flex-col hover:-translate-y-1.5 transition-all duration-500 group shadow-sm hover:shadow-xl cursor-pointer ${p.bestSeller ? 'border-orange-200 ring-2 ring-orange-500/20' : 'border-black/10'}`}
             >
               {/* Image */}
               <div className="relative h-48 overflow-hidden bg-black/5">
@@ -103,7 +105,8 @@ export default function Shop() {
                     <span className="text-xs text-black/40 line-through mb-1">₹{p.oldPrice}</span>
                   </div>
                   <Link 
-                    to={`/shop/product/${p.id}`} 
+                    to="/checkout" 
+                    onClick={(e) => e.stopPropagation()}
                     className={`flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-bold transition-all shadow-md ${p.bestSeller ? 'bg-green-500 text-white hover:bg-green-600 hover:shadow-lg hover:shadow-green-500/30' : 'bg-black text-white hover:bg-black/90'}`}
                   >
                     Buy Now <ArrowRight className="w-3.5 h-3.5" />
