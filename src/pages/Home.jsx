@@ -326,7 +326,7 @@ export default function Home() {
             ].map((v, i) => (
               <div key={i} className={`bg-[#fdf8d5] rounded-2xl p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1 ${v.highlight ? 'border-2 border-[#fcd34d] shadow-[0_10px_30px_rgba(252,211,77,0.3)] scale-105 z-10' : 'border border-[#f4e28e] shadow-sm'}`}>
                 <div>
-                  <div className="text-4xl mb-4">{v.icon}</div>
+                  <div className="text-4xl mb-4 flex justify-center">{v.icon}</div>
                   <h3 className="font-black text-black text-base md:text-lg mb-2">{v.title}</h3>
                   <p className="text-[11px] md:text-xs text-black/60 font-medium mb-6 leading-relaxed">{v.desc}</p>
                 </div>
