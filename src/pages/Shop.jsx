@@ -19,7 +19,9 @@ import {
   Award, 
   Sparkles, 
   ShieldAlert, 
-  CheckCircle2 
+  CheckCircle2,
+  PackageOpen,
+  Headphones
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import PageHero from '../components/PageHero';
@@ -30,101 +32,29 @@ export default function Shop() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchProducts() {
-      setIsLoading(true);
-      try {
-        const res = await api.getProducts();
-        if (res.success && res.products && res.products.length > 0) {
-          setProducts(res.products);
-        } else {
-          setProducts(getDefaultProducts());
-        }
-      } catch (err) {
-        console.log('Error fetching products, using catalog fallback', err);
-        setProducts(getDefaultProducts());
-      } finally {
-        setIsLoading(false);
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    try {
+      const res = await api.getProducts();
+      if (res.success && Array.isArray(res.products) && res.products.length > 0) {
+        setProducts(res.products);
+      } else {
+        setProducts([]);
       }
+    } catch (err) {
+      console.error('Error fetching products from API:', err);
+      setProducts([]);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
-  const getDefaultProducts = () => [
-    {
-      _id: 'prod_car_kit',
-      routeId: 'car',
-      title: 'Car Safety QR Protection Kit (2 Stickers)',
-      description: 'Pack of 2 high-grade reflective stickers with masked calling and 24/7 instant emergency alerts.',
-      imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
-      tagType: '4-Wheeler / Car',
-      deliveryInfo: '2 Reflective Stickers',
-      price: 399,
-      originalPrice: 499,
-      discount: 100,
-      initialCalls: 10,
-      initialMessages: 20,
-      validityDays: 365,
-      renewalAmount: 199,
-      badge: 'MOST POPULAR',
-      features: [
-        '2x Premium Reflective UV Stickers',
-        '10 Voice Calls & 20 WhatsApp Alerts',
-        'Number Masking Privacy Bridge',
-        'Live GPS Emergency SOS Dispatch'
-      ]
-    },
-    {
-      _id: 'prod_bike_kit',
-      routeId: 'bike',
-      title: 'Bike Safety QR Protection Kit',
-      description: 'Compact weather & scratch-proof helmet/visor tag for motorcycles & scooters with emergency alerts.',
-      imageUrl: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
-      tagType: '2-Wheeler / Bike',
-      deliveryInfo: '1 Waterproof Sticker',
-      price: 299,
-      originalPrice: 399,
-      discount: 100,
-      initialCalls: 10,
-      initialMessages: 20,
-      validityDays: 365,
-      renewalAmount: 199,
-      badge: null,
-      features: [
-        '1x Ultra-Adhesive Bike Tag',
-        '10 Voice Calls & 20 WhatsApp Alerts',
-        'Accident SOS Broadcast to Family',
-        '1 Year Full Cloud Protection'
-      ]
-    },
-    {
-      _id: 'prod_luggage_kit',
-      routeId: 'luggage',
-      title: 'Smart Luggage & Bag Safety Kit',
-      description: 'Heavy-duty metallic QR bag badges with braided steel loop cables for flight suitcases and laptop bags.',
-      imageUrl: 'https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=800&q=80',
-      tagType: 'Travel Luggage & Bags',
-      deliveryInfo: '2 Metallic Badges',
-      price: 249,
-      originalPrice: 349,
-      discount: 100,
-      initialCalls: 10,
-      initialMessages: 20,
-      validityDays: 365,
-      renewalAmount: 199,
-      badge: '✈️ TRAVEL ESSENTIAL',
-      features: [
-        '2x Metallic Badges + Steel Loop Cables',
-        'Instant Lost Bag GPS Location Alert',
-        'Masked Caller ID (No Personal Phone Leak)',
-        'Airport, Train & Taxi Bag Recovery'
-      ]
-    }
-  ];
-
   const handleProductClick = (prod) => {
-    const target = prod.routeId || prod._id;
-    navigate(`/shop/product/${target}`);
+    navigate(`/shop/product/${prod._id}`);
   };
 
   const handleOrderNow = (e, prod) => {
@@ -164,7 +94,8 @@ export default function Shop() {
       {/* --- PRODUCT CARDS SECTION (DYNAMIC FROM API) --- */}
       <section className="relative z-20 -mt-6 sm:-mt-8 px-4 sm:px-6 max-w-7xl mx-auto">
         
-        {isLoading ? (
+        {/* State 1: Loading Skeleton */}
+        {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
             {[1, 2, 3].map((n) => (
               <div key={n} className="bg-white rounded-3xl p-6 sm:p-7 shadow-xl border border-black/5 animate-pulse h-96 flex flex-col justify-between">
@@ -175,12 +106,52 @@ export default function Shop() {
               </div>
             ))}
           </div>
-        ) : (
+        )}
+
+        {/* State 2: No Products Found */}
+        {!isLoading && products.length === 0 && (
+          <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl shadow-black/5 border border-black/5 text-center max-w-2xl mx-auto animate-fade-up">
+            <div className="w-20 h-20 bg-orange-100 text-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-inner">
+              <PackageOpen size={40} />
+            </div>
+            
+            <span className="inline-block bg-orange-50 text-orange-700 text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-orange-200 mb-3">
+              Store Catalog Empty
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl font-black text-black tracking-tight mb-2">
+              No Products Found
+            </h2>
+            <p className="text-sm text-black/60 font-medium max-w-md mx-auto mb-8 leading-relaxed">
+              Currently there are no active products available in the store database. Please check back shortly or get in touch with our team.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                onClick={fetchProducts}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm transition-all shadow-lg shadow-orange-500/25 cursor-pointer"
+              >
+                <RefreshCcw size={15} />
+                <span>Retry / Refresh</span>
+              </button>
+              <Link
+                to="/contact"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black/5 hover:bg-black/10 text-black font-bold px-6 py-3.5 rounded-2xl text-xs sm:text-sm border border-black/10 transition-all"
+              >
+                <Headphones size={15} />
+                <span>Contact Support</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* State 3: Products Available */}
+        {!isLoading && products.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
             {products.map((prod, idx) => {
               const discountPercent = prod.originalPrice && prod.price
                 ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)
-                : 20;
+                : 0;
 
               return (
                 <div 
@@ -218,10 +189,10 @@ export default function Shop() {
                     <div className="flex items-center justify-between gap-2 mb-3.5">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-200/60 font-bold text-[10px] px-2 py-0.5 rounded-md">
-                          <Tag size={10} /> {prod.tagType || 'Vehicle / Luggage Kit'}
+                          <Tag size={10} /> {prod.qrType === 'DIGITAL' ? 'Digital Pass' : 'Physical Sticker Kit'}
                         </span>
                         <span className="inline-flex items-center gap-1 bg-[#fdf8d5] text-[#6d5516] border border-[#f4e28e] font-bold text-[10px] px-2 py-0.5 rounded-md">
-                          <Package size={10} /> {prod.deliveryInfo || 'Physical Courier'}
+                          <Package size={10} /> Pan-India Delivery
                         </span>
                       </div>
                       <div className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center shrink-0">
@@ -251,7 +222,7 @@ export default function Shop() {
                             </span>
                           )}
                         </div>
-                        <span className="text-black/50 font-medium text-[11px]">Includes QR Kit + 1 Yr Quota</span>
+                        <span className="text-black/50 font-medium text-[11px]">Includes QR Kit + {prod.validityDays || 365}d Quota</span>
                       </div>
                       <div className="text-[11px] font-bold text-black/50 text-right">
                         Renewal: <span className="text-orange-600 font-extrabold">₹{prod.renewalAmount || 199}/yr</span>
