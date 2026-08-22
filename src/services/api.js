@@ -101,6 +101,24 @@ export const api = {
     }),
 
   // --- 3. Checkout & Payment APIs ---
+  sendPurchaseOtp: (data) => {
+    const body = typeof data === 'object' && data !== null ? data : { phone: data };
+    return apiRequest('/purchase/send-otp', {
+      method: 'POST',
+      body,
+    });
+  },
+
+  verifyPurchaseOtp: (phoneOrData, otp) => {
+    const body = typeof phoneOrData === 'object' && phoneOrData !== null 
+      ? { ...phoneOrData, ...(otp ? { otp } : {}) }
+      : { phone: phoneOrData, otp };
+    return apiRequest('/purchase/verify-otp', {
+      method: 'POST',
+      body,
+    });
+  },
+
   createOrder: (orderData) =>
     apiRequest('/purchase/create-order', {
       method: 'POST',

@@ -147,14 +147,14 @@ export default function Checkout() {
 
     setIsSubmitting(true);
     try {
-      // Send Name, Email, and Mobile to POST /auth/send-login-otp
+      // Send Name, Email, and Mobile to POST /purchase/send-otp
       const otpPayload = {
         name: customerFullName,
         email: customerEmail,
         phone: cleanPhone,
       };
 
-      const otpRes = await api.sendLoginOtp(otpPayload);
+      const otpRes = await api.sendPurchaseOtp(otpPayload);
       if (otpRes.success) {
         setIsOtpModalOpen(true);
         setOtpError('');
@@ -220,7 +220,7 @@ export default function Checkout() {
         phone: cleanPhone,
       };
 
-      const res = await api.sendLoginOtp(otpPayload);
+      const res = await api.sendPurchaseOtp(otpPayload);
       if (res.success) {
         setResendTimer(30);
         setCanResend(false);
@@ -260,7 +260,7 @@ export default function Checkout() {
         email: customerEmail,
       };
 
-      const verifyRes = await api.verifyLoginOtp(verifyPayload);
+      const verifyRes = await api.verifyPurchaseOtp(verifyPayload);
 
       if (verifyRes.success) {
         if (verifyRes.token) {
