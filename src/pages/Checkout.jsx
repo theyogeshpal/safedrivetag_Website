@@ -82,14 +82,18 @@ export default function Checkout() {
     setIsSubmitting(true);
     try {
       const customerFullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
-      const fullAddress = `${formData.shippingAddress.trim()}, ${formData.city.trim()} - ${formData.pincode.trim()}`;
+      const customerEmail = formData.email.trim();
+      const streetAddress = formData.shippingAddress.trim();
+      const cityVal = formData.city.trim();
+      const pinVal = formData.pincode.trim();
+      const fullAddress = `${streetAddress}, ${cityVal} - ${pinVal}`;
 
       const items = [
         {
-          productId: selectedProduct.productId || selectedProduct._id || 'prod_001',
-          title: selectedProduct.title || selectedProduct.name || 'SafeDrive QR Kit',
-          quantity: quantity,
-          price: selectedProduct.price,
+          productId: selectedProduct.productId || selectedProduct._id || '66c7f8a1e2b4c3d4e5f6a7b8',
+          title: selectedProduct.title || selectedProduct.name || 'Car Safety QR Protection Kit',
+          quantity: Number(quantity),
+          price: Number(selectedProduct.price),
           qrType: selectedProduct.qrType || 'PHYSICAL',
         },
       ];
@@ -99,7 +103,7 @@ export default function Checkout() {
         amount: totalAmount,
         customerName: customerFullName,
         customerPhone: cleanPhone,
-        customerEmail: formData.email.trim() || 'customer@safedrive.in',
+        customerEmail: customerEmail,
         shippingAddress: fullAddress,
         items,
       });
@@ -122,7 +126,7 @@ export default function Checkout() {
           razorpay_signature: 'mock_signature_valid',
           customerName: customerFullName,
           customerPhone: cleanPhone,
-          customerEmail: formData.email.trim() || 'customer@safedrive.in',
+          customerEmail: customerEmail,
           shippingAddress: fullAddress,
           items,
         });
@@ -160,7 +164,7 @@ export default function Checkout() {
               razorpay_signature: paymentResponse.razorpay_signature || 'mock_signature_valid',
               customerName: customerFullName,
               customerPhone: cleanPhone,
-              customerEmail: formData.email.trim() || 'customer@safedrive.in',
+              customerEmail: customerEmail,
               shippingAddress: fullAddress,
               items,
             };
@@ -187,15 +191,11 @@ export default function Checkout() {
         },
         prefill: {
           name: customerFullName,
-          email: formData.email.trim() || 'customer@safedrive.in',
+          email: customerEmail,
           contact: cleanPhone,
         },
-        notes: {
-          shippingAddress: fullAddress,
-          productId: items[0]?.productId,
-        },
         theme: {
-          color: '#f97316', // SafeDrive orange theme
+          color: '#f97316',
         },
         modal: {
           ondismiss: function () {
@@ -347,9 +347,10 @@ export default function Checkout() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">Email Address</label>
+                    <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">Email Address *</label>
                     <input 
                       type="email" 
+                      required
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
