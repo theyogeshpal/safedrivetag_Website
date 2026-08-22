@@ -79,10 +79,9 @@ export function AuthProvider({ children }) {
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
   // Send Login OTP to Mobile Number
-  const sendOtp = async (phone) => {
+  const sendOtp = async (phoneOrData) => {
     try {
-      const cleanPhone = phone.replace(/\D/g, '');
-      const res = await api.sendLoginOtp(cleanPhone);
+      const res = await api.sendLoginOtp(phoneOrData);
       return res;
     } catch (err) {
       return { success: false, message: 'Failed to send OTP. Please try again.' };
@@ -90,16 +89,16 @@ export function AuthProvider({ children }) {
   };
 
   // Verify Login OTP & Store Auth Token
-  const verifyOtp = async (phone, otp) => {
+  const verifyOtp = async (phoneOrData, otp) => {
     try {
-      const cleanPhone = phone.replace(/\D/g, '');
-      const res = await api.verifyLoginOtp(cleanPhone, otp);
+      const res = await api.verifyLoginOtp(phoneOrData, otp);
 
       if (res.success && res.token) {
         setAuthToken(res.token);
+        const cleanPhone = typeof phoneOrData === 'object' ? phoneOrData.phone : phoneOrData;
         const userObj = res.user || {
           phone: cleanPhone,
-          name: `User ${cleanPhone.slice(-4)}`,
+          name: `User ${String(cleanPhone).slice(-4)}`,
         };
         setCurrentUser(userObj);
         closeLoginModal();

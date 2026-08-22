@@ -51,26 +51,38 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 export const api = {
-  // --- 2. Product Catalog & Store APIs ---
+  // --- 1. Product Catalog & Store APIs ---
   getProducts: () => apiRequest('/purchase/products'),
   getProductById: (id) => apiRequest(`/purchase/products/${id}`),
 
-  // --- 3. User Authentication & OTP APIs ---
-  sendLoginOtp: (phone) => 
-    apiRequest('/auth/send-login-otp', {
+  // --- 2. User Authentication & Profile APIs ---
+  sendLoginOtp: (data) => {
+    const body = typeof data === 'object' && data !== null ? data : { phone: data };
+    return apiRequest('/auth/send-login-otp', {
       method: 'POST',
-      body: { phone },
-    }),
+      body,
+    });
+  },
 
-  verifyLoginOtp: (phone, otp) =>
-    apiRequest('/auth/verify-login-otp', {
+  verifyLoginOtp: (phoneOrData, otp) => {
+    const body = typeof phoneOrData === 'object' && phoneOrData !== null 
+      ? { ...phoneOrData, ...(otp ? { otp } : {}) }
+      : { phone: phoneOrData, otp };
+    return apiRequest('/auth/verify-login-otp', {
       method: 'POST',
-      body: { phone, otp },
-    }),
+      body,
+    });
+  },
 
   getCurrentUser: () => apiRequest('/auth/me'),
 
-  // --- 4. Order & Checkout APIs ---
+  updateProfile: (profileData) =>
+    apiRequest('/user/profile', {
+      method: 'PUT',
+      body: profileData,
+    }),
+
+  // --- 3. Checkout & Payment APIs ---
   createOrder: (orderData) =>
     apiRequest('/purchase/create-order', {
       method: 'POST',
@@ -83,8 +95,9 @@ export const api = {
       body: paymentData,
     }),
 
-  // --- 5. Public QR Scan & Masked Caller APIs ---
+  // --- 4. Public QR Scan & Safety Features ---
   getPublicQrInfo: (token) => apiRequest(`/public/qr/${token}`),
+  getScanReasons: () => apiRequest('/public/scan-reasons'),
 
   verifyPlate: (token, last4Digits) =>
     apiRequest(`/public/qr/${token}/verify-plate`, {
@@ -110,16 +123,17 @@ export const api = {
       body: { last4Digits, location },
     }),
 
-  // --- 6. First-Time QR Registration API ---
+  // --- 5. First-Time QR Registration API ---
   registerQrKit: (token, registrationData) =>
     apiRequest(`/public/qr/${token}/register`, {
       method: 'POST',
       body: registrationData,
     }),
 
-  // --- 7. User Dashboard & Management APIs ---
+  // --- 6. Customer Dashboard & Vehicle Management ---
   getDashboard: () => apiRequest('/user/dashboard'),
   getPackages: () => apiRequest('/user/packages'),
+  getUserOrders: () => apiRequest('/user/orders'),
 
   buyQuota: (data) =>
     apiRequest('/user/quota/buy', {
