@@ -56,9 +56,27 @@ export const api = {
   getProductById: (id) => apiRequest(`/purchase/products/${id}`),
 
   // --- 2. User Authentication & Profile APIs ---
+  sendOtp: (data) => {
+    const body = typeof data === 'object' && data !== null ? data : { phone: data };
+    return apiRequest('/auth/send-otp', {
+      method: 'POST',
+      body,
+    });
+  },
+
   sendLoginOtp: (data) => {
     const body = typeof data === 'object' && data !== null ? data : { phone: data };
-    return apiRequest('/auth/send-login-otp', {
+    return apiRequest('/auth/send-otp', {
+      method: 'POST',
+      body,
+    });
+  },
+
+  verifyOtp: (phoneOrData, otp) => {
+    const body = typeof phoneOrData === 'object' && phoneOrData !== null 
+      ? { ...phoneOrData, ...(otp ? { otp } : {}) }
+      : { phone: phoneOrData, otp };
+    return apiRequest('/auth/verify-otp', {
       method: 'POST',
       body,
     });
@@ -68,7 +86,7 @@ export const api = {
     const body = typeof phoneOrData === 'object' && phoneOrData !== null 
       ? { ...phoneOrData, ...(otp ? { otp } : {}) }
       : { phone: phoneOrData, otp };
-    return apiRequest('/auth/verify-login-otp', {
+    return apiRequest('/auth/verify-otp', {
       method: 'POST',
       body,
     });
