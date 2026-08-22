@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Lock, 
@@ -11,21 +11,139 @@ import {
   QrCode, 
   Tag, 
   Package, 
-  Smartphone,
-  Star,
-  Truck,
-  CreditCard,
-  RefreshCcw,
-  Award,
-  Sparkles,
-  ShieldAlert,
-  CheckCircle2
+  Smartphone, 
+  Star, 
+  Truck, 
+  CreditCard, 
+  RefreshCcw, 
+  Award, 
+  Sparkles, 
+  ShieldAlert, 
+  CheckCircle2 
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import PageHero from '../components/PageHero';
+import api from '../services/api';
 
 export default function Shop() {
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      setIsLoading(true);
+      try {
+        const res = await api.getProducts();
+        if (res.success && res.products && res.products.length > 0) {
+          setProducts(res.products);
+        } else {
+          setProducts(getDefaultProducts());
+        }
+      } catch (err) {
+        console.log('Error fetching products, using catalog fallback', err);
+        setProducts(getDefaultProducts());
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  const getDefaultProducts = () => [
+    {
+      _id: 'prod_car_kit',
+      routeId: 'car',
+      title: 'Car Safety QR Protection Kit (2 Stickers)',
+      description: 'Pack of 2 high-grade reflective stickers with masked calling and 24/7 instant emergency alerts.',
+      imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
+      tagType: '4-Wheeler / Car',
+      deliveryInfo: '2 Reflective Stickers',
+      price: 399,
+      originalPrice: 499,
+      discount: 100,
+      initialCalls: 10,
+      initialMessages: 20,
+      validityDays: 365,
+      renewalAmount: 199,
+      badge: 'MOST POPULAR',
+      features: [
+        '2x Premium Reflective UV Stickers',
+        '10 Voice Calls & 20 WhatsApp Alerts',
+        'Number Masking Privacy Bridge',
+        'Live GPS Emergency SOS Dispatch'
+      ]
+    },
+    {
+      _id: 'prod_bike_kit',
+      routeId: 'bike',
+      title: 'Bike Safety QR Protection Kit',
+      description: 'Compact weather & scratch-proof helmet/visor tag for motorcycles & scooters with emergency alerts.',
+      imageUrl: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
+      tagType: '2-Wheeler / Bike',
+      deliveryInfo: '1 Waterproof Sticker',
+      price: 299,
+      originalPrice: 399,
+      discount: 100,
+      initialCalls: 10,
+      initialMessages: 20,
+      validityDays: 365,
+      renewalAmount: 199,
+      badge: null,
+      features: [
+        '1x Ultra-Adhesive Bike Tag',
+        '10 Voice Calls & 20 WhatsApp Alerts',
+        'Accident SOS Broadcast to Family',
+        '1 Year Full Cloud Protection'
+      ]
+    },
+    {
+      _id: 'prod_luggage_kit',
+      routeId: 'luggage',
+      title: 'Smart Luggage & Bag Safety Kit',
+      description: 'Heavy-duty metallic QR bag badges with braided steel loop cables for flight suitcases and laptop bags.',
+      imageUrl: 'https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=800&q=80',
+      tagType: 'Travel Luggage & Bags',
+      deliveryInfo: '2 Metallic Badges',
+      price: 249,
+      originalPrice: 349,
+      discount: 100,
+      initialCalls: 10,
+      initialMessages: 20,
+      validityDays: 365,
+      renewalAmount: 199,
+      badge: '✈️ TRAVEL ESSENTIAL',
+      features: [
+        '2x Metallic Badges + Steel Loop Cables',
+        'Instant Lost Bag GPS Location Alert',
+        'Masked Caller ID (No Personal Phone Leak)',
+        'Airport, Train & Taxi Bag Recovery'
+      ]
+    }
+  ];
+
+  const handleProductClick = (prod) => {
+    const target = prod.routeId || prod._id;
+    navigate(`/shop/product/${target}`);
+  };
+
+  const handleOrderNow = (e, prod) => {
+    e.stopPropagation();
+    navigate('/checkout', {
+      state: {
+        product: {
+          productId: prod._id,
+          title: prod.title,
+          description: prod.description,
+          price: prod.price,
+          originalPrice: prod.originalPrice,
+          imageUrl: prod.imageUrl,
+          qrType: prod.qrType || 'PHYSICAL',
+        },
+        quantity: 1,
+      },
+    });
+  };
 
   return (
     <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900">
@@ -43,385 +161,158 @@ export default function Shop() {
         ]}
       />
 
-      {/* --- PRODUCT CARDS SECTION --- */}
+      {/* --- PRODUCT CARDS SECTION (DYNAMIC FROM API) --- */}
       <section className="relative z-20 -mt-6 sm:-mt-8 px-4 sm:px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
-          
-          {/* CARD 1: CAR SAFETY STICKERS (MOST POPULAR) */}
-          <div 
-            onClick={() => navigate('/shop/product/car')}
-            className="relative bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-orange-500/5 border border-black/5 flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300 cursor-pointer group"
-          >
-            
-            {/* Floating Top Badge */}
-            <div className="absolute -top-3.5 left-6 z-30">
-              <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[10px] sm:text-[11px] tracking-wider uppercase px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
-                <Star size={12} className="fill-white" /> MOST POPULAR
-              </span>
-            </div>
-
-            <div>
-              {/* Product Visual Mockup */}
-              <div 
-                className="relative bg-orange-50/40 rounded-2xl p-3 sm:p-4 border border-orange-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80" 
-                  alt="Car Safety Stickers"
-                  className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-end p-4">
-                  <span className="text-white text-xs font-bold flex items-center gap-1.5">
-                    View details <ArrowRight size={13} />
-                  </span>
-                </div>
+        
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="bg-white rounded-3xl p-6 sm:p-7 shadow-xl border border-black/5 animate-pulse h-96 flex flex-col justify-between">
+                <div className="w-full h-48 bg-black/5 rounded-2xl mb-4" />
+                <div className="h-6 bg-black/5 rounded-md w-3/4 mb-2" />
+                <div className="h-4 bg-black/5 rounded-md w-1/2 mb-4" />
+                <div className="h-12 bg-black/5 rounded-xl w-full" />
               </div>
-
-              {/* Tag Badges Row */}
-              <div className="flex items-center justify-between gap-2 mb-3.5">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-200/60 font-bold text-[10px] px-2 py-0.5 rounded-md">
-                    <Tag size={10} /> 4-Wheeler / Car
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-[#fdf8d5] text-[#6d5516] border border-[#f4e28e] font-bold text-[10px] px-2 py-0.5 rounded-md">
-                    <Package size={10} /> Courier Delivery
-                  </span>
-                </div>
-                <div className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center shrink-0">
-                  <QrCode size={14} />
-                </div>
-              </div>
-
-              {/* Title & Description */}
-              <h2 className="text-xl font-black text-black tracking-tight mb-1.5 group-hover:text-orange-600 transition-colors">
-                Car Safety Stickers Kit
-              </h2>
-              <p className="text-xs text-black/60 font-medium mb-4 leading-relaxed line-clamp-2">
-                Pack of 2 high-grade reflective stickers with masked calling and 24/7 instant emergency alerts.
-              </p>
-
-              {/* Pricing Row */}
-              <div className="flex items-baseline justify-between mb-4 pb-3.5 border-b border-black/5">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-3xl font-black text-black">₹399</span>
-                    <span className="text-xs font-bold text-black/40 line-through">₹499</span>
-                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full border border-green-200">
-                      20% OFF
-                    </span>
-                  </div>
-                  <span className="text-black/50 font-medium text-[11px]">Includes 2 Stickers + 1 Yr Quota</span>
-                </div>
-                <div className="text-[11px] font-bold text-black/50 text-right">
-                  Renewal: <span className="text-orange-600 font-extrabold">₹199/yr</span>
-                </div>
-              </div>
-
-              {/* Quota Row */}
-              <div className="bg-orange-50/40 border border-orange-100/80 rounded-xl p-2.5 grid grid-cols-3 gap-1.5 text-center mb-5">
-                <div>
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <Phone size={11} className="text-orange-600" /> 10
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">Free Calls</div>
-                </div>
-                <div className="border-x border-orange-200/60">
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <MessageSquare size={11} className="text-emerald-600" /> 20
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">Free SMS/WA</div>
-                </div>
-                <div>
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <Clock size={11} className="text-purple-600" /> 365d
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">Validity</div>
-                </div>
-              </div>
-
-              {/* Features List */}
-              <div className="mb-5 space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-wider text-black/40 mb-1.5">
-                  Kit Inclusions:
-                </p>
-                {[
-                  '2x Premium Reflective UV Stickers',
-                  '10 Voice Calls & 20 WhatsApp Alerts',
-                  'Number Masking Privacy Bridge',
-                  'Live GPS Emergency SOS Dispatch'
-                ].map((feat, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs font-semibold text-black/80">
-                    <div className="w-3.5 h-3.5 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-                      <Check size={10} strokeWidth={3} />
-                    </div>
-                    <span>{feat}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* CTA Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate('/checkout');
-              }}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(34,197,94,0.25)] transition-all text-xs sm:text-sm cursor-pointer hover:scale-[1.01]"
-            >
-              <span>Order Car Safety Tag</span>
-              <ArrowRight size={15} />
-            </button>
-
+            ))}
           </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
+            {products.map((prod, idx) => {
+              const discountPercent = prod.originalPrice && prod.price
+                ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)
+                : 20;
 
-          {/* CARD 2: BIKE SAFETY STICKER */}
-          <div 
-            onClick={() => navigate('/shop/product/bike')}
-            className="relative bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-orange-500/5 border border-black/5 flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300 cursor-pointer group"
-          >
-            
-            <div>
-              {/* Product Visual Mockup */}
-              <div 
-                className="relative bg-amber-50/40 rounded-2xl p-3 sm:p-4 border border-amber-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80" 
-                  alt="Bike Safety Tag"
-                  className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-end p-4">
-                  <span className="text-white text-xs font-bold flex items-center gap-1.5">
-                    View details <ArrowRight size={13} />
-                  </span>
-                </div>
-              </div>
-
-              {/* Tag Badges Row */}
-              <div className="flex items-center justify-between gap-2 mb-3.5">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200/60 font-bold text-[10px] px-2 py-0.5 rounded-md">
-                    <Tag size={10} /> 2-Wheeler / Bike
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-[#fdf8d5] text-[#6d5516] border border-[#f4e28e] font-bold text-[10px] px-2 py-0.5 rounded-md">
-                    <Package size={10} /> Courier Delivery
-                  </span>
-                </div>
-                <div className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center shrink-0">
-                  <QrCode size={14} />
-                </div>
-              </div>
-
-              {/* Title & Description */}
-              <h2 className="text-xl font-black text-black tracking-tight mb-1.5 group-hover:text-orange-600 transition-colors">
-                Bike Safety Sticker Kit
-              </h2>
-              <p className="text-xs text-black/60 font-medium mb-4 leading-relaxed line-clamp-2">
-                Compact weather & scratch-proof helmet/visor tag for motorcycles & scooters with emergency alerts.
-              </p>
-
-              {/* Pricing Row */}
-              <div className="flex items-baseline justify-between mb-4 pb-3.5 border-b border-black/5">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-3xl font-black text-black">₹299</span>
-                    <span className="text-xs font-bold text-black/40 line-through">₹399</span>
-                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full border border-green-200">
-                      25% OFF
-                    </span>
-                  </div>
-                  <span className="text-black/50 font-medium text-[11px]">Includes 1 Waterproof Sticker + 1 Yr Quota</span>
-                </div>
-                <div className="text-[11px] font-bold text-black/50 text-right">
-                  Renewal: <span className="text-orange-600 font-extrabold">₹199/yr</span>
-                </div>
-              </div>
-
-              {/* Quota Row */}
-              <div className="bg-orange-50/40 border border-orange-100/80 rounded-xl p-2.5 grid grid-cols-3 gap-1.5 text-center mb-5">
-                <div>
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <Phone size={11} className="text-orange-600" /> 10
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">Free Calls</div>
-                </div>
-                <div className="border-x border-orange-200/60">
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <MessageSquare size={11} className="text-emerald-600" /> 20
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">Free SMS/WA</div>
-                </div>
-                <div>
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <Clock size={11} className="text-purple-600" /> 365d
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">Validity</div>
-                </div>
-              </div>
-
-              {/* Features List */}
-              <div className="mb-5 space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-wider text-black/40 mb-1.5">
-                  Kit Inclusions:
-                </p>
-                {[
-                  '1x Ultra-Adhesive Bike Tag',
-                  '10 Voice Calls & 20 WhatsApp Alerts',
-                  'Accident SOS Broadcast to Family',
-                  '1 Year Full Cloud Protection'
-                ].map((feat, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs font-semibold text-black/80">
-                    <div className="w-3.5 h-3.5 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-                      <Check size={10} strokeWidth={3} />
+              return (
+                <div 
+                  key={prod._id || idx}
+                  onClick={() => handleProductClick(prod)}
+                  className="relative bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-orange-500/5 border border-black/5 flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300 cursor-pointer group"
+                >
+                  {/* Floating Top Badge */}
+                  {prod.badge && (
+                    <div className="absolute -top-3.5 left-6 z-30">
+                      <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[10px] sm:text-[11px] tracking-wider uppercase px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+                        <Star size={12} className="fill-white" /> {prod.badge}
+                      </span>
                     </div>
-                    <span>{feat}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+                  )}
 
-            {/* CTA Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate('/checkout');
-              }}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(249,115,22,0.25)] transition-all text-xs sm:text-sm cursor-pointer hover:scale-[1.01]"
-            >
-              <span>Order Bike Safety Tag</span>
-              <ArrowRight size={15} />
-            </button>
-
-          </div>
-
-          {/* CARD 3: LUGGAGE & BAG SAFETY TAG (NEW) */}
-          <div 
-            onClick={() => navigate('/shop/product/luggage')}
-            className="relative bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-orange-500/5 border border-black/5 flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300 cursor-pointer group"
-          >
-            
-            {/* Top Badge */}
-            <div className="absolute -top-3.5 left-6 z-30">
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-[10px] sm:text-[11px] tracking-wider uppercase px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
-                ✈️ TRAVEL ESSENTIAL
-              </span>
-            </div>
-
-            <div>
-              {/* Product Visual Mockup */}
-              <div 
-                className="relative bg-blue-50/40 rounded-2xl p-3 sm:p-4 border border-blue-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=800&q=80" 
-                  alt="Luggage & Bag Safety Tag"
-                  className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-end p-4">
-                  <span className="text-white text-xs font-bold flex items-center gap-1.5">
-                    View details <ArrowRight size={13} />
-                  </span>
-                </div>
-              </div>
-
-              {/* Tag Badges Row */}
-              <div className="flex items-center justify-between gap-2 mb-3.5">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-800 border border-blue-200/60 font-bold text-[10px] px-2 py-0.5 rounded-md">
-                    <Tag size={10} /> Travel Luggage & Bags
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-[#fdf8d5] text-[#6d5516] border border-[#f4e28e] font-bold text-[10px] px-2 py-0.5 rounded-md">
-                    <Package size={10} /> 2 Metallic Badges
-                  </span>
-                </div>
-                <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
-                  <QrCode size={14} />
-                </div>
-              </div>
-
-              {/* Title & Description */}
-              <h2 className="text-xl font-black text-black tracking-tight mb-1.5 group-hover:text-orange-600 transition-colors">
-                Smart Luggage Tag Kit
-              </h2>
-              <p className="text-xs text-black/60 font-medium mb-4 leading-relaxed line-clamp-2">
-                Heavy-duty metallic QR bag badges with braided steel loop cables for flight suitcases and laptop bags.
-              </p>
-
-              {/* Pricing Row */}
-              <div className="flex items-baseline justify-between mb-4 pb-3.5 border-b border-black/5">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-3xl font-black text-black">₹249</span>
-                    <span className="text-xs font-bold text-black/40 line-through">₹349</span>
-                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full border border-green-200">
-                      28% OFF
-                    </span>
-                  </div>
-                  <span className="text-black/50 font-medium text-[11px]">Includes 2 Tags + Steel Loop Cables</span>
-                </div>
-                <div className="text-[11px] font-bold text-black/50 text-right">
-                  Renewal: <span className="text-orange-600 font-extrabold">₹199/yr</span>
-                </div>
-              </div>
-
-              {/* Quota Row */}
-              <div className="bg-blue-50/30 border border-blue-100/80 rounded-xl p-2.5 grid grid-cols-3 gap-1.5 text-center mb-5">
-                <div>
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <Phone size={11} className="text-blue-600" /> 10
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">Masked Calls</div>
-                </div>
-                <div className="border-x border-blue-200/60">
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <MessageSquare size={11} className="text-emerald-600" /> 20
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">WA Lost Alerts</div>
-                </div>
-                <div>
-                  <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                    <Clock size={11} className="text-purple-600" /> 365d
-                  </div>
-                  <div className="text-[9px] text-black/50 font-semibold mt-0.5">Cloud Validity</div>
-                </div>
-              </div>
-
-              {/* Features List */}
-              <div className="mb-5 space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-wider text-black/40 mb-1.5">
-                  Kit Inclusions:
-                </p>
-                {[
-                  '2x Metallic Badges + Steel Loop Cables',
-                  'Instant Lost Bag GPS Location Alert',
-                  'Masked Caller ID (No Personal Phone Leak)',
-                  'Airport, Train & Taxi Bag Recovery'
-                ].map((feat, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs font-semibold text-black/80">
-                    <div className="w-3.5 h-3.5 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-                      <Check size={10} strokeWidth={3} />
+                  <div>
+                    {/* Product Visual Mockup */}
+                    <div 
+                      className="relative bg-orange-50/40 rounded-2xl p-3 sm:p-4 border border-orange-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5"
+                    >
+                      <img 
+                        src={prod.imageUrl || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80'} 
+                        alt={prod.title}
+                        className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-end p-4">
+                        <span className="text-white text-xs font-bold flex items-center gap-1.5">
+                          View details <ArrowRight size={13} />
+                        </span>
+                      </div>
                     </div>
-                    <span>{feat}</span>
+
+                    {/* Tag Badges Row */}
+                    <div className="flex items-center justify-between gap-2 mb-3.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-200/60 font-bold text-[10px] px-2 py-0.5 rounded-md">
+                          <Tag size={10} /> {prod.tagType || 'Vehicle / Luggage Kit'}
+                        </span>
+                        <span className="inline-flex items-center gap-1 bg-[#fdf8d5] text-[#6d5516] border border-[#f4e28e] font-bold text-[10px] px-2 py-0.5 rounded-md">
+                          <Package size={10} /> {prod.deliveryInfo || 'Physical Courier'}
+                        </span>
+                      </div>
+                      <div className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center shrink-0">
+                        <QrCode size={14} />
+                      </div>
+                    </div>
+
+                    {/* Title & Description */}
+                    <h2 className="text-xl font-black text-black tracking-tight mb-1.5 group-hover:text-orange-600 transition-colors">
+                      {prod.title}
+                    </h2>
+                    <p className="text-xs text-black/60 font-medium mb-4 leading-relaxed line-clamp-2">
+                      {prod.description}
+                    </p>
+
+                    {/* Pricing Row */}
+                    <div className="flex items-baseline justify-between mb-4 pb-3.5 border-b border-black/5">
+                      <div>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-2xl sm:text-3xl font-black text-black">₹{prod.price}</span>
+                          {prod.originalPrice && (
+                            <span className="text-xs font-bold text-black/40 line-through">₹{prod.originalPrice}</span>
+                          )}
+                          {discountPercent > 0 && (
+                            <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full border border-green-200">
+                              {discountPercent}% OFF
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-black/50 font-medium text-[11px]">Includes QR Kit + 1 Yr Quota</span>
+                      </div>
+                      <div className="text-[11px] font-bold text-black/50 text-right">
+                        Renewal: <span className="text-orange-600 font-extrabold">₹{prod.renewalAmount || 199}/yr</span>
+                      </div>
+                    </div>
+
+                    {/* Quota Row */}
+                    <div className="bg-orange-50/40 border border-orange-100/80 rounded-xl p-2.5 grid grid-cols-3 gap-1.5 text-center mb-5">
+                      <div>
+                        <div className="text-xs font-black text-black flex items-center justify-center gap-1">
+                          <Phone size={11} className="text-orange-600" /> {prod.initialCalls || 10}
+                        </div>
+                        <div className="text-[9px] text-black/50 font-semibold mt-0.5">Free Calls</div>
+                      </div>
+                      <div className="border-x border-orange-200/60">
+                        <div className="text-xs font-black text-black flex items-center justify-center gap-1">
+                          <MessageSquare size={11} className="text-emerald-600" /> {prod.initialMessages || 20}
+                        </div>
+                        <div className="text-[9px] text-black/50 font-semibold mt-0.5">Free SMS/WA</div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-black text-black flex items-center justify-center gap-1">
+                          <Clock size={11} className="text-purple-600" /> {prod.validityDays || 365}d
+                        </div>
+                        <div className="text-[9px] text-black/50 font-semibold mt-0.5">Validity</div>
+                      </div>
+                    </div>
+
+                    {/* Features List */}
+                    {prod.features && prod.features.length > 0 && (
+                      <div className="mb-5 space-y-2">
+                        <p className="text-[10px] font-black uppercase tracking-wider text-black/40 mb-1.5">
+                          Kit Inclusions:
+                        </p>
+                        {prod.features.slice(0, 4).map((feat, i) => (
+                          <div key={i} className="flex items-center gap-2 text-xs font-semibold text-black/80">
+                            <div className="w-3.5 h-3.5 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
+                              <Check size={10} strokeWidth={3} />
+                            </div>
+                            <span className="line-clamp-1">{feat}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* CTA Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate('/checkout');
-              }}
-              className="w-full bg-[#18181b] hover:bg-black text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(0,0,0,0.25)] transition-all text-xs sm:text-sm cursor-pointer hover:scale-[1.01]"
-            >
-              <span>Order Luggage Safety Tag</span>
-              <ArrowRight size={15} />
-            </button>
+                  {/* CTA Button */}
+                  <button
+                    onClick={(e) => handleOrderNow(e, prod)}
+                    className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(34,197,94,0.25)] transition-all text-xs sm:text-sm cursor-pointer hover:scale-[1.01]"
+                  >
+                    <span>Order Now — ₹{prod.price}</span>
+                    <ArrowRight size={15} />
+                  </button>
 
+                </div>
+              );
+            })}
           </div>
+        )}
 
-        </div>
       </section>
 
       {/* --- THREE FEATURE PILLARS --- */}
@@ -496,4 +387,3 @@ export default function Shop() {
     </div>
   );
 }
-
