@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Star, Truck, ShieldCheck, RefreshCcw, CheckCircle, ArrowRight, Minus, Plus, CreditCard } from 'lucide-react';
+import { 
+  Star, 
+  Truck, 
+  ShieldCheck, 
+  CheckCircle, 
+  ArrowRight, 
+  Minus, 
+  Plus, 
+  CreditCard,
+  RefreshCw,
+  AlertCircle,
+  PackageOpen
+} from 'lucide-react';
 import PageHero from '../components/PageHero';
 import api from '../services/api';
 
@@ -9,229 +21,292 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
-  const [liveProduct, setLiveProduct] = useState(null);
+  const [product, setProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Fetch product from live backend if valid ID
+  // Fetch product strictly from live backend API
   useEffect(() => {
     async function loadProduct() {
-      if (id && id.length > 10) {
+      setIsLoading(true);
+      setError('');
+      try {
+        // Try direct ID endpoint first
+        let foundProduct = null;
         try {
           const res = await api.getProductById(id);
           if (res.success && res.product) {
-            setLiveProduct(res.product);
+            foundProduct = res.product;
           }
         } catch (e) {
-          console.log('Using catalog fallback for product id:', id);
+          console.warn('Direct product fetch failed, falling back to products list', e);
         }
+
+        // If direct fetch didn't return product, search in full catalog
+        if (!foundProduct) {
+          const listRes = await api.getProducts();
+          if (listRes.success && listRes.products && listRes.products.length > 0) {
+            foundProduct = listRes.products.find(
+              (p) => p._id === id || p.productId === id || p.slug === id
+            ) || listRes.products[0];
+          }
+        }
+
+        if (foundProduct) {
+          // Extract strictly backend images
+          const backendImages = [];
+          if (Array.isArray(foundProduct.images) && foundProduct.images.length > 0) {
+            backendImages.push(...foundProduct.images.filter(Boolean));
+          } else if (foundProduct.imageUrl) {
+            backendImages.push(foundProduct.imageUrl);
+          }
+
+          setProduct({
+            _id: foundProduct._id || id,
+            name: foundProduct.title || foundProduct.name || 'SafeDrive Vehicle Protection Kit',
+            sub: foundProduct.description || 'Smart QR Vehicle Safety Kit with Instant Cloud Call Bridge',
+            price: foundProduct.price || 299,
+            oldPrice: foundProduct.originalPrice || (foundProduct.price ? foundProduct.price + 200 : 499),
+            rating: foundProduct.rating || 4.9,
+            reviews: foundProduct.reviewsCount || 2340,
+            desc: foundProduct.description || 'Premium reflective and weatherproof SafeDrive QR stickers for complete privacy and vehicle security.',
+            features: Array.isArray(foundProduct.features) && foundProduct.features.length > 0 
+              ? foundProduct.features 
+              : [
+                  'Instant Masked Voice Calling to Owner (Zero Phone Number Exposure)',
+                  'Direct WhatsApp Emergency Broadcast Alert',
+                  'High-Grade Reflective Waterproof 3M Vinyl Stickers',
+                  '1-Year Free Cloud Relay Bridge Included',
+                  'Anti-Harassment 4-Digit Plate Protection'
+                ],
+            images: backendImages,
+            qrType: foundProduct.qrType || 'PHYSICAL',
+          });
+        } else {
+          setError('Product not found in catalog.');
+        }
+      } catch (err) {
+        console.error('Error loading product details', err);
+        setError('Failed to load product details from server.');
+      } finally {
+        setIsLoading(false);
       }
     }
-    loadProduct();
+
+    if (id) {
+      loadProduct();
+    }
   }, [id]);
 
-  const getProductData = () => {
-    if (liveProduct) {
-      return {
-        _id: liveProduct._id,
-        name: liveProduct.title || 'SafeDrive QR Kit',
-        sub: liveProduct.description || 'Premium SafeDrive QR Protection',
-        price: liveProduct.price || 299,
-        oldPrice: liveProduct.originalPrice || liveProduct.price + 100,
-        rating: 4.8,
-        reviews: 2150,
-        desc: liveProduct.description || 'Premium reflective waterproof QR stickers for your vehicle.',
-        features: liveProduct.features || [
-          'Instant Masked Voice Calling to Owner',
-          'WhatsApp Emergency Alert',
-          '2 Physical Reflective Waterproof Stickers',
-          '1-Year Validity Included'
-        ],
-        images: [
-          liveProduct.imageUrl || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80'
-        ],
-        dark: true,
-      };
-    }
-
-    if (id === 'car') {
-      return {
-        _id: 'prod_car_kit',
-        name: 'SafeDrive Car Tag',
-        sub: 'Pack of 2 Premium QR Stickers',
-        price: 399,
-        oldPrice: 499,
-        rating: 4.8,
-        reviews: 2341,
-        desc: 'The ultimate privacy protection for your 4-wheeler. Apply one sticker on the front windshield and one on the rear to ensure anyone can reach you securely from any angle.',
-        features: ['2x Premium QR Tags', 'Front & rear windshield coverage', 'Priority masked call routing', 'Instant WhatsApp & SMS alerts', '1 Year Free Cloud Quota Included'],
-        images: [
-          'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80'
-        ],
-        dark: true,
-      };
-    } else if (id === 'luggage' || id === 'bag') {
-      return {
-        _id: 'prod_luggage_kit',
-        name: 'SafeDrive Luggage & Bag Tag',
-        sub: 'Pack of 2 Metallic QR Badges with Steel Cables',
-        price: 249,
-        oldPrice: 349,
-        rating: 4.9,
-        reviews: 1420,
-        desc: 'Never lose your flight suitcase, backpack, or laptop bag during commutes. When someone scans your luggage tag, you receive immediate WhatsApp location alerts and private phone calls without exposing your private phone number or home address.',
-        features: ['2x Heavy-Duty Metallic Luggage QR Badges', 'Stainless steel braided loop cables included', 'Instant lost baggage WhatsApp GPS notification', 'Private masked calling (No personal number visible)', '1 Year Cloud Protection Included'],
-        images: [
-          'https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1581553680321-4fffae59fccd?auto=format&fit=crop&w=800&q=80'
-        ],
-        dark: false,
-      };
-    } else {
-      return {
-        _id: 'prod_bike_kit',
-        name: 'SafeDrive Bike Tag',
-        sub: 'Pack of 1 Premium QR Sticker',
-        price: 299,
-        oldPrice: 399,
-        rating: 4.7,
-        reviews: 1892,
-        desc: 'Designed specifically for two-wheelers. Stick it securely on your bike visor or fuel tank. Weatherproof, anti-fade, and built to last in harsh conditions.',
-        features: ['1x Premium QR Tag', 'Secure masked calling', 'WhatsApp & SMS Alerts', 'Weather & Water proof', 'Anti-fade coating'],
-        images: [
-          'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80'
-        ],
-        dark: false,
-      };
-    }
-  };
-
-  const product = getProductData();
-
   const handleBuyNow = () => {
+    if (!product) return;
     navigate('/checkout', {
       state: {
         product: {
           productId: product._id,
+          _id: product._id,
           title: product.name,
           description: product.sub,
           price: product.price,
           originalPrice: product.oldPrice,
-          imageUrl: product.images[0],
-          qrType: 'PHYSICAL',
+          imageUrl: product.images?.[0] || '',
+          qrType: product.qrType || 'PHYSICAL',
         },
         quantity: qty,
       },
     });
   };
 
+  // Loading State
+  if (isLoading) {
+    return (
+      <div className="bg-[#FAF8F5] min-h-screen pb-24 font-sans flex flex-col items-center justify-center">
+        <RefreshCw className="w-10 h-10 text-orange-500 animate-spin mb-4" />
+        <p className="text-black/60 font-bold text-sm">Loading product details from server...</p>
+      </div>
+    );
+  }
+
+  // Error / Not Found State
+  if (error || !product) {
+    return (
+      <div className="bg-[#FAF8F5] min-h-screen pb-24 font-sans">
+        <PageHero
+          badge="🏷️ OFFICIAL STORE"
+          title="Product Not"
+          highlightText="Found"
+          description="The requested product could not be located in our catalog."
+        />
+        <div className="max-w-xl mx-auto px-4 -mt-6 relative z-10 text-center">
+          <div className="bg-white rounded-3xl p-10 shadow-xl border border-black/5">
+            <PackageOpen className="w-16 h-16 text-black/30 mx-auto mb-4" />
+            <h2 className="text-2xl font-black text-black mb-2">Product Unavailable</h2>
+            <p className="text-sm text-black/60 mb-6">
+              {error || 'This product may have been removed or is temporarily out of stock.'}
+            </p>
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-black px-8 py-3.5 rounded-2xl text-sm transition-all shadow-lg shadow-orange-500/25"
+            >
+              Browse All Products <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-[#FAF8F5] min-h-screen pb-24 selection:bg-orange-500/30">
+    <div className="bg-[#FAF8F5] min-h-screen pb-24 selection:bg-orange-500/30 font-sans">
       
-      {/* Uniform Hero Banner */}
+      {/* Hero Header */}
       <PageHero
         badge="🏷️ OFFICIAL PRODUCT STORE"
         title={product.name}
         description={product.sub}
       >
         {/* Breadcrumb inside Hero */}
-        <div className="flex items-center justify-center gap-2 text-xs text-white/50 font-bold uppercase tracking-wider pt-1">
-          <Link to="/" className="hover:text-orange-500 transition-colors">Home</Link>
+        <div className="flex items-center justify-center gap-2 text-xs text-white/60 font-bold uppercase tracking-wider pt-1">
+          <Link to="/" className="hover:text-orange-400 transition-colors">Home</Link>
           <span>/</span>
-          <Link to="/shop" className="hover:text-orange-500 transition-colors">Shop</Link>
+          <Link to="/shop" className="hover:text-orange-400 transition-colors">Shop</Link>
           <span>/</span>
-          <span className="text-white font-extrabold">{product.name}</span>
+          <span className="text-white font-extrabold line-clamp-1">{product.name}</span>
         </div>
       </PageHero>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-6 relative z-10">
         <div className="bg-white rounded-3xl p-6 md:p-10 shadow-xl shadow-black/5 border border-black/5 flex flex-col md:flex-row gap-10">
           
-          {/* Images Gallery */}
+          {/* Images Gallery - Strictly Backend Images */}
           <div className="md:w-1/2 flex flex-col gap-4">
-            <div className="w-full aspect-square rounded-2xl overflow-hidden bg-black/5 relative group">
-              <img src={product.images[activeImage]} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-              {product.dark && (
-                <span className="absolute top-4 left-4 bg-green-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
-                  Best Seller
-                </span>
+            <div className="w-full aspect-square rounded-2xl overflow-hidden bg-black/[0.03] border border-black/5 relative group flex items-center justify-center">
+              {product.images && product.images.length > 0 ? (
+                <img 
+                  src={product.images[activeImage] || product.images[0]} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+              ) : (
+                <div className="text-center p-8 text-black/40">
+                  <PackageOpen className="w-16 h-16 mx-auto mb-2 opacity-50" />
+                  <p className="text-xs font-bold">Image coming soon</p>
+                </div>
               )}
+              
+              <span className="absolute top-4 left-4 bg-green-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                Official SafeDrive
+              </span>
             </div>
-            <div className="flex gap-4">
-              {product.images.map((img, idx) => (
-                <button 
-                  key={idx}
-                  onClick={() => setActiveImage(idx)}
-                  className={`w-24 aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${activeImage === idx ? 'border-orange-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
-                >
-                  <img src={img} alt="thumbnail" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
+
+            {/* Thumbnail Row only if more than 1 backend image */}
+            {product.images && product.images.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-1">
+                {product.images.map((img, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setActiveImage(idx)}
+                    className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer shrink-0 ${activeImage === idx ? 'border-orange-500 opacity-100 ring-2 ring-orange-500/20' : 'border-black/10 opacity-60 hover:opacity-100'}`}
+                  >
+                    <img src={img} alt={`view-${idx + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Product Info */}
           <div className="md:w-1/2 flex flex-col">
-            <h1 className="text-4xl font-black text-black mb-2">{product.name}</h1>
-            <p className="text-lg text-black/50 font-medium mb-4">{product.sub}</p>
+            <h1 className="text-3xl sm:text-4xl font-black text-black mb-2 tracking-tight">{product.name}</h1>
+            <p className="text-base sm:text-lg text-black/50 font-medium mb-4">{product.sub}</p>
             
             <div className="flex items-center gap-3 mb-6">
               <div className="flex items-center bg-orange-50 px-3 py-1 rounded-full border border-orange-100">
                 <Star className="w-4 h-4 fill-orange-500 text-orange-500 mr-1" />
                 <span className="text-sm font-bold text-orange-700">{product.rating}</span>
               </div>
-              <span className="text-sm font-medium text-black/40 underline decoration-black/20 underline-offset-4">{product.reviews.toLocaleString()} verified reviews</span>
+              <span className="text-sm font-medium text-black/40 underline decoration-black/20 underline-offset-4">
+                {product.reviews.toLocaleString()} verified buyers
+              </span>
             </div>
 
-            <div className="flex items-end gap-3 mb-8">
-              <span className="text-5xl font-black text-black">₹{product.price}</span>
-              <span className="text-2xl text-black/40 line-through mb-1">₹{product.oldPrice}</span>
-              <span className="mb-2 ml-2 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">Save ₹{product.oldPrice - product.price}</span>
+            {/* Price Box */}
+            <div className="flex items-end gap-3 mb-6 bg-black/[0.02] border border-black/5 p-4 rounded-2xl">
+              <span className="text-4xl sm:text-5xl font-black text-black">₹{product.price}</span>
+              {product.oldPrice > product.price && (
+                <>
+                  <span className="text-xl sm:text-2xl text-black/40 line-through mb-1">₹{product.oldPrice}</span>
+                  <span className="mb-2 ml-1 bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                    Save ₹{product.oldPrice - product.price}
+                  </span>
+                </>
+              )}
             </div>
 
-            <p className="text-black/60 leading-relaxed mb-8">{product.desc}</p>
+            <p className="text-black/70 text-sm leading-relaxed mb-6 font-medium">{product.desc}</p>
 
-            <div className="bg-white rounded-2xl p-6 border border-black/5 mb-8">
-              <h3 className="font-bold text-black mb-4 uppercase tracking-wider text-xs">What's included</h3>
-              <ul className="space-y-3">
-                {product.features.map(f => (
-                  <li key={f} className="flex items-center gap-3 text-black/80 font-medium text-sm">
-                    <CheckCircle className="w-5 h-5 text-orange-500 shrink-0" />
-                    {f}
+            {/* Included Features List */}
+            <div className="bg-white rounded-2xl p-5 border border-black/5 mb-6 shadow-sm">
+              <h3 className="font-bold text-black mb-3 uppercase tracking-wider text-xs">What's included in this kit</h3>
+              <ul className="space-y-2.5">
+                {product.features.map((f, index) => (
+                  <li key={index} className="flex items-start gap-2.5 text-black/80 font-semibold text-xs sm:text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                    <span>{f}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
+            {/* Quantity Selector & Buy Now Button */}
             <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-              <div className="flex items-center justify-between bg-black/5 rounded-full px-4 py-3 sm:w-32 border border-black/10">
-                <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-black/50 hover:text-black transition-colors p-1 cursor-pointer"><Minus size={18} /></button>
-                <span className="font-bold text-black">{qty}</span>
-                <button onClick={() => setQty(qty + 1)} className="text-black/50 hover:text-black transition-colors p-1 cursor-pointer"><Plus size={18} /></button>
+              <div className="flex items-center justify-between bg-black/5 rounded-2xl px-4 py-3 sm:w-32 border border-black/10">
+                <button 
+                  type="button" 
+                  onClick={() => setQty(Math.max(1, qty - 1))} 
+                  className="text-black/60 hover:text-black font-black text-base px-2 cursor-pointer"
+                >
+                  <Minus size={16} />
+                </button>
+                <span className="font-black text-black text-base">{qty}</span>
+                <button 
+                  type="button" 
+                  onClick={() => setQty(qty + 1)} 
+                  className="text-black/60 hover:text-black font-black text-base px-2 cursor-pointer"
+                >
+                  <Plus size={16} />
+                </button>
               </div>
               
               <button 
+                type="button"
                 onClick={handleBuyNow}
-                className="flex-1 bg-green-500 text-white flex items-center justify-center gap-2 rounded-full py-4 font-black text-lg hover:bg-green-600 transition-all shadow-[0_8px_30px_rgba(34,197,94,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(34,197,94,0.4)] cursor-pointer"
+                className="flex-1 bg-green-500 text-white flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-base hover:bg-green-600 transition-all shadow-[0_8px_30px_rgba(34,197,94,0.3)] hover:-translate-y-0.5 cursor-pointer"
               >
-                Buy Now — ₹{product.price * qty} <ArrowRight size={20} />
+                <span>Buy Now — ₹{product.price * qty}</span>
+                <ArrowRight size={18} />
               </button>
             </div>
 
             {/* Trust Badges */}
-            <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-black/5">
+            <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-black/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center shrink-0"><Truck className="w-5 h-5 text-green-500" /></div>
-                <div><p className="text-sm font-bold text-black">Free Shipping</p><p className="text-xs text-black/50">Across India</p></div>
+                <div className="w-9 h-9 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+                  <Truck className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-black">Express Delivery</p>
+                  <p className="text-[11px] text-black/50">3-5 Days Across India</p>
+                </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center shrink-0"><CreditCard className="w-5 h-5 text-green-500" /></div>
-                <div><p className="text-sm font-bold text-black">Secure Pay</p><p className="text-xs text-black/50">COD Available</p></div>
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-black">100% Privacy</p>
+                  <p className="text-[11px] text-black/50">Masked Calling Bridge</p>
+                </div>
               </div>
             </div>
 

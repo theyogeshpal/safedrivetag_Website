@@ -111,70 +111,86 @@ export default function Dashboard() {
   // Orders State & Search
   const [orderSearchQuery, setOrderSearchQuery] = useState('');
   const [orderFilter, setOrderFilter] = useState('all');
-  const [orders] = useState([
-    {
-      id: 'OD-982710382910',
-      title: 'SafeDrive Smart QR Sticker - 2 Pack (Car + Bike)',
-      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=300&q=80',
-      price: 399,
-      date: 'Feb 18, 2025',
-      status: 'Delivered',
-      statusDate: 'Delivered on Feb 18, 2025',
-      statusDesc: 'Your item has been delivered to your primary address',
-      vehicleType: 'Car & Bike',
-      rating: 5,
-    },
-    {
-      id: 'OD-773820194820',
-      title: 'SafeDrive Waterproof Metallic QR Badge for SUV',
-      image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=300&q=80',
-      price: 599,
-      date: 'Jan 28, 2025',
-      status: 'Delivered',
-      statusDate: 'Delivered on Jan 30, 2025',
-      statusDesc: 'Handed over directly to resident',
-      vehicleType: 'SUV/Car',
-      rating: 4,
-    }
-  ]);
+  const [orders, setOrders] = useState([]);
+  const [packages, setPackages] = useState([]);
+  const [dashboardStats, setDashboardStats] = useState({ totalKits: 0, totalCallsLeft: 0, totalMessagesLeft: 0 });
 
   // FAQ Expand state
   const [expandedFaq, setExpandedFaq] = useState(null);
 
   // Initial Sync from currentUser & Live Backend API
   const loadDashboardData = useCallback(async () => {
-    if (!currentUser) return;
     setIsLoadingDashboard(true);
     try {
+      // 1. Fetch Dashboard Kits & Balances
       const res = await api.getDashboard();
-      if (res.success && res.kits && res.kits.length > 0) {
-        const mappedTags = res.kits.map((kit, idx) => ({
-          id: kit.copies?.[0]?.copyCode || kit.productId || `SD-${idx + 1}`,
-          publicToken: kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || `pk_live_${idx}`,
-          name: kit.user?.name || currentUser.name || 'Owner',
-          phone: kit.user?.phone || currentUser.phone,
-          emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser.phone,
-          emergencyContacts: kit.vehicle?.emergencyContacts || [],
-          whatsapp: currentUser.phone,
-          vehicleNumber: kit.vehicle?.vehicleNumber || 'RJ14AB2024',
-          vehicleName: `${kit.vehicle?.vehicleBrand || ''} ${kit.vehicle?.vehicleName || ''}`.trim() || 'My Vehicle',
-          vehicleType: 'Car',
-          status: kit.status?.toLowerCase() || 'active',
-          registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          expiryDate: kit.expiryDate,
-          callBalance: kit.wallet?.callBalance ?? 10,
-          messageBalance: kit.wallet?.messageBalance ?? 20,
-          scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
-          callMaskingEnabled: true,
-          whatsappAlertsEnabled: true,
-        }));
-        setUserTags(mappedTags);
-      } else {
-        const fallbackTags = getUserTags ? getUserTags(currentUser.phone) : [];
-        setUserTags(fallbackTags);
+      if (res.success) {
+        if (res.stats) {
+          setDashboardStats(res.stats);
+        }
+        if (res.kits && res.kits.length > 0) {
+          const mappedTags = res.kits.map((kit, idx) => ({
+            id: kit.copies?.[0]?.copyCode || kit.productId || `SD-${idx + 1}`,
+            publicToken: kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || `pk_live_${idx}`,
+            name: kit.user?.name || currentUser?.name || 'Owner',
+            phone: kit.user?.phone || currentUser?.phone,
+            emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
+            emergencyContacts: kit.vehicle?.emergencyContacts || [],
+            whatsapp: currentUser?.phone,
+            vehicleNumber: kit.vehicle?.vehicleNumber || 'RJ14AB2024',
+            vehicleName: `${kit.vehicle?.vehicleBrand || ''} ${kit.vehicle?.vehicleName || ''}`.trim() || 'My Vehicle',
+            vehicleType: 'Car',
+            status: kit.status?.toLowerCase() || 'active',
+            registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+            expiryDate: kit.expiryDate,
+            callBalance: kit.wallet?.callBalance ?? 10,
+            messageBalance: kit.wallet?.messageBalance ?? 20,
+            scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
+            callMaskingEnabled: true,
+            whatsappAlertsEnabled: true,
+          }));
+          setUserTags(mappedTags);
+        } else {
+          const fallbackTags = getUserTags && currentUser?.phone ? getUserTags(currentUser.phone) : [];
+          setUserTags(fallbackTags);
+        }
       }
+
+      // 2. Fetch User Orders
+      try {
+        const ordersRes = await api.getUserOrders();
+        if (ordersRes.success && ordersRes.orders && ordersRes.orders.length > 0) {
+          const mappedOrders = ordersRes.orders.map((ord, idx) => ({
+            id: ord.orderNumber || ord._id || `ORD-${idx + 1}`,
+            title: ord.items?.[0]?.title || ord.items?.[0]?.name || 'SafeDrive Smart QR Kit',
+            image: ord.items?.[0]?.imageUrl || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=300&q=80',
+            price: ord.totalAmount || ord.amount || 299,
+            date: ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent',
+            status: ord.orderStatus === 'DELIVERED' ? 'Delivered' : ord.orderStatus === 'CANCELLED' ? 'Cancelled' : 'In Transit',
+            statusDate: ord.createdAt ? `Ordered on ${new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Processing',
+            statusDesc: ord.deliveryAddress ? `Delivery to: ${ord.deliveryAddress}` : 'Express Pan-India Shipping',
+            vehicleType: 'Physical Kit',
+            rating: 5,
+          }));
+          setOrders(mappedOrders);
+        }
+      } catch (e) {
+        console.error('Error fetching user orders', e);
+      }
+
+      // 3. Fetch Add-On Packages
+      try {
+        const pkgRes = await api.getPackages();
+        if (pkgRes.success && pkgRes.packages) {
+          setPackages(pkgRes.packages);
+        }
+      } catch (e) {
+        console.error('Error fetching add-on packages', e);
+      }
+
     } catch (e) {
-      const fallbackTags = getUserTags ? getUserTags(currentUser.phone) : [];
+      console.error('Error loading dashboard data', e);
+      const fallbackTags = getUserTags && currentUser?.phone ? getUserTags(currentUser.phone) : [];
       setUserTags(fallbackTags);
     } finally {
       setIsLoadingDashboard(false);
@@ -182,15 +198,18 @@ export default function Dashboard() {
   }, [currentUser, getUserTags]);
 
   useEffect(() => {
-    if (!currentUser) {
+    const token = localStorage.getItem('safedrive_token');
+    if (!currentUser && !token) {
       navigate('/login');
     } else {
-      const parts = (currentUser.name || '').trim().split(' ');
-      setFirstName(parts[0] || 'Rahul');
-      setLastName(parts.slice(1).join(' ') || 'Sharma');
-      setEmail(currentUser.email || 'rahul.sharma@example.com');
-      setPhoneNumber(currentUser.phone || '');
-      setGender(currentUser.gender || 'Male');
+      if (currentUser) {
+        const parts = (currentUser.name || '').trim().split(' ');
+        setFirstName(parts[0] || 'Rahul');
+        setLastName(parts.slice(1).join(' ') || 'Sharma');
+        setEmail(currentUser.email || 'rahul.sharma@example.com');
+        setPhoneNumber(currentUser.phone || '');
+        setGender(currentUser.gender || 'Male');
+      }
       loadDashboardData();
     }
   }, [currentUser, navigate, loadDashboardData]);
@@ -219,9 +238,61 @@ export default function Dashboard() {
     showNotification(`Call masking ${!currentMasking ? 'enabled' : 'disabled'} for Tag ${tagId}`);
   };
 
-  const handleSaveEdit = (e) => {
+  const handleBuyBoosterQuota = async (tagId, category = 'CALL', quantity = 50, price = 99) => {
+    try {
+      showNotification('Processing Quota Booster Purchase...');
+      const res = await api.buyQuota({
+        qrId: tagId,
+        category,
+        quantity,
+        amountPaid: price,
+        paymentId: `pay_booster_${Date.now()}`,
+      });
+      if (res.success) {
+        showNotification(res.message || `Successfully credited ${quantity} ${category} balance!`);
+        loadDashboardData();
+      } else {
+        showNotification(res.message || 'Failed to top up quota.');
+      }
+    } catch (e) {
+      showNotification('Error topping up quota.');
+    }
+  };
+
+  const handleRenewValidity = async (tagId) => {
+    try {
+      showNotification('Renewing 1-Year Subscription...');
+      const res = await api.renewSubscription({
+        qrId: tagId,
+        paymentAmount: 199,
+        paymentId: `pay_renew_${Date.now()}`,
+      });
+      if (res.success) {
+        showNotification(res.message || 'Subscription renewed for 365 days!');
+        loadDashboardData();
+      } else {
+        showNotification(res.message || 'Renewal failed.');
+      }
+    } catch (e) {
+      showNotification('Error renewing subscription.');
+    }
+  };
+
+  const handleSaveEdit = async (e) => {
     e.preventDefault();
     if (!editingTag) return;
+    try {
+      if (editingTag.emergencyContact) {
+        await api.updateEmergencyContacts({
+          vehicleId: editingTag.id,
+          emergencyContacts: [
+            { name: 'Primary Emergency Contact', number: editingTag.emergencyContact },
+          ],
+        });
+      }
+    } catch (err) {
+      console.error('Error updating emergency contacts', err);
+    }
     updateTag(editingTag.id, {
       name: editingTag.name,
       vehicleType: editingTag.vehicleType || 'Car',
@@ -231,7 +302,7 @@ export default function Dashboard() {
       whatsapp: editingTag.whatsapp,
     });
     setEditingTag(null);
-    setUserTags(getUserTags(currentUser.phone));
+    setUserTags(getUserTags(currentUser?.phone));
     showNotification('Vehicle Tag updated successfully!');
   };
 
@@ -273,9 +344,19 @@ export default function Dashboard() {
     }
   };
 
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e.preventDefault();
     const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
+    try {
+      await api.updateProfile({
+        name: fullName,
+        email: email.trim(),
+        whatsappNumber: phoneNumber.trim(),
+        address: addresses[0]?.address || 'India',
+      });
+    } catch (err) {
+      console.error('Error updating live profile', err);
+    }
     updateUserProfile({
       name: fullName,
       gender,
@@ -555,27 +636,31 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Flipkart Metric Banner (Order / Protection Summary) */}
+                {/* Metric Banner (Live Backend Stats) */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 bg-[#fbfbfb] p-3.5 rounded-sm border border-gray-200/70">
                   <div className="p-2.5">
-                    <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Total Tags</p>
-                    <p className="text-xl font-bold text-[#212121] mt-0.5">{userTags.length}</p>
-                    <span className="text-[10px] text-green-600 font-medium">All Linked</span>
+                    <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Total Vehicle Kits</p>
+                    <p className="text-xl font-bold text-[#212121] mt-0.5">{dashboardStats.totalKits || userTags.length}</p>
+                    <span className="text-[10px] text-green-600 font-medium">All Protected</span>
                   </div>
                   <div className="p-2.5 border-l border-gray-200/70">
-                    <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Active Protection</p>
-                    <p className="text-xl font-bold text-green-600 mt-0.5">{activeTagsCount}</p>
-                    <span className="text-[10px] text-gray-500 font-medium">Live Monitoring</span>
+                    <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Remaining Calls</p>
+                    <p className="text-xl font-bold text-[#2874f0] mt-0.5">
+                      {dashboardStats.totalCallsLeft ?? userTags.reduce((sum, t) => sum + (t.callBalance || 0), 0)}
+                    </p>
+                    <span className="text-[10px] text-blue-600 font-medium">Voice Bridge Balance</span>
                   </div>
                   <div className="p-2.5 border-l border-gray-200/70">
-                    <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Call Privacy</p>
-                    <p className="text-xl font-bold text-[#2874f0] mt-0.5">100%</p>
-                    <span className="text-[10px] text-green-600 font-medium">Number Masked</span>
+                    <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Remaining Alerts</p>
+                    <p className="text-xl font-bold text-emerald-600 mt-0.5">
+                      {dashboardStats.totalMessagesLeft ?? userTags.reduce((sum, t) => sum + (t.messageBalance || 0), 0)}
+                    </p>
+                    <span className="text-[10px] text-emerald-600 font-medium">WhatsApp / SMS</span>
                   </div>
                   <div className="p-2.5 border-l border-gray-200/70">
-                    <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Total QR Scans</p>
-                    <p className="text-xl font-bold text-[#212121] mt-0.5">{totalScans}</p>
-                    <span className="text-[10px] text-gray-500 font-medium">Lifetime Activity</span>
+                    <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Active Monitoring</p>
+                    <p className="text-xl font-bold text-green-600 mt-0.5">{activeTagsCount || (userTags.length > 0 ? userTags.length : 0)}</p>
+                    <span className="text-[10px] text-gray-500 font-medium">100% Number Masked</span>
                   </div>
                 </div>
 
@@ -706,6 +791,45 @@ export default function Dashboard() {
                               </button>
                             </div>
 
+                          </div>
+
+                          {/* Quota & Validity Row */}
+                          <div className="bg-blue-50/50 border border-blue-100 rounded-sm p-3 my-2 flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div className="flex items-center gap-4">
+                              <div>
+                                <span className="text-gray-500 font-semibold text-[11px]">Calls Balance:</span>
+                                <div className="font-black text-[#2874f0] text-sm flex items-center gap-1">
+                                  <Phone size={12} /> {tag.callBalance ?? 10} Left
+                                </div>
+                              </div>
+                              <div className="border-l border-blue-200 pl-4">
+                                <span className="text-gray-500 font-semibold text-[11px]">WhatsApp / SMS:</span>
+                                <div className="font-black text-emerald-600 text-sm flex items-center gap-1">
+                                  <MessageCircle size={12} /> {tag.messageBalance ?? 20} Left
+                                </div>
+                              </div>
+                              <div className="border-l border-blue-200 pl-4">
+                                <span className="text-gray-500 font-semibold text-[11px]">Validity Expiry:</span>
+                                <div className="font-bold text-gray-800 text-xs">
+                                  {tag.expiryDate ? new Date(tag.expiryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '1 Year Active'}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleBuyBoosterQuota(tag.id, 'CALL', 50, 99)}
+                                className="bg-white hover:bg-blue-50 text-[#2874f0] border border-[#2874f0] px-3 py-1.5 rounded-sm font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
+                              >
+                                <Zap size={12} className="text-orange-500" /> +50 Calls (₹99)
+                              </button>
+                              <button
+                                onClick={() => handleRenewValidity(tag.id)}
+                                className="bg-[#2874f0] hover:bg-blue-700 text-white px-3 py-1.5 rounded-sm font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
+                              >
+                                <RefreshCw size={12} /> Renew 1-Yr (₹199)
+                              </button>
+                            </div>
                           </div>
 
                           {/* Bottom Row: Actions Bar */}
