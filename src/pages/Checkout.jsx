@@ -1,9 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Lock, CreditCard, ArrowRight, ShieldCheck, Truck, CheckCircle2, RefreshCw, Smartphone, QrCode, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Lock, 
+  CreditCard, 
+  ArrowRight, 
+  ShieldCheck, 
+  Truck, 
+  CheckCircle2, 
+  RefreshCw, 
+  Smartphone, 
+  QrCode, 
+  AlertCircle,
+  KeyRound,
+  X
+} from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
+import api, { setAuthToken, getAuthToken } from '../services/api';
 
 // Helper to ensure Razorpay checkout script is loaded
 const loadRazorpayScript = () => {
@@ -24,7 +37,7 @@ const loadRazorpayScript = () => {
 export default function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
 
   // Selected product state
   const [selectedProduct, setSelectedProduct] = useState(
@@ -58,6 +71,15 @@ export default function Checkout() {
   const [error, setError] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(null);
 
+  // OTP Verification Modal State
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otpError, setOtpError] = useState('');
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+  const otpInputRefs = useRef([]);
+
   // Sync real product from backend if none passed or initial load
   useEffect(() => {
     loadRazorpayScript();
@@ -87,12 +109,26 @@ export default function Checkout() {
     syncBackendProducts();
   }, [location.state]);
 
+  // Resend Timer Effect
+  useEffect(() => {
+    let timer;
+    if (isOtpModalOpen && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [isOtpModalOpen, resendTimer]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePlaceOrder = async (e) => {
+  // Triggered when user clicks "Pay with Razorpay"
+  const handleSubmitForm = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -107,9 +143,130 @@ export default function Checkout() {
       return;
     }
 
+    const token = getAuthToken();
+    // If user is already logged in with valid token, proceed directly to payment
+    if (token && currentUser) {
+      await proceedToPayment();
+    } else {
+      // Step 1: Send OTP to verify phone number
+      setIsSubmitting(true);
+      try {
+        const otpRes = await api.sendLoginOtp(cleanPhone);
+        if (otpRes.success) {
+          setIsOtpModalOpen(true);
+          setResendTimer(30);
+          setCanResend(false);
+          setOtp(['', '', '', '', '', '']);
+          setTimeout(() => {
+            if (otpInputRefs.current[0]) {
+              otpInputRefs.current[0].focus();
+            }
+          }, 100);
+        } else {
+          setError(otpRes.message || 'Failed to send OTP to mobile number.');
+        }
+      } catch (err) {
+        setError('Network error while sending OTP. Please retry.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
+
+  // Handle OTP Inputs
+  const handleOtpChange = (index, value) => {
+    if (value.length > 1) {
+      const digits = value.replace(/\D/g, '').slice(0, 6).split('');
+      const newOtp = [...otp];
+      digits.forEach((d, idx) => {
+        if (idx < 6) newOtp[idx] = d;
+      });
+      setOtp(newOtp);
+      const nextIdx = Math.min(digits.length, 5);
+      otpInputRefs.current[nextIdx]?.focus();
+      return;
+    }
+
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+
+    if (value && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!canResend) return;
+    setOtpError('');
+    setIsVerifyingOtp(true);
+    try {
+      const cleanPhone = formData.phone.replace(/\D/g, '');
+      const res = await api.sendLoginOtp(cleanPhone);
+      if (res.success) {
+        setResendTimer(30);
+        setCanResend(false);
+        setOtp(['', '', '', '', '', '']);
+        otpInputRefs.current[0]?.focus();
+      } else {
+        setOtpError(res.message || 'Failed to resend OTP.');
+      }
+    } catch (e) {
+      setOtpError('Failed to resend OTP.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  // Verify OTP and proceed to Payment Gateway
+  const handleVerifyOtpAndPay = async (e) => {
+    e?.preventDefault();
+    setOtpError('');
+    const fullOtp = otp.join('');
+
+    if (fullOtp.length < 4) {
+      setOtpError('Please enter the 6-digit OTP code.');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    try {
+      const cleanPhone = formData.phone.replace(/\D/g, '');
+      const verifyRes = await api.verifyLoginOtp(cleanPhone, fullOtp);
+
+      if (verifyRes.success) {
+        if (verifyRes.token) {
+          setAuthToken(verifyRes.token);
+        }
+        if (verifyRes.user && setCurrentUser) {
+          setCurrentUser(verifyRes.user);
+        }
+        setIsOtpModalOpen(false);
+        // Step 2: Open Razorpay Payment Gateway
+        await proceedToPayment();
+      } else {
+        setOtpError(verifyRes.message || 'Invalid verification OTP.');
+      }
+    } catch (err) {
+      setOtpError('Verification failed. Please check network connection.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  // Launch Order Creation & Razorpay Gateway
+  const proceedToPayment = async () => {
     setIsSubmitting(true);
+    setError('');
     try {
       const customerFullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+      const cleanPhone = formData.phone.replace(/\D/g, '');
       const customerEmail = formData.email.trim();
       const streetAddress = formData.shippingAddress.trim();
       const cityVal = formData.city.trim() || 'City';
@@ -121,22 +278,51 @@ export default function Checkout() {
       const items = [
         {
           productId: resolvedProductId,
+          id: resolvedProductId,
           title: selectedProduct.title || selectedProduct.name || 'Car Safety Kit Protection',
+          name: selectedProduct.title || selectedProduct.name || 'Car Safety Kit Protection',
           quantity: Number(quantity),
+          qty: Number(quantity),
           price: Number(selectedProduct.price),
+          amount: Number(selectedProduct.price * quantity),
           qrType: selectedProduct.qrType || 'PHYSICAL',
         },
       ];
 
-      // Step 1: Create Order on Backend
-      const createRes = await api.createOrder({
+      const basePayload = {
         amount: totalAmount,
         customerName: customerFullName,
+        name: customerFullName,
         customerPhone: cleanPhone,
+        phone: cleanPhone,
         customerEmail: customerEmail,
+        email: customerEmail,
         shippingAddress: fullAddress,
+        deliveryAddress: fullAddress,
+        address: streetAddress,
+        street: streetAddress,
+        city: cityVal,
+        pincode: pinVal,
+        pin: pinVal,
+        postalCode: pinVal,
+        state: 'Uttar Pradesh',
+        deliveryDetails: {
+          address: streetAddress,
+          city: cityVal,
+          pincode: pinVal,
+          state: 'Uttar Pradesh',
+        },
+        shippingDetails: {
+          address: streetAddress,
+          city: cityVal,
+          pincode: pinVal,
+          state: 'Uttar Pradesh',
+        },
         items,
-      });
+      };
+
+      // Step 1: Create Order on Backend
+      const createRes = await api.createOrder(basePayload);
 
       if (!createRes.success) {
         setError(createRes.message || 'Failed to initialize order with payment server.');
@@ -150,15 +336,13 @@ export default function Checkout() {
       if (!isScriptLoaded || !window.Razorpay) {
         console.warn('Razorpay script not available, completing purchase directly.');
         const completeRes = await api.completePurchase({
+          ...basePayload,
           razorpay_order_id: createRes.orderId || `order_mock_${Date.now()}`,
           razorpay_payment_id: `pay_direct_${Date.now()}`,
           razorpay_signature: 'mock_signature_valid',
-          amount: totalAmount,
-          customerName: customerFullName,
-          customerPhone: cleanPhone,
-          customerEmail: customerEmail,
-          shippingAddress: fullAddress,
-          items,
+          orderId: createRes.orderId || `order_mock_${Date.now()}`,
+          paymentId: `pay_direct_${Date.now()}`,
+          signature: 'mock_signature_valid',
         });
 
         if (completeRes.success) {
@@ -189,15 +373,13 @@ export default function Checkout() {
           try {
             setIsSubmitting(true);
             const completePayload = {
+              ...basePayload,
               razorpay_order_id: paymentResponse.razorpay_order_id || createRes.orderId || `order_${Date.now()}`,
               razorpay_payment_id: paymentResponse.razorpay_payment_id || `pay_${Date.now()}`,
               razorpay_signature: paymentResponse.razorpay_signature || 'mock_signature_valid',
-              amount: totalAmount,
-              customerName: customerFullName,
-              customerPhone: cleanPhone,
-              customerEmail: customerEmail,
-              shippingAddress: fullAddress,
-              items,
+              orderId: paymentResponse.razorpay_order_id || createRes.orderId || `order_${Date.now()}`,
+              paymentId: paymentResponse.razorpay_payment_id || `pay_${Date.now()}`,
+              signature: paymentResponse.razorpay_signature || 'mock_signature_valid',
             };
 
             const completeRes = await api.completePurchase(completePayload);
@@ -318,7 +500,7 @@ export default function Checkout() {
           </div>
         ) : (
           /* Checkout Form & Order Summary */
-          <form onSubmit={handlePlaceOrder} className="flex flex-col lg:flex-row gap-10 items-start">
+          <form onSubmit={handleSubmitForm} className="flex flex-col lg:flex-row gap-10 items-start">
             
             {/* Left Column - Form */}
             <div className="w-full lg:w-3/5 flex flex-col gap-6">
@@ -510,7 +692,7 @@ export default function Checkout() {
                   {isSubmitting ? (
                     <>
                       <RefreshCw className="w-5 h-5 animate-spin" />
-                      <span>Opening Razorpay Gateway...</span>
+                      <span>Processing...</span>
                     </>
                   ) : (
                     <>
@@ -535,6 +717,102 @@ export default function Checkout() {
         )}
 
       </div>
+
+      {/* --- OTP VERIFICATION MODAL --- */}
+      {isOtpModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl p-7 sm:p-9 shadow-2xl max-w-md w-full relative animate-scale-up">
+            
+            <button
+              onClick={() => setIsOtpModalOpen(false)}
+              className="absolute top-5 right-5 text-black/40 hover:text-black p-1.5 rounded-full hover:bg-black/5 transition-all"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <KeyRound className="w-8 h-8" />
+              </div>
+              <h2 className="text-2xl font-black text-black">Verify Mobile Number</h2>
+              <p className="text-xs sm:text-sm text-black/60 mt-1 font-medium">
+                Enter the 6-digit verification OTP code sent to <br />
+                <strong className="text-black">+91 {formData.phone}</strong>
+              </p>
+            </div>
+
+            {otpError && (
+              <div className="mb-4 bg-red-50 text-red-600 border border-red-200 text-xs font-bold rounded-xl p-3 text-center">
+                {otpError}
+              </div>
+            )}
+
+            <form onSubmit={handleVerifyOtpAndPay} className="space-y-5">
+              <div className="flex justify-center gap-2 my-2">
+                {otp.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => (otpInputRefs.current[idx] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                    className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-black rounded-xl border-2 border-black/10 focus:border-orange-500 focus:bg-orange-50/20 bg-white outline-none transition-all"
+                  />
+                ))}
+              </div>
+
+              {/* Dev Test Helper */}
+              <div className="flex items-center justify-between bg-orange-50 border border-orange-100 rounded-xl px-3 py-2 text-xs">
+                <span className="text-orange-800 font-medium">💡 Dev Test OTP: <strong>123456</strong></span>
+                <button
+                  type="button"
+                  onClick={() => setOtp(['1', '2', '3', '4', '5', '6'])}
+                  className="text-orange-600 font-bold hover:underline cursor-pointer"
+                >
+                  Auto-fill 123456
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isVerifyingOtp || otp.join('').length < 4}
+                className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-green-500/25 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isVerifyingOtp ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Verifying & Opening Payment Gateway...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck size={18} />
+                    <span>Verify OTP & Open Gateway</span>
+                  </>
+                )}
+              </button>
+
+              <div className="text-center text-xs font-semibold text-black/60 pt-1">
+                {canResend ? (
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    className="text-orange-600 font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <RefreshCw size={12} /> Resend OTP now
+                  </button>
+                ) : (
+                  <span>Resend OTP in <span className="text-black font-bold">{resendTimer}s</span></span>
+                )}
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
