@@ -50,6 +50,8 @@ function App() {
               <Route path="/shipping" element={<Legal />} />
               <Route path="/login" element={<Login />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/q/:id" element={<QRScan />} />
+              <Route path="/qr/:id" element={<QRScan />} />
               <Route path="/scan/:id" element={<QRScan />} />
               <Route path="/register/:id" element={<RegisterTag />} />
               <Route path="*" element={<NotFound />} />

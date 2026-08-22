@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import InvoiceModal from '../components/InvoiceModal';
+import downloadInvoicePdf from '../utils/invoiceGenerator';
 import {
   User,
   Package,
@@ -873,7 +873,7 @@ export default function Dashboard() {
                             </div>
 
                             <Link
-                              to={`/scan/${tag.id}`}
+                              to={`/q/${tag.id}`}
                               target="_blank"
                               className="text-xs font-bold text-[#2874f0] hover:underline flex items-center gap-1"
                             >
@@ -1248,10 +1248,11 @@ export default function Dashboard() {
                             <Truck size={13} /> Track Order
                           </button>
                           <button
-                            onClick={() => setInvoiceModalOrder(order)}
-                            className="flex-1 md:flex-none border border-[#2874f0] text-[#2874f0] hover:bg-blue-50 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                            onClick={() => downloadInvoicePdf(order, currentUser)}
+                            className="flex-1 md:flex-none border border-[#2874f0] text-[#2874f0] hover:bg-blue-50 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                            title="Direct 1-Click PDF Download"
                           >
-                            <FileText size={13} /> Tax Invoice
+                            <Download size={13} /> Download Invoice
                           </button>
                         </div>
 
@@ -1804,7 +1805,7 @@ export default function Dashboard() {
 
               <div className="space-y-2">
                 <Link
-                  to={`/scan/${qrModalTag.id}`}
+                  to={`/q/${qrModalTag.id}`}
                   target="_blank"
                   className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-sm text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all block"
                 >
@@ -1821,19 +1822,6 @@ export default function Dashboard() {
 
           </div>
         </div>
-      )}
-
-      {/* ======================================================== */}
-      {/* MODAL 4: TAX INVOICE RECEIPT MODAL */}
-      {/* ======================================================== */}
-      {invoiceModalOrder && (
-        <InvoiceModal
-          order={invoiceModalOrder}
-          currentUser={currentUser}
-          onClose={() => setInvoiceModalOrder(null)}
-        />
-      )}
-
     </div>
   );
 }

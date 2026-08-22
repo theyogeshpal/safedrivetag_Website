@@ -52,6 +52,12 @@ export default function QRScan() {
     try {
       const res = await api.getPublicQrInfo(token);
       if (res.success) {
+        // Automatic Instant Redirect if Tag is UNREGISTERED
+        if (res.status === 'UNREGISTERED') {
+          navigate(`/register/${token}`, { replace: true, state: { qrData: res } });
+          return;
+        }
+
         setQrData(res);
         // If not requiring verification or already active without plate requirement
         if (res.status === 'ACTIVE' && !res.requiresVerification) {
@@ -65,7 +71,7 @@ export default function QRScan() {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, navigate]);
 
   useEffect(() => {
     fetchQrInfo();

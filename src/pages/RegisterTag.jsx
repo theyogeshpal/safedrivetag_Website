@@ -145,7 +145,7 @@ export default function RegisterTag() {
                 Go to My Dashboard &rarr;
               </Link>
               <Link 
-                to={`/scan/${token}`} 
+                to={`/q/${token}`} 
                 className="w-full sm:w-auto bg-white hover:bg-black/5 text-black font-bold px-7 py-3.5 rounded-xl text-sm border border-black/10 transition-all"
               >
                 Test Live QR Scan Page
