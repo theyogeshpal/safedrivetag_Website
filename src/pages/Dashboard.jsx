@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import InvoiceModal from '../components/InvoiceModal';
 import {
   User,
   Package,
@@ -33,7 +34,8 @@ import {
   Briefcase,
   Zap,
   Clock,
-  RefreshCw
+  RefreshCw,
+  FileText
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -53,6 +55,7 @@ export default function Dashboard() {
   const [newVehicleNumber, setNewVehicleNumber] = useState('');
   const [newVehicleType, setNewVehicleType] = useState('Car');
   const [qrModalTag, setQrModalTag] = useState(null);
+  const [invoiceModalOrder, setInvoiceModalOrder] = useState(null);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
 
   // Profile Edit State
@@ -162,14 +165,14 @@ export default function Dashboard() {
         if (ordersRes.success && ordersRes.orders && ordersRes.orders.length > 0) {
           const mappedOrders = ordersRes.orders.map((ord, idx) => ({
             id: ord.orderNumber || ord._id || `ORD-${idx + 1}`,
-            title: ord.items?.[0]?.title || ord.items?.[0]?.name || 'SafeDrive Smart QR Kit',
-            image: ord.items?.[0]?.imageUrl || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=300&q=80',
+            title: ord.items?.[0]?.title || ord.items?.[0]?.name || ord.productId?.title || ord.productId?.name || 'SafeDrive Car Safety QR Protection Kit',
+            image: ord.items?.[0]?.imageUrl || ord.productId?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
             price: ord.totalAmount || ord.amount || 299,
             date: ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent',
             status: ord.orderStatus === 'DELIVERED' ? 'Delivered' : ord.orderStatus === 'CANCELLED' ? 'Cancelled' : 'In Transit',
             statusDate: ord.createdAt ? `Ordered on ${new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Processing',
             statusDesc: ord.deliveryAddress ? `Delivery to: ${ord.deliveryAddress}` : 'Express Pan-India Shipping',
-            vehicleType: 'Physical Kit',
+            vehicleType: 'Physical QR Kit',
             rating: 5,
           }));
           setOrders(mappedOrders);
@@ -1234,25 +1237,21 @@ export default function Dashboard() {
                             <span className="font-bold text-xs sm:text-sm text-[#212121]">{order.statusDate}</span>
                           </div>
                           <p className="text-[11px] text-gray-500 mt-1 pl-4.5">{order.statusDesc}</p>
-                          <div className="mt-2 pl-4.5 flex items-center gap-1 text-xs text-[#2874f0] font-bold hover:underline cursor-pointer">
-                            <Star size={12} className="fill-amber-400 text-amber-400" />
-                            <span>Rate & Review Product</span>
-                          </div>
                         </div>
 
                         {/* Actions */}
                         <div className="flex md:flex-col gap-2 w-full md:w-auto">
                           <button
-                            onClick={() => alert(`Tracking information for ${order.id}: Out for final delivery.`)}
+                            onClick={() => alert(`Tracking information for ${order.id}: Dispatched via Express Courier. Tracking ID: EXP-${order.id?.toString().slice(-6)}`)}
                             className="flex-1 md:flex-none bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                           >
                             <Truck size={13} /> Track Order
                           </button>
                           <button
-                            onClick={() => alert(`Invoice for ${order.id} downloaded.`)}
-                            className="flex-1 md:flex-none border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                            onClick={() => setInvoiceModalOrder(order)}
+                            className="flex-1 md:flex-none border border-[#2874f0] text-[#2874f0] hover:bg-blue-50 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                           >
-                            <Download size={13} /> Invoice
+                            <FileText size={13} /> Tax Invoice
                           </button>
                         </div>
 
@@ -1822,6 +1821,17 @@ export default function Dashboard() {
 
           </div>
         </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 4: TAX INVOICE RECEIPT MODAL */}
+      {/* ======================================================== */}
+      {invoiceModalOrder && (
+        <InvoiceModal
+          order={invoiceModalOrder}
+          currentUser={currentUser}
+          onClose={() => setInvoiceModalOrder(null)}
+        />
       )}
 
     </div>

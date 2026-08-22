@@ -294,6 +294,7 @@ export default function Checkout() {
       // Call POST /purchase/create-order
       const createRes = await api.createOrder({
         productId: resolvedProductId,
+        quantity: quantity || 1,
         name: customerFullName,
       });
 
@@ -309,6 +310,7 @@ export default function Checkout() {
         // Fallback completion if SDK blocked
         const completeRes = await api.completePurchase({
           productId: resolvedProductId,
+          quantity: quantity || 1,
           name: customerFullName,
           phone: cleanPhone,
           email: formData.email.trim(),
@@ -354,6 +356,7 @@ export default function Checkout() {
             // Call POST /purchase/complete
             const completePayload = {
               productId: resolvedProductId,
+              quantity: quantity || 1,
               name: customerFullName,
               phone: cleanPhone,
               email: formData.email.trim(),
