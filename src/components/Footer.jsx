@@ -46,7 +46,7 @@ export default function Footer() {
         {/* Brand Column */}
         <div className="lg:col-span-2 pr-4">
           <Link to="/" className="inline-block mb-6">
-            <img src="/logo.jpg" alt="SafeDriveTag Logo" className="h-10 sm:h-12 w-auto object-contain bg-white rounded p-1" />
+            <img src="/logo.png" alt="SafeDriveTag Logo" className="h-10 sm:h-12 w-auto object-contain bg-white rounded-lg p-1" />
           </Link>
           <p className="text-sm text-white/60 mb-6 font-medium leading-relaxed">
             SafeDriveTag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. 🚗 Shielding vehicles in wrong parking & emergency situations.

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Shield, FileText, ArrowLeft, Truck, RefreshCw } from 'lucide-react';
+import { Shield, FileText, ArrowLeft, Truck, RefreshCw, CheckCircle2 } from 'lucide-react';
+import PageHero from '../components/PageHero';
 
 export default function Legal() {
   const location = useLocation();
@@ -9,6 +10,7 @@ export default function Legal() {
   let contentData = {
     title: '',
     icon: null,
+    badge: '⚖️ LEGAL & COMPLIANCE',
     updatedAt: 'October 15, 2026',
     sections: []
   };
@@ -16,6 +18,7 @@ export default function Legal() {
   if (path === '/privacy') {
     contentData.title = 'Privacy Policy';
     contentData.icon = <Shield className="w-8 h-8 text-orange-500" />;
+    contentData.badge = '🔒 PRIVACY & DATA POLICY';
     contentData.sections = [
       {
         heading: "1. Information We Collect",
@@ -37,6 +40,7 @@ export default function Legal() {
   } else if (path === '/terms') {
     contentData.title = 'Terms of Service';
     contentData.icon = <FileText className="w-8 h-8 text-orange-500" />;
+    contentData.badge = '📜 TERMS & CONDITIONS';
     contentData.sections = [
       {
         heading: "1. Acceptance of Terms",
@@ -58,6 +62,7 @@ export default function Legal() {
   } else if (path === '/refund') {
     contentData.title = 'Refund & Cancellation Policy';
     contentData.icon = <RefreshCw className="w-8 h-8 text-green-500" />;
+    contentData.badge = '🔄 30-DAY MONEY BACK';
     contentData.sections = [
       {
         heading: "1. 30-Day Money-Back Guarantee",
@@ -79,6 +84,7 @@ export default function Legal() {
   } else if (path === '/shipping') {
     contentData.title = 'Shipping Information';
     contentData.icon = <Truck className="w-8 h-8 text-green-500" />;
+    contentData.badge = '🚚 PAN-INDIA COURIER';
     contentData.sections = [
       {
         heading: "1. Processing Times",
@@ -100,39 +106,35 @@ export default function Legal() {
   }
 
   return (
-    <div className="bg-[#fcfaf5] min-h-screen pt-32 pb-24 px-6 selection:bg-orange-500/30">
-      <div className="max-w-3xl mx-auto">
+    <div className="bg-[#FAF8F5] min-h-screen pb-24 selection:bg-orange-500/30">
+      
+      {/* Hero Banner */}
+      <PageHero
+        badge={contentData.badge}
+        title={contentData.title}
+        description={`Last updated on ${contentData.updatedAt} • SafeDriveTag Official Policy`}
+      />
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-6 relative z-10">
         
         {/* Back Link */}
-        <Link to="/" className="inline-flex items-center gap-2 text-black/50 hover:text-orange-500 font-bold text-sm mb-8 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Home
-        </Link>
+        <div className="mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 text-black/50 hover:text-orange-500 font-bold text-xs transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
+          </Link>
+        </div>
 
-        <div className="bg-white rounded-[2rem] shadow-xl shadow-black/5 p-8 md:p-12 border border-black/5 relative overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-xl shadow-black/5 p-6 sm:p-10 border border-black/5 relative overflow-hidden">
           
-          {/* Header */}
-          <div className="flex items-center gap-5 mb-10 pb-10 border-b border-black/5">
-            <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center border border-black/5 shrink-0">
-              {contentData.icon}
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-black text-black tracking-tight mb-2">
-                {contentData.title}
-              </h1>
-              <p className="text-black/50 font-medium text-sm">
-                Last updated: {contentData.updatedAt}
-              </p>
-            </div>
-          </div>
-
           {/* Content */}
-          <div className="space-y-10">
+          <div className="space-y-8">
             {contentData.sections.map((section, idx) => (
-              <div key={idx} className="animate-fade-up" style={{ animationDelay: `${idx * 100}ms` }}>
-                <h3 className="text-xl font-black text-black mb-3">
+              <div key={idx} className="animate-fade-up" style={{ animationDelay: `${idx * 80}ms` }}>
+                <h3 className="text-lg sm:text-xl font-black text-black mb-2 flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-orange-500 shrink-0" />
                   {section.heading}
                 </h3>
-                <p className="text-black/70 leading-relaxed font-medium">
+                <p className="text-black/70 leading-relaxed font-medium text-xs sm:text-sm pl-6">
                   {section.body}
                 </p>
               </div>
@@ -140,9 +142,9 @@ export default function Legal() {
           </div>
 
           {/* Footer Note */}
-          <div className="mt-12 pt-8 border-t border-black/5 text-center">
-            <p className="text-black/50 text-sm font-medium">
-              Have questions about our {contentData.title.toLowerCase()}? <Link to="/contact" className="text-orange-500 hover:underline">Contact our support team</Link>.
+          <div className="mt-10 pt-6 border-t border-black/5 text-center">
+            <p className="text-black/50 text-xs font-medium">
+              Have questions about our {contentData.title.toLowerCase()}? <Link to="/contact" className="text-orange-500 font-bold hover:underline">Contact our support team</Link>.
             </p>
           </div>
 
@@ -151,3 +153,4 @@ export default function Legal() {
     </div>
   );
 }
+

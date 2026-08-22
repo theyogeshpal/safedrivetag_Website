@@ -1,22 +1,28 @@
 import React, { useState } from 'react';
-import { Lock, CreditCard, ArrowRight, ShieldCheck, Truck, CheckCircle, Smartphone, Banknote } from 'lucide-react';
+import { Lock, CreditCard, ArrowRight, ShieldCheck, Truck, CheckCircle, Smartphone, Banknote, ShieldAlert, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import PageHero from '../components/PageHero';
 
 export default function Checkout() {
   const [method, setMethod] = useState('upi');
 
   return (
-    <div className="min-h-screen bg-white font-sans pb-24 pt-24">
-      <div className="max-w-6xl mx-auto px-6">
-        
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-black text-black mb-2">Secure Checkout</h1>
-          <p className="text-black/50 font-medium flex items-center justify-center gap-2">
-            <Lock className="w-4 h-4 text-green-500" /> End-to-end encrypted 256-bit security
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#FAF8F5] font-sans pb-24 selection:bg-orange-500/30">
+      
+      {/* Header Banner */}
+      <PageHero
+        badge="🔒 SECURE 256-BIT CHECKOUT"
+        title="Complete Your"
+        highlightText="Order"
+        description="Free Pan-India delivery within 3-5 business days. Safe & instant payment gateway."
+        badges={[
+          { icon: <Lock size={14} className="text-green-600" />, label: '256-Bit Encrypted' },
+          { icon: <Truck size={14} className="text-blue-500" />, label: 'Free Delivery' },
+          { icon: <ShieldCheck size={14} className="text-orange-500" />, label: '100% Satisfaction Guarantee' }
+        ]}
+      />
 
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-6 relative z-10">
         <div className="flex flex-col lg:flex-row gap-10 items-start">
           
           {/* Left Column - Form */}

@@ -1,36 +1,25 @@
 import React from 'react';
-import { Lock, Handshake, MapPin, Building2, Wrench, CircleParking, ArrowRight, Star } from 'lucide-react';
+import { Lock, Handshake, MapPin, Building2, Wrench, CircleParking, ArrowRight, Star, Shield, Users, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import PageHero from '../components/PageHero';
 import './About.css';
 
 export default function About() {
   return (
-    <div className="about-wrapper pt-24 pb-20 bg-white">
+    <div className="about-wrapper bg-white font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900">
 
-      {/* Hero */}
-      <section className="about-hero">
-        <div className="about-hero-blob" />
-        <div className="max-w-7xl mx-auto about-hero-grid">
-          <div className="animate-fade-up">
-            <p className="about-subtitle">Our Story</p>
-            <h1 className="about-title">
-              Privacy shouldn't cost you<br />
-              <span className="gradient-text">a phone call.</span>
-            </h1>
-            <p className="about-desc">
-              SafeDriveTag started with a simple frustration: leaving your number on the dashboard meant spam, scams and zero privacy. So we built a tag that lets anyone reach you — without ever seeing your number.
-            </p>
-          </div>
-          <div className="animate-fade-up delay-200 about-hero-img-wrapper">
-            <img
-              src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80"
-              alt="Car QR Tag"
-              className="about-hero-img"
-            />
-            <div className="about-hero-overlay" />
-          </div>
-        </div>
-      </section>
+      {/* --- HERO / HEADER BANNER --- */}
+      <PageHero
+        badge="📖 OUR MISSION & STORY"
+        title="Privacy Shouldn't Cost You"
+        highlightText="A Phone Call."
+        description="SafeDriveTag started with a simple frustration: leaving your phone number on vehicle dashboards or luggage tags meant spam, scams, and zero privacy. We built an instant smart QR bridge that connects people without exposing numbers."
+        badges={[
+          { icon: <Shield size={14} className="text-green-600" />, label: '100% Number Masked' },
+          { icon: <Users size={14} className="text-orange-500" />, label: '9.5 Lakh+ Active Users' },
+          { icon: <Award size={14} className="text-blue-500" />, label: 'Made in India' }
+        ]}
+      />
 
       {/* Stats */}
       <section className="stats-section">

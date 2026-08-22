@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Star, Truck, ShieldCheck, RefreshCcw, CheckCircle, ArrowRight, Minus, Plus, CreditCard } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import { Star, Truck, ShieldCheck, RefreshCcw, CheckCircle, ArrowRight, Minus, Plus, CreditCard } from 'lucide-react';
+import PageHero from '../components/PageHero';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
 
-  const product = id === 'car' 
-    ? {
+  const getProductData = () => {
+    if (id === 'car') {
+      return {
         name: 'SafeDrive Car Tag',
         sub: 'Pack of 2 Premium QR Stickers',
         price: 399,
@@ -16,15 +18,33 @@ export default function ProductDetail() {
         rating: 4.8,
         reviews: 2341,
         desc: 'The ultimate privacy protection for your 4-wheeler. Apply one sticker on the front windshield and one on the rear to ensure anyone can reach you securely from any angle.',
-        features: ['2x Premium QR Tags', 'Front & rear coverage', 'Priority Support', 'Secure masked calling', 'WhatsApp & SMS Alerts'],
+        features: ['2x Premium QR Tags', 'Front & rear windshield coverage', 'Priority masked call routing', 'Instant WhatsApp & SMS alerts', '1 Year Free Cloud Quota Included'],
         images: [
           'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
           'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
           'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80'
         ],
         dark: true,
-      }
-    : {
+      };
+    } else if (id === 'luggage' || id === 'bag') {
+      return {
+        name: 'SafeDrive Luggage & Bag Tag',
+        sub: 'Pack of 2 Metallic QR Badges with Steel Cables',
+        price: 249,
+        oldPrice: 349,
+        rating: 4.9,
+        reviews: 1420,
+        desc: 'Never lose your flight suitcase, backpack, or laptop bag during commutes. When someone scans your luggage tag, you receive immediate WhatsApp location alerts and private phone calls without exposing your private phone number or home address.',
+        features: ['2x Heavy-Duty Metallic Luggage QR Badges', 'Stainless steel braided loop cables included', 'Instant lost baggage WhatsApp GPS notification', 'Private masked calling (No personal number visible)', '1 Year Cloud Protection Included'],
+        images: [
+          'https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1581553680321-4fffae59fccd?auto=format&fit=crop&w=800&q=80'
+        ],
+        dark: false,
+      };
+    } else {
+      return {
         name: 'SafeDrive Bike Tag',
         sub: 'Pack of 1 Premium QR Sticker',
         price: 299,
@@ -40,21 +60,32 @@ export default function ProductDetail() {
         ],
         dark: false,
       };
+    }
+  };
+
+  const product = getProductData();
 
   return (
-    <div className="bg-white min-h-screen pt-32 pb-24 px-6">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-black/50 mb-8 font-medium">
-          <Link to="/" className="hover:text-orange-500 transition-colors">Home</Link>
+    <div className="bg-[#FAF8F5] min-h-screen pb-24 selection:bg-orange-500/30">
+      
+      {/* Uniform Hero Banner */}
+      <PageHero
+        badge="🏷️ OFFICIAL PRODUCT STORE"
+        title={product.name}
+        description={product.sub}
+      >
+        {/* Breadcrumb inside Hero */}
+        <div className="flex items-center justify-center gap-2 text-xs text-black/50 font-bold uppercase tracking-wider pt-1">
+          <Link to="/" className="hover:text-orange-600 transition-colors">Home</Link>
           <span>/</span>
-          <Link to="/shop" className="hover:text-orange-500 transition-colors">Shop</Link>
+          <Link to="/shop" className="hover:text-orange-600 transition-colors">Shop</Link>
           <span>/</span>
-          <span className="text-black">{product.name}</span>
+          <span className="text-black font-extrabold">{product.name}</span>
         </div>
+      </PageHero>
 
-        <div className="bg-white rounded-3xl p-6 md:p-10 shadow-xl shadow-black/10/50 border border-black/5 flex flex-col md:flex-row gap-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-6 relative z-10">
+        <div className="bg-white rounded-3xl p-6 md:p-10 shadow-xl shadow-black/5 border border-black/5 flex flex-col md:flex-row gap-10">
           
           {/* Images Gallery */}
           <div className="md:w-1/2 flex flex-col gap-4">

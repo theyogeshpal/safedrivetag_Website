@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { MessageCircle, Mail, MapPin, ChevronRight, Phone, ChevronDown } from 'lucide-react';
+import { MessageCircle, Mail, MapPin, ChevronRight, Phone, ChevronDown, Clock, ShieldCheck, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import PageHero from '../components/PageHero';
 
 export default function Contact() {
   const [openFaq, setOpenFaq] = useState(null);
@@ -13,18 +14,20 @@ export default function Contact() {
   ];
 
   return (
-    <div className="bg-white font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900 pt-24 pb-20">
+    <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900 pb-20">
 
       {/* --- HERO --- */}
-      <section className="relative pt-10 pb-16 px-6 text-center">
-        <div className="relative z-10 max-w-3xl mx-auto animate-fade-up">
-          <p className="text-orange-500 font-bold tracking-widest text-sm uppercase mb-4">Support</p>
-          <h1 className="text-5xl md:text-6xl font-black text-black mb-6 tracking-tight">We're here to help.</h1>
-          <p className="text-lg text-black/60 font-medium">
-            Questions about your tag, an order, or a partnership? Reach out and we'll get back within one business day.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        badge="💬 24/7 CUSTOMER SUPPORT"
+        title="We're Here to"
+        highlightText="Help You."
+        description="Questions about your safety tag, an order status, or a partnership? Reach out to our dedicated support team."
+        badges={[
+          { icon: <Headphones size={14} className="text-orange-500" />, label: 'Fast Response' },
+          { icon: <Clock size={14} className="text-blue-500" />, label: 'Mon-Sat 9AM - 8PM' },
+          { icon: <ShieldCheck size={14} className="text-green-600" />, label: 'Direct WhatsApp Support' }
+        ]}
+      />
 
       {/* --- MAIN CONTENT --- */}
       <section className="pb-20 px-6 relative z-10">
