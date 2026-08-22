@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Lock, 
   CreditCard, 
@@ -7,7 +7,9 @@ import {
   Truck, 
   CheckCircle2, 
   RefreshCw, 
-  AlertCircle
+  AlertCircle,
+  KeyRound,
+  X
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PageHero from '../components/PageHero';
@@ -68,6 +70,15 @@ export default function Checkout() {
   const [error, setError] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(null);
 
+  // OTP Verification Modal State
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otpError, setOtpError] = useState('');
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+  const otpInputRefs = useRef([]);
+
   // Sync real product from backend
   useEffect(() => {
     loadRazorpayScript();
@@ -97,12 +108,26 @@ export default function Checkout() {
     syncBackendProducts();
   }, [location.state]);
 
+  // Resend Timer Effect
+  useEffect(() => {
+    let timer;
+    if (isOtpModalOpen && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [isOtpModalOpen, resendTimer]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePlaceOrder = async (e) => {
+  // STEP 1: Form Submit -> Send OTP with Name, Email & Mobile
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -113,16 +138,160 @@ export default function Checkout() {
     }
 
     if (!formData.firstName.trim() || !formData.address.trim() || !formData.city.trim() || !formData.pincode.trim() || !formData.email.trim()) {
-      setError('Please fill in all required fields (Name, Phone, Email, Address, City, PIN code).');
+      setError('Please fill in all required contact and delivery fields.');
       return;
     }
 
+    const customerFullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+    const customerEmail = formData.email.trim();
+
     setIsSubmitting(true);
     try {
+      // Send Name, Email, and Mobile to POST /auth/send-login-otp
+      const otpPayload = {
+        name: customerFullName,
+        email: customerEmail,
+        phone: cleanPhone,
+      };
+
+      const otpRes = await api.sendLoginOtp(otpPayload);
+      if (otpRes.success) {
+        setIsOtpModalOpen(true);
+        setOtpError('');
+        setResendTimer(30);
+        setCanResend(false);
+        setOtp(['', '', '', '', '', '']);
+        setTimeout(() => {
+          if (otpInputRefs.current[0]) {
+            otpInputRefs.current[0].focus();
+          }
+        }, 150);
+      } else {
+        setError(otpRes.message || 'Failed to send OTP to mobile number.');
+      }
+    } catch (err) {
+      setError('Network error while sending OTP. Please retry.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // OTP Inputs handling
+  const handleOtpChange = (index, value) => {
+    if (value.length > 1) {
+      const digits = value.replace(/\D/g, '').slice(0, 6).split('');
+      const newOtp = [...otp];
+      digits.forEach((d, idx) => {
+        if (idx < 6) newOtp[idx] = d;
+      });
+      setOtp(newOtp);
+      const nextIdx = Math.min(digits.length, 5);
+      otpInputRefs.current[nextIdx]?.focus();
+      return;
+    }
+
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+
+    if (value && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!canResend) return;
+    setOtpError('');
+    setIsVerifyingOtp(true);
+    try {
+      const cleanPhone = formData.phone.replace(/\D/g, '');
       const customerFullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+      const customerEmail = formData.email.trim();
+
+      const otpPayload = {
+        name: customerFullName,
+        email: customerEmail,
+        phone: cleanPhone,
+      };
+
+      const res = await api.sendLoginOtp(otpPayload);
+      if (res.success) {
+        setResendTimer(30);
+        setCanResend(false);
+        setOtp(['', '', '', '', '', '']);
+        otpInputRefs.current[0]?.focus();
+      } else {
+        setOtpError(res.message || 'Failed to resend OTP.');
+      }
+    } catch (e) {
+      setOtpError('Failed to resend OTP.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  // STEP 2: Verify OTP -> Open Razorpay Payment Gateway
+  const handleVerifyOtpAndOpenGateway = async (e) => {
+    e?.preventDefault();
+    setOtpError('');
+    const fullOtp = otp.join('');
+
+    if (fullOtp.length < 4) {
+      setOtpError('Please enter the 6-digit OTP code.');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    try {
+      const cleanPhone = formData.phone.replace(/\D/g, '');
+      const customerFullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+      const customerEmail = formData.email.trim();
+
+      const verifyPayload = {
+        phone: cleanPhone,
+        otp: fullOtp,
+        name: customerFullName,
+        email: customerEmail,
+      };
+
+      const verifyRes = await api.verifyLoginOtp(verifyPayload);
+
+      if (verifyRes.success) {
+        if (verifyRes.token) {
+          setAuthToken(verifyRes.token);
+        }
+        if (verifyRes.user && setCurrentUser) {
+          setCurrentUser(verifyRes.user);
+        }
+        setIsOtpModalOpen(false);
+        // OTP Verified Successfully -> Open Payment Gateway
+        await openRazorpayPayment();
+      } else {
+        setOtpError(verifyRes.message || 'Invalid verification OTP.');
+      }
+    } catch (err) {
+      setOtpError('Verification failed. Please check your connection.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  // STEP 3: Create Razorpay Order & Open Gateway
+  const openRazorpayPayment = async () => {
+    setIsSubmitting(true);
+    setError('');
+    try {
+      const customerFullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+      const cleanPhone = formData.phone.replace(/\D/g, '');
       const resolvedProductId = selectedProduct.productId || selectedProduct._id || '6a899b9e719bda67dc3b1a66';
 
-      // --- Step 1: Create Razorpay Order (API 3.1) ---
+      // Call POST /purchase/create-order
       const createRes = await api.createOrder({
         productId: resolvedProductId,
         name: customerFullName,
@@ -134,11 +303,10 @@ export default function Checkout() {
         return;
       }
 
-      // --- Step 2: Initialize Razorpay Checkout Gateway ---
       const isScriptLoaded = await loadRazorpayScript();
 
       if (!isScriptLoaded || !window.Razorpay) {
-        // Fallback: Direct complete if SDK blocked
+        // Fallback completion if SDK blocked
         const completeRes = await api.completePurchase({
           productId: resolvedProductId,
           name: customerFullName,
@@ -170,7 +338,7 @@ export default function Checkout() {
         return;
       }
 
-      // Open Razorpay Modal
+      // Open Razorpay Standard Checkout Modal
       const razorpayOptions = {
         key: createRes.keyId || createRes.key || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_6kz5nGEzi8uXRw',
         amount: createRes.amount || totalAmount * 100,
@@ -183,7 +351,7 @@ export default function Checkout() {
           try {
             setIsSubmitting(true);
             
-            // --- Step 3: Complete Purchase & Place Order (API 3.2) ---
+            // Call POST /purchase/complete
             const completePayload = {
               productId: resolvedProductId,
               name: customerFullName,
@@ -242,7 +410,7 @@ export default function Checkout() {
       const razorpayInstance = new window.Razorpay(razorpayOptions);
       
       razorpayInstance.on('payment.failed', function (resp) {
-        setError(resp.error?.description || 'Payment was declined or cancelled. Please retry.');
+        setError(resp.error?.description || 'Payment was cancelled or failed.');
         setIsSubmitting(false);
       });
 
@@ -250,7 +418,7 @@ export default function Checkout() {
 
     } catch (err) {
       console.error('Checkout error:', err);
-      setError('Checkout failed. Please check your network connection.');
+      setError('Checkout failed. Please check connection.');
       setIsSubmitting(false);
     }
   };
@@ -322,7 +490,7 @@ export default function Checkout() {
           </div>
         ) : (
           /* Checkout Form & Order Summary */
-          <form onSubmit={handlePlaceOrder} className="flex flex-col lg:flex-row gap-10 items-start">
+          <form onSubmit={handleFormSubmit} className="flex flex-col lg:flex-row gap-10 items-start">
             
             {/* Left Column - Form */}
             <div className="w-full lg:w-3/5 flex flex-col gap-6">
@@ -526,12 +694,12 @@ export default function Checkout() {
                   {isSubmitting ? (
                     <>
                       <RefreshCw className="w-5 h-5 animate-spin" />
-                      <span>Opening Razorpay Gateway...</span>
+                      <span>Sending OTP...</span>
                     </>
                   ) : (
                     <>
                       <Lock size={18} />
-                      <span>Pay ₹{totalAmount} with Razorpay</span>
+                      <span>Proceed to Verify & Pay ₹{totalAmount}</span>
                     </>
                   )}
                 </button>
@@ -551,6 +719,102 @@ export default function Checkout() {
         )}
 
       </div>
+
+      {/* --- OTP VERIFICATION MODAL --- */}
+      {isOtpModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in font-sans">
+          <div className="bg-white rounded-3xl p-7 sm:p-9 shadow-2xl max-w-md w-full relative animate-scale-up">
+            
+            <button
+              onClick={() => setIsOtpModalOpen(false)}
+              className="absolute top-5 right-5 text-black/40 hover:text-black p-1.5 rounded-full hover:bg-black/5 transition-all cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <KeyRound className="w-8 h-8" />
+              </div>
+              <h2 className="text-2xl font-black text-black">Verify Mobile Number</h2>
+              <p className="text-xs sm:text-sm text-black/60 mt-1 font-medium">
+                Enter the 6-digit OTP sent to <br />
+                <strong className="text-black">+91 {formData.phone}</strong>
+              </p>
+            </div>
+
+            {otpError && (
+              <div className="mb-4 bg-red-50 text-red-600 border border-red-200 text-xs font-bold rounded-xl p-3 text-center">
+                {otpError}
+              </div>
+            )}
+
+            <form onSubmit={handleVerifyOtpAndOpenGateway} className="space-y-5">
+              <div className="flex justify-center gap-2 my-2">
+                {otp.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => (otpInputRefs.current[idx] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                    className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-black rounded-xl border-2 border-black/10 focus:border-orange-500 focus:bg-orange-50/20 bg-white outline-none transition-all"
+                  />
+                ))}
+              </div>
+
+              {/* Dev Test Helper */}
+              <div className="flex items-center justify-between bg-orange-50 border border-orange-100 rounded-xl px-3 py-2 text-xs">
+                <span className="text-orange-800 font-medium">💡 Dev Test OTP: <strong>123456</strong></span>
+                <button
+                  type="button"
+                  onClick={() => setOtp(['1', '2', '3', '4', '5', '6'])}
+                  className="text-orange-600 font-bold hover:underline cursor-pointer"
+                >
+                  Auto-fill 123456
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isVerifyingOtp || otp.join('').length < 4}
+                className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-green-500/25 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isVerifyingOtp ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Verifying OTP & Opening Payment Gateway...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck size={18} />
+                    <span>Verify OTP & Open Payment Gateway</span>
+                  </>
+                )}
+              </button>
+
+              <div className="text-center text-xs font-semibold text-black/60 pt-1">
+                {canResend ? (
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    className="text-orange-600 font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <RefreshCw size={12} /> Resend OTP now
+                  </button>
+                ) : (
+                  <span>Resend OTP in <span className="text-black font-bold">{resendTimer}s</span></span>
+                )}
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
