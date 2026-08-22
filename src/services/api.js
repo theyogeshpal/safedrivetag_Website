@@ -56,37 +56,75 @@ export const api = {
   getProductById: (id) => apiRequest(`/purchase/products/${id}`),
 
   // --- 2. User Authentication & Profile APIs ---
-  sendOtp: (data) => {
+  sendOtp: async (data) => {
     const body = typeof data === 'object' && data !== null ? data : { phone: data };
-    return apiRequest('/auth/send-otp', {
+    // Try /auth/send-login-otp first
+    const res1 = await apiRequest('/auth/send-login-otp', {
+      method: 'POST',
+      body,
+    });
+    if (res1.success || (!res1.message?.toLowerCase().includes('route not found') && !res1.message?.toLowerCase().includes('not found') && res1.status !== 404)) {
+      return res1;
+    }
+    // Fallback to /purchase/send-otp
+    return apiRequest('/purchase/send-otp', {
       method: 'POST',
       body,
     });
   },
 
-  sendLoginOtp: (data) => {
+  sendLoginOtp: async (data) => {
     const body = typeof data === 'object' && data !== null ? data : { phone: data };
-    return apiRequest('/auth/send-otp', {
+    // Try /auth/send-login-otp first
+    const res1 = await apiRequest('/auth/send-login-otp', {
+      method: 'POST',
+      body,
+    });
+    if (res1.success || (!res1.message?.toLowerCase().includes('route not found') && !res1.message?.toLowerCase().includes('not found') && res1.status !== 404)) {
+      return res1;
+    }
+    // Fallback to /purchase/send-otp
+    return apiRequest('/purchase/send-otp', {
       method: 'POST',
       body,
     });
   },
 
-  verifyOtp: (phoneOrData, otp) => {
+  verifyOtp: async (phoneOrData, otp) => {
     const body = typeof phoneOrData === 'object' && phoneOrData !== null 
       ? { ...phoneOrData, ...(otp ? { otp } : {}) }
       : { phone: phoneOrData, otp };
-    return apiRequest('/auth/verify-otp', {
+    
+    // Try /auth/verify-login-otp first
+    const res1 = await apiRequest('/auth/verify-login-otp', {
+      method: 'POST',
+      body,
+    });
+    if (res1.success || (!res1.message?.toLowerCase().includes('route not found') && !res1.message?.toLowerCase().includes('not found') && res1.status !== 404)) {
+      return res1;
+    }
+    // Fallback to /purchase/verify-otp
+    return apiRequest('/purchase/verify-otp', {
       method: 'POST',
       body,
     });
   },
 
-  verifyLoginOtp: (phoneOrData, otp) => {
+  verifyLoginOtp: async (phoneOrData, otp) => {
     const body = typeof phoneOrData === 'object' && phoneOrData !== null 
       ? { ...phoneOrData, ...(otp ? { otp } : {}) }
       : { phone: phoneOrData, otp };
-    return apiRequest('/auth/verify-otp', {
+    
+    // Try /auth/verify-login-otp first
+    const res1 = await apiRequest('/auth/verify-login-otp', {
+      method: 'POST',
+      body,
+    });
+    if (res1.success || (!res1.message?.toLowerCase().includes('route not found') && !res1.message?.toLowerCase().includes('not found') && res1.status !== 404)) {
+      return res1;
+    }
+    // Fallback to /purchase/verify-otp
+    return apiRequest('/purchase/verify-otp', {
       method: 'POST',
       body,
     });
