@@ -37,7 +37,8 @@ import {
   Zap,
   Clock,
   RefreshCw,
-  FileText
+  FileText,
+  Printer
 } from 'lucide-react';
 
 export default function Dashboard() {
