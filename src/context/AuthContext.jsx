@@ -1,43 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import api, { getAuthToken, setAuthToken } from '../services/api';
 
 const AuthContext = createContext();
 
 const STORAGE_KEY_USER = 'safedrive_user';
-const STORAGE_KEY_TAGS = 'safedrive_registered_tags';
-
-// Initial demo seed data so users can test immediately with 9876543210 or new numbers
-const INITIAL_DEMO_TAGS = [
-  {
-    id: 'SD-84920',
-    name: 'Rahul Sharma',
-    phone: '9876543210',
-    emergencyContact: '9811223344',
-    whatsapp: '9876543210',
-    vehicleNumber: 'DL 01 AB 1234',
-    vehicleName: 'Hyundai Creta',
-    vehicleType: 'Car',
-    status: 'active',
-    registeredAt: '2025-01-15',
-    scansCount: 4,
-    callMaskingEnabled: true,
-    whatsappAlertsEnabled: true,
-  },
-  {
-    id: 'SD-19384',
-    name: 'Rahul Sharma',
-    phone: '9876543210',
-    emergencyContact: '9811223344',
-    whatsapp: '9876543210',
-    vehicleNumber: 'HR 26 DQ 8821',
-    vehicleName: 'Royal Enfield Classic 350',
-    vehicleType: 'Bike',
-    status: 'active',
-    registeredAt: '2025-02-02',
-    scansCount: 1,
-    callMaskingEnabled: true,
-    whatsappAlertsEnabled: true,
-  }
-];
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -49,31 +15,11 @@ export function AuthProvider({ children }) {
     }
   });
 
-  const [tags, setTags] = useState(() => {
-    try {
-      const savedTags = localStorage.getItem(STORAGE_KEY_TAGS);
-      if (savedTags) {
-        return JSON.parse(savedTags);
-      }
-      localStorage.setItem(STORAGE_KEY_TAGS, JSON.stringify(INITIAL_DEMO_TAGS));
-      return INITIAL_DEMO_TAGS;
-    } catch {
-      return INITIAL_DEMO_TAGS;
-    }
-  });
-
+  const [dashboardData, setDashboardData] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(false);
 
-  // Sync tags to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_TAGS, JSON.stringify(tags));
-    } catch (e) {
-      console.error('Failed to save tags to localStorage', e);
-    }
-  }, [tags]);
-
-  // Sync user to localStorage
+  // Sync user object to localStorage
   useEffect(() => {
     try {
       if (currentUser) {
@@ -86,125 +32,121 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
+  // Fetch logged-in user profile on load if token exists
+  const checkAuth = useCallback(async () => {
+    const token = getAuthToken();
+    if (!token) return;
+
+    try {
+      const res = await api.getCurrentUser();
+      if (res.success && res.user) {
+        setCurrentUser(res.user);
+      }
+    } catch (err) {
+      console.error('Failed to fetch current user profile', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  // Fetch Dashboard Kits & Balances
+  const fetchDashboard = useCallback(async () => {
+    const token = getAuthToken();
+    if (!token) return null;
+
+    try {
+      setIsLoadingAuth(true);
+      const res = await api.getDashboard();
+      if (res.success) {
+        setDashboardData(res);
+        if (res.user) {
+          setCurrentUser((prev) => ({ ...prev, ...res.user }));
+        }
+        return res;
+      }
+      return null;
+    } catch (err) {
+      console.error('Failed to fetch dashboard data', err);
+      return null;
+    } finally {
+      setIsLoadingAuth(false);
+    }
+  }, []);
+
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
-  // Mock OTP Generation & Sending
+  // Send Login OTP to Mobile Number
   const sendOtp = async (phone) => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    return {
-      success: true,
-      otp: '1234',
-      message: `OTP sent successfully to +91 ${phone}`,
-    };
+    try {
+      const cleanPhone = phone.replace(/\D/g, '');
+      const res = await api.sendLoginOtp(cleanPhone);
+      return res;
+    } catch (err) {
+      return { success: false, message: 'Failed to send OTP. Please try again.' };
+    }
   };
 
-  // Verify OTP and Log In
+  // Verify Login OTP & Store Auth Token
   const verifyOtp = async (phone, otp) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    // Accept demo OTP '1234' or any 4-digit code in dev
-    if (otp === '1234' || otp.length === 4) {
-      const userTags = tags.filter((t) => t.phone === phone);
-      const existingName = userTags.length > 0 ? userTags[0].name : '';
+    try {
+      const cleanPhone = phone.replace(/\D/g, '');
+      const res = await api.verifyLoginOtp(cleanPhone, otp);
 
-      const userObj = {
-        phone,
-        name: existingName || `User ${phone.slice(-4)}`,
-        loginAt: new Date().toISOString(),
-      };
-
-      setCurrentUser(userObj);
-      closeLoginModal();
-      return { success: true, user: userObj };
-    } else {
-      return { success: false, message: 'Invalid OTP! Please enter 1234 for demo.' };
+      if (res.success && res.token) {
+        setAuthToken(res.token);
+        const userObj = res.user || {
+          phone: cleanPhone,
+          name: `User ${cleanPhone.slice(-4)}`,
+        };
+        setCurrentUser(userObj);
+        closeLoginModal();
+        // Trigger dashboard load
+        fetchDashboard();
+        return { success: true, user: userObj, token: res.token };
+      } else {
+        return { success: false, message: res.message || 'Invalid OTP code' };
+      }
+    } catch (err) {
+      return { success: false, message: 'Verification failed. Please try again.' };
     }
   };
 
   const logout = () => {
+    setAuthToken('');
     setCurrentUser(null);
+    setDashboardData(null);
   };
 
-  // Get all tags for currently logged in user (or by phone)
-  const getUserTags = (phone = currentUser?.phone) => {
-    if (!phone) return [];
-    return tags.filter((t) => t.phone === phone);
-  };
-
-  // Register a new tag or link to phone
-  const registerTag = (tagData) => {
-    const existingIndex = tags.findIndex((t) => t.id === tagData.id);
-    const newTag = {
-      id: tagData.id,
-      name: tagData.name || '',
-      phone: tagData.phone,
-      emergencyContact: tagData.emergencyContact || '',
-      whatsapp: tagData.whatsapp || tagData.phone,
-      vehicleNumber: tagData.vehicleNumber || 'Not Specified',
-      vehicleName: tagData.vehicleName || 'My Vehicle',
-      vehicleType: tagData.vehicleType || 'Car',
-      status: tagData.status || 'active',
-      registeredAt: tagData.registeredAt || new Date().toISOString().split('T')[0],
-      scansCount: tagData.scansCount || 0,
-      callMaskingEnabled: tagData.callMaskingEnabled ?? true,
-      whatsappAlertsEnabled: tagData.whatsappAlertsEnabled ?? true,
-    };
-
-    if (existingIndex >= 0) {
-      setTags((prev) => {
-        const updated = [...prev];
-        updated[existingIndex] = { ...updated[existingIndex], ...newTag };
-        return updated;
-      });
-    } else {
-      setTags((prev) => [newTag, ...prev]);
-    }
-
-    if (currentUser && currentUser.phone === tagData.phone && tagData.name) {
-      setCurrentUser((prev) => ({ ...prev, name: tagData.name }));
-    }
-
-    return newTag;
-  };
-
-  // Update existing tag
-  const updateTag = (tagId, updatedFields) => {
-    setTags((prev) =>
-      prev.map((t) => (t.id === tagId ? { ...t, ...updatedFields } : t))
-    );
-  };
-
-  // Delete / Unlink tag
-  const deleteTag = (tagId) => {
-    setTags((prev) => prev.filter((t) => t.id !== tagId));
-  };
-
-  // Update user profile info
+  // Update user profile locally & state
   const updateUserProfile = (profileData) => {
-    setCurrentUser((prev) => {
-      const updated = { ...prev, ...profileData };
-      return updated;
-    });
+    setCurrentUser((prev) => ({ ...prev, ...profileData }));
+  };
+
+  // Set Auth state directly (e.g. after first-time QR registration)
+  const setAuthenticatedSession = (token, user) => {
+    if (token) setAuthToken(token);
+    if (user) setCurrentUser(user);
+    fetchDashboard();
   };
 
   return (
     <AuthContext.Provider
       value={{
         currentUser,
+        dashboardData,
+        isLoadingAuth,
         isLoginModalOpen,
         openLoginModal,
         closeLoginModal,
         sendOtp,
         verifyOtp,
         logout,
-        tags,
-        getUserTags,
-        registerTag,
-        updateTag,
-        deleteTag,
+        fetchDashboard,
         updateUserProfile,
+        setAuthenticatedSession,
       }}
     >
       {children}

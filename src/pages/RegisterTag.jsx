@@ -5,44 +5,51 @@ import {
   Car, 
   Bike, 
   Truck, 
-  Phone, 
-  MessageSquare, 
   CheckCircle2, 
   ArrowRight, 
   QrCode, 
   Sparkles,
   Lock,
-  ChevronRight,
   Briefcase,
   User,
-  Smartphone,
-  MessageCircle
+  Phone,
+  RefreshCw,
+  MapPin
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 export default function RegisterTag() {
   const { id } = useParams();
+  const token = id;
   const navigate = useNavigate();
-  const { registerTag } = useAuth();
+  const { currentUser, setAuthenticatedSession } = useAuth();
 
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    emergencyContact: '',
-    whatsapp: '',
-    vehicleType: 'Car',
-    vehicleName: '',
+    name: currentUser?.name || '',
+    phone: currentUser?.phone || '',
+    whatsappNumber: currentUser?.whatsappNumber || currentUser?.phone || '',
+    address: currentUser?.address || '',
+    vehicleBrand: 'Hyundai',
+    vehicleName: 'Creta',
     vehicleNumber: '',
-    vehicleColor: '',
+    vehicleType: 'Car',
+    emergencyContact1Name: 'Family Contact 1',
+    emergencyContact1Number: '',
+    emergencyContact2Name: 'Family Contact 2',
+    emergencyContact2Number: '',
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
+  const [successData, setSuccessData] = useState(null);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -50,35 +57,63 @@ export default function RegisterTag() {
     setFormData((prev) => ({ ...prev, vehicleType: type }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
-    if (!formData.phone || formData.phone.length < 10) {
-      alert('Please enter a valid 10-digit primary phone number.');
+    const cleanPhone = formData.phone.replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length !== 10) {
+      setError('Please enter a valid 10-digit primary mobile number.');
       return;
     }
 
-    registerTag({
-      id: id || `SD-${Math.floor(10000 + Math.random() * 90000)}`,
-      tagId: id,
-      name: formData.name,
-      phone: formData.phone.replace(/\D/g, ''),
-      primaryPhone: formData.phone.replace(/\D/g, ''),
-      emergencyContact: formData.emergencyContact.replace(/\D/g, ''),
-      emergencyPhone: formData.emergencyContact.replace(/\D/g, ''),
-      whatsapp: formData.whatsapp.replace(/\D/g, ''),
-      vehicleName: formData.vehicleName.trim() || `${formData.vehicleType}`,
-      vehicleNumber: formData.vehicleNumber.trim().toUpperCase() || 'LUGGAGE-TAG',
-      vehicleType: formData.vehicleType,
-      vehicleColor: formData.vehicleColor.trim(),
-      status: 'active',
-      registeredAt: new Date().toISOString().split('T')[0],
-      scansCount: 0,
-      callMaskingEnabled: true,
-      whatsappAlertsEnabled: true,
-    });
+    if (!formData.vehicleNumber.trim()) {
+      setError('Please enter your vehicle registration number.');
+      return;
+    }
 
-    setIsSuccess(true);
+    setIsLoading(true);
+    try {
+      const emergencyContacts = [];
+      if (formData.emergencyContact1Number.trim()) {
+        emergencyContacts.push({
+          name: formData.emergencyContact1Name.trim() || 'Contact 1',
+          number: formData.emergencyContact1Number.replace(/\D/g, ''),
+        });
+      }
+      if (formData.emergencyContact2Number.trim()) {
+        emergencyContacts.push({
+          name: formData.emergencyContact2Name.trim() || 'Contact 2',
+          number: formData.emergencyContact2Number.replace(/\D/g, ''),
+        });
+      }
+
+      const payload = {
+        name: formData.name.trim() || `User ${cleanPhone.slice(-4)}`,
+        phone: cleanPhone,
+        whatsappNumber: formData.whatsappNumber.replace(/\D/g, '') || cleanPhone,
+        address: formData.address.trim() || 'Not specified',
+        vehicleBrand: formData.vehicleBrand.trim() || formData.vehicleType,
+        vehicleName: formData.vehicleName.trim() || 'My Vehicle',
+        vehicleNumber: formData.vehicleNumber.trim().toUpperCase(),
+        emergencyContacts,
+      };
+
+      const res = await api.registerQrKit(token, payload);
+      if (res.success) {
+        setIsSuccess(true);
+        setSuccessData(res);
+        if (res.token) {
+          setAuthenticatedSession(res.token, res.user);
+        }
+      } else {
+        setError(res.message || 'Registration failed. Please check details and try again.');
+      }
+    } catch (err) {
+      setError('Failed to activate tag. Network error.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const vehicleTypes = [
@@ -89,12 +124,8 @@ export default function RegisterTag() {
   ];
 
   return (
-    <div className="min-h-screen bg-orange-50/30 flex items-center justify-center pt-24 pb-16 px-4 sm:px-6 relative z-10 overflow-hidden">
+    <div className="min-h-screen bg-orange-50/30 flex items-center justify-center pt-24 pb-16 px-4 sm:px-6 relative z-10 overflow-hidden font-sans">
       
-      {/* Background Blobs */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none z-0" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-green-500/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none z-0" />
-
       <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl shadow-black/5 p-6 sm:p-9 relative z-10 border border-black/5">
         
         {isSuccess ? (
@@ -102,9 +133,9 @@ export default function RegisterTag() {
             <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
               <CheckCircle2 size={36} />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-black mb-2">Tag Registered Successfully!</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-black mb-2">Tag Kit Activated Successfully!</h2>
             <p className="text-sm text-black/60 font-medium mb-6">
-              Tag ID <span className="font-mono font-bold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">{id}</span> is now linked with <strong className="text-black">{formData.vehicleName} ({formData.vehicleNumber})</strong>.
+              Tag ID <span className="font-mono font-bold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">{token}</span> is now linked with <strong className="text-black">{formData.vehicleBrand} {formData.vehicleName} ({formData.vehicleNumber})</strong>.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link 
@@ -114,7 +145,7 @@ export default function RegisterTag() {
                 Go to My Dashboard &rarr;
               </Link>
               <Link 
-                to={`/scan/${id}`} 
+                to={`/scan/${token}`} 
                 className="w-full sm:w-auto bg-white hover:bg-black/5 text-black font-bold px-7 py-3.5 rounded-xl text-sm border border-black/10 transition-all"
               >
                 Test Live QR Scan Page
@@ -138,189 +169,212 @@ export default function RegisterTag() {
               </div>
 
               {/* Tag ID Pill */}
-              <div className="shrink-0 bg-[#fdf8d5] border border-[#f4e28e] p-3 rounded-2xl text-center">
-                <div className="text-[10px] font-black text-[#6d5516] uppercase tracking-wider">Tag ID</div>
-                <div className="font-mono font-black text-sm text-black">{id || 'NEW-TAG'}</div>
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-black/40">Tag Token</span>
+                <div className="flex items-center gap-1.5 bg-black/5 border border-black/10 px-3 py-1.5 rounded-xl text-xs font-mono font-black text-black">
+                  <QrCode size={14} className="text-orange-600" />
+                  <span>{token || 'SD-DEMO'}</span>
+                </div>
               </div>
             </div>
 
-            {/* Registration Form */}
+            {error && (
+              <div className="mb-5 bg-red-50 text-red-600 border border-red-200 text-xs sm:text-sm font-semibold rounded-xl p-3 text-center">
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               
-              {/* SECTION 1: VEHICLE OR BAG DETAILS */}
-              <div className="bg-orange-50/40 border border-orange-100/80 rounded-2xl p-4 sm:p-5 space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-orange-100">
-                  <h3 className="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
-                    {formData.vehicleType === 'Luggage' ? <Briefcase className="w-4 h-4 text-orange-600" /> : <Car className="w-4 h-4 text-orange-600" />}
-                    1. {formData.vehicleType === 'Luggage' ? 'Luggage / Bag Details (बैग की जानकारी)' : 'Vehicle Details (वाहन की जानकारी)'}
-                  </h3>
-                  <span className="text-[11px] font-bold text-orange-600 bg-white px-2 py-0.5 rounded-md border border-orange-200">Required</span>
+              {/* Vehicle Type Selection */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-black/70 mb-2">
+                  1. Tag Attached To:
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {vehicleTypes.map(({ id: typeId, label, icon }) => (
+                    <button
+                      key={typeId}
+                      type="button"
+                      onClick={() => setVehicleType(typeId)}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-2xl border text-xs font-bold transition-all cursor-pointer ${
+                        formData.vehicleType === typeId
+                          ? 'border-orange-500 bg-orange-50/80 text-orange-600 shadow-sm'
+                          : 'border-black/5 bg-black/[0.02] text-black/60 hover:bg-black/5'
+                      }`}
+                    >
+                      {icon}
+                      <span>{label}</span>
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                {/* Vehicle / Item Type Radio Chips */}
-                <div>
-                  <label className="block text-xs font-bold text-black/70 mb-2">Select Item Type</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {vehicleTypes.map((vt) => (
-                      <button
-                        key={vt.id}
-                        type="button"
-                        onClick={() => setVehicleType(vt.id)}
-                        className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                          formData.vehicleType === vt.id
-                            ? 'bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/20 scale-[1.02]'
-                            : 'bg-white text-black/70 border-black/10 hover:border-black/20 hover:bg-black/[0.02]'
-                        }`}
-                      >
-                        {vt.icon}
-                        <span>{vt.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Model & Registration / Bag Identifier */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-black/80 flex items-center gap-1">
-                      {formData.vehicleType === 'Luggage' ? 'Bag Name / Model / Brand' : 'Vehicle Model / Make'} <span className="text-red-500">*</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      name="vehicleName"
+              {/* Vehicle Details */}
+              <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-4 sm:p-5 space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-black/80 flex items-center gap-2">
+                  <Car size={14} className="text-orange-500" /> 2. Vehicle Identification
+                </h3>
+                
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 mb-1">Vehicle Brand / Make</label>
+                    <input
+                      type="text"
                       required
+                      placeholder="e.g. Hyundai, Honda, Maruti"
+                      name="vehicleBrand"
+                      value={formData.vehicleBrand}
+                      onChange={handleChange}
+                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 mb-1">Model Name</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Creta, City, Swift"
+                      name="vehicleName"
                       value={formData.vehicleName}
                       onChange={handleChange}
-                      placeholder={formData.vehicleType === 'Luggage' ? 'e.g. American Tourister Suitcase / Dell Backpack' : 'e.g. Hyundai Creta / Honda City'} 
-                      className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-black font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all text-sm"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-black/80 flex items-center gap-1">
-                      {formData.vehicleType === 'Luggage' ? 'Bag Identifier / PNR / Serial (Optional)' : 'Vehicle Registration Number'} <span className={formData.vehicleType === 'Luggage' ? 'text-black/40' : 'text-red-500'}>{formData.vehicleType === 'Luggage' ? '' : '*'}</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      name="vehicleNumber"
-                      required={formData.vehicleType !== 'Luggage'}
-                      value={formData.vehicleNumber}
-                      onChange={handleChange}
-                      placeholder={formData.vehicleType === 'Luggage' ? 'e.g. BAG-01 or My Suitcase' : 'e.g. DL 01 AB 1234'} 
-                      className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-black font-bold uppercase tracking-wider font-mono focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all text-sm"
+                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/70 flex items-center gap-1">
-                    {formData.vehicleType === 'Luggage' ? 'Bag Color / Appearance (Optional)' : 'Vehicle Color / Variant (Optional)'}
-                  </label>
-                  <input 
-                    type="text" 
-                    name="vehicleColor"
-                    value={formData.vehicleColor}
-                    onChange={handleChange}
-                    placeholder="e.g. Polar White / Titanium Grey" 
-                    className="w-full bg-white border border-black/10 rounded-xl px-4 py-2.5 text-black font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all text-xs"
-                  />
-                </div>
-              </div>
-
-              {/* SECTION 2: OWNER & CONTACT DETAILS */}
-              <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-4 sm:p-5 space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-black/5">
-                  <h3 className="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
-                    <User className="w-4 h-4 text-orange-600" /> 2. Owner & Contact Details
-                  </h3>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-orange-500" /> Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="e.g. Rahul Sharma" 
-                    className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-black font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all text-sm"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
-                    <Smartphone className="w-3.5 h-3.5 text-orange-500" /> Primary Mobile Number (Your Login ID) <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    type="tel" 
-                    name="phone"
-                    required
-                    pattern="[0-9]{10}"
-                    title="Please enter a valid 10-digit phone number"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="e.g. 9876543210" 
-                    className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-black font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all text-sm"
-                  />
-                  <p className="text-[11px] text-black/50 ml-1">This number acts as your account login ID via OTP.</p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-green-500" /> Emergency SOS Contact <span className="text-red-500">*</span>
-                    </label>
-                    <input 
-                      type="tel" 
-                      name="emergencyContact"
-                      required
-                      pattern="[0-9]{10}"
-                      title="Please enter a valid 10-digit phone number"
-                      value={formData.emergencyContact}
-                      onChange={handleChange}
-                      placeholder="e.g. 9811223344" 
-                      className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-black font-medium focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 transition-all text-sm"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
-                      <MessageCircle className="w-3.5 h-3.5 text-green-500" /> WhatsApp Alert Number <span className="text-red-500">*</span>
-                    </label>
-                    <input 
-                      type="tel" 
-                      name="whatsapp"
-                      required
-                      pattern="[0-9]{10}"
-                      title="Please enter a valid 10-digit phone number"
-                      value={formData.whatsapp}
-                      onChange={handleChange}
-                      placeholder="e.g. 9876543210" 
-                      className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-black font-medium focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 transition-all text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Privacy Notice */}
-              <div className="bg-green-50 border border-green-100 rounded-2xl p-3.5 flex gap-3 items-start">
-                <Lock className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-green-900 mb-0.5">100% Two-Way Privacy Masking</p>
-                  <p className="text-[11px] text-green-700/90 leading-relaxed">Your personal number and vehicle details are protected. Callers will only be connected through a secure masked bridge.</p>
+                  <label className="block text-[11px] font-bold text-black/60 mb-1">
+                    Registration Plate Number (e.g. RJ-14-AB-2024)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Enter full registration plate"
+                    name="vehicleNumber"
+                    value={formData.vehicleNumber}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-sm font-black tracking-wider outline-none focus:border-orange-500 uppercase"
+                  />
                 </div>
               </div>
 
-              <div>
-                <button 
-                  type="submit" 
-                  className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-green-500/25 cursor-pointer text-base hover:scale-[1.01]"
-                >
-                  Register Tag & Save Vehicle
-                </button>
+              {/* Owner Contact Information */}
+              <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-4 sm:p-5 space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-black/80 flex items-center gap-2">
+                  <User size={14} className="text-orange-500" /> 3. Owner Private Contacts
+                </h3>
+
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 mb-1">Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Rahul Sharma"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 mb-1">Primary Calling Number (10 Digits)</label>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      required
+                      placeholder="e.g. 9876543210"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 mb-1">WhatsApp Number</label>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      placeholder="Same as phone or alternate"
+                      name="whatsappNumber"
+                      value={formData.whatsappNumber}
+                      onChange={handleChange}
+                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 mb-1">City / Address</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Sector 5, Jaipur"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Emergency Contacts */}
+              <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-4 sm:p-5 space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-red-600 flex items-center gap-2">
+                  <Phone size={14} className="text-red-500" /> 4. Emergency SOS Contacts (Optional)
+                </h3>
+
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 mb-1">Contact 1 Name</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Pooja (Wife)"
+                      name="emergencyContact1Name"
+                      value={formData.emergencyContact1Name}
+                      onChange={handleChange}
+                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 mb-1">Contact 1 Phone Number</label>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      placeholder="e.g. 9876500001"
+                      name="emergencyContact1Number"
+                      value={formData.emergencyContact1Number}
+                      onChange={handleChange}
+                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-red-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition-all cursor-pointer hover:scale-[1.01]"
+              >
+                {isLoading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" /> Activating Tag Kit...
+                  </>
+                ) : (
+                  <>
+                    <span>Activate Tag Kit Now</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+
+              <div className="text-center">
+                <p className="text-[11px] text-black/50 flex items-center justify-center gap-1">
+                  <Lock size={12} className="text-green-600" />
+                  Your phone number is encrypted and never shown to callers.
+                </p>
               </div>
 
             </form>

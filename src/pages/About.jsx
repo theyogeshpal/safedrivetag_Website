@@ -21,6 +21,31 @@ export default function About() {
         ]}
       />
 
+      {/* Values */}
+      <section className="values-section">
+        <div className="max-w-7xl mx-auto">
+          <div className="section-header">
+            <p className="about-subtitle">Our Values</p>
+            <h2 className="section-title">What we stand for</h2>
+          </div>
+          <div className="values-grid">
+            {[
+              { icon: <Lock size={28} />, title: 'Privacy by default', desc: 'Your number is never the product. Everything we build keeps it hidden securely behind our systems.' },
+              { icon: <Handshake size={28} />, title: 'Useful, not flashy', desc: 'A tag that just works, exactly the moment someone needs to reach you — no complicated apps required.' },
+              { icon: <MapPin size={28} />, title: 'Made in India', desc: 'Designed, built and supported locally by a passionate team working right here in India.' },
+            ].map(({ icon, title, desc }) => (
+              <div key={title} className="value-card hover-lift">
+                <div className="value-icon-wrapper">
+                  {icon}
+                </div>
+                <h3 className="value-title">{title}</h3>
+                <p className="value-desc">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Stats */}
       <section className="stats-section">
         <div className="max-w-7xl mx-auto stats-grid">
@@ -55,31 +80,6 @@ export default function About() {
               alt="Team"
               className="stats-img"
             />
-          </div>
-        </div>
-      </section>
-
-      {/* Values */}
-      <section className="values-section">
-        <div className="max-w-7xl mx-auto">
-          <div className="section-header">
-            <p className="about-subtitle">Our Values</p>
-            <h2 className="section-title">What we stand for</h2>
-          </div>
-          <div className="values-grid">
-            {[
-              { icon: <Lock size={28} />, title: 'Privacy by default', desc: 'Your number is never the product. Everything we build keeps it hidden securely behind our systems.' },
-              { icon: <Handshake size={28} />, title: 'Useful, not flashy', desc: 'A tag that just works, exactly the moment someone needs to reach you — no complicated apps required.' },
-              { icon: <MapPin size={28} />, title: 'Made in India', desc: 'Designed, built and supported locally by a passionate team working right here in India.' },
-            ].map(({ icon, title, desc }) => (
-              <div key={title} className="value-card hover-lift">
-                <div className="value-icon-wrapper">
-                  {icon}
-                </div>
-                <h3 className="value-title">{title}</h3>
-                <p className="value-desc">{desc}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>

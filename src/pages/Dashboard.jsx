@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import {
   User,
   Package,
@@ -29,7 +30,10 @@ import {
   Truck,
   CheckCircle2,
   ChevronDown,
-  Briefcase
+  Briefcase,
+  Zap,
+  Clock,
+  RefreshCw
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -49,6 +53,7 @@ export default function Dashboard() {
   const [newVehicleNumber, setNewVehicleNumber] = useState('');
   const [newVehicleType, setNewVehicleType] = useState('Car');
   const [qrModalTag, setQrModalTag] = useState(null);
+  const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
 
   // Profile Edit State
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
@@ -136,20 +141,59 @@ export default function Dashboard() {
   // FAQ Expand state
   const [expandedFaq, setExpandedFaq] = useState(null);
 
-  // Initial Sync from currentUser
+  // Initial Sync from currentUser & Live Backend API
+  const loadDashboardData = useCallback(async () => {
+    if (!currentUser) return;
+    setIsLoadingDashboard(true);
+    try {
+      const res = await api.getDashboard();
+      if (res.success && res.kits && res.kits.length > 0) {
+        const mappedTags = res.kits.map((kit, idx) => ({
+          id: kit.copies?.[0]?.copyCode || kit.productId || `SD-${idx + 1}`,
+          publicToken: kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || `pk_live_${idx}`,
+          name: kit.user?.name || currentUser.name || 'Owner',
+          phone: kit.user?.phone || currentUser.phone,
+          emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser.phone,
+          emergencyContacts: kit.vehicle?.emergencyContacts || [],
+          whatsapp: currentUser.phone,
+          vehicleNumber: kit.vehicle?.vehicleNumber || 'RJ14AB2024',
+          vehicleName: `${kit.vehicle?.vehicleBrand || ''} ${kit.vehicle?.vehicleName || ''}`.trim() || 'My Vehicle',
+          vehicleType: 'Car',
+          status: kit.status?.toLowerCase() || 'active',
+          registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+          expiryDate: kit.expiryDate,
+          callBalance: kit.wallet?.callBalance ?? 10,
+          messageBalance: kit.wallet?.messageBalance ?? 20,
+          scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
+          callMaskingEnabled: true,
+          whatsappAlertsEnabled: true,
+        }));
+        setUserTags(mappedTags);
+      } else {
+        const fallbackTags = getUserTags ? getUserTags(currentUser.phone) : [];
+        setUserTags(fallbackTags);
+      }
+    } catch (e) {
+      const fallbackTags = getUserTags ? getUserTags(currentUser.phone) : [];
+      setUserTags(fallbackTags);
+    } finally {
+      setIsLoadingDashboard(false);
+    }
+  }, [currentUser, getUserTags]);
+
   useEffect(() => {
     if (!currentUser) {
       navigate('/login');
     } else {
-      setUserTags(getUserTags(currentUser.phone));
       const parts = (currentUser.name || '').trim().split(' ');
       setFirstName(parts[0] || 'Rahul');
       setLastName(parts.slice(1).join(' ') || 'Sharma');
       setEmail(currentUser.email || 'rahul.sharma@example.com');
       setPhoneNumber(currentUser.phone || '');
       setGender(currentUser.gender || 'Male');
+      loadDashboardData();
     }
-  }, [currentUser, navigate, getUserTags]);
+  }, [currentUser, navigate, loadDashboardData]);
 
   const showNotification = (msg) => {
     setSaveSuccessMsg(msg);

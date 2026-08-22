@@ -1,16 +1,62 @@
-import React, { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Star, Truck, ShieldCheck, RefreshCcw, CheckCircle, ArrowRight, Minus, Plus, CreditCard } from 'lucide-react';
 import PageHero from '../components/PageHero';
+import api from '../services/api';
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
+  const [liveProduct, setLiveProduct] = useState(null);
+
+  // Fetch product from live backend if valid ID
+  useEffect(() => {
+    async function loadProduct() {
+      if (id && id.length > 10) {
+        try {
+          const res = await api.getProductById(id);
+          if (res.success && res.product) {
+            setLiveProduct(res.product);
+          }
+        } catch (e) {
+          console.log('Using catalog fallback for product id:', id);
+        }
+      }
+    }
+    loadProduct();
+  }, [id]);
 
   const getProductData = () => {
+    if (liveProduct) {
+      return {
+        _id: liveProduct._id,
+        name: liveProduct.title || 'SafeDrive QR Kit',
+        sub: liveProduct.description || 'Premium SafeDrive QR Protection',
+        price: liveProduct.price || 299,
+        oldPrice: liveProduct.originalPrice || liveProduct.price + 100,
+        rating: 4.8,
+        reviews: 2150,
+        desc: liveProduct.description || 'Premium reflective waterproof QR stickers for your vehicle.',
+        features: liveProduct.features || [
+          'Instant Masked Voice Calling to Owner',
+          'WhatsApp Emergency Alert',
+          '2 Physical Reflective Waterproof Stickers',
+          '1-Year Validity Included'
+        ],
+        images: [
+          liveProduct.imageUrl || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80'
+        ],
+        dark: true,
+      };
+    }
+
     if (id === 'car') {
       return {
+        _id: 'prod_car_kit',
         name: 'SafeDrive Car Tag',
         sub: 'Pack of 2 Premium QR Stickers',
         price: 399,
@@ -28,6 +74,7 @@ export default function ProductDetail() {
       };
     } else if (id === 'luggage' || id === 'bag') {
       return {
+        _id: 'prod_luggage_kit',
         name: 'SafeDrive Luggage & Bag Tag',
         sub: 'Pack of 2 Metallic QR Badges with Steel Cables',
         price: 249,
@@ -45,6 +92,7 @@ export default function ProductDetail() {
       };
     } else {
       return {
+        _id: 'prod_bike_kit',
         name: 'SafeDrive Bike Tag',
         sub: 'Pack of 1 Premium QR Sticker',
         price: 299,
@@ -65,6 +113,23 @@ export default function ProductDetail() {
 
   const product = getProductData();
 
+  const handleBuyNow = () => {
+    navigate('/checkout', {
+      state: {
+        product: {
+          productId: product._id,
+          title: product.name,
+          description: product.sub,
+          price: product.price,
+          originalPrice: product.oldPrice,
+          imageUrl: product.images[0],
+          qrType: 'PHYSICAL',
+        },
+        quantity: qty,
+      },
+    });
+  };
+
   return (
     <div className="bg-[#FAF8F5] min-h-screen pb-24 selection:bg-orange-500/30">
       
@@ -75,12 +140,12 @@ export default function ProductDetail() {
         description={product.sub}
       >
         {/* Breadcrumb inside Hero */}
-        <div className="flex items-center justify-center gap-2 text-xs text-black/50 font-bold uppercase tracking-wider pt-1">
-          <Link to="/" className="hover:text-orange-600 transition-colors">Home</Link>
+        <div className="flex items-center justify-center gap-2 text-xs text-white/50 font-bold uppercase tracking-wider pt-1">
+          <Link to="/" className="hover:text-orange-500 transition-colors">Home</Link>
           <span>/</span>
-          <Link to="/shop" className="hover:text-orange-600 transition-colors">Shop</Link>
+          <Link to="/shop" className="hover:text-orange-500 transition-colors">Shop</Link>
           <span>/</span>
-          <span className="text-black font-extrabold">{product.name}</span>
+          <span className="text-white font-extrabold">{product.name}</span>
         </div>
       </PageHero>
 
@@ -102,7 +167,7 @@ export default function ProductDetail() {
                 <button 
                   key={idx}
                   onClick={() => setActiveImage(idx)}
-                  className={`w-24 aspect-square rounded-xl overflow-hidden border-2 transition-all ${activeImage === idx ? 'border-orange-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                  className={`w-24 aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${activeImage === idx ? 'border-orange-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
                 >
                   <img src={img} alt="thumbnail" className="w-full h-full object-cover" />
                 </button>
@@ -145,14 +210,17 @@ export default function ProductDetail() {
 
             <div className="flex flex-col sm:flex-row gap-4 mt-auto">
               <div className="flex items-center justify-between bg-black/5 rounded-full px-4 py-3 sm:w-32 border border-black/10">
-                <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-black/50 hover:text-black transition-colors p-1"><Minus size={18} /></button>
+                <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-black/50 hover:text-black transition-colors p-1 cursor-pointer"><Minus size={18} /></button>
                 <span className="font-bold text-black">{qty}</span>
-                <button onClick={() => setQty(qty + 1)} className="text-black/50 hover:text-black transition-colors p-1"><Plus size={18} /></button>
+                <button onClick={() => setQty(qty + 1)} className="text-black/50 hover:text-black transition-colors p-1 cursor-pointer"><Plus size={18} /></button>
               </div>
               
-              <Link to="/checkout" className="flex-1 bg-green-500 text-white flex items-center justify-center gap-2 rounded-full py-4 font-black text-lg hover:bg-green-600 transition-all shadow-[0_8px_30px_rgba(34,197,94,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(34,197,94,0.4)]">
+              <button 
+                onClick={handleBuyNow}
+                className="flex-1 bg-green-500 text-white flex items-center justify-center gap-2 rounded-full py-4 font-black text-lg hover:bg-green-600 transition-all shadow-[0_8px_30px_rgba(34,197,94,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(34,197,94,0.4)] cursor-pointer"
+              >
                 Buy Now — ₹{product.price * qty} <ArrowRight size={20} />
-              </Link>
+              </button>
             </div>
 
             {/* Trust Badges */}

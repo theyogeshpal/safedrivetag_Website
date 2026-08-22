@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Smartphone, ArrowRight, CheckCircle2, Lock, RefreshCw, KeyRound, Shield, QrCode } from 'lucide-react';
+import { Smartphone, ArrowRight, CheckCircle2, Lock, RefreshCw, KeyRound } from 'lucide-react';
 
 export default function Login() {
   const { currentUser, sendOtp, verifyOtp } = useAuth();
   const navigate = useNavigate();
 
   const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '']);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -47,15 +47,19 @@ export default function Login() {
 
     setIsLoading(true);
     try {
-      await sendOtp(cleanPhone);
-      setStep(2);
-      setResendTimer(30);
-      setCanResend(false);
-      setTimeout(() => {
-        if (otpInputRefs.current[0]) {
-          otpInputRefs.current[0].focus();
-        }
-      }, 100);
+      const res = await sendOtp(cleanPhone);
+      if (res.success) {
+        setStep(2);
+        setResendTimer(30);
+        setCanResend(false);
+        setTimeout(() => {
+          if (otpInputRefs.current[0]) {
+            otpInputRefs.current[0].focus();
+          }
+        }, 100);
+      } else {
+        setError(res.message || 'Failed to send OTP.');
+      }
     } catch (err) {
       setError('Failed to send OTP. Please try again.');
     } finally {
@@ -65,13 +69,13 @@ export default function Login() {
 
   const handleOtpChange = (index, value) => {
     if (value.length > 1) {
-      const digits = value.replace(/\D/g, '').slice(0, 4).split('');
+      const digits = value.replace(/\D/g, '').slice(0, 6).split('');
       const newOtp = [...otp];
       digits.forEach((d, idx) => {
-        if (idx < 4) newOtp[idx] = d;
+        if (idx < 6) newOtp[idx] = d;
       });
       setOtp(newOtp);
-      const nextIdx = Math.min(digits.length, 3);
+      const nextIdx = Math.min(digits.length, 5);
       otpInputRefs.current[nextIdx]?.focus();
       return;
     }
@@ -80,7 +84,7 @@ export default function Login() {
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
 
-    if (value && index < 3) {
+    if (value && index < 5) {
       otpInputRefs.current[index + 1]?.focus();
     }
   };
@@ -96,8 +100,8 @@ export default function Login() {
     setError('');
     const fullOtp = otp.join('');
 
-    if (fullOtp.length !== 4) {
-      setError('Please enter the full 4-digit OTP code.');
+    if (fullOtp.length < 4) {
+      setError('Please enter the verification OTP code.');
       return;
     }
 
@@ -123,11 +127,15 @@ export default function Login() {
     setIsLoading(true);
     try {
       const cleanPhone = phone.replace(/\D/g, '');
-      await sendOtp(cleanPhone);
-      setResendTimer(30);
-      setCanResend(false);
-      setOtp(['', '', '', '']);
-      otpInputRefs.current[0]?.focus();
+      const res = await sendOtp(cleanPhone);
+      if (res.success) {
+        setResendTimer(30);
+        setCanResend(false);
+        setOtp(['', '', '', '', '', '']);
+        otpInputRefs.current[0]?.focus();
+      } else {
+        setError(res.message || 'Failed to resend OTP.');
+      }
     } catch (err) {
       setError('Failed to resend OTP.');
     } finally {
@@ -136,11 +144,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-orange-50/40 flex items-center justify-center pt-24 pb-16 px-4 relative overflow-hidden">
-      {/* Background Glows */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-400/10 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-green-400/10 rounded-full blur-[100px] pointer-events-none" />
-
+    <div className="min-h-screen bg-orange-50/40 flex items-center justify-center pt-24 pb-16 px-4 relative overflow-hidden font-sans">
       <div className="max-w-md w-full relative z-10">
         
         <div className="bg-white rounded-3xl p-7 sm:p-9 shadow-xl shadow-orange-500/5 border border-black/5 animate-fade-up">
@@ -156,7 +160,7 @@ export default function Login() {
             <p className="text-sm text-black/60 mt-1.5 font-medium">
               {step === 1 
                 ? 'Your registered mobile number acts as your account ID' 
-                : `Enter the 4-digit code sent to +91 ${phone}`}
+                : `Enter the code sent to +91 ${phone}`}
             </p>
           </div>
 
@@ -239,18 +243,18 @@ export default function Login() {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-black/70 ml-1">
-                    4-Digit Verification Code
+                    6-Digit Verification Code
                   </label>
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="text-xs text-orange-600 font-bold hover:underline"
+                    className="text-xs text-orange-600 font-bold hover:underline cursor-pointer"
                   >
                     Change Number
                   </button>
                 </div>
 
-                <div className="flex justify-center gap-3 my-3">
+                <div className="flex justify-center gap-2 my-3">
                   {otp.map((digit, idx) => (
                     <input
                       key={idx}
@@ -261,28 +265,28 @@ export default function Login() {
                       value={digit}
                       onChange={(e) => handleOtpChange(idx, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                      className="w-14 h-14 text-center text-2xl font-black rounded-2xl border-2 border-black/10 focus:border-orange-500 focus:bg-orange-50/20 bg-white outline-none transition-all"
+                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-black rounded-xl border-2 border-black/10 focus:border-orange-500 focus:bg-orange-50/20 bg-white outline-none transition-all"
                     />
                   ))}
                 </div>
 
                 <div className="flex items-center justify-between bg-orange-50 border border-orange-100 rounded-xl px-3 py-2 text-xs">
-                  <span className="text-orange-800 font-medium">💡 Demo OTP: <strong>1234</strong></span>
+                  <span className="text-orange-800 font-medium">💡 Dev Test OTP: <strong>123456</strong></span>
                   <button
                     type="button"
-                    onClick={() => setOtp(['1', '2', '3', '4'])}
+                    onClick={() => setOtp(['1', '2', '3', '4', '5', '6'])}
                     className="text-orange-600 font-bold hover:underline cursor-pointer"
                   >
-                    Auto-fill 1234
+                    Auto-fill 123456
                   </button>
                 </div>
               </div>
 
               <button
                 type="submit"
-                disabled={isLoading || otp.join('').length !== 4}
+                disabled={isLoading || otp.join('').length < 4}
                 className={`w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg transition-all ${
-                  otp.join('').length === 4 && !isLoading
+                  otp.join('').length >= 4 && !isLoading
                     ? 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/25 cursor-pointer hover:scale-[1.01]'
                     : 'bg-black/10 text-black/40 cursor-not-allowed'
                 }`}
@@ -295,7 +299,7 @@ export default function Login() {
                 ) : (
                   <>
                     <CheckCircle2 size={18} />
-                    <span>Verify & View My Tags</span>
+                    <span>Verify & View My Dashboard</span>
                   </>
                 )}
               </button>

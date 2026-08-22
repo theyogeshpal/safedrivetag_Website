@@ -86,3 +86,8 @@ body {
 .animate-float {
   animation: float 3.5s ease-in-out infinite;
 }
+
+.carbon-texture-bg {
+  background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+  background-repeat: repeat;
+}
