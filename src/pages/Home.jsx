@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
@@ -6,6 +6,14 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev >= 3 ? 1 : prev + 1));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   const faqs = [
     { q: "What is SafeDriveTag?", a: "SafeDriveTag is a smart QR sticker for your vehicle that lets anyone contact you without revealing your phone number." },
@@ -27,7 +35,7 @@ export default function Home() {
           <div className="space-y-6 animate-fade-up">
             
             
-            <h1 className="text-[2.5rem] font-black text-black leading-[1.1] tracking-tighter">
+            <h1 className="text-[40px] md:text-[60px] font-black text-black leading-[1.1] tracking-tighter">
               Stay reachable in emergencies, stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">private.</span>
             </h1>
 
@@ -63,7 +71,7 @@ export default function Home() {
               </button>
             </div>
             
-            <div className="flex flex-wrap items-center gap-3 pt-6 border-t border-black/10 mt-4">
+            <div className="flex flex-wrap items-center gap-3 pt-6 border-t border-black/10 mt-6">
               <div className="bg-orange-50/80 border border-orange-200/60 px-4 py-2 rounded-xl flex flex-col justify-center cursor-default hover:bg-orange-100 transition-colors">
                 <span className="text-orange-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Trusted Customers</span>
                 <span className="text-orange-700 font-black text-lg leading-none">9.5L+</span>
@@ -96,13 +104,23 @@ export default function Home() {
 
           {/* Hero Side Image */}
           <div className="relative hidden lg:flex justify-center items-center animate-fade-up w-full h-full" style={{ animationDelay: '200ms' }}>
-            <img src="/hero-car.png" alt="SafeDriveTag on Car" className="relative z-10 w-full max-w-[125%] xl:max-w-[140%] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500 translate-x-12" />
+            
+            {/* Floating Privacy Banner (Top Right Area) */}
+            <div className="absolute top-4 right-12 xl:right-16 z-30 max-w-[340px] bg-white/95 backdrop-blur-md border border-green-200 shadow-xl shadow-green-900/5 rounded-2xl p-5 flex gap-4 items-start" style={{ animationDelay: '400ms' }}>
+              <Lock className="w-8 h-8 text-green-500 shrink-0 mt-1" />
+              <div>
+                <p className="text-base font-black text-black mb-1">100% Two-Way Privacy</p>
+                <p className="text-xs text-black/70 leading-relaxed font-medium">Your details are completely safe! When someone scans your tag, they cannot see your number, and you cannot see theirs.</p>
+              </div>
+            </div>
+
+            <img src="/hero-car.png" alt="SafeDriveTag on Car" className="relative z-10 w-full max-w-[150%] xl:max-w-[180%] scale-110 xl:scale-125 object-contain drop-shadow-2xl hover:scale-110 transition-transform duration-500 translate-x-8 xl:translate-x-16" />
           </div>
         </div>
       </section>
 
       {/* --- MARQUEE --- */}
-      <div className="border-y border-black/10 bg-white py-5 overflow-hidden shadow-sm relative z-20">
+      <div className="border-y border-black/10 bg-white py-5 overflow-hidden shadow-sm relative z-20 -rotate-2 scale-105 my-8">
         <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
           {[...Array(2)].map((_, i) => (
             <div key={i} className="flex items-center gap-12 px-6">
@@ -226,40 +244,40 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8 relative">
             {/* The Connecting Line with Left-to-Right Fill Animation */}
             <div className="hidden md:block absolute top-[48px] left-[16%] w-[68%] h-1 bg-black/5 z-0 overflow-hidden rounded-full">
-              <div className="h-full bg-gradient-to-r from-orange-300 to-orange-500 w-full animate-progress rounded-full"></div>
+              <div className="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-1000 ease-in-out rounded-full" style={{ width: activeStep === 1 ? '0%' : activeStep === 2 ? '50%' : '100%' }}></div>
             </div>
             
             {/* Step 1 */}
-            <div className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-24 h-24 bg-white border-4 border-white rounded-full flex items-center justify-center shadow-xl group-hover:border-orange-500 group-hover:scale-110 transition-all duration-500 mb-6 relative">
-                <Car className="w-10 h-10 text-black/80 group-hover:text-orange-500 transition-colors" />
-                <span className="absolute -top-2 -right-2 bg-black text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white">1</span>
+            <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(1)}>
+              <div className={`w-24 h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-6 relative ${activeStep === 1 ? 'border-orange-500 scale-110 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
+                <Car className={`w-10 h-10 transition-colors duration-500 ${activeStep === 1 ? 'text-orange-500' : 'text-black/80'}`} />
+                <span className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white transition-colors duration-500 ${activeStep === 1 ? 'bg-orange-500 text-white' : 'bg-black text-white'}`}>1</span>
               </div>
-              <div className="bg-white p-6 rounded-2xl border border-black/5 group-hover:shadow-lg transition-all w-full">
+              <div className={`bg-white p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 1 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-black/5 shadow-sm'}`}>
                 <h4 className="font-black text-black mb-3">Stick the Tag</h4>
                 <p className="text-black/60">Place the premium QR sticker on your car or bike's windshield.</p>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-24 h-24 bg-white border-4 border-white rounded-full flex items-center justify-center shadow-xl group-hover:border-orange-500 group-hover:scale-110 transition-all duration-500 mb-6 relative">
-                <QrCode className="w-10 h-10 text-black/80 group-hover:text-orange-500 transition-colors" />
-                <span className="absolute -top-2 -right-2 bg-black text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white">2</span>
+            <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(2)}>
+              <div className={`w-24 h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-6 relative ${activeStep === 2 ? 'border-orange-500 scale-110 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
+                <QrCode className={`w-10 h-10 transition-colors duration-500 ${activeStep === 2 ? 'text-orange-500' : 'text-black/80'}`} />
+                <span className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white transition-colors duration-500 ${activeStep === 2 ? 'bg-orange-500 text-white' : 'bg-black text-white'}`}>2</span>
               </div>
-              <div className="bg-white p-6 rounded-2xl border border-black/5 group-hover:shadow-lg transition-all w-full">
+              <div className={`bg-white p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-black/5 shadow-sm'}`}>
                 <h4 className="font-black text-black mb-3">Someone Scans It</h4>
                 <p className="text-black/60">In case of accident or wrong parking, any random person can scan it.</p>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-24 h-24 bg-white border-4 border-white rounded-full flex items-center justify-center shadow-xl group-hover:border-orange-500 group-hover:scale-110 transition-all duration-500 mb-6 relative">
-                <Phone className="w-10 h-10 text-black/80 group-hover:text-orange-500 transition-colors" />
-                <span className="absolute -top-2 -right-2 bg-black text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white">3</span>
+            <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(3)}>
+              <div className={`w-24 h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-6 relative ${activeStep === 3 ? 'border-orange-500 scale-110 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
+                <Phone className={`w-10 h-10 transition-colors duration-500 ${activeStep === 3 ? 'text-orange-500' : 'text-black/80'}`} />
+                <span className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white transition-colors duration-500 ${activeStep === 3 ? 'bg-orange-500 text-white' : 'bg-black text-white'}`}>3</span>
               </div>
-              <div className="bg-white p-6 rounded-2xl border border-black/5 group-hover:shadow-lg transition-all w-full">
+              <div className={`bg-white p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 3 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-black/5 shadow-sm'}`}>
                 <h4 className="font-black text-black mb-3">Direct Contact</h4>
                 <p className="text-black/60">They choose an option (e.g., Wrong Parking) and contact you via WhatsApp or Masked Call.</p>
               </div>
@@ -335,7 +353,7 @@ export default function Home() {
       <section className="py-8 px-6 relative bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-6 animate-fade-up">
-            <span className="text-orange-500 font-black tracking-widest text-[10px] uppercase mb-1 block">Innovation</span>
+            <span className="text-orange-500 font-black tracking-widest text-sm md:text-base uppercase mb-1 block">Innovation</span>
             <h2 className="text-3xl md:text-4xl font-black text-black">Smart features, simple setup.</h2>
           </div>
 
@@ -348,8 +366,10 @@ export default function Home() {
                 <div className="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mb-3 border border-orange-100">
                   <Phone className="w-5 h-5" />
                 </div>
-                <h4 className="text-lg font-black text-black mb-1">Masked Calling Engine</h4>
-                <p className="text-black/60 text-sm max-w-md leading-relaxed">Our secure bridge routes calls to your phone without ever exposing your real number to the scanner.</p>
+                <h4 className="text-xl md:text-2xl font-black text-black mb-2">100% Two-Way Number Masking</h4>
+                <p className="text-black/60 text-base max-w-md leading-relaxed">
+                  Total privacy for everyone. When a stranger scans and calls, <strong className="text-orange-500">their number is hidden from you</strong>, and <strong className="text-orange-500">your number is hidden from them</strong>. Complete anonymity guaranteed.
+                </p>
               </div>
 
               <div className="relative z-10 w-28 h-28 shrink-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity">
@@ -369,8 +389,8 @@ export default function Home() {
                 <div className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-3 border border-green-100">
                   <QrCode className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-black text-black mb-1">Universal Scan</h4>
-                <p className="text-black/60 text-xs">Scannable by any default iOS or Android camera. No app downloads required.</p>
+                <h4 className="text-lg md:text-xl font-black text-black mb-1">Universal Scan</h4>
+                <p className="text-black/60 text-sm">Scannable by any default iOS or Android camera. No app downloads required.</p>
               </div>
             </div>
 
@@ -381,8 +401,8 @@ export default function Home() {
                 <div className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-3 border border-green-100">
                   <BellRing className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-black text-black mb-1">Instant Alerts</h4>
-                <p className="text-black/60 text-xs">Get WhatsApp and SMS notifications the moment someone scans your tag.</p>
+                <h4 className="text-lg md:text-xl font-black text-black mb-1">Instant Alerts</h4>
+                <p className="text-black/60 text-sm">Get WhatsApp and SMS notifications the moment someone scans your tag.</p>
               </div>
             </div>
 
@@ -392,8 +412,8 @@ export default function Home() {
                 <div className="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mb-3 border border-orange-100">
                   <BellRing className="w-5 h-5" />
                 </div>
-                <h4 className="text-lg font-black text-black mb-1">Unlimited Push Notifications</h4>
-                <p className="text-black/60 text-sm leading-relaxed">Get instantly notified on your phone whenever someone scans your vehicle tag. Pay once and stay connected forever without any limits.</p>
+                <h4 className="text-xl md:text-2xl font-black text-black mb-1">Unlimited Push Notifications</h4>
+                <p className="text-black/60 text-base leading-relaxed">Get instantly notified on your phone whenever someone scans your vehicle tag. Pay once and stay connected forever without any limits.</p>
               </div>
               <div className="w-24 h-24 shrink-0 relative">
                 <div className="absolute inset-0 border-[4px] border-orange-100 rounded-full border-t-orange-500 animate-spin" style={{ animationDuration: '3s' }}></div>
@@ -407,7 +427,7 @@ export default function Home() {
       </section>
 
       {/* --- FAQ --- */}
-      <section className="py-32 px-6 bg-white">
+      <section className="py-32 px-6 bg-[#fcfaf5]">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           
           <div className="text-center md:text-left mb-10 md:mb-0 animate-fade-up">

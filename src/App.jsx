@@ -12,6 +12,7 @@ import Checkout from './pages/Checkout';
 import Legal from './pages/Legal';
 
 import QRScan from './pages/QRScan';
+import RegisterTag from './pages/RegisterTag';
 import NotFound from './pages/NotFound';
 
 function ScrollToTop() {
@@ -43,6 +44,7 @@ function App() {
             <Route path="/refund" element={<Legal />} />
             <Route path="/shipping" element={<Legal />} />
             <Route path="/scan/:id" element={<QRScan />} />
+            <Route path="/register/:id" element={<RegisterTag />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

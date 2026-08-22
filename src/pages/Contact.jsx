@@ -40,7 +40,7 @@ export default function Contact() {
                 title: 'WhatsApp',
                 sub: 'Fastest way to reach us',
                 action: 'Chat on WhatsApp',
-                href: '#',
+                href: 'https://wa.me/919876543210?text=Hello%20SafeDriveTag%20Team',
               },
               {
                 icon: <Mail className="w-7 h-7 text-green-600" />,
@@ -64,7 +64,9 @@ export default function Contact() {
               <a
                 key={title}
                 href={href}
-                className="flex items-center gap-5 p-6 bg-white border border-black/10 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group"
+                target={title === 'WhatsApp' ? "_blank" : undefined}
+                rel={title === 'WhatsApp' ? "noopener noreferrer" : undefined}
+                className="flex items-center gap-5 p-6 bg-white border border-black/10 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group cursor-pointer"
               >
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border ${bg} ${border}`}>
                   {icon}

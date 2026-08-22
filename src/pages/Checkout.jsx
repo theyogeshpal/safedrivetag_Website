@@ -57,35 +57,7 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Step 2: Payment */}
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-black/5">
-              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-black/5">
-                <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-black text-sm">2</div>
-                <h2 className="text-xl font-black text-black">Payment Method</h2>
-              </div>
-              
-              <div className="space-y-3">
-                {[
-                  { id: 'upi', label: 'UPI (GPay, PhonePe, Paytm)', icon: <Smartphone className="w-5 h-5 text-black/60" /> },
-                  { id: 'card', label: 'Credit / Debit Card', icon: <CreditCard className="w-5 h-5 text-black/60" /> },
-                  { id: 'cod', label: 'Cash on Delivery (COD)', icon: <Banknote className="w-5 h-5 text-black/60" /> },
-                ].map(m => (
-                  <div 
-                    key={m.id}
-                    onClick={() => setMethod(m.id)}
-                    className={`flex items-center justify-between p-4 rounded-2xl cursor-pointer border-2 transition-all ${method === m.id ? 'border-orange-500 bg-orange-50' : 'border-black/5 bg-white hover:border-black/10'}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${method === m.id ? 'border-orange-500' : 'border-black/20'}`}>
-                        {method === m.id && <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />}
-                      </div>
-                      <span className="font-bold text-black">{m.label}</span>
-                    </div>
-                    <div className="text-black/40 shrink-0">{m.icon}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+
 
           </div>
 
