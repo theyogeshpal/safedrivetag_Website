@@ -26,19 +26,22 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
-  // Selected product from navigation or default
-  const selectedProduct = location.state?.product || {
-    productId: '66c7f8a1e2b4c3d4e5f6a7b8',
-    title: 'Car Safety QR Protection Kit (2 Stickers)',
-    description: 'Pack of 2 Premium Reflective QR Stickers',
-    price: 399,
-    originalPrice: 499,
-    quantity: location.state?.quantity || 1,
-    qrType: 'PHYSICAL',
-    imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
-  };
+  // Selected product state
+  const [selectedProduct, setSelectedProduct] = useState(
+    location.state?.product || {
+      productId: '6a899b9e719bda67dc3b1a66',
+      _id: '6a899b9e719bda67dc3b1a66',
+      title: 'Car Safety Kit Protection',
+      description: 'Premium reflective waterproof QR stickers for your vehicle.',
+      price: 299,
+      originalPrice: 499,
+      quantity: location.state?.quantity || 1,
+      qrType: 'PHYSICAL',
+      imageUrl: 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
+    }
+  );
 
-  const [quantity, setQuantity] = useState(selectedProduct.quantity || 1);
+  const [quantity, setQuantity] = useState(location.state?.quantity || 1);
   const totalAmount = selectedProduct.price * quantity;
 
   const [formData, setFormData] = useState({
@@ -55,9 +58,34 @@ export default function Checkout() {
   const [error, setError] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(null);
 
+  // Sync real product from backend if none passed or initial load
   useEffect(() => {
     loadRazorpayScript();
-  }, []);
+
+    async function syncBackendProducts() {
+      if (!location.state?.product) {
+        try {
+          const res = await api.getProducts();
+          if (res.success && res.products && res.products.length > 0) {
+            const first = res.products[0];
+            setSelectedProduct({
+              productId: first._id,
+              _id: first._id,
+              title: first.title || first.name,
+              description: first.description,
+              price: first.price,
+              originalPrice: first.originalPrice,
+              qrType: first.qrType || 'PHYSICAL',
+              imageUrl: first.imageUrl,
+            });
+          }
+        } catch (e) {
+          console.error('Error fetching default checkout product', e);
+        }
+      }
+    }
+    syncBackendProducts();
+  }, [location.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,8 +102,8 @@ export default function Checkout() {
       return;
     }
 
-    if (!formData.firstName.trim() || !formData.shippingAddress.trim() || !formData.pincode.trim()) {
-      setError('Please fill in all mandatory shipping address fields.');
+    if (!formData.firstName.trim() || !formData.shippingAddress.trim() || !formData.pincode.trim() || !formData.email.trim()) {
+      setError('Please fill in all mandatory contact & delivery fields (Name, Phone, Email, Address, City, PIN code).');
       return;
     }
 
@@ -84,14 +112,16 @@ export default function Checkout() {
       const customerFullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
       const customerEmail = formData.email.trim();
       const streetAddress = formData.shippingAddress.trim();
-      const cityVal = formData.city.trim();
+      const cityVal = formData.city.trim() || 'City';
       const pinVal = formData.pincode.trim();
       const fullAddress = `${streetAddress}, ${cityVal} - ${pinVal}`;
 
+      const resolvedProductId = selectedProduct.productId || selectedProduct._id || '6a899b9e719bda67dc3b1a66';
+
       const items = [
         {
-          productId: selectedProduct.productId || selectedProduct._id || '66c7f8a1e2b4c3d4e5f6a7b8',
-          title: selectedProduct.title || selectedProduct.name || 'Car Safety QR Protection Kit',
+          productId: resolvedProductId,
+          title: selectedProduct.title || selectedProduct.name || 'Car Safety Kit Protection',
           quantity: Number(quantity),
           price: Number(selectedProduct.price),
           qrType: selectedProduct.qrType || 'PHYSICAL',
@@ -118,12 +148,12 @@ export default function Checkout() {
       const isScriptLoaded = await loadRazorpayScript();
 
       if (!isScriptLoaded || !window.Razorpay) {
-        // Fallback: direct completion if script couldn't be loaded (e.g. strict CSP / offline)
-        console.warn('Razorpay script not available, proceeding to complete purchase directly.');
+        console.warn('Razorpay script not available, completing purchase directly.');
         const completeRes = await api.completePurchase({
           razorpay_order_id: createRes.orderId || `order_mock_${Date.now()}`,
           razorpay_payment_id: `pay_direct_${Date.now()}`,
           razorpay_signature: 'mock_signature_valid',
+          amount: totalAmount,
           customerName: customerFullName,
           customerPhone: cleanPhone,
           customerEmail: customerEmail,
@@ -162,6 +192,7 @@ export default function Checkout() {
               razorpay_order_id: paymentResponse.razorpay_order_id || createRes.orderId || `order_${Date.now()}`,
               razorpay_payment_id: paymentResponse.razorpay_payment_id || `pay_${Date.now()}`,
               razorpay_signature: paymentResponse.razorpay_signature || 'mock_signature_valid',
+              amount: totalAmount,
               customerName: customerFullName,
               customerPhone: cleanPhone,
               customerEmail: customerEmail,
@@ -383,7 +414,7 @@ export default function Checkout() {
                       value={formData.city}
                       onChange={handleChange}
                       className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
-                      placeholder="Jaipur / Delhi / Mumbai" 
+                      placeholder="Jaipur / Delhi / Bareilly" 
                     />
                   </div>
                   <div className="space-y-1.5">
