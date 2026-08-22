@@ -16,6 +16,7 @@ import QRScan from './pages/QRScan';
 import RegisterTag from './pages/RegisterTag';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 
 function ScrollToTop() {
@@ -50,6 +51,7 @@ function App() {
               <Route path="/shipping" element={<Legal />} />
               <Route path="/login" element={<Login />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="/q/:id" element={<QRScan />} />
               <Route path="/qr/:id" element={<QRScan />} />
               <Route path="/scan/:id" element={<QRScan />} />

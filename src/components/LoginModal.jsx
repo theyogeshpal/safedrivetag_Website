@@ -228,17 +228,6 @@ export default function LoginModal() {
               </div>
             </div>
 
-            {/* Quick Demo Fill Helper */}
-            <div className="flex items-center justify-between text-xs pt-1">
-              <span className="text-black/50">Test with demo account?</span>
-              <button
-                type="button"
-                onClick={fillDemoAccount}
-                className="text-orange-600 hover:text-orange-700 font-bold underline cursor-pointer"
-              >
-                Use Demo (9876543210)
-              </button>
-            </div>
 
             <button
               type="submit"
@@ -303,17 +292,7 @@ export default function LoginModal() {
                 ))}
               </div>
 
-              {/* Demo OTP Helper */}
-              <div className="flex items-center justify-between bg-orange-50 border border-orange-100 rounded-xl px-3 py-2 text-xs">
-                <span className="text-orange-800 font-medium">💡 Dev Test OTP: <strong>123456</strong></span>
-                <button
-                  type="button"
-                  onClick={fillDemoOtp}
-                  className="text-orange-600 font-bold hover:underline cursor-pointer"
-                >
-                  Auto-fill 123456
-                </button>
-              </div>
+
             </div>
 
             <button

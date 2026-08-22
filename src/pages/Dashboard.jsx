@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import downloadInvoicePdf from '../utils/invoiceGenerator';
+import { openDigitalPdf, printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
+import PageLoader from '../components/PageLoader';
 import {
   User,
   Package,
@@ -846,6 +848,13 @@ export default function Dashboard() {
                               </button>
 
                               <button
+                                onClick={() => printDigitalPdfInColor({ title: tag.vehicleName, publicToken: tag.publicToken || tag.id, vehicleNumber: tag.vehicleNumber })}
+                                className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                              >
+                                <Printer size={13} /> Print Color Badge
+                              </button>
+
+                              <button
                                 onClick={() => handleToggleStatus(tag.id, tag.status)}
                                 className={`px-3 py-1.5 rounded text-xs font-bold transition-colors cursor-pointer ${
                                   isActive
@@ -1242,17 +1251,27 @@ export default function Dashboard() {
                         {/* Actions */}
                         <div className="flex md:flex-col gap-2 w-full md:w-auto">
                           <button
-                            onClick={() => alert(`Tracking information for ${order.id}: Dispatched via Express Courier. Tracking ID: EXP-${order.id?.toString().slice(-6)}`)}
-                            className="flex-1 md:flex-none bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                          >
-                            <Truck size={13} /> Track Order
-                          </button>
-                          <button
                             onClick={() => downloadInvoicePdf(order, currentUser)}
                             className="flex-1 md:flex-none border border-[#2874f0] text-[#2874f0] hover:bg-blue-50 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
                             title="Direct 1-Click PDF Download"
                           >
-                            <Download size={13} /> Download Invoice
+                            <Download size={13} /> Invoice
+                          </button>
+
+                          <button
+                            onClick={() => openDigitalPdf(order)}
+                            className="flex-1 md:flex-none bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                            title="Open Digital QR Kit PDF"
+                          >
+                            <Eye size={13} /> Open PDF
+                          </button>
+
+                          <button
+                            onClick={() => printDigitalPdfInColor(order)}
+                            className="flex-1 md:flex-none bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                            title="Print High-Resolution Color PDF Badges"
+                          >
+                            <Printer size={13} /> Print Color PDF
                           </button>
                         </div>
 

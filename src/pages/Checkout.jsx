@@ -769,17 +769,6 @@ export default function Checkout() {
                 ))}
               </div>
 
-              {/* Dev Test Helper */}
-              <div className="flex items-center justify-between bg-orange-50 border border-orange-100 rounded-xl px-3 py-2 text-xs">
-                <span className="text-orange-800 font-medium">💡 Dev Test OTP: <strong>123456</strong></span>
-                <button
-                  type="button"
-                  onClick={() => setOtp(['1', '2', '3', '4', '5', '6'])}
-                  className="text-orange-600 font-bold hover:underline cursor-pointer"
-                >
-                  Auto-fill 123456
-                </button>
-              </div>
 
               <button
                 type="submit"

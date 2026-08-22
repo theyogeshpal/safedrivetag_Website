@@ -11,10 +11,15 @@ import {
   CreditCard,
   RefreshCw,
   AlertCircle,
-  PackageOpen
+  PackageOpen,
+  Eye,
+  Printer,
+  Sparkles
 } from 'lucide-react';
 import PageHero from '../components/PageHero';
+import PageLoader from '../components/PageLoader';
 import api from '../services/api';
+import { openDigitalPdf, printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -117,14 +122,9 @@ export default function ProductDetail() {
     });
   };
 
-  // Loading State
+  // Loading State with Branded PageLoader
   if (isLoading) {
-    return (
-      <div className="bg-[#FAF8F5] min-h-screen pb-24 font-sans flex flex-col items-center justify-center">
-        <RefreshCw className="w-10 h-10 text-orange-500 animate-spin mb-4" />
-        <p className="text-black/60 font-bold text-sm">Loading product details from server...</p>
-      </div>
-    );
+    return <PageLoader text="Loading SafeDrive product details..." fullScreen={true} />;
   }
 
   // Error / Not Found State
@@ -155,6 +155,8 @@ export default function ProductDetail() {
       </div>
     );
   }
+
+  const isDigitalProduct = product.qrType === 'DIGITAL';
 
   return (
     <div className="bg-[#FAF8F5] min-h-screen pb-24 selection:bg-orange-500/30 font-sans">
@@ -194,8 +196,10 @@ export default function ProductDetail() {
                 </div>
               )}
               
-              <span className="absolute top-4 left-4 bg-green-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
-                Official SafeDrive
+              <span className={`absolute top-4 left-4 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg ${
+                isDigitalProduct ? 'bg-purple-600' : 'bg-green-500'
+              }`}>
+                {isDigitalProduct ? 'Instant Digital Kit' : 'Official Physical Kit'}
               </span>
             </div>
 
@@ -213,10 +217,46 @@ export default function ProductDetail() {
                 ))}
               </div>
             )}
+
+            {/* Digital Kit Preview Buttons */}
+            {isDigitalProduct && (
+              <div className="bg-purple-50/70 border border-purple-200/80 rounded-2xl p-4 space-y-2.5">
+                <div className="flex items-center gap-2 text-purple-900 font-bold text-xs">
+                  <Sparkles size={14} className="text-purple-600" />
+                  <span>Digital E-Kit: Instant Download & Print Ready</span>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openDigitalPdf(product)}
+                    className="flex-1 bg-white hover:bg-purple-100/50 text-purple-800 border border-purple-300 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Eye size={13} /> Open PDF
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => printDigitalPdfInColor(product)}
+                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-purple-600/20 cursor-pointer"
+                  >
+                    <Printer size={13} /> Print Color PDF
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Product Info */}
           <div className="md:w-1/2 flex flex-col">
+            <div className="flex items-center gap-2 mb-2">
+              <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md ${
+                isDigitalProduct 
+                  ? 'bg-purple-100 text-purple-700 border border-purple-200' 
+                  : 'bg-orange-100 text-orange-700 border border-orange-200'
+              }`}>
+                {isDigitalProduct ? '⚡ INSTANT DIGITAL PASS' : '📦 3M PHYSICAL STICKERS'}
+              </span>
+            </div>
+
             <h1 className="text-3xl sm:text-4xl font-black text-black mb-2 tracking-tight">{product.name}</h1>
             <p className="text-base sm:text-lg text-black/50 font-medium mb-4">{product.sub}</p>
             
@@ -295,8 +335,8 @@ export default function ProductDetail() {
                   <Truck className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-black">Express Delivery</p>
-                  <p className="text-[11px] text-black/50">3-5 Days Across India</p>
+                  <p className="text-xs font-black text-black">{isDigitalProduct ? 'Instant Delivery' : 'Express Delivery'}</p>
+                  <p className="text-[11px] text-black/50">{isDigitalProduct ? 'Instant PDF In Dashboard' : '3-5 Days Across India'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
