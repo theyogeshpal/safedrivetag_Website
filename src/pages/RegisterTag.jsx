@@ -206,19 +206,26 @@ export default function RegisterTag() {
         },
       ];
 
-      const payload = {
-        name: name.trim() || `Owner ${cleanPhone.slice(-4)}`,
-        phone: cleanPhone,
-        whatsappNumber: formData.whatsappNumber.replace(/\D/g, '') || cleanPhone,
-        address: formData.address.trim() || 'Not specified',
-        vehicleBrand: formData.vehicleBrand.trim() || formData.vehicleType,
-        vehicleName: formData.vehicleName.trim() || 'My Vehicle',
-        vehicleNumber: formData.vehicleNumber.trim().toUpperCase(),
-        emergencyContacts,
-      };
-
       const res = await api.registerQrKit(token, payload);
-      if (res.success) {
+      if (res.success || res.status === 200 || res.message?.toLowerCase().includes('success') || res.kit) {
+        // Cache locally for instant Dashboard reflection
+        try {
+          const existing = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
+          existing[token] = {
+            ...payload,
+            token,
+            status: 'active',
+            registeredAt: new Date().toISOString(),
+          };
+          if (res.copyCode || res.kit?.copies?.[0]?.copyCode) {
+            const cc = res.copyCode || res.kit?.copies?.[0]?.copyCode;
+            existing[cc] = existing[token];
+          }
+          localStorage.setItem('safedrive_registered_tags', JSON.stringify(existing));
+        } catch (storageErr) {
+          console.error('Error saving registered tag cache', storageErr);
+        }
+
         setIsSuccess(true);
         setSuccessData(res);
         if (res.token) {

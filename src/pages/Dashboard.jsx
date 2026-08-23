@@ -178,23 +178,42 @@ export default function Dashboard() {
           });
           setOrders(mappedOrders);
 
+          // Load locally registered tags cache
+          let locallyRegistered = {};
+          try {
+            locallyRegistered = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
+          } catch (e) {
+            console.error('Error reading registered tags cache', e);
+          }
+
           // Extract all allocated QR copies from orders
           ordersRes.orders.forEach((ord) => {
             if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
               ord.allocatedQRIds.forEach((qr, qIdx) => {
+                const token = qr.publicToken || qr.copyCode || qr._id;
+                const copyCode = qr.copyCode || `COPY-${qIdx + 1}`;
+                const regInfo = locallyRegistered[token] || locallyRegistered[copyCode] || locallyRegistered[qr.copyCode];
+
+                const isLinked = !!(qr.vehicleNumber || regInfo?.vehicleNumber);
+                const vehicleNo = qr.vehicleNumber || regInfo?.vehicleNumber || 'Unlinked Tag (Ready to Link)';
+                const vBrand = qr.vehicleBrand || regInfo?.vehicleBrand || '';
+                const vName = qr.vehicleName || regInfo?.vehicleName || `${ord.productName || 'SafeDrive Smart Tag'} (Copy ${qIdx + 1})`;
+                const vTitle = vBrand ? `${vBrand} ${vName}`.trim() : vName;
+
                 allocatedFromOrders.push({
-                  id: qr.copyCode || qr.productId || `SD-ALLOC-${qIdx + 1}`,
-                  publicToken: qr.publicToken || qr.copyCode || qr._id,
-                  copyCode: qr.copyCode || `COPY-${qIdx + 1}`,
+                  id: copyCode,
+                  publicToken: token,
+                  copyCode: copyCode,
                   productId: qr.productId || ord.productName || 'SafeDrive Smart Tag',
-                  name: ord.customerName || currentUser?.name || 'Owner',
-                  phone: ord.customerPhone || currentUser?.phone,
-                  emergencyContact: ord.customerPhone || currentUser?.phone,
-                  whatsapp: ord.customerPhone || currentUser?.phone,
-                  vehicleNumber: qr.vehicleNumber || 'Unlinked Tag (Ready to Link)',
-                  vehicleName: `${ord.productName || 'SafeDrive Smart Tag'} (Copy ${qIdx + 1})`,
-                  vehicleType: qr.qrFor || 'Car',
-                  status: qr.status === 'ACTIVE' ? 'active' : 'unregistered',
+                  name: regInfo?.name || ord.customerName || currentUser?.name || 'Owner',
+                  phone: regInfo?.phone || ord.customerPhone || currentUser?.phone,
+                  emergencyContact: regInfo?.emergencyContacts?.[0]?.number || ord.customerPhone || currentUser?.phone,
+                  emergencyContacts: regInfo?.emergencyContacts || [],
+                  whatsapp: regInfo?.whatsappNumber || ord.customerPhone || currentUser?.phone,
+                  vehicleNumber: vehicleNo,
+                  vehicleName: vTitle,
+                  vehicleType: qr.qrFor || regInfo?.vehicleType || 'Car',
+                  status: isLinked ? 'active' : (qr.status === 'ACTIVE' ? 'active' : 'unregistered'),
                   qrType: qr.qrType || ord.productType || 'DIGITAL',
                   orderNumber: ord.orderNumber,
                   image: ord.productId?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
@@ -223,32 +242,72 @@ export default function Dashboard() {
             setDashboardStats(res.stats);
           }
           if (res.kits && res.kits.length > 0) {
-            mappedTags = res.kits.map((kit, idx) => ({
-              id: kit.copies?.[0]?.copyCode || kit.productId || `SD-${idx + 1}`,
-              publicToken: kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || `pk_live_${idx}`,
-              name: kit.user?.name || currentUser?.name || 'Owner',
-              phone: kit.user?.phone || currentUser?.phone,
-              emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
-              emergencyContacts: kit.vehicle?.emergencyContacts || [],
-              whatsapp: currentUser?.phone,
-              vehicleNumber: kit.vehicle?.vehicleNumber || 'RJ14AB2024',
-              vehicleName: `${kit.vehicle?.vehicleBrand || ''} ${kit.vehicle?.vehicleName || ''}`.trim() || 'My Vehicle',
-              vehicleType: 'Car',
-              status: kit.status?.toLowerCase() || 'active',
-              registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-              expiryDate: kit.expiryDate,
-              callBalance: kit.wallet?.callBalance ?? 10,
-              messageBalance: kit.wallet?.messageBalance ?? 20,
-              scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
-              callMaskingEnabled: true,
-              whatsappAlertsEnabled: true,
-            }));
+            res.kits.forEach((kit, idx) => {
+              const vehicleNo = kit.vehicle?.vehicleNumber || kit.vehicleNumber || kit.plateNumber || 'Protected Vehicle';
+              const vBrand = kit.vehicle?.vehicleBrand || kit.vehicleBrand || '';
+              const vName = kit.vehicle?.vehicleName || kit.vehicleName || kit.productName || 'My Vehicle';
+              const vehicleTitle = vBrand ? `${vBrand} ${vName}`.trim() : vName;
+
+              if (Array.isArray(kit.copies) && kit.copies.length > 0) {
+                kit.copies.forEach((copy, cIdx) => {
+                  mappedTags.push({
+                    id: copy.copyCode || `SD-${idx + 1}C${cIdx + 1}`,
+                    publicToken: copy.publicToken || copy.copyCode,
+                    copyCode: copy.copyCode || `COPY-${cIdx + 1}`,
+                    name: kit.user?.name || currentUser?.name || 'Owner',
+                    phone: kit.user?.phone || currentUser?.phone,
+                    emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
+                    emergencyContacts: kit.vehicle?.emergencyContacts || [],
+                    whatsapp: currentUser?.phone,
+                    vehicleNumber: vehicleNo,
+                    vehicleName: `${vehicleTitle} (Copy ${cIdx + 1})`,
+                    vehicleType: kit.vehicle?.vehicleType || kit.vehicleType || 'Car',
+                    status: (copy.status || kit.status || 'ACTIVE').toLowerCase(),
+                    registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+                    expiryDate: kit.expiryDate,
+                    callBalance: kit.wallet?.callBalance ?? 10,
+                    messageBalance: kit.wallet?.messageBalance ?? 20,
+                    scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
+                    callMaskingEnabled: true,
+                    whatsappAlertsEnabled: true,
+                  });
+                });
+              } else {
+                mappedTags.push({
+                  id: kit.copyCode || kit.productId || `SD-${idx + 1}`,
+                  publicToken: kit.publicToken || kit.token || kit.copies?.[0]?.publicToken || `pk_live_${idx}`,
+                  copyCode: kit.copyCode || `SD-${idx + 1}`,
+                  name: kit.user?.name || currentUser?.name || 'Owner',
+                  phone: kit.user?.phone || currentUser?.phone,
+                  emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
+                  emergencyContacts: kit.vehicle?.emergencyContacts || [],
+                  whatsapp: currentUser?.phone,
+                  vehicleNumber: vehicleNo,
+                  vehicleName: vehicleTitle,
+                  vehicleType: kit.vehicle?.vehicleType || kit.vehicleType || 'Car',
+                  status: (kit.status || 'ACTIVE').toLowerCase(),
+                  registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+                  expiryDate: kit.expiryDate,
+                  callBalance: kit.wallet?.callBalance ?? 10,
+                  messageBalance: kit.wallet?.messageBalance ?? 20,
+                  scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
+                  callMaskingEnabled: true,
+                  whatsappAlertsEnabled: true,
+                });
+              }
+            });
           }
         }
 
         // Merge active kits with allocated QR copies
-        const existingTokens = new Set(mappedTags.map(t => t.publicToken).concat(mappedTags.map(t => t.id)));
-        const uniqueAllocated = allocatedFromOrders.filter(at => !existingTokens.has(at.publicToken) && !existingTokens.has(at.id));
+        const existingTokens = new Set(
+          mappedTags.map(t => t.publicToken)
+            .concat(mappedTags.map(t => t.id))
+            .concat(mappedTags.map(t => t.copyCode))
+        );
+        const uniqueAllocated = allocatedFromOrders.filter(
+          at => !existingTokens.has(at.publicToken) && !existingTokens.has(at.id) && !existingTokens.has(at.copyCode)
+        );
         const allTags = [...mappedTags, ...uniqueAllocated];
 
         if (allTags.length > 0) {
@@ -803,7 +862,8 @@ export default function Dashboard() {
                 ) : (
                   <div className="space-y-4">
                     {userTags.map((tag) => {
-                      const isActive = tag.status === 'active';
+                      const isUnlinked = tag.status === 'unregistered' || !tag.vehicleNumber || tag.vehicleNumber.includes('Unlinked') || tag.vehicleNumber.includes('Ready');
+                      const isActive = tag.status === 'active' && !isUnlinked;
                       return (
                         <div
                           key={tag.id}
@@ -826,10 +886,14 @@ export default function Dashboard() {
 
                             <div className="flex items-center gap-3">
                               <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                                isActive ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'
+                                isUnlinked
+                                  ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                                  : isActive 
+                                    ? 'bg-green-50 text-green-700 border border-green-200' 
+                                    : 'bg-gray-100 text-gray-500 border border-gray-200'
                               }`}>
-                                <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
-                                {isActive ? 'Active Protection' : 'Paused'}
+                                <span className={`w-2 h-2 rounded-full ${isUnlinked ? 'bg-amber-500' : isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
+                                {isUnlinked ? 'Ready to Link' : isActive ? 'Active Protection' : 'Paused'}
                               </span>
                               <span className="text-xs text-gray-400">
                                 {tag.scansCount || 0} Scans
@@ -853,12 +917,28 @@ export default function Dashboard() {
                               </div>
                               <div>
                                 <h4 className="font-bold text-sm text-[#212121] flex items-center gap-1.5">
-                                  {tag.vehicleName || 'Vehicle'}
+                                  {tag.vehicleName || 'Vehicle Tag'}
                                 </h4>
-                                <p className="font-mono text-xs font-bold text-gray-600 mt-0.5">
-                                  {tag.vehicleNumber}
-                                </p>
-                                <span className="text-[11px] text-gray-400 font-medium">
+                                
+                                {isUnlinked ? (
+                                  <div className="mt-1">
+                                    <p className="text-xs text-amber-700 font-semibold mb-1">
+                                      No vehicle linked yet
+                                    </p>
+                                    <Link
+                                      to={`/register/${tag.publicToken || tag.id}`}
+                                      className="bg-green-600 hover:bg-green-700 text-white font-bold px-3 py-1 rounded text-xs inline-flex items-center gap-1 shadow-2xs"
+                                    >
+                                      🔗 Link Vehicle Now
+                                    </Link>
+                                  </div>
+                                ) : (
+                                  <p className="font-mono text-sm font-black text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-300 tracking-wider uppercase inline-block mt-1">
+                                    {tag.vehicleNumber}
+                                  </p>
+                                )}
+
+                                <span className="block text-[11px] text-gray-400 font-medium mt-1">
                                   Type: {tag.vehicleType || 'Car'}
                                 </span>
                               </div>
