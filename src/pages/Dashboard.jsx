@@ -245,6 +245,8 @@ export default function Dashboard() {
                     vehicleType: qrRes.vehicle?.vehicleType || qrRes.vehicleType || at.vehicleType,
                     emergencyContacts: eContacts,
                     emergencyContact: eContacts?.[0]?.number || at.emergencyContact,
+                    totalCalls: qrRes.wallet?.totalCalls || qrRes.totalCalls || qrRes.initialCalls || 10,
+                    totalMessages: qrRes.wallet?.totalMessages || qrRes.totalMessages || qrRes.initialMessages || 20,
                     callBalance: qrRes.wallet?.callBalance ?? at.callBalance,
                     messageBalance: qrRes.wallet?.messageBalance ?? at.messageBalance,
                     scansCount: qrRes.scansCount ?? (qrRes.wallet?.totalCallsUsed || 0) + (qrRes.wallet?.totalMessagesUsed || 0),
@@ -1053,22 +1055,30 @@ export default function Dashboard() {
 
                           {/* Quota & Validity Row */}
                           <div className="bg-blue-50/50 border border-blue-100 rounded-sm p-3 my-2 flex flex-wrap items-center justify-between gap-3 text-xs">
-                            <div className="flex items-center gap-4">
+                            <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                               <div>
                                 <span className="text-gray-500 font-semibold text-[11px]">Calls Balance:</span>
-                                <div className="font-black text-[#2874f0] text-sm flex items-center gap-1">
-                                  <Phone size={12} /> {tag.callBalance ?? 10} Left
+                                <div className="font-black text-[#2874f0] text-sm flex items-center gap-1.5 mt-0.5">
+                                  <Phone size={12} />
+                                  <span>{tag.callBalance ?? 10} Left</span>
+                                  <span className="text-[11px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded border border-blue-200">
+                                    Total: {tag.totalCalls || 10}
+                                  </span>
                                 </div>
                               </div>
-                              <div className="border-l border-blue-200 pl-4">
+                              <div className="border-l border-blue-200 pl-4 sm:pl-6">
                                 <span className="text-gray-500 font-semibold text-[11px]">WhatsApp / SMS:</span>
-                                <div className="font-black text-emerald-600 text-sm flex items-center gap-1">
-                                  <MessageCircle size={12} /> {tag.messageBalance ?? 20} Left
+                                <div className="font-black text-emerald-600 text-sm flex items-center gap-1.5 mt-0.5">
+                                  <MessageCircle size={12} />
+                                  <span>{tag.messageBalance ?? 20} Left</span>
+                                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded border border-emerald-200">
+                                    Total: {tag.totalMessages || 20}
+                                  </span>
                                 </div>
                               </div>
-                              <div className="border-l border-blue-200 pl-4">
+                              <div className="border-l border-blue-200 pl-4 sm:pl-6">
                                 <span className="text-gray-500 font-semibold text-[11px]">Validity Expiry:</span>
-                                <div className="font-bold text-gray-800 text-xs">
+                                <div className="font-bold text-gray-800 text-xs mt-0.5">
                                   {tag.expiryDate ? new Date(tag.expiryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '1 Year Active'}
                                 </div>
                               </div>
