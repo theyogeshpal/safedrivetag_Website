@@ -127,83 +127,139 @@ export default function Dashboard() {
   // Initial Sync from currentUser & Live Backend API
   const loadDashboardData = useCallback(async () => {
     setIsLoadingDashboard(true);
-    try {
-      // 1. Fetch Dashboard Kits & Balances
-      const res = await api.getDashboard();
-      if (res.success) {
-        if (res.stats) {
-          setDashboardStats(res.stats);
-        }
-        if (res.kits && res.kits.length > 0) {
-          const mappedTags = res.kits.map((kit, idx) => ({
-            id: kit.copies?.[0]?.copyCode || kit.productId || `SD-${idx + 1}`,
-            publicToken: kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || `pk_live_${idx}`,
-            name: kit.user?.name || currentUser?.name || 'Owner',
-            phone: kit.user?.phone || currentUser?.phone,
-            emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
-            emergencyContacts: kit.vehicle?.emergencyContacts || [],
-            whatsapp: currentUser?.phone,
-            vehicleNumber: kit.vehicle?.vehicleNumber || 'RJ14AB2024',
-            vehicleName: `${kit.vehicle?.vehicleBrand || ''} ${kit.vehicle?.vehicleName || ''}`.trim() || 'My Vehicle',
-            vehicleType: 'Car',
-            status: kit.status?.toLowerCase() || 'active',
-            registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-            expiryDate: kit.expiryDate,
-            callBalance: kit.wallet?.callBalance ?? 10,
-            messageBalance: kit.wallet?.messageBalance ?? 20,
-            scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
-            callMaskingEnabled: true,
-            whatsappAlertsEnabled: true,
-          }));
-          setUserTags(mappedTags);
-        } else {
-          const fallbackTags = getUserTags && currentUser?.phone ? getUserTags(currentUser.phone) : [];
-          setUserTags(fallbackTags);
-        }
-      }
-
-      // 2. Fetch User Orders
+      // 1. Fetch User Orders first to get allocated QR tags
+      let allOrders = [];
+      let allocatedFromOrders = [];
       try {
         const ordersRes = await api.getUserOrders();
         if (ordersRes.success && ordersRes.orders && ordersRes.orders.length > 0) {
+          allOrders = ordersRes.orders;
+          
+          // Map Orders
           const mappedOrders = ordersRes.orders.map((ord, idx) => {
             const isDigital = 
               ord.qrType === 'DIGITAL' || 
+              ord.productType === 'DIGITAL' ||
               ord.items?.[0]?.qrType === 'DIGITAL' || 
               ord.productId?.qrType === 'DIGITAL' || 
               ord.batchId?.includes('DIGITAL') ||
               ord.title?.toLowerCase().includes('digital') || 
               ord.items?.[0]?.title?.toLowerCase().includes('digital') ||
+              ord.productName?.toLowerCase().includes('digital') ||
               ord.productId?.title?.toLowerCase().includes('digital');
 
             const resolvedToken = 
               ord.publicToken || 
+              ord.allocatedQRIds?.[0]?.publicToken ||
               ord.items?.[0]?.publicToken || 
               ord.copies?.[0]?.publicToken || 
               ord.copyCode ||
-              ord.items?.[0]?.copyCode ||
+              ord.allocatedQRIds?.[0]?.copyCode ||
               ord.orderNumber || 
               ord._id;
 
             return {
               id: ord.orderNumber || ord._id || `ORD-${idx + 1}`,
-              title: ord.items?.[0]?.title || ord.items?.[0]?.name || ord.productId?.title || ord.productId?.name || (isDigital ? 'Digital QR Safety Pass' : 'SafeDrive Car Safety QR Protection Kit'),
-              image: ord.items?.[0]?.imageUrl || ord.productId?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
-              price: ord.totalAmount || ord.amount || 299,
+              title: ord.productName || ord.items?.[0]?.title || ord.items?.[0]?.name || ord.productId?.title || ord.productId?.name || (isDigital ? 'Digital Kit' : 'SafeDrive Car Safety QR Protection Kit'),
+              image: ord.productId?.imageUrl || ord.items?.[0]?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
+              price: ord.amount || ord.totalAmount || 299,
               date: ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent',
-              status: ord.orderStatus === 'DELIVERED' ? 'Delivered' : ord.orderStatus === 'CANCELLED' ? 'Cancelled' : (isDigital ? 'Active (Instant Delivery)' : 'In Transit'),
+              status: ord.paymentStatus === 'PAID' ? 'Delivered' : ord.orderStatus === 'DELIVERED' ? 'Delivered' : 'Delivered',
               statusDate: ord.createdAt ? `Ordered on ${new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Processing',
               statusDesc: isDigital ? 'Instant Digital Kit - Ready to Print & Use' : (ord.deliveryAddress ? `Delivery to: ${ord.deliveryAddress}` : 'Express Pan-India Shipping'),
               vehicleType: isDigital ? 'Digital E-Kit' : 'Physical QR Kit',
               qrType: isDigital ? 'DIGITAL' : 'PHYSICAL',
               publicToken: resolvedToken,
+              allocatedQRIds: ord.allocatedQRIds || [],
               rating: 5,
             };
           });
           setOrders(mappedOrders);
+
+          // Extract all allocated QR copies from orders
+          ordersRes.orders.forEach((ord) => {
+            if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
+              ord.allocatedQRIds.forEach((qr, qIdx) => {
+                allocatedFromOrders.push({
+                  id: qr.copyCode || qr.productId || `SD-ALLOC-${qIdx + 1}`,
+                  publicToken: qr.publicToken || qr.copyCode || qr._id,
+                  copyCode: qr.copyCode || `COPY-${qIdx + 1}`,
+                  productId: qr.productId || ord.productName || 'SafeDrive Smart Tag',
+                  name: ord.customerName || currentUser?.name || 'Owner',
+                  phone: ord.customerPhone || currentUser?.phone,
+                  emergencyContact: ord.customerPhone || currentUser?.phone,
+                  whatsapp: ord.customerPhone || currentUser?.phone,
+                  vehicleNumber: qr.vehicleNumber || 'Unlinked Tag (Ready to Link)',
+                  vehicleName: `${ord.productName || 'SafeDrive Smart Tag'} (Copy ${qIdx + 1})`,
+                  vehicleType: qr.qrFor || 'Car',
+                  status: qr.status === 'ACTIVE' ? 'active' : 'unregistered',
+                  qrType: qr.qrType || ord.productType || 'DIGITAL',
+                  orderNumber: ord.orderNumber,
+                  image: ord.productId?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
+                  registeredAt: qr.createdAt?.split('T')[0] || ord.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+                  expiryDate: null,
+                  callBalance: qr.initialCalls ?? 10,
+                  messageBalance: qr.initialMessages ?? 20,
+                  scansCount: 0,
+                  callMaskingEnabled: true,
+                  whatsappAlertsEnabled: true,
+                });
+              });
+            }
+          });
         }
       } catch (e) {
         console.error('Error fetching user orders', e);
+      }
+
+      // 2. Fetch Dashboard Kits & Balances
+      try {
+        const res = await api.getDashboard();
+        let mappedTags = [];
+        if (res.success) {
+          if (res.stats) {
+            setDashboardStats(res.stats);
+          }
+          if (res.kits && res.kits.length > 0) {
+            mappedTags = res.kits.map((kit, idx) => ({
+              id: kit.copies?.[0]?.copyCode || kit.productId || `SD-${idx + 1}`,
+              publicToken: kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || `pk_live_${idx}`,
+              name: kit.user?.name || currentUser?.name || 'Owner',
+              phone: kit.user?.phone || currentUser?.phone,
+              emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
+              emergencyContacts: kit.vehicle?.emergencyContacts || [],
+              whatsapp: currentUser?.phone,
+              vehicleNumber: kit.vehicle?.vehicleNumber || 'RJ14AB2024',
+              vehicleName: `${kit.vehicle?.vehicleBrand || ''} ${kit.vehicle?.vehicleName || ''}`.trim() || 'My Vehicle',
+              vehicleType: 'Car',
+              status: kit.status?.toLowerCase() || 'active',
+              registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+              expiryDate: kit.expiryDate,
+              callBalance: kit.wallet?.callBalance ?? 10,
+              messageBalance: kit.wallet?.messageBalance ?? 20,
+              scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
+              callMaskingEnabled: true,
+              whatsappAlertsEnabled: true,
+            }));
+          }
+        }
+
+        // Merge active kits with allocated QR copies
+        const existingTokens = new Set(mappedTags.map(t => t.publicToken).concat(mappedTags.map(t => t.id)));
+        const uniqueAllocated = allocatedFromOrders.filter(at => !existingTokens.has(at.publicToken) && !existingTokens.has(at.id));
+        const allTags = [...mappedTags, ...uniqueAllocated];
+
+        if (allTags.length > 0) {
+          setUserTags(allTags);
+        } else {
+          const fallbackTags = getUserTags && currentUser?.phone ? getUserTags(currentUser.phone) : [];
+          setUserTags(fallbackTags);
+        }
+      } catch (e) {
+        console.error('Error loading dashboard kits', e);
+        if (allocatedFromOrders.length > 0) {
+          setUserTags(allocatedFromOrders);
+        }
       }
 
       // 3. Fetch Add-On Packages
@@ -1306,6 +1362,63 @@ export default function Dashboard() {
                             <Printer size={13} /> Print Color PDF
                           </button>
                         </div>
+
+                        {/* Allocated QR Copies (Live Generated from Order) */}
+                        {Array.isArray(order.allocatedQRIds) && order.allocatedQRIds.length > 0 && (
+                          <div className="w-full mt-4 pt-4 border-t border-gray-100 bg-gray-50/70 rounded-lg p-3.5 space-y-2.5">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                                <QrCode size={15} className="text-[#2874f0]" />
+                                <span>Allocated QR Tags ({order.allocatedQRIds.length} Copies Included)</span>
+                              </div>
+                              <span className="text-[11px] font-semibold text-green-700 bg-green-100 px-2.5 py-0.5 rounded-full border border-green-200">
+                                Ready to Activate & Use
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                              {order.allocatedQRIds.map((qrItem, qIdx) => (
+                                <div key={qIdx} className="bg-white border border-gray-200 rounded p-3 flex flex-col justify-between gap-2 shadow-2xs">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-mono font-bold text-xs bg-blue-50 text-[#2874f0] px-2 py-0.5 rounded border border-blue-200">
+                                      {qrItem.copyCode || `COPY-${qIdx + 1}`}
+                                    </span>
+                                    <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200 uppercase">
+                                      {qrItem.qrType || 'DIGITAL'}
+                                    </span>
+                                  </div>
+
+                                  <div className="text-[11px] text-gray-500 font-mono truncate" title={qrItem.publicToken}>
+                                    Token: {qrItem.publicToken?.slice(0, 16)}...
+                                  </div>
+
+                                  <div className="flex items-center gap-1.5 pt-1 border-t border-gray-100">
+                                    <Link
+                                      to={`/register/${qrItem.publicToken || qrItem.copyCode}`}
+                                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 rounded text-[11px] flex items-center justify-center gap-1 transition-colors text-center"
+                                    >
+                                      Activate Tag
+                                    </Link>
+                                    <Link
+                                      to={`/q/${qrItem.publicToken || qrItem.copyCode}`}
+                                      target="_blank"
+                                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-1.5 rounded text-[11px] flex items-center justify-center gap-1 transition-colors text-center"
+                                    >
+                                      <Eye size={11} /> Test QR
+                                    </Link>
+                                    <button
+                                      onClick={() => printDigitalPdfInColor({ title: `${order.title} (${qrItem.copyCode})`, publicToken: qrItem.publicToken || qrItem.copyCode, image: order.image })}
+                                      className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-2 py-1.5 rounded text-[11px] flex items-center justify-center transition-colors cursor-pointer"
+                                      title="Print Color Badge for this Copy"
+                                    >
+                                      <Printer size={12} />
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                       </div>
                     ))}
