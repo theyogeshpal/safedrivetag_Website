@@ -1014,21 +1014,6 @@ export default function Dashboard() {
                                 </div>
                               </div>
                             </div>
-
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => handleBuyBoosterQuota(tag.id, 'CALL', 50, 99)}
-                                className="bg-white hover:bg-blue-50 text-[#2874f0] border border-[#2874f0] px-3 py-1.5 rounded-sm font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
-                              >
-                                <Zap size={12} className="text-orange-500" /> +50 Calls (₹99)
-                              </button>
-                              <button
-                                onClick={() => handleRenewValidity(tag.id)}
-                                className="bg-[#2874f0] hover:bg-blue-700 text-white px-3 py-1.5 rounded-sm font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
-                              >
-                                <RefreshCw size={12} /> Renew 1-Yr (₹199)
-                              </button>
-                            </div>
                           </div>
 
                           {/* Bottom Row: Actions Bar */}
