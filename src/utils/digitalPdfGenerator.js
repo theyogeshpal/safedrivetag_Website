@@ -407,3 +407,88 @@ export const printDigitalPdfInColor = (item = {}) => {
     iframe.contentWindow.print();
   }, 500);
 };
+
+/**
+ * 1-Click High-Resolution PNG Badge Download
+ */
+export const downloadQrPng = (item = {}) => {
+  const token = item.publicToken || item.token || item.id || 'SD-TAG';
+  const copyCode = item.copyCode || item.id || 'SD-TAG';
+  const vehicle = item.vehicleNumber || item.vehicleName || 'SafeDrive Smart Tag';
+  const liveUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 600;
+  canvas.height = 760;
+
+  // Background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 600, 760);
+
+  // Top Banner
+  const grad = ctx.createLinearGradient(0, 0, 600, 0);
+  grad.addColorStop(0, '#ea580c');
+  grad.addColorStop(1, '#c2410c');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 600, 110);
+
+  // Title
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 30px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('SafeDrive Smart Tag', 300, 68);
+
+  // Subtitle
+  ctx.fillStyle = '#0f172a';
+  ctx.font = '900 17px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText('SCAN TO CONTACT VEHICLE OWNER', 300, 150);
+
+  ctx.fillStyle = '#64748b';
+  ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText('PARKING OBSTRUCTION • EMERGENCY • NUMBER PRIVACY', 300, 172);
+
+  // Fetch QR Code Image
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    // Draw QR code with border
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(110, 195, 380, 380);
+    ctx.drawImage(img, 120, 205, 360, 360);
+
+    // Code & Vehicle Box
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(110, 595, 380, 65);
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(110, 595, 380, 65);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 19px monospace';
+    ctx.fillText(`${copyCode}`, 300, 624);
+
+    ctx.fillStyle = '#ea580c';
+    ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillText(`${vehicle}`, 300, 646);
+
+    // Footer
+    ctx.fillStyle = '#15803d';
+    ctx.font = 'bold 13.5px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillText('🔒 100% Private Masked Calling & Instant WhatsApp Bridge', 300, 695);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '11.5px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillText('Official SafeDrive Tag • https://safedrivetag-website.vercel.app', 300, 725);
+
+    // Trigger Download
+    const a = document.createElement('a');
+    a.download = `SafeDrive_Tag_${copyCode}.png`;
+    a.href = canvas.toDataURL('image/png');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(liveUrl)}&format=png&margin=1`;
+};

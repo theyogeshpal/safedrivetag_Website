@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import downloadInvoicePdf from '../utils/invoiceGenerator';
-import { openDigitalPdf, printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
+import { openDigitalPdf, printDigitalPdfInColor, downloadQrPng } from '../utils/digitalPdfGenerator';
 import PageLoader from '../components/PageLoader';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -2163,20 +2163,26 @@ export default function Dashboard() {
                 </p>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2.5">
+                <button
+                  onClick={() => downloadQrPng(qrModalTag)}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-sm text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                >
+                  <Download size={15} /> Download High-Res Badge (PNG)
+                </button>
+                <button
+                  onClick={() => printDigitalPdfInColor(qrModalTag)}
+                  className="w-full bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2.5 rounded-sm text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                >
+                  <Printer size={15} /> Print Color Stickers (PDF)
+                </button>
                 <Link
-                  to={`/q/${qrModalTag.id}`}
+                  to={`/q/${qrModalTag.publicToken || qrModalTag.id}`}
                   target="_blank"
-                  className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-sm text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all block"
+                  className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-2.5 rounded-sm text-xs flex items-center justify-center gap-1.5 transition-colors block"
                 >
                   <Eye size={14} /> Open Live Scan Test Page
                 </Link>
-                <button
-                  onClick={() => alert(`QR Badge image for ${qrModalTag.id} downloaded successfully!`)}
-                  className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-2.5 rounded-sm text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Download size={14} /> Download Printable Badge
-                </button>
               </div>
             </div>
 
