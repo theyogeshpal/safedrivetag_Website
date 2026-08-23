@@ -166,18 +166,40 @@ export default function Dashboard() {
       try {
         const ordersRes = await api.getUserOrders();
         if (ordersRes.success && ordersRes.orders && ordersRes.orders.length > 0) {
-          const mappedOrders = ordersRes.orders.map((ord, idx) => ({
-            id: ord.orderNumber || ord._id || `ORD-${idx + 1}`,
-            title: ord.items?.[0]?.title || ord.items?.[0]?.name || ord.productId?.title || ord.productId?.name || 'SafeDrive Car Safety QR Protection Kit',
-            image: ord.items?.[0]?.imageUrl || ord.productId?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
-            price: ord.totalAmount || ord.amount || 299,
-            date: ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent',
-            status: ord.orderStatus === 'DELIVERED' ? 'Delivered' : ord.orderStatus === 'CANCELLED' ? 'Cancelled' : 'In Transit',
-            statusDate: ord.createdAt ? `Ordered on ${new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Processing',
-            statusDesc: ord.deliveryAddress ? `Delivery to: ${ord.deliveryAddress}` : 'Express Pan-India Shipping',
-            vehicleType: 'Physical QR Kit',
-            rating: 5,
-          }));
+          const mappedOrders = ordersRes.orders.map((ord, idx) => {
+            const isDigital = 
+              ord.qrType === 'DIGITAL' || 
+              ord.items?.[0]?.qrType === 'DIGITAL' || 
+              ord.productId?.qrType === 'DIGITAL' || 
+              ord.batchId?.includes('DIGITAL') ||
+              ord.title?.toLowerCase().includes('digital') || 
+              ord.items?.[0]?.title?.toLowerCase().includes('digital') ||
+              ord.productId?.title?.toLowerCase().includes('digital');
+
+            const resolvedToken = 
+              ord.publicToken || 
+              ord.items?.[0]?.publicToken || 
+              ord.copies?.[0]?.publicToken || 
+              ord.copyCode ||
+              ord.items?.[0]?.copyCode ||
+              ord.orderNumber || 
+              ord._id;
+
+            return {
+              id: ord.orderNumber || ord._id || `ORD-${idx + 1}`,
+              title: ord.items?.[0]?.title || ord.items?.[0]?.name || ord.productId?.title || ord.productId?.name || (isDigital ? 'Digital QR Safety Pass' : 'SafeDrive Car Safety QR Protection Kit'),
+              image: ord.items?.[0]?.imageUrl || ord.productId?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
+              price: ord.totalAmount || ord.amount || 299,
+              date: ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent',
+              status: ord.orderStatus === 'DELIVERED' ? 'Delivered' : ord.orderStatus === 'CANCELLED' ? 'Cancelled' : (isDigital ? 'Active (Instant Delivery)' : 'In Transit'),
+              statusDate: ord.createdAt ? `Ordered on ${new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Processing',
+              statusDesc: isDigital ? 'Instant Digital Kit - Ready to Print & Use' : (ord.deliveryAddress ? `Delivery to: ${ord.deliveryAddress}` : 'Express Pan-India Shipping'),
+              vehicleType: isDigital ? 'Digital E-Kit' : 'Physical QR Kit',
+              qrType: isDigital ? 'DIGITAL' : 'PHYSICAL',
+              publicToken: resolvedToken,
+              rating: 5,
+            };
+          });
           setOrders(mappedOrders);
         }
       } catch (e) {
@@ -1235,7 +1257,16 @@ export default function Dashboard() {
                               {order.title}
                             </h4>
                             <p className="text-xs text-gray-500 mt-0.5 font-mono">Order ID: {order.id}</p>
-                            <p className="text-xs text-gray-500 font-medium">Type: {order.vehicleType}</p>
+                            <div className="flex items-center gap-1.5 mt-1">
+                              <span className="text-xs text-gray-500 font-medium">Type:</span>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                                order.qrType === 'DIGITAL'
+                                  ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                                  : 'bg-blue-100 text-blue-700 border border-blue-200'
+                              }`}>
+                                {order.qrType === 'DIGITAL' ? '⚡ Digital E-Kit' : '📦 Physical QR Kit'}
+                              </span>
+                            </div>
                             <p className="text-sm font-bold text-[#212121] mt-1">₹{order.price}</p>
                           </div>
                         </div>
