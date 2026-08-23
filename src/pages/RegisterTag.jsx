@@ -16,7 +16,9 @@ import {
   RefreshCw,
   MapPin,
   KeyRound,
-  Check
+  AlertTriangle,
+  HeartPulse,
+  Users
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -27,7 +29,7 @@ export default function RegisterTag() {
   const navigate = useNavigate();
   const { currentUser, setAuthenticatedSession } = useAuth();
 
-  // Wizard Step: 1 = Phone Entry, 2 = OTP Verification, 3 = Vehicle & Safety Details
+  // Wizard Step: 1 = Phone Entry, 2 = OTP Verification, 3 = Vehicle & 2 Emergency Contacts
   const [step, setStep] = useState(currentUser?.phone ? 3 : 1);
   
   // Phone & Auth State
@@ -37,7 +39,7 @@ export default function RegisterTag() {
   const [isPhoneVerified, setIsPhoneVerified] = useState(!!currentUser?.phone);
   const otpInputRefs = useRef([]);
 
-  // Vehicle Details State
+  // Vehicle & Mandatory 2 Emergency Contacts Details
   const [formData, setFormData] = useState({
     vehicleBrand: 'Hyundai',
     vehicleName: 'Creta',
@@ -45,9 +47,9 @@ export default function RegisterTag() {
     vehicleType: 'Car',
     whatsappNumber: currentUser?.whatsappNumber || currentUser?.phone || '',
     address: currentUser?.address || '',
-    emergencyContact1Name: 'Family Contact 1',
+    emergencyContact1Name: 'Family Member 1',
     emergencyContact1Number: '',
-    emergencyContact2Name: 'Family Contact 2',
+    emergencyContact2Name: 'Family Member 2',
     emergencyContact2Number: '',
   });
 
@@ -71,7 +73,7 @@ export default function RegisterTag() {
     try {
       const res = await api.sendOtp({
         phone: cleanPhone,
-        name: name.trim() || 'New Vehicle Owner',
+        name: name.trim() || 'Vehicle Owner',
       });
 
       if (res.success || res.status === 200) {
@@ -80,7 +82,7 @@ export default function RegisterTag() {
           otpInputRefs.current[0]?.focus();
         }, 100);
       } else {
-        setError(res.message || 'Failed to send OTP to this number. Please try again.');
+        setError(res.message || 'Failed to send OTP to this number. Please check the number and try again.');
       }
     } catch (err) {
       setError('Network error while sending OTP. Please check connection.');
@@ -133,7 +135,7 @@ export default function RegisterTag() {
         }
         setStep(3);
       } else {
-        setError(res.message || 'Invalid or expired OTP. Please check and retry.');
+        setError(res.message || 'Invalid or expired OTP. Please enter the correct code.');
       }
     } catch (err) {
       setError('Verification failed. Please check network connection.');
@@ -142,7 +144,7 @@ export default function RegisterTag() {
     }
   };
 
-  // --- Step 3: Complete Vehicle Registration ---
+  // --- Step 3: Complete Vehicle & Mandatory 2 Emergency Contacts Registration ---
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -160,26 +162,49 @@ export default function RegisterTag() {
     setError('');
 
     const cleanPhone = phone.replace(/\D/g, '');
+    
+    // Validate Vehicle Registration
     if (!formData.vehicleNumber.trim()) {
       setError('Please enter your vehicle registration plate number.');
       return;
     }
 
+    // Strictly Validate 2 Mandatory Emergency Contacts
+    const c1 = formData.emergencyContact1Number.replace(/\D/g, '');
+    const c2 = formData.emergencyContact2Number.replace(/\D/g, '');
+
+    if (!c1 || c1.length !== 10) {
+      setError('Please enter a valid 10-digit mobile number for Emergency SOS Contact 1.');
+      return;
+    }
+
+    if (!c2 || c2.length !== 10) {
+      setError('Please enter a valid 10-digit mobile number for Emergency SOS Contact 2.');
+      return;
+    }
+
+    if (c1 === c2) {
+      setError('Emergency Contact 1 and Contact 2 must be two different mobile numbers.');
+      return;
+    }
+
+    if (c1 === cleanPhone || c2 === cleanPhone) {
+      setError('Emergency contacts must be different from your own registered phone number.');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const emergencyContacts = [];
-      if (formData.emergencyContact1Number.trim()) {
-        emergencyContacts.push({
-          name: formData.emergencyContact1Name.trim() || 'Contact 1',
-          number: formData.emergencyContact1Number.replace(/\D/g, ''),
-        });
-      }
-      if (formData.emergencyContact2Number.trim()) {
-        emergencyContacts.push({
-          name: formData.emergencyContact2Name.trim() || 'Contact 2',
-          number: formData.emergencyContact2Number.replace(/\D/g, ''),
-        });
-      }
+      const emergencyContacts = [
+        {
+          name: formData.emergencyContact1Name.trim() || 'Primary Emergency Contact',
+          number: c1,
+        },
+        {
+          name: formData.emergencyContact2Name.trim() || 'Secondary Emergency Contact',
+          number: c2,
+        },
+      ];
 
       const payload = {
         name: name.trim() || `Owner ${cleanPhone.slice(-4)}`,
@@ -200,7 +225,7 @@ export default function RegisterTag() {
           setAuthenticatedSession(res.token, res.user);
         }
       } else {
-        setError(res.message || 'Tag registration failed. Please check your details and try again.');
+        setError(res.message || 'Tag registration failed. Please ensure both emergency contacts are valid.');
       }
     } catch (err) {
       setError('Failed to activate tag. Network error.');
@@ -258,7 +283,7 @@ export default function RegisterTag() {
                   Link & Activate SafeDrive Tag
                 </h1>
                 <p className="text-xs sm:text-sm text-black/60 font-medium mt-1">
-                  Step-by-step verification to enable masked calling and 24/7 SOS safety alerts.
+                  Step-by-step verification with 2 mandatory emergency SOS contacts for complete safety.
                 </p>
               </div>
 
@@ -297,7 +322,7 @@ export default function RegisterTag() {
                   ? 'bg-orange-500 text-white border-orange-500 shadow-xs' 
                   : 'bg-gray-100 text-gray-500 border-gray-200'
               }`}>
-                3. Vehicle Details
+                3. Vehicle & Contacts
               </div>
             </div>
 
@@ -434,7 +459,7 @@ export default function RegisterTag() {
             )}
 
             {/* ======================================================== */}
-            {/* STEP 3: VEHICLE & SAFETY DETAILS (AFTER OTP VERIFIED) */}
+            {/* STEP 3: VEHICLE & MANDATORY 2 EMERGENCY CONTACTS */}
             {/* ======================================================== */}
             {step === 3 && (
               <form onSubmit={handleFinalSubmit} className="space-y-6 animate-fade-up">
@@ -443,7 +468,7 @@ export default function RegisterTag() {
                 <div className="bg-green-50 border border-green-200 rounded-2xl p-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs font-bold text-green-800">
                     <CheckCircle2 size={16} className="text-green-600" />
-                    <span>Verified Mobile: +91 {phone}</span>
+                    <span>Owner Registered Mobile: +91 {phone}</span>
                   </div>
                   <button
                     type="button"
@@ -453,11 +478,11 @@ export default function RegisterTag() {
                     }}
                     className="text-xs text-green-700 underline font-bold cursor-pointer hover:text-green-900"
                   >
-                    Change
+                    Change Number
                   </button>
                 </div>
 
-                {/* Vehicle Type Selection */}
+                {/* Section 1: Vehicle Type Selection */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-black/70 mb-2">
                     1. Tag Attached To:
@@ -481,7 +506,7 @@ export default function RegisterTag() {
                   </div>
                 </div>
 
-                {/* Vehicle Details */}
+                {/* Section 2: Vehicle Identification */}
                 <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-4 sm:p-5 space-y-4">
                   <h3 className="text-xs font-black uppercase tracking-wider text-black/80 flex items-center gap-2">
                     <Car size={14} className="text-orange-500" /> 2. Vehicle Identification
@@ -489,7 +514,9 @@ export default function RegisterTag() {
                   
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-bold text-black/60 mb-1">Vehicle Brand / Make</label>
+                      <label className="block text-[11px] font-bold text-black/60 mb-1">
+                        Vehicle Brand / Make <span className="text-red-500">*</span>
+                      </label>
                       <input
                         type="text"
                         required
@@ -501,7 +528,9 @@ export default function RegisterTag() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold text-black/60 mb-1">Model Name</label>
+                      <label className="block text-[11px] font-bold text-black/60 mb-1">
+                        Model Name <span className="text-red-500">*</span>
+                      </label>
                       <input
                         type="text"
                         required
@@ -516,12 +545,12 @@ export default function RegisterTag() {
 
                   <div>
                     <label className="block text-[11px] font-bold text-black/60 mb-1">
-                      Registration Plate Number (e.g. RJ-14-AB-2024)
+                      Registration Plate Number (e.g. RJ-14-AB-2024) <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="Enter full vehicle registration number"
+                      placeholder="Enter full vehicle plate number"
                       name="vehicleNumber"
                       value={formData.vehicleNumber}
                       onChange={handleFormChange}
@@ -530,36 +559,102 @@ export default function RegisterTag() {
                   </div>
                 </div>
 
-                {/* Emergency Contacts */}
-                <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-4 sm:p-5 space-y-4">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-red-600 flex items-center gap-2">
-                    <Phone size={14} className="text-red-500" /> 3. Emergency SOS Contacts (Optional)
-                  </h3>
+                {/* Section 3: MANDATORY 2 EMERGENCY CONTACTS */}
+                <div className="bg-red-50/50 border border-red-200/80 rounded-2xl p-4 sm:p-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-black uppercase tracking-wider text-red-700 flex items-center gap-2">
+                      <HeartPulse size={16} className="text-red-600" />
+                      <span>3. Mandatory Emergency SOS Contacts (2 Required)</span>
+                    </h3>
+                    <span className="text-[10px] font-black bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full uppercase">
+                      Mandatory
+                    </span>
+                  </div>
 
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-bold text-black/60 mb-1">Contact 1 Name</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Pooja (Wife)"
-                        name="emergencyContact1Name"
-                        value={formData.emergencyContact1Name}
-                        onChange={handleFormChange}
-                        className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-red-500"
-                      />
+                  <p className="text-xs text-red-900/70 leading-relaxed font-medium">
+                    SafeDrive instantly alerts these <strong>2 verified family/emergency contacts</strong> with live location in case of an accident or SOS trigger.
+                  </p>
+
+                  <div className="space-y-3.5">
+                    
+                    {/* Emergency Contact 1 */}
+                    <div className="bg-white border border-red-200 rounded-xl p-3.5 shadow-2xs">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-bold text-red-800 flex items-center gap-1.5">
+                          <User size={12} className="text-red-600" /> Contact 1 (Primary Family Member) *
+                        </span>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-2.5">
+                        <div>
+                          <label className="block text-[10px] font-bold text-black/50 mb-0.5">Relation / Name *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. Papa / Spouse"
+                            name="emergencyContact1Name"
+                            value={formData.emergencyContact1Name}
+                            onChange={handleFormChange}
+                            className="w-full bg-gray-50 border border-black/10 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:bg-white focus:border-red-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-black/50 mb-0.5">10-Digit Mobile Number *</label>
+                          <div className="relative flex items-center">
+                            <span className="absolute left-2.5 text-[11px] font-bold text-black/40">+91</span>
+                            <input
+                              type="tel"
+                              maxLength={10}
+                              required
+                              placeholder="9876500001"
+                              name="emergencyContact1Number"
+                              value={formData.emergencyContact1Number}
+                              onChange={handleFormChange}
+                              className="w-full bg-gray-50 border border-black/10 rounded-lg py-2 pl-11 pr-3 text-xs font-bold font-mono outline-none focus:bg-white focus:border-red-500 tracking-wider"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-black/60 mb-1">Contact 1 Phone Number</label>
-                      <input
-                        type="tel"
-                        maxLength={10}
-                        placeholder="e.g. 9876500001"
-                        name="emergencyContact1Number"
-                        value={formData.emergencyContact1Number}
-                        onChange={handleFormChange}
-                        className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-red-500"
-                      />
+
+                    {/* Emergency Contact 2 */}
+                    <div className="bg-white border border-red-200 rounded-xl p-3.5 shadow-2xs">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-bold text-red-800 flex items-center gap-1.5">
+                          <User size={12} className="text-red-600" /> Contact 2 (Alternate Emergency Contact) *
+                        </span>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-2.5">
+                        <div>
+                          <label className="block text-[10px] font-bold text-black/50 mb-0.5">Relation / Name *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. Brother / Friend"
+                            name="emergencyContact2Name"
+                            value={formData.emergencyContact2Name}
+                            onChange={handleFormChange}
+                            className="w-full bg-gray-50 border border-black/10 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:bg-white focus:border-red-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-black/50 mb-0.5">10-Digit Mobile Number *</label>
+                          <div className="relative flex items-center">
+                            <span className="absolute left-2.5 text-[11px] font-bold text-black/40">+91</span>
+                            <input
+                              type="tel"
+                              maxLength={10}
+                              required
+                              placeholder="9876500002"
+                              name="emergencyContact2Number"
+                              value={formData.emergencyContact2Number}
+                              onChange={handleFormChange}
+                              className="w-full bg-gray-50 border border-black/10 rounded-lg py-2 pl-11 pr-3 text-xs font-bold font-mono outline-none focus:bg-white focus:border-red-500 tracking-wider"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
+
                   </div>
                 </div>
 
@@ -583,7 +678,7 @@ export default function RegisterTag() {
                 <div className="text-center">
                   <p className="text-[11px] text-black/50 flex items-center justify-center gap-1">
                     <Lock size={12} className="text-green-600" />
-                    Your phone number is encrypted and never shown to callers.
+                    All contacts are encrypted & only notified during actual SOS emergencies.
                   </p>
                 </div>
 
