@@ -121,7 +121,7 @@ export default function RegisterTag() {
 
     setIsLoading(true);
     try {
-      const res = await api.verifyPurchaseOtp({
+      const res = await api.verifyOtp({
         phone: cleanPhone,
         otp: enteredOtp,
       });
