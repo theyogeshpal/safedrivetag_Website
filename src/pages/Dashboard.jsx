@@ -5,6 +5,7 @@ import api from '../services/api';
 import downloadInvoicePdf from '../utils/invoiceGenerator';
 import { openDigitalPdf, printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
 import PageLoader from '../components/PageLoader';
+import { QRCodeSVG } from 'qrcode.react';
 import {
   User,
   Package,
@@ -1377,46 +1378,72 @@ export default function Dashboard() {
                               </span>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                              {order.allocatedQRIds.map((qrItem, qIdx) => (
-                                <div key={qIdx} className="bg-white border border-gray-200 rounded p-3 flex flex-col justify-between gap-2 shadow-2xs">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-mono font-bold text-xs bg-blue-50 text-[#2874f0] px-2 py-0.5 rounded border border-blue-200">
-                                      {qrItem.copyCode || `COPY-${qIdx + 1}`}
-                                    </span>
-                                    <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200 uppercase">
-                                      {qrItem.qrType || 'DIGITAL'}
-                                    </span>
-                                  </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              {order.allocatedQRIds.map((qrItem, qIdx) => {
+                                const liveQrUrl = `https://safedrivetag-website.vercel.app/q/${qrItem.publicToken || qrItem.copyCode}`;
+                                return (
+                                  <div key={qIdx} className="bg-white border border-gray-200 rounded-lg p-3.5 flex flex-col justify-between gap-3 shadow-xs hover:border-[#2874f0] transition-colors">
+                                    
+                                    {/* Top Header */}
+                                    <div className="flex items-center justify-between">
+                                      <span className="font-mono font-bold text-xs bg-blue-50 text-[#2874f0] px-2.5 py-0.5 rounded border border-blue-200 flex items-center gap-1">
+                                        <QrCode size={12} /> {qrItem.copyCode || `COPY-${qIdx + 1}`}
+                                      </span>
+                                      <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200 uppercase">
+                                        {qrItem.qrType || 'DIGITAL'}
+                                      </span>
+                                    </div>
 
-                                  <div className="text-[11px] text-gray-500 font-mono truncate" title={qrItem.publicToken}>
-                                    Token: {qrItem.publicToken?.slice(0, 16)}...
-                                  </div>
+                                    {/* Live Scannable QR Code Box */}
+                                    <div className="flex items-center gap-3 bg-gray-50/90 p-2.5 rounded-lg border border-gray-200/80">
+                                      <div className="bg-white p-1 rounded border border-gray-200 shadow-2xs shrink-0">
+                                        <QRCodeSVG 
+                                          value={liveQrUrl}
+                                          size={76}
+                                          level="H"
+                                          includeMargin={false}
+                                        />
+                                      </div>
+                                      <div className="flex-1 min-w-0 text-left">
+                                        <p className="text-[11px] font-bold text-gray-800 flex items-center gap-1">
+                                          <span>Scan with Camera</span>
+                                        </p>
+                                        <p className="text-[10px] text-gray-500 font-mono truncate mt-0.5" title={qrItem.publicToken}>
+                                          {qrItem.publicToken ? `${qrItem.publicToken.slice(0, 14)}...` : 'Token Active'}
+                                        </p>
+                                        <span className="inline-block text-[9px] font-bold text-green-700 bg-green-100 px-1.5 py-0.2 rounded mt-1">
+                                          ✓ Active Scannable
+                                        </span>
+                                      </div>
+                                    </div>
 
-                                  <div className="flex items-center gap-1.5 pt-1 border-t border-gray-100">
-                                    <Link
-                                      to={`/register/${qrItem.publicToken || qrItem.copyCode}`}
-                                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 rounded text-[11px] flex items-center justify-center gap-1 transition-colors text-center"
-                                    >
-                                      Activate Tag
-                                    </Link>
-                                    <Link
-                                      to={`/q/${qrItem.publicToken || qrItem.copyCode}`}
-                                      target="_blank"
-                                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-1.5 rounded text-[11px] flex items-center justify-center gap-1 transition-colors text-center"
-                                    >
-                                      <Eye size={11} /> Test QR
-                                    </Link>
-                                    <button
-                                      onClick={() => printDigitalPdfInColor({ title: `${order.title} (${qrItem.copyCode})`, publicToken: qrItem.publicToken || qrItem.copyCode, image: order.image })}
-                                      className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-2 py-1.5 rounded text-[11px] flex items-center justify-center transition-colors cursor-pointer"
-                                      title="Print Color Badge for this Copy"
-                                    >
-                                      <Printer size={12} />
-                                    </button>
+                                    {/* Actions */}
+                                    <div className="flex items-center gap-1.5 pt-1 border-t border-gray-100">
+                                      <Link
+                                        to={`/register/${qrItem.publicToken || qrItem.copyCode}`}
+                                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 rounded text-xs flex items-center justify-center gap-1 transition-colors text-center shadow-2xs"
+                                      >
+                                        Activate Tag
+                                      </Link>
+                                      <Link
+                                        to={`/q/${qrItem.publicToken || qrItem.copyCode}`}
+                                        target="_blank"
+                                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-1.5 rounded text-xs flex items-center justify-center gap-1 transition-colors text-center"
+                                      >
+                                        <Eye size={12} /> Test QR
+                                      </Link>
+                                      <button
+                                        onClick={() => printDigitalPdfInColor({ title: `${order.title} (${qrItem.copyCode})`, copyCode: qrItem.copyCode, publicToken: qrItem.publicToken || qrItem.copyCode, image: order.image })}
+                                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-2.5 py-1.5 rounded text-xs flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                                        title="Print Color Badge for this Copy"
+                                      >
+                                        <Printer size={13} />
+                                      </button>
+                                    </div>
+
                                   </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
                         )}
@@ -1961,9 +1988,14 @@ export default function Dashboard() {
             </div>
 
             <div className="p-6">
-              <div className="p-4 bg-gray-50 border border-gray-200 inline-block mx-auto mb-4 rounded-sm shadow-inner">
-                <QrCode size={160} className="text-gray-900 mx-auto" />
-                <p className="text-xs font-mono font-bold text-[#2874f0] mt-2">
+              <div className="p-4 bg-white border border-gray-200 inline-block mx-auto mb-4 rounded-lg shadow-sm">
+                <QRCodeSVG 
+                  value={`https://safedrivetag-website.vercel.app/q/${qrModalTag.publicToken || qrModalTag.id}`}
+                  size={170}
+                  level="H"
+                  includeMargin={false}
+                />
+                <p className="text-xs font-mono font-bold text-[#2874f0] mt-3">
                   {qrModalTag.id} • {qrModalTag.vehicleNumber}
                 </p>
               </div>

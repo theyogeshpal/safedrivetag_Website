@@ -1,11 +1,19 @@
 /**
  * SafeDrive Digital QR Kit PDF Generator & Color Printer
- * Displays and prints the ACTUAL official SafeDrive product card design received from the backend API.
+ * Generates high-definition full-color printable stickers containing the live scannable QR Code.
  */
 
 export const generateDigitalPdfHtml = (item = {}) => {
   const token = item.publicToken || item.token || item.id || 'pk_live_digital';
   const title = item.title || item.name || 'SafeDrive Smart QR Vehicle Tag';
+  const copyCode = item.copyCode || item.id || 'SD-TAG';
+  const vehicleNo = item.vehicleNumber || 'YOUR-VEHICLE-NO';
+  
+  // Real Live Scannable Redirect URL
+  const liveScanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
+  // High-Resolution Scannable QR Code
+  const qrCodeImg = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(liveScanUrl)}&format=png&margin=1`;
+  
   const cardImage = 
     item.image || 
     item.imageUrl || 
@@ -30,7 +38,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
           }
           body { 
-            background: #f1f5f9; 
+            background: #f8fafc; 
             color: #0f172a; 
             padding: 16px; 
             -webkit-print-color-adjust: exact;
@@ -53,7 +61,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
             align-items: center;
             border-bottom: 2.5px solid #ea580c;
             padding-bottom: 14px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
           }
           .sheet-title {
             font-size: 22px;
@@ -89,84 +97,144 @@ export const generateDigitalPdfHtml = (item = {}) => {
             border: 1px solid #ffedd5;
             border-radius: 12px;
             padding: 12px 16px;
-            margin-bottom: 22px;
-            font-size: 12px;
+            margin-bottom: 20px;
+            font-size: 11.5px;
             color: #9a3412;
             line-height: 1.5;
           }
 
-          /* Actual Product Card Layout */
-          .main-card-wrapper {
-            border: 2.5px dashed #cbd5e1;
-            border-radius: 20px;
-            padding: 20px;
+          /* Real Printable Sticker Badges Grid */
+          .badges-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 20px;
+          }
+
+          .printable-card {
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 14px;
             background: #fafafa;
-            margin-bottom: 24px;
             position: relative;
             text-align: center;
           }
           .cut-guide-label {
             position: absolute;
-            top: -11px;
-            right: 20px;
+            top: -10px;
+            right: 14px;
             background: #e2e8f0;
             color: #475569;
+            font-size: 9px;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+          }
+
+          /* Front Windshield Sticker Theme (Orange Gradient) */
+          .sticker-inner-orange {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            border-radius: 14px;
+            padding: 18px 14px;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(234, 88, 12, 0.25);
+          }
+
+          /* Rear Glass Sticker Theme (Dark Navy Gradient) */
+          .sticker-inner-blue {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 14px;
+            padding: 18px 14px;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+          }
+
+          .sticker-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+          }
+          .sticker-brand {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+          }
+          .sticker-pill {
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+          }
+
+          /* The Live Scannable QR Box */
+          .qr-container {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+          }
+          .live-qr-img {
+            width: 145px;
+            height: 145px;
+            display: block;
+          }
+
+          .sticker-headline {
+            font-size: 13px;
+            font-weight: 900;
+            margin-bottom: 3px;
+            letter-spacing: 0.2px;
+          }
+          .sticker-sub {
+            font-size: 10px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+          }
+          .token-badge {
+            background: #ffffff;
+            color: #0f172a;
             font-size: 10px;
             font-weight: 900;
-            padding: 2px 10px;
+            font-family: monospace;
+            padding: 3px 10px;
             border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            letter-spacing: 0.5px;
-          }
-          .card-header-badge {
-            font-size: 12px;
-            font-weight: 900;
-            color: #0f172a;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          }
-
-          /* The Actual Product Card Image */
-          .actual-product-card-img {
-            max-width: 100%;
-            width: 580px;
-            height: auto;
-            border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            border: 1.5px solid rgba(0, 0, 0, 0.08);
             display: inline-block;
-            background: #ffffff;
           }
 
-          /* Dual Badges Grid for Front & Rear Glass Placement */
-          .dual-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
+          .sticker-footer-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            font-size: 8.5px;
+            font-weight: 700;
+            opacity: 0.95;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 8px;
           }
-          .dual-card {
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 14px;
-            background: #ffffff;
-            text-align: center;
-            position: relative;
-          }
-          .dual-card-title {
-            font-size: 11px;
-            font-weight: 800;
-            color: #ea580c;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-          }
-          .dual-card-img {
-            width: 100%;
-            height: auto;
+
+          /* Scan Test URL box */
+          .scan-url-box {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #334155;
+          }
+          .scan-url-text {
+            font-family: monospace;
+            font-weight: 700;
+            color: #ea580c;
           }
 
           /* Footer */
@@ -201,10 +269,10 @@ export const generateDigitalPdfHtml = (item = {}) => {
           <!-- Sheet Header -->
           <div class="sheet-header">
             <div>
-              <div class="sheet-title">SafeDrive Official Smart Tag</div>
-              <div class="sheet-subtitle">${title} • ID: ${token}</div>
+              <div class="sheet-title">SafeDrive Official Printable Tag</div>
+              <div class="sheet-subtitle">${title} • Copy: ${copyCode}</div>
             </div>
-            <div class="badge-verified">✓ 100% Genuine SafeDrive Product</div>
+            <div class="badge-verified">✓ Live Scannable Tag</div>
           </div>
 
           <!-- Printing & Placement Notice -->
@@ -212,41 +280,66 @@ export const generateDigitalPdfHtml = (item = {}) => {
             <strong>🖨️ DIY Color Printing & Placement Guide:</strong><br />
             1. Print in <strong>Full Color</strong> on A4 sticker sheet, glossy photo paper, or standard A4 paper.<br />
             2. Cut along the outer guidelines ✂. Place inside your vehicle's front windshield or rear window.<br />
-            3. <strong>100% Privacy Protected:</strong> Anyone scanning this tag will reach you through SafeDrive's private calling bridge without seeing your phone number.
+            3. <strong>100% Scannable & Private:</strong> Scanning this live QR code automatically connects callers via SafeDrive's masked call bridge.
           </div>
 
-          <!-- ACTUAL OFFICIAL PRODUCT CARD (From Live Backend) -->
-          <div class="main-card-wrapper">
-            <div class="cut-guide-label">✂ CUT ALONG THE BORDER</div>
-            <div class="card-header-badge">⭐ Primary Vehicle Badge (Original Design)</div>
-            <img 
-              src="${cardImage}" 
-              alt="SafeDrive Official Product QR Card" 
-              class="actual-product-card-img" 
-            />
+          <!-- Scan Verification URL Link -->
+          <div class="scan-url-box">
+            <span>🔗 Live Scan Redirect Target:</span>
+            <span class="scan-url-text">${liveScanUrl}</span>
           </div>
 
-          <!-- Dual Front & Rear Placement Cutouts -->
-          <div class="dual-grid">
-            <div class="dual-card">
+          <!-- DUAL REAL SCANNABLE PRINTABLE BADGES (Front & Rear) -->
+          <div class="badges-grid">
+            
+            <!-- BADGE 1: Front Windshield Primary Sticker -->
+            <div class="printable-card">
               <div class="cut-guide-label">✂ CUT HERE</div>
-              <div class="dual-card-title">🛡️ Front Windshield Placement</div>
-              <img 
-                src="${cardImage}" 
-                alt="Front Windshield Tag" 
-                class="dual-card-img" 
-              />
+              <div class="sticker-inner-orange">
+                <div class="sticker-top-bar">
+                  <div class="sticker-brand">🛡️ SafeDriveTag</div>
+                  <div class="sticker-pill">Front Windshield</div>
+                </div>
+
+                <div class="qr-container">
+                  <img src="${qrCodeImg}" alt="SafeDrive Scannable QR" class="live-qr-img" />
+                </div>
+
+                <div class="sticker-headline">SCAN TO CONTACT OWNER</div>
+                <div class="sticker-sub">Parking Obstruction • Emergency • Lights ON</div>
+                <div class="token-badge">CODE: ${copyCode}</div>
+
+                <div class="sticker-footer-info">
+                  <span>🔒 100% Number Privacy</span>
+                  <span>⚡ Instant Masked Call</span>
+                </div>
+              </div>
             </div>
 
-            <div class="dual-card">
+            <!-- BADGE 2: Rear Glass / Visor / Luggage Sticker -->
+            <div class="printable-card">
               <div class="cut-guide-label">✂ CUT HERE</div>
-              <div class="dual-card-title">🚗 Rear Glass / Luggage Placement</div>
-              <img 
-                src="${cardImage}" 
-                alt="Rear Glass Tag" 
-                class="dual-card-img" 
-              />
+              <div class="sticker-inner-blue">
+                <div class="sticker-top-bar">
+                  <div class="sticker-brand">🛡️ SafeDriveTag</div>
+                  <div class="sticker-pill">Rear Glass / Visor</div>
+                </div>
+
+                <div class="qr-container">
+                  <img src="${qrCodeImg}" alt="SafeDrive Scannable QR" class="live-qr-img" />
+                </div>
+
+                <div class="sticker-headline">SCAN IN EMERGENCY / ISSUE</div>
+                <div class="sticker-sub">Direct WhatsApp Alert & Family SOS Broadcast</div>
+                <div class="token-badge">CODE: ${copyCode}</div>
+
+                <div class="sticker-footer-info">
+                  <span>🚨 24/7 SOS Alert</span>
+                  <span>💬 WhatsApp Connect</span>
+                </div>
+              </div>
             </div>
+
           </div>
 
           <!-- Sheet Footer -->
