@@ -1615,9 +1615,17 @@ export default function Dashboard() {
                                         <div className="bg-white p-1 rounded border border-gray-200 shadow-2xs shrink-0">
                                           <QRCodeSVG 
                                             value={liveQrUrl}
-                                            size={76}
+                                            size={78}
                                             level="H"
                                             includeMargin={false}
+                                            imageSettings={{
+                                              src: "/logo.png",
+                                              x: undefined,
+                                              y: undefined,
+                                              height: 18,
+                                              width: 18,
+                                              excavate: true,
+                                            }}
                                           />
                                         </div>
                                         <div className="flex-1 min-w-0 text-left">
@@ -2208,9 +2216,17 @@ export default function Dashboard() {
               <div className="p-4 bg-white border border-gray-200 inline-block mx-auto mb-4 rounded-lg shadow-sm">
                 <QRCodeSVG 
                   value={`https://safedrivetag-website.vercel.app/q/${qrModalTag.publicToken || qrModalTag.id}`}
-                  size={170}
+                  size={180}
                   level="H"
                   includeMargin={false}
+                  imageSettings={{
+                    src: "/logo.png",
+                    x: undefined,
+                    y: undefined,
+                    height: 42,
+                    width: 42,
+                    excavate: true,
+                  }}
                 />
                 <p className="text-xs font-mono font-bold text-[#2874f0] mt-3">
                   {qrModalTag.id} • {qrModalTag.vehicleNumber}

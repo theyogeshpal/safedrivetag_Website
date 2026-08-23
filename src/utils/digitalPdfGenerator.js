@@ -301,8 +301,11 @@ export const generateDigitalPdfHtml = (item = {}) => {
                   <div class="sticker-pill">Front Windshield</div>
                 </div>
 
-                <div class="qr-container">
+                <div class="qr-container" style="position: relative; display: inline-block;">
                   <img src="${qrCodeImg}" alt="SafeDrive Scannable QR" class="live-qr-img" />
+                  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2.5px solid #ea580c;">
+                    <img src="/logo.png" style="width: 22px; height: 22px; object-fit: contain;" />
+                  </div>
                 </div>
 
                 <div class="sticker-headline">SCAN TO CONTACT OWNER</div>
@@ -325,8 +328,11 @@ export const generateDigitalPdfHtml = (item = {}) => {
                   <div class="sticker-pill">Rear Glass / Visor</div>
                 </div>
 
-                <div class="qr-container">
+                <div class="qr-container" style="position: relative; display: inline-block;">
                   <img src="${qrCodeImg}" alt="SafeDrive Scannable QR" class="live-qr-img" />
+                  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2.5px solid #0f172a;">
+                    <img src="/logo.png" style="width: 22px; height: 22px; object-fit: contain;" />
+                  </div>
                 </div>
 
                 <div class="sticker-headline">SCAN IN EMERGENCY / ISSUE</div>
@@ -409,7 +415,7 @@ export const printDigitalPdfInColor = (item = {}) => {
 };
 
 /**
- * 1-Click High-Resolution PNG Badge Download
+ * 1-Click High-Resolution PNG Badge Download with Centered Circular Logo
  */
 export const downloadQrPng = (item = {}) => {
   const token = item.publicToken || item.token || item.id || 'SD-TAG';
@@ -458,37 +464,74 @@ export const downloadQrPng = (item = {}) => {
     ctx.strokeRect(110, 195, 380, 380);
     ctx.drawImage(img, 120, 205, 360, 360);
 
-    // Code & Vehicle Box
-    ctx.fillStyle = '#f8fafc';
-    ctx.fillRect(110, 595, 380, 65);
-    ctx.strokeStyle = '#cbd5e1';
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(110, 595, 380, 65);
+    // Draw central circular shield logo over QR code
+    const logoImg = new Image();
+    logoImg.crossOrigin = 'anonymous';
+    logoImg.onload = () => {
+      const cx = 300;
+      const cy = 385;
+      const r = 36;
 
-    ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 19px monospace';
-    ctx.fillText(`${copyCode}`, 300, 624);
+      ctx.save();
+      // White circular cutout background
+      ctx.beginPath();
+      ctx.arc(cx, cy, r + 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.strokeStyle = '#ea580c';
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
 
-    ctx.fillStyle = '#ea580c';
-    ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, sans-serif';
-    ctx.fillText(`${vehicle}`, 300, 646);
+      // Draw Logo
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(logoImg, cx - r + 3, cy - r + 3, (r - 3) * 2, (r - 3) * 2);
+      ctx.restore();
 
-    // Footer
-    ctx.fillStyle = '#15803d';
-    ctx.font = 'bold 13.5px -apple-system, BlinkMacSystemFont, sans-serif';
-    ctx.fillText('🔒 100% Private Masked Calling & Instant WhatsApp Bridge', 300, 695);
+      // Finalize text & trigger download
+      finishDownload();
+    };
 
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '11.5px -apple-system, BlinkMacSystemFont, sans-serif';
-    ctx.fillText('Official SafeDrive Tag • https://safedrivetag-website.vercel.app', 300, 725);
+    logoImg.onerror = () => {
+      finishDownload();
+    };
 
-    // Trigger Download
-    const a = document.createElement('a');
-    a.download = `SafeDrive_Tag_${copyCode}.png`;
-    a.href = canvas.toDataURL('image/png');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    logoImg.src = '/logo.png';
+
+    function finishDownload() {
+      // Code & Vehicle Box
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(110, 595, 380, 65);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(110, 595, 380, 65);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 19px monospace';
+      ctx.fillText(`${copyCode}`, 300, 624);
+
+      ctx.fillStyle = '#ea580c';
+      ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText(`${vehicle}`, 300, 646);
+
+      // Footer
+      ctx.fillStyle = '#15803d';
+      ctx.font = 'bold 13.5px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('🔒 100% Private Masked Calling & Instant WhatsApp Bridge', 300, 695);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '11.5px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('Official SafeDrive Tag • https://safedrivetag-website.vercel.app', 300, 725);
+
+      // Trigger Download
+      const a = document.createElement('a');
+      a.download = `SafeDrive_Tag_${copyCode}.png`;
+      a.href = canvas.toDataURL('image/png');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
   };
   img.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(liveUrl)}&format=png&margin=1`;
 };
