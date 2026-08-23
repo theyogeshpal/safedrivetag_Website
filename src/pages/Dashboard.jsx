@@ -127,6 +127,7 @@ export default function Dashboard() {
   // Initial Sync from currentUser & Live Backend API
   const loadDashboardData = useCallback(async () => {
     setIsLoadingDashboard(true);
+    try {
       // 1. Fetch User Orders first to get allocated QR tags
       let allOrders = [];
       let allocatedFromOrders = [];
