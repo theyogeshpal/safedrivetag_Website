@@ -187,6 +187,7 @@ export default function Dashboard() {
           }
 
           // Extract all allocated QR copies from orders
+          const rawAllocated = [];
           ordersRes.orders.forEach((ord) => {
             if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
               ord.allocatedQRIds.forEach((qr, qIdx) => {
@@ -194,26 +195,20 @@ export default function Dashboard() {
                 const copyCode = qr.copyCode || `COPY-${qIdx + 1}`;
                 const regInfo = locallyRegistered[token] || locallyRegistered[copyCode] || locallyRegistered[qr.copyCode];
 
-                const isLinked = !!(qr.vehicleNumber || regInfo?.vehicleNumber);
-                const vehicleNo = qr.vehicleNumber || regInfo?.vehicleNumber || 'Unlinked Tag (Ready to Link)';
-                const vBrand = qr.vehicleBrand || regInfo?.vehicleBrand || '';
-                const vName = qr.vehicleName || regInfo?.vehicleName || `${ord.productName || 'SafeDrive Smart Tag'} (Copy ${qIdx + 1})`;
-                const vTitle = vBrand ? `${vBrand} ${vName}`.trim() : vName;
-
-                allocatedFromOrders.push({
+                rawAllocated.push({
                   id: copyCode,
                   publicToken: token,
                   copyCode: copyCode,
                   productId: qr.productId || ord.productName || 'SafeDrive Smart Tag',
                   name: regInfo?.name || ord.customerName || currentUser?.name || 'Owner',
                   phone: regInfo?.phone || ord.customerPhone || currentUser?.phone,
-                  emergencyContact: regInfo?.emergencyContacts?.[0]?.number || ord.customerPhone || currentUser?.phone,
+                  emergencyContact: regInfo?.emergencyContacts?.[0]?.number || null,
                   emergencyContacts: regInfo?.emergencyContacts || [],
                   whatsapp: regInfo?.whatsappNumber || ord.customerPhone || currentUser?.phone,
-                  vehicleNumber: vehicleNo,
-                  vehicleName: vTitle,
-                  vehicleType: qr.qrFor || regInfo?.vehicleType || 'Car',
-                  status: isLinked ? 'active' : (qr.status === 'ACTIVE' ? 'active' : 'unregistered'),
+                  vehicleNumber: regInfo?.vehicleNumber || qr.vehicleNumber || null,
+                  vehicleName: regInfo ? `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() : `${ord.productName || 'SafeDrive Smart Tag'} (Copy ${qIdx + 1})`,
+                  vehicleType: regInfo?.vehicleType || qr.qrFor || 'Car',
+                  status: regInfo ? 'active' : (qr.status === 'ACTIVE' ? 'active' : 'unregistered'),
                   qrType: qr.qrType || ord.productType || 'DIGITAL',
                   orderNumber: ord.orderNumber,
                   image: ord.productId?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
@@ -228,6 +223,44 @@ export default function Dashboard() {
               });
             }
           });
+
+          // Fetch Live Public QR API Data in Parallel for each token
+          const liveQrResults = await Promise.allSettled(
+            rawAllocated.map(async (at) => {
+              try {
+                const qrRes = await api.getPublicQrInfo(at.publicToken);
+                if (qrRes && qrRes.success) {
+                  const isLiveActive = qrRes.status === 'ACTIVE';
+                  const vNumber = qrRes.vehicle?.vehicleNumber || qrRes.vehicleNumber || at.vehicleNumber;
+                  const vBrand = qrRes.vehicle?.vehicleBrand || qrRes.vehicleBrand || '';
+                  const vModel = qrRes.vehicle?.vehicleName || qrRes.vehicleName || '';
+                  const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : at.vehicleName;
+                  const eContacts = qrRes.emergencyContacts || qrRes.vehicle?.emergencyContacts || at.emergencyContacts;
+
+                  return {
+                    ...at,
+                    status: isLiveActive ? 'active' : (at.vehicleNumber ? 'active' : 'unregistered'),
+                    vehicleNumber: isLiveActive ? vNumber : (at.vehicleNumber || 'Unlinked Tag (Ready to Link)'),
+                    vehicleName: vTitle,
+                    vehicleType: qrRes.vehicle?.vehicleType || qrRes.vehicleType || at.vehicleType,
+                    emergencyContacts: eContacts,
+                    emergencyContact: eContacts?.[0]?.number || at.emergencyContact,
+                    callBalance: qrRes.wallet?.callBalance ?? at.callBalance,
+                    messageBalance: qrRes.wallet?.messageBalance ?? at.messageBalance,
+                    scansCount: qrRes.scansCount ?? (qrRes.wallet?.totalCallsUsed || 0) + (qrRes.wallet?.totalMessagesUsed || 0),
+                  };
+                }
+              } catch (e) {
+                console.error('Error fetching live QR info for token', at.publicToken, e);
+              }
+              return {
+                ...at,
+                vehicleNumber: at.vehicleNumber || 'Unlinked Tag (Ready to Link)',
+              };
+            })
+          );
+
+          allocatedFromOrders = liveQrResults.map((r, i) => (r.status === 'fulfilled' ? r.value : rawAllocated[i]));
         }
       } catch (e) {
         console.error('Error fetching user orders', e);
@@ -949,17 +982,43 @@ export default function Dashboard() {
                               <div className="flex items-center gap-2">
                                 <Phone size={12} className="text-gray-400" />
                                 <span className="text-gray-500 font-medium">Owner:</span>
-                                <span className="font-bold text-gray-800">+91 {tag.phone}</span>
+                                <span className="font-bold text-gray-800">
+                                  {tag.phone ? `+91 ${String(tag.phone).replace(/\D/g, '').slice(-10)}` : 'Not Set'}
+                                </span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Phone size={12} className="text-green-600" />
                                 <span className="text-gray-500 font-medium">Emergency SOS:</span>
-                                <span className="font-bold text-gray-800">+91 {tag.emergencyContact || tag.phone}</span>
+                                {tag.emergencyContacts && tag.emergencyContacts.length > 0 ? (
+                                  <span className="font-bold text-gray-800">
+                                    {tag.emergencyContacts.length} Emergency Contacts Configured
+                                  </span>
+                                ) : tag.emergencyContact && tag.emergencyContact !== tag.phone ? (
+                                  <span className="font-bold text-gray-800">
+                                    +91 {String(tag.emergencyContact).replace(/\D/g, '').slice(-10)}
+                                  </span>
+                                ) : isUnlinked ? (
+                                  <span className="text-amber-700 font-semibold bg-amber-50 px-1.5 py-0.2 rounded text-[10px]">
+                                    Configure during linking
+                                  </span>
+                                ) : (
+                                  <span className="font-bold text-gray-800">+91 {String(tag.phone).replace(/\D/g, '').slice(-10)}</span>
+                                )}
                               </div>
                               <div className="flex items-center gap-2">
                                 <MessageCircle size={12} className="text-emerald-600" />
                                 <span className="text-gray-500 font-medium">WhatsApp Alerts:</span>
-                                <span className="font-bold text-gray-800">+91 {tag.whatsapp || tag.phone}</span>
+                                {tag.whatsapp ? (
+                                  <span className="font-bold text-gray-800">
+                                    +91 {String(tag.whatsapp).replace(/\D/g, '').slice(-10)}
+                                  </span>
+                                ) : isUnlinked ? (
+                                  <span className="text-amber-700 font-semibold bg-amber-50 px-1.5 py-0.2 rounded text-[10px]">
+                                    Configure during linking
+                                  </span>
+                                ) : (
+                                  <span className="font-bold text-gray-800">+91 {String(tag.phone).replace(/\D/g, '').slice(-10)}</span>
+                                )}
                               </div>
                             </div>
 
