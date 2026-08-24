@@ -57,6 +57,61 @@ body {
   animation: fadeUp 0.7s ease forwards;
 }
 
+/* ======================================================== */
+/* UNIFIED PREMIUM BUTTON ANIMATIONS & ACTIVE GREEN EFFECT  */
+/* ======================================================== */
+button,
+[role="button"],
+.btn-primary,
+.btn-secondary,
+.btn-action,
+a.inline-flex[href*="shop"],
+a.inline-flex[href*="checkout"],
+a.flex[href*="shop"],
+a.btn {
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.2s ease, 
+              box-shadow 0.2s ease, 
+              border-color 0.2s ease, 
+              color 0.2s ease;
+  will-change: transform, background-color, box-shadow;
+  transform: translateZ(0);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hover Lift Effect */
+button:hover:not(:disabled),
+[role="button"]:hover,
+a.inline-flex[href*="shop"]:hover,
+a.inline-flex[href*="checkout"]:hover {
+  transform: translateY(-2px);
+}
+
+/* Click / Active State: Smooth Press Down + Vibrant Emerald Green Flash */
+button:active:not(:disabled),
+[role="button"]:active,
+a.inline-flex[href*="shop"]:active,
+a.inline-flex[href*="checkout"]:active,
+a.flex[href*="shop"]:active {
+  transform: translateY(1px) scale(0.96) !important;
+  background-color: #16a34a !important; /* Emerald Green */
+  background-image: none !important;
+  border-color: #15803d !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 22px rgba(22, 163, 74, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+button:active:not(:disabled) svg,
+[role="button"]:active svg,
+a.inline-flex[href*="shop"]:active svg,
+a.inline-flex[href*="checkout"]:active svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
