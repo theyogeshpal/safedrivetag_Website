@@ -98,29 +98,12 @@ export const downloadInvoicePdf = (order, currentUser) => {
           .brand-header {
             display: flex;
             align-items: center;
-            gap: 12px;
             margin-bottom: 8px;
           }
           .brand-logo-img {
-            height: 44px;
+            height: 62px;
             width: auto;
             object-fit: contain;
-            border-radius: 8px;
-          }
-          .brand-name {
-            font-size: 22px;
-            font-weight: 900;
-            color: #111827;
-            letter-spacing: -0.5px;
-            line-height: 1;
-          }
-          .brand-tag {
-            font-size: 10px;
-            font-weight: 800;
-            color: #ea580c;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 3px;
           }
           .company-info {
             font-size: 11px;
@@ -248,10 +231,6 @@ export const downloadInvoicePdf = (order, currentUser) => {
             <div>
               <div class="brand-header">
                 <img src="${logoUrl}" alt="SafeDrive Logo" class="brand-logo-img" onerror="this.style.display='none'" />
-                <div>
-                  <div class="brand-name">SafeDriveTag</div>
-                  <div class="brand-tag">Smart Vehicle Privacy Solutions</div>
-                </div>
               </div>
               <div class="company-info">
                 <strong>SafeDrive Technologies Pvt. Ltd.</strong><br />
