@@ -124,10 +124,36 @@ export default function TagDetails() {
       }
 
       // Build unified Tag Details Model
-      const reg = locallyRegistered[id] || 
-                  (dashKit?.copies?.[0]?.publicToken && locallyRegistered[dashKit.copies[0].publicToken]) || 
-                  (matchedAllocated?.[0]?.publicToken && locallyRegistered[matchedAllocated[0].publicToken]) || 
-                  {};
+      let reg = locallyRegistered[id] || 
+                (dashKit?.copies?.[0]?.publicToken && locallyRegistered[dashKit.copies[0].publicToken]) || 
+                (matchedAllocated?.[0]?.publicToken && locallyRegistered[matchedAllocated[0].publicToken]) || 
+                {};
+
+      if (!reg || Object.keys(reg).length === 0) {
+        for (const key of Object.keys(locallyRegistered)) {
+          const item = locallyRegistered[key];
+          if (item) {
+            if (key === id || item.token === id || item.copyCode === id || item.id === id || 
+                matchedAllocated.some(m => m.publicToken === key || m.copyCode === key || m.publicToken === item.token || m.copyCode === item.copyCode)) {
+              reg = item;
+              break;
+            }
+          }
+        }
+      }
+
+      // If emergency contacts still missing in matched reg, match by logged in user phone
+      const cleanUserPhone = currentUser?.phone ? String(currentUser.phone).replace(/\D/g, '').slice(-10) : '';
+      if (!reg.emergencyContacts || reg.emergencyContacts.length === 0) {
+        for (const key of Object.keys(locallyRegistered)) {
+          const item = locallyRegistered[key];
+          const itemPhone = item?.phone ? String(item.phone).replace(/\D/g, '').slice(-10) : '';
+          if (cleanUserPhone && itemPhone === cleanUserPhone && Array.isArray(item.emergencyContacts) && item.emergencyContacts.length > 0) {
+            reg = { ...item, ...reg, emergencyContacts: item.emergencyContacts };
+            break;
+          }
+        }
+      }
 
       const isRegistered = (qrApiRes?.status === 'ACTIVE') || 
                            !!(reg.vehicleNumber) || 
@@ -141,7 +167,30 @@ export default function TagDetails() {
       const vPlate = qrApiRes?.vehicle?.vehicleNumber || qrApiRes?.vehicleNumber || reg.vehicleNumber || dashKit?.vehicle?.vehicleNumber || (isRegistered ? 'REGISTERED' : 'Not Linked Yet');
       const vType = qrApiRes?.vehicle?.vehicleType || qrApiRes?.vehicleType || reg.vehicleType || dashKit?.vehicle?.vehicleType || 'Car';
 
-      const emergencyList = qrApiRes?.emergencyContacts || qrApiRes?.vehicle?.emergencyContacts || reg.emergencyContacts || (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
+      // Resolve emergencyList from all available sources
+      let rawContacts = qrApiRes?.emergencyContacts || 
+                         qrApiRes?.vehicle?.emergencyContacts || 
+                         reg?.emergencyContacts || 
+                         dashKit?.emergencyContacts || 
+                         dashKit?.vehicle?.emergencyContacts || 
+                         (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
+
+      let emergencyList = [];
+      if (Array.isArray(rawContacts) && rawContacts.length > 0) {
+        emergencyList = rawContacts
+          .filter(c => c && (c.number || c.phone || typeof c === 'string'))
+          .map((c, idx) => ({
+            name: (typeof c === 'object' && c.name) ? c.name : (idx === 0 ? 'Primary Emergency Contact' : 'Secondary Emergency Contact'),
+            number: typeof c === 'object' ? (c.number || c.phone) : String(c),
+          }));
+      }
+
+      if (emergencyList.length === 0 && (reg?.emergencyContact || reg?.phone || currentUser?.phone)) {
+        const primaryNo = reg?.emergencyContact || reg?.phone || currentUser?.phone;
+        emergencyList = [
+          { name: 'Primary Emergency SOS Contact', number: String(primaryNo).replace(/\D/g, '').slice(-10) }
+        ];
+      }
 
       // Form copies (from order or API or single token)
       let copies = [];
