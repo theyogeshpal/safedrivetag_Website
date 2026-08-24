@@ -56,8 +56,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-5 md:px-6 flex items-center justify-between relative z-50">
         
         {/* Brand / Logo */}
-        <Link to="/" className="flex items-center gap-2 relative z-50 cursor-pointer">
-          <img src="/logos/primary.jpeg" alt="SafeDriveTag Logo" className="h-8 sm:h-11 w-auto object-contain rounded-md" />
+        <Link to="/" className="flex items-center gap-2 relative z-50 cursor-pointer py-1">
+          <img 
+            src="/logos/primary.jpeg" 
+            alt="SafeDriveTag Logo" 
+            className="h-10 sm:h-13 md:h-15 w-auto object-contain rounded-lg transition-transform hover:scale-105" 
+          />
         </Link>
 
         {/* Desktop Links */}
