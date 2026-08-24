@@ -126,8 +126,10 @@ export default function Dashboard() {
   const [expandedFaq, setExpandedFaq] = useState(null);
 
   // Initial Sync from currentUser & Live Backend API
-  const loadDashboardData = useCallback(async () => {
-    setIsLoadingDashboard(true);
+  const loadDashboardData = useCallback(async (silent = false) => {
+    if (!silent) {
+      setIsLoadingDashboard(true);
+    }
     try {
       // 1. Fetch User Orders first to get allocated QR tags
       let allOrders = [];

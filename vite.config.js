@@ -7,4 +7,17 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-core': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-icons': ['lucide-react', 'react-icons'],
+          'vendor-qr': ['qrcode.react'],
+          'vendor-api': ['axios'],
+        }
+      }
+    }
+  }
 })
