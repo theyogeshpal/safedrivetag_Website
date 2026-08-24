@@ -122,34 +122,31 @@ export default function Dashboard() {
 
   // Addresses State
   const [showAddAddress, setShowAddAddress] = useState(false);
-  const [addresses, setAddresses] = useState([
-    {
-      id: 'addr-1',
-      name: currentUser?.name || 'Rahul Sharma',
-      phone: currentUser?.phone || '9876543210',
-      pincode: '110001',
-      locality: 'Connaught Place',
-      address: 'Flat 402, Block B, Heritage Residency, Barakhamba Road',
-      city: 'New Delhi',
-      state: 'Delhi',
-      landmark: 'Near Metro Station Gate 2',
-      type: 'HOME',
-      isDefault: true,
-    },
-    {
-      id: 'addr-2',
-      name: currentUser?.name || 'Rahul Sharma',
-      phone: currentUser?.phone || '9876543210',
-      pincode: '122002',
-      locality: 'Cyber City, DLF Phase 2',
-      address: 'Tower 4, 8th Floor, Tech Innovation Park',
-      city: 'Gurugram',
-      state: 'Haryana',
-      landmark: 'Opposite Cyber Hub',
-      type: 'WORK',
-      isDefault: false,
+  const [addresses, setAddresses] = useState(() => {
+    try {
+      const userId = currentUser?._id || currentUser?.id || currentUser?.phone || 'guest';
+      const saved = localStorage.getItem(`safedrive_addresses_${userId}`);
+      if (saved) return JSON.parse(saved);
+      if (currentUser?.deliveryAddress || currentUser?.address) {
+        return [{
+          id: 'addr-1',
+          name: currentUser.name || 'Customer',
+          phone: currentUser.phone || '',
+          pincode: currentUser.pincode || '',
+          locality: '',
+          address: currentUser.deliveryAddress || currentUser.address,
+          city: currentUser.city || '',
+          state: currentUser.state || 'Delhi',
+          landmark: '',
+          type: 'HOME',
+          isDefault: true,
+        }];
+      }
+    } catch (e) {
+      console.error('Error reading saved addresses', e);
     }
-  ]);
+    return [];
+  });
   const [newAddress, setNewAddress] = useState({
     name: '',
     phone: '',
@@ -626,7 +623,14 @@ export default function Dashboard() {
       ...newAddress,
       isDefault: addresses.length === 0
     };
-    setAddresses([...addresses, newAddrObj]);
+    const updated = [...addresses, newAddrObj];
+    setAddresses(updated);
+    try {
+      const userId = currentUser?._id || currentUser?.id || currentUser?.phone || 'guest';
+      localStorage.setItem(`safedrive_addresses_${userId}`, JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
     setNewAddress({
       name: '',
       phone: '',
@@ -644,7 +648,14 @@ export default function Dashboard() {
 
   const handleDeleteAddress = (id) => {
     if (window.confirm('Are you sure you want to delete this address?')) {
-      setAddresses(addresses.filter(a => a.id !== id));
+      const updated = addresses.filter(a => a.id !== id);
+      setAddresses(updated);
+      try {
+        const userId = currentUser?._id || currentUser?.id || currentUser?.phone || 'guest';
+        localStorage.setItem(`safedrive_addresses_${userId}`, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
       showNotification('Address deleted successfully.');
     }
   };
@@ -1968,41 +1979,59 @@ export default function Dashboard() {
                 )}
 
                 {/* Addresses List */}
-                <div className="space-y-3">
-                  {addresses.map((addr) => (
-                    <div
-                      key={addr.id}
-                      className="bg-white rounded-sm border border-gray-200 p-4 sm:p-5 relative hover:border-gray-300 transition-all"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-[11px] font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded uppercase">
-                            {addr.type}
-                          </span>
-                          <span className="font-bold text-sm text-[#212121]">{addr.name}</span>
-                          <span className="font-bold text-xs text-gray-700">{addr.phone}</span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleDeleteAddress(addr.id)}
-                            className="text-red-500 hover:text-red-700 text-xs font-bold p-1 rounded cursor-pointer"
-                            title="Delete Address"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <p className="text-xs text-gray-600 leading-relaxed pr-8">
-                        {addr.address}, {addr.locality}, {addr.city}, {addr.state} - <span className="font-bold text-black">{addr.pincode}</span>
-                      </p>
-                      {addr.landmark && (
-                        <p className="text-[11px] text-gray-400 mt-1">Landmark: {addr.landmark}</p>
-                      )}
+                {addresses.length === 0 ? (
+                  <div className="py-12 text-center border border-dashed border-gray-300 rounded-lg bg-gray-50/60 p-6">
+                    <div className="w-12 h-12 rounded-full bg-blue-50 text-[#2874f0] flex items-center justify-center mx-auto mb-2.5">
+                      <MapPin size={22} />
                     </div>
-                  ))}
-                </div>
+                    <h4 className="font-bold text-sm text-[#212121]">No Saved Addresses Found</h4>
+                    <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1 mb-4">
+                      You have not added any delivery address yet. Click "+ ADD A NEW ADDRESS" to save one.
+                    </p>
+                    <button
+                      onClick={() => setShowAddAddress(true)}
+                      className="bg-[#2874f0] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-md shadow-xs cursor-pointer transition-colors"
+                    >
+                      + Add Delivery Address
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {addresses.map((addr) => (
+                      <div
+                        key={addr.id}
+                        className="bg-white rounded-lg border border-gray-200 p-4 sm:p-5 relative hover:border-gray-300 transition-all shadow-xs"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2.5">
+                            <span className="text-[10px] font-black bg-gray-100 text-gray-700 px-2 py-0.5 rounded uppercase">
+                              {addr.type}
+                            </span>
+                            <span className="font-bold text-sm text-[#212121]">{addr.name}</span>
+                            <span className="font-bold text-xs text-gray-700">{addr.phone}</span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleDeleteAddress(addr.id)}
+                              className="text-red-500 hover:text-red-700 text-xs font-bold p-1.5 rounded hover:bg-red-50 cursor-pointer transition-colors"
+                              title="Delete Address"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-gray-600 leading-relaxed pr-8">
+                          {addr.address}{addr.locality ? `, ${addr.locality}` : ''}{addr.city ? `, ${addr.city}` : ''}{addr.state ? `, ${addr.state}` : ''} {addr.pincode ? `- ${addr.pincode}` : ''}
+                        </p>
+                        {addr.landmark && (
+                          <p className="text-[11px] text-gray-400 mt-1">Landmark: {addr.landmark}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
               </div>
             )}
