@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase, ShieldCheck, TrendingUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
@@ -376,38 +377,37 @@ export default function Home() {
             </div>
             
             {/* Right Content: The Visual Tag with Pointers */}
-            <div className="relative flex justify-center items-center py-10 sm:py-14 lg:py-12 w-full max-w-md mx-auto">
+            <div className="relative flex justify-center items-center py-8 sm:py-12 lg:py-12 w-full max-w-xl mx-auto">
               
-              {/* The Tag Itself */}
-              <div className="relative bg-[#fcd34d] rounded-2xl sm:rounded-3xl w-full shadow-2xl overflow-hidden flex flex-col border-2 sm:border-4 border-[#fcd34d]">
-                {/* Yellow/Black striped border top */}
-                <div className="w-full h-2.5 sm:h-3 bg-[repeating-linear-gradient(45deg,#000,#000_10px,#fcd34d_10px,#fcd34d_20px)]"></div>
-                
-                {/* Tag Content */}
-                <div className="flex-1 p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 bg-white rounded-xl mx-1 my-1">
-                  <div className="flex-1 w-full text-center sm:text-left">
-                    <div className="font-black text-xl sm:text-2xl mb-1 flex items-center justify-center sm:justify-start text-black">
-                      SafeDrive<span className="bg-black text-white px-1.5 ml-1 rounded text-base sm:text-lg py-0.5">Tag</span>
-                    </div>
-                    <div className="text-[8px] sm:text-[9px] text-gray-500 mb-3 sm:mb-4 font-bold tracking-wide">Vehicle alert sticker • safedrivetag.com</div>
-                    <h3 className="font-black text-lg sm:text-xl leading-tight mb-3 sm:mb-4 text-black">Scan to contact<br className="hidden sm:inline"/><span className="border-b-4 border-[#fcd34d] pb-0.5">the owner.</span></h3>
-                    
-                    <div className="space-y-1.5 sm:space-y-2 text-xs font-bold text-black/80 text-left">
-                      <div className="flex items-center gap-2"><span className="bg-black text-white w-5 h-5 rounded flex items-center justify-center text-[10px] shrink-0">P</span> Wrong Parking</div>
-                      <div className="flex items-center gap-2"><span className="bg-black text-white w-5 h-5 rounded flex items-center justify-center text-[12px] shrink-0">!</span> Vehicle Issue</div>
-                      <div className="flex items-center gap-2"><span className="bg-red-500 text-white px-1.5 h-5 rounded flex items-center justify-center text-[9px] tracking-widest shrink-0">SOS</span> Emergency</div>
-                    </div>
-                    <div className="text-[8px] text-gray-400 mt-4 sm:mt-6 font-bold uppercase tracking-wider">Use phone camera or any QR scanner app to scan</div>
-                  </div>
-                  
-                  <div className="w-28 sm:w-32 shrink-0 flex flex-col items-center bg-[#fcd34d] p-2.5 sm:p-3 rounded-2xl">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://safedrivetag.com" alt="QR Code" className="w-full aspect-square bg-white rounded-xl p-1.5 sm:p-2" />
-                    <div className="mt-1.5 sm:mt-2 text-[9px] sm:text-[10px] font-black tracking-widest text-black">▲ SCAN ME ▲</div>
+              {/* The Official SafeDrive-Tag Sticker Card */}
+              <div className="relative w-full rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border-2 border-white/10 bg-white group transition-transform duration-300 hover:scale-[1.02]">
+                {/* Sticker Template Image */}
+                <img 
+                  src="/safedrivetag-sticker.jpg" 
+                  alt="SafeDrive-Tag Vehicle QR Sticker" 
+                  className="w-full h-auto object-contain block select-none" 
+                />
+
+                {/* Real Working QR Code Overlay inside the white section */}
+                <div 
+                  className="absolute flex items-center justify-center pointer-events-auto"
+                  style={{
+                    top: '7%',
+                    left: '57%',
+                    width: '38%',
+                    height: '64%'
+                  }}
+                >
+                  <div className="w-full h-full flex items-center justify-center p-1 sm:p-2.5">
+                    <QRCodeSVG 
+                      value="https://safedrivetag.in"
+                      size={180}
+                      level="H"
+                      includeMargin={false}
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                 </div>
-
-                {/* Yellow/Black striped border bottom */}
-                <div className="w-full h-2.5 sm:h-3 bg-[repeating-linear-gradient(45deg,#000,#000_10px,#fcd34d_10px,#fcd34d_20px)]"></div>
               </div>
 
               {/* Pointers (absolute positioned) - Hidden on mobile, visible on lg */}
@@ -431,7 +431,7 @@ export default function Home() {
                 <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
                 <div className="w-0.5 h-6 bg-amber-400 mt-0.5"></div>
                 <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
-                  SOS / Emergency label
+                  Wrong Parking & SOS Alert
                 </div>
               </div>
 
