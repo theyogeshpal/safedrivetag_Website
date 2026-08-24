@@ -353,7 +353,7 @@ export default function Checkout() {
         currency: createRes.currency || 'INR',
         name: 'SafeDriveTag',
         description: selectedProduct.title || 'Car Safety Kit Protection',
-        image: '/logo.png',
+        image: '/logos/primary.jpeg',
         order_id: createRes.orderId,
         handler: async function (paymentResponse) {
           try {

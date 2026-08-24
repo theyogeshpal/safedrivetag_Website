@@ -16,7 +16,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
   const cgst = Math.round((totalGst / 2) * 100) / 100;
   const sgst = Math.round((totalGst / 2) * 100) / 100;
 
-  const logoUrl = window.location.origin + '/logo.png';
+  const logoUrl = window.location.origin + '/logos/primary.jpeg';
 
   const invoiceHtml = `
     <!DOCTYPE html>

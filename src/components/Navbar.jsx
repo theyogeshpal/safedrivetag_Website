@@ -57,7 +57,7 @@ export default function Navbar() {
         
         {/* Brand / Logo */}
         <Link to="/" className="flex items-center gap-2 relative z-50">
-          <img src="/logo.png" alt="SafeDriveTag Logo" className="h-8 sm:h-11 w-auto object-contain" />
+          <img src="/logos/primary.jpeg" alt="SafeDriveTag Logo" className="h-8 sm:h-11 w-auto object-contain rounded-md" />
         </Link>
 
         {/* Desktop Links */}

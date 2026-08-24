@@ -304,7 +304,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
                 <div class="qr-container" style="position: relative; display: inline-block;">
                   <img src="${qrCodeImg}" alt="SafeDrive Scannable QR" class="live-qr-img" />
                   <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2.5px solid #ea580c;">
-                    <img src="/logo.png" style="width: 22px; height: 22px; object-fit: contain;" />
+                    <img src="/logos/primary.jpeg" style="width: 22px; height: 22px; object-fit: contain;" />
                   </div>
                 </div>
 
@@ -331,7 +331,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
                 <div class="qr-container" style="position: relative; display: inline-block;">
                   <img src="${qrCodeImg}" alt="SafeDrive Scannable QR" class="live-qr-img" />
                   <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2.5px solid #0f172a;">
-                    <img src="/logo.png" style="width: 22px; height: 22px; object-fit: contain;" />
+                    <img src="/logos/primary.jpeg" style="width: 22px; height: 22px; object-fit: contain;" />
                   </div>
                 </div>
 
@@ -497,7 +497,7 @@ export const downloadQrPng = (item = {}) => {
       finishDownload();
     };
 
-    logoImg.src = '/logo.png';
+    logoImg.src = '/logos/primary.jpeg';
 
     function finishDownload() {
       // Code & Vehicle Box

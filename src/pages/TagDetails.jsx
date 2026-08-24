@@ -602,7 +602,7 @@ export default function TagDetails() {
                           level="H"
                           includeMargin={false}
                           imageSettings={{
-                            src: '/logo.png',
+                            src: '/logos/primary.jpeg',
                             x: undefined,
                             y: undefined,
                             height: 32,
