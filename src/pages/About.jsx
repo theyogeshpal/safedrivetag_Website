@@ -13,7 +13,7 @@ export default function About() {
         badge="📖 OUR MISSION & STORY"
         title="Privacy Shouldn't Cost You"
         highlightText="A Phone Call."
-        description="SafeDriveTag started with a simple frustration: leaving your phone number on vehicle dashboards or luggage tags meant spam, scams, and zero privacy. We built an instant smart QR bridge that connects people without exposing numbers."
+        description="SafeDrive-Tag started with a simple frustration: leaving your phone number on vehicle dashboards or luggage tags meant spam, scams, and zero privacy. We built an instant smart QR bridge that connects people without exposing numbers."
         badges={[
           { icon: <Shield size={14} className="text-green-600" />, label: '100% Number Masked' },
           { icon: <Users size={14} className="text-orange-500" />, label: '9.5 Lakh+ Active Users' },
@@ -112,7 +112,7 @@ export default function About() {
         <div className="cta-overlay" />
         <div className="cta-content">
           <h2 className="cta-title">Be part of the 9.5 lakh.</h2>
-          <p className="cta-desc">Get your SafeDriveTag today and drive with ultimate privacy.</p>
+          <p className="cta-desc">Get your SafeDrive-Tag today and drive with ultimate privacy.</p>
           <Link to="/shop" className="cta-btn">
             Buy the Safe Tag @ ₹299 <ArrowRight size={20} />
           </Link>

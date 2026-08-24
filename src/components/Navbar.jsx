@@ -81,7 +81,7 @@ export default function Navbar() {
           <Link to="/" className="flex items-center gap-2.5 relative z-50 cursor-pointer group">
             <img 
               src="/logos/primary.jpeg" 
-              alt="SafeDriveTag Logo" 
+              alt="SafeDrive-Tag Logo" 
               className="h-11 sm:h-13 md:h-15 w-auto object-contain rounded-xl transition-transform duration-300 group-hover:scale-105" 
             />
           </Link>

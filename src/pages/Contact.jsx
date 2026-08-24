@@ -43,7 +43,7 @@ export default function Contact() {
                 title: 'WhatsApp',
                 sub: 'Fastest way to reach us',
                 action: 'Chat on WhatsApp',
-                href: 'https://wa.me/919876543210?text=Hello%20SafeDriveTag%20Team',
+                href: 'https://wa.me/919876543210?text=Hello%20SafeDrive-Tag%20Team',
               },
               {
                 icon: <Mail className="w-7 h-7 text-green-600" />,

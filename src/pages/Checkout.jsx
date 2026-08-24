@@ -351,7 +351,7 @@ export default function Checkout() {
         key: createRes.keyId || createRes.key || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_6kz5nGEzi8uXRw',
         amount: createRes.amount || totalAmount * 100,
         currency: createRes.currency || 'INR',
-        name: 'SafeDriveTag',
+        name: 'SafeDrive-Tag',
         description: selectedProduct.title || 'Car Safety Kit Protection',
         image: '/logos/primary.jpeg',
         order_id: createRes.orderId,

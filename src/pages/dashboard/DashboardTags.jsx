@@ -432,7 +432,7 @@ export default function DashboardTags() {
   };
 
   return (
-    <DashboardLayout currentTab="tags" pageTitle="My SafeDrive Tags" saveSuccessMsg={saveSuccessMsg}>
+    <DashboardLayout currentTab="tags" pageTitle="My SafeDrive-Tags" saveSuccessMsg={saveSuccessMsg}>
       <div className="bg-white rounded-sm shadow-sm border border-gray-200/80 p-4 sm:p-6 space-y-6">
         
         {/* Header Title + Actions */}
@@ -440,7 +440,7 @@ export default function DashboardTags() {
           <div>
             <div className="flex items-center gap-2.5">
               <h2 className="text-lg sm:text-xl font-bold text-[#212121]">
-                My SafeDrive Tags
+                My SafeDrive-Tags
               </h2>
               <span className="bg-blue-50 text-[#2874f0] text-xs font-bold px-2 py-0.5 rounded border border-blue-200">
                 {userTags.length} Registered
@@ -499,7 +499,7 @@ export default function DashboardTags() {
         {isLoadingDashboard ? (
           <div className="py-10 space-y-4 animate-fade-in text-center">
             <div className="w-12 h-12 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-            <h3 className="text-base font-bold text-gray-800">Loading Your SafeDrive Tags...</h3>
+            <h3 className="text-base font-bold text-gray-800">Loading Your SafeDrive-Tags...</h3>
           </div>
         ) : userTags.length === 0 ? (
           <div className="py-14 text-center border border-dashed border-gray-300 rounded-sm bg-gray-50/50">
@@ -749,7 +749,7 @@ export default function DashboardTags() {
             <div className="bg-[#2874f0] text-white px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <QrCode size={20} />
-                <h3 className="text-base font-bold">Link New SafeDrive Tag</h3>
+                <h3 className="text-base font-bold">Link New SafeDrive-Tag</h3>
               </div>
               <button
                 onClick={() => setIsLinkModalOpen(false)}

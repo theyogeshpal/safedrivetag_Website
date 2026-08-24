@@ -28,9 +28,9 @@ export default function Home() {
   }, []);
 
   const faqs = [
-    { q: "What is SafeDriveTag?", a: "SafeDriveTag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
+    { q: "What is SafeDrive-Tag?", a: "SafeDrive-Tag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
     { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
-    { q: "Can I use SafeDriveTag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
+    { q: "Can I use SafeDrive-Tag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
     { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
     { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weatherproof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
   ];
@@ -51,7 +51,7 @@ export default function Home() {
             </h1>
 
             <p className="text-base sm:text-lg text-black/60 leading-relaxed max-w-lg font-medium">
-              SafeDriveTag — Smart QR emergency contacts for vehicles & travel bags. 🚗 🏍️ 🧳 Protect your car, bike & luggage without sharing your private phone number.
+              SafeDrive-Tag — Smart QR emergency contacts for vehicles & travel bags. 🚗 🏍️ 🧳 Protect your car, bike & luggage without sharing your private phone number.
             </p>
 
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 py-1">
@@ -125,7 +125,7 @@ export default function Home() {
               </div>
             </div>
 
-            <img src="/hero-car.png" alt="SafeDriveTag on Car" className="relative z-10 w-full max-w-[150%] xl:max-w-[180%] scale-110 xl:scale-125 object-contain drop-shadow-2xl hover:scale-110 transition-transform duration-500 translate-x-8 xl:translate-x-16" />
+            <img src="/hero-car.png" alt="SafeDrive-Tag on Car" className="relative z-10 w-full max-w-[150%] xl:max-w-[180%] scale-110 xl:scale-125 object-contain drop-shadow-2xl hover:scale-110 transition-transform duration-500 translate-x-8 xl:translate-x-16" />
           </div>
         </div>
       </section>
@@ -158,14 +158,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10 md:mb-16">
             <span className="text-orange-500 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight">What is SafeDriveTag?</h2>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight">What is SafeDrive-Tag?</h2>
           </div>
           
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="max-w-xl mx-auto lg:max-w-none w-full">
               <p className="text-base sm:text-lg text-black/70 leading-relaxed mb-8 sm:mb-10 font-medium">
-                SafeDriveTag is a weatherproof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
+                SafeDrive-Tag is a weatherproof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
               </p>
               
               {/* Stat Boxes */}
@@ -178,7 +178,7 @@ export default function Home() {
                 ].map((stat, i) => (
                   <div key={i} className="bg-[#fdf8d5] border border-[#f4e28e] rounded-xl p-3 sm:p-4 text-center shadow-sm">
                     <div className="text-xl sm:text-2xl font-black text-black mb-1">{stat.val}</div>
-                    <div className="text-[11px] sm:text-xs font-bold text-[#6d5516] leading-tight">{stat.lbl}</div>
+                    <div className="text-[10px] sm:text-xs text-black/60 font-bold uppercase tracking-wider">{stat.lbl}</div>
                   </div>
                 ))}
               </div>
@@ -309,7 +309,7 @@ export default function Home() {
             <span className="text-[#c29623] font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">For Vehicles & Travel Belongings</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black mb-4">Cars. Bikes. Luggage. Backpacks.</h2>
             <p className="text-sm sm:text-base md:text-lg text-black/60 max-w-2xl mx-auto font-medium">
-              SafeDriveTag protects your daily commute vehicles and your travel luggage — with instant emergency and lost bag recovery QR alerts.
+              SafeDrive-Tag protects your daily commute vehicles and your travel luggage — with instant emergency and lost bag recovery QR alerts.
             </p>
           </div>
           
@@ -450,7 +450,7 @@ export default function Home() {
           <div className="text-center md:text-left mb-6 md:mb-0 animate-fade-up">
             <h2 className="text-orange-500 font-black tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-4">Support</h2>
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-black mb-4 sm:mb-6">Got Questions?</h3>
-            <p className="text-sm sm:text-base md:text-lg text-black/60 mb-6 sm:mb-8">Everything you need to know about SafeDriveTag. If you can't find your answer, our support team is just a click away.</p>
+            <p className="text-sm sm:text-base md:text-lg text-black/60 mb-6 sm:mb-8">Everything you need to know about SafeDrive-Tag. If you can't find your answer, our support team is just a click away.</p>
             <div className="relative rounded-[2rem] overflow-hidden border border-black/10 shadow-xl hidden md:flex items-center justify-center bg-white p-12 min-h-[300px]">
               <DotLottieReact
                 src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f914/lottie.json"

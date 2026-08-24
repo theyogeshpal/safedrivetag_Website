@@ -300,7 +300,7 @@ export default function RegisterTag() {
                   <Sparkles size={13} className="text-orange-500" /> New Tag Activation
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-                  Link & Activate SafeDrive Tag
+                  Link & Activate SafeDrive-Tag
                 </h1>
                 <p className="text-xs sm:text-sm text-black/60 font-medium mt-1">
                   Step-by-step verification with 2 mandatory emergency SOS contacts for complete safety.
@@ -690,7 +690,7 @@ export default function RegisterTag() {
                     </>
                   ) : (
                     <>
-                      <span>Complete & Activate SafeDrive Tag</span>
+                      <span>Complete & Activate SafeDrive-Tag</span>
                       <ArrowRight size={18} />
                     </>
                   )}

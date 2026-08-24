@@ -1,6 +1,6 @@
 {
-  "name": "SafeDriveTag — Smart Vehicle Safety & Privacy",
-  "short_name": "SafeDriveTag",
+  "name": "SafeDrive-Tag — Smart Vehicle Safety & Privacy",
+  "short_name": "SafeDrive-Tag",
   "description": "India's #1 Smart Vehicle QR Tag. Receive instant masked calls & WhatsApp alerts without sharing your personal number.",
   "start_url": "/dashboard",
   "display": "standalone",

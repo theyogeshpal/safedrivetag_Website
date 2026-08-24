@@ -29,7 +29,7 @@ export default function Footer() {
 
   return isScanPage ? (
     <footer className="bg-gray-50 text-gray-400 py-6 text-center text-[10px] font-medium border-t border-gray-200">
-      <p>Secured by SafeDriveTag &copy; {new Date().getFullYear()}</p>
+      <p>Secured by SafeDrive-Tag &copy; {new Date().getFullYear()}</p>
     </footer>
   ) : (
     <footer className="relative bg-[#000000] text-white/80 pt-24 pb-12 overflow-hidden mt-10">
@@ -46,10 +46,10 @@ export default function Footer() {
         {/* Brand Column */}
         <div className="lg:col-span-2 pr-4">
           <Link to="/" className="inline-block mb-6">
-            <img src="/logos/primary.jpeg" alt="SafeDriveTag Logo" className="h-10 sm:h-12 w-auto object-contain bg-white rounded-lg p-1" />
+            <img src="/logos/primary.jpeg" alt="SafeDrive-Tag Logo" className="h-10 sm:h-12 w-auto object-contain bg-white rounded-lg p-1" />
           </Link>
           <p className="text-sm text-white/60 mb-6 font-medium leading-relaxed">
-            SafeDriveTag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. 🚗 Shielding vehicles in wrong parking & emergency situations.
+            SafeDrive-Tag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. 🚗 Shielding vehicles in wrong parking & emergency situations.
           </p>
           <div className="flex items-center gap-3">
             <a href="https://www.instagram.com/safedrivetag/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-orange-500 hover:text-white hover:-translate-y-1 transition-all">
@@ -112,7 +112,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-sm text-white/50 font-medium">
-        <p>&copy; {new Date().getFullYear()} SafeDriveTag. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} SafeDrive-Tag. All rights reserved.</p>
         <div className="flex gap-6 mt-4 md:mt-0">
           <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>

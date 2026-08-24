@@ -26,7 +26,7 @@ export default function Legal() {
       },
       {
         heading: "2. How We Use Your Information",
-        body: "Our primary goal in collecting your information is to provide you with an enhanced experience when using our SafeDriveTag services. We use the information to connect the QR tag to your emergency contacts, ensure masking of real phone numbers, and provide immediate SMS/WhatsApp alerts when your tag is scanned."
+        body: "Our primary goal in collecting your information is to provide you with an enhanced experience when using our SafeDrive-Tag services. We use the information to connect the QR tag to your emergency contacts, ensure masking of real phone numbers, and provide immediate SMS/WhatsApp alerts when your tag is scanned."
       },
       {
         heading: "3. Data Sharing and Masking",
@@ -44,7 +44,7 @@ export default function Legal() {
     contentData.sections = [
       {
         heading: "1. Acceptance of Terms",
-        body: "By purchasing and using a SafeDriveTag, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services or products."
+        body: "By purchasing and using a SafeDrive-Tag, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services or products."
       },
       {
         heading: "2. Service Availability",
@@ -52,11 +52,11 @@ export default function Legal() {
       },
       {
         heading: "3. User Responsibilities",
-        body: "You are responsible for maintaining accurate emergency contact information in your SafeDriveTag profile. You agree not to use the tag for any unlawful purpose or to impersonate any person or entity."
+        body: "You are responsible for maintaining accurate emergency contact information in your SafeDrive-Tag profile. You agree not to use the tag for any unlawful purpose or to impersonate any person or entity."
       },
       {
         heading: "4. Limitation of Liability",
-        body: "SafeDriveTag shall not be liable for any indirect, incidental, special, consequential or punitive damages resulting from your access to or use of, or inability to access or use, the services."
+        body: "SafeDrive-Tag shall not be liable for any indirect, incidental, special, consequential or punitive damages resulting from your access to or use of, or inability to access or use, the services."
       }
     ];
   } else if (path === '/refund') {
@@ -66,11 +66,11 @@ export default function Legal() {
     contentData.sections = [
       {
         heading: "1. 30-Day Money-Back Guarantee",
-        body: "We stand behind the quality of our SafeDriveTags. If you are not completely satisfied with your purchase, you can request a full refund within 30 days of the delivery date."
+        body: "We stand behind the quality of our SafeDrive-Tags. If you are not completely satisfied with your purchase, you can request a full refund within 30 days of the delivery date."
       },
       {
         heading: "2. Eligibility for Returns",
-        body: "To be eligible for a return, the SafeDriveTag must be unused, unpeeled, and in the exact same condition that you received it. It must also be in the original packaging."
+        body: "To be eligible for a return, the SafeDrive-Tag must be unused, unpeeled, and in the exact same condition that you received it. It must also be in the original packaging."
       },
       {
         heading: "3. Return Process",
@@ -112,7 +112,7 @@ export default function Legal() {
       <PageHero
         badge={contentData.badge}
         title={contentData.title}
-        description={`Last updated on ${contentData.updatedAt} • SafeDriveTag Official Policy`}
+        description={`Last updated on ${contentData.updatedAt} • SafeDrive-Tag Official Policy`}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-6 relative z-10">

@@ -121,7 +121,7 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
                   <div className="w-7 h-7 rounded-lg bg-orange-500 text-white flex items-center justify-center font-black text-sm">
                     SD
                   </div>
-                  <span className="text-xl font-black tracking-tight text-gray-900">SafeDriveTag</span>
+                  <span className="text-xl font-black tracking-tight text-gray-900">SafeDrive-Tag</span>
                 </div>
                 <p className="text-[11px] text-orange-600 font-bold uppercase tracking-wider">Smart Vehicle Privacy Solutions</p>
                 <p className="text-[11px] text-gray-500 mt-1 leading-tight">

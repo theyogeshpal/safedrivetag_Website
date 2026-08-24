@@ -6,7 +6,7 @@ export default function DashboardNotifications() {
   const [notifications, setNotifications] = useState([
     {
       id: 1,
-      title: 'Welcome to SafeDrive Tag Protection',
+      title: 'Welcome to SafeDrive-Tag Protection',
       message: 'Your account is live. You will receive private vehicle alerts whenever someone scans your QR pass.',
       time: '1 day ago',
       read: true,

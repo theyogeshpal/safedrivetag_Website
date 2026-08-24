@@ -99,7 +99,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
 
   const menuItems = [
     { id: 'orders', label: 'My Orders', path: '/dashboard/orders', icon: <Package size={16} /> },
-    { id: 'tags', label: 'My SafeDrive Tags', path: '/dashboard/tags', icon: <QrCode size={16} /> },
+    { id: 'tags', label: 'My SafeDrive-Tags', path: '/dashboard/tags', icon: <QrCode size={16} /> },
     { id: 'logs', label: 'Activity Logs', path: '/dashboard/logs', icon: <Activity size={16} /> },
     { id: 'profile', label: 'Profile Info', path: '/dashboard/profile', icon: <User size={16} /> },
     { id: 'addresses', label: 'Addresses', path: '/dashboard/addresses', icon: <MapPin size={16} /> },
@@ -242,7 +242,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                       currentTab === 'tags' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
                     }`}
                   >
-                    My SafeDrive Tags
+                    My SafeDrive-Tags
                   </Link>
                   <Link
                     to="/dashboard/logs"

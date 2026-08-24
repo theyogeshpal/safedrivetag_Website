@@ -298,7 +298,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
               <div class="cut-guide-label">✂ CUT HERE</div>
               <div class="sticker-inner-orange">
                 <div class="sticker-top-bar">
-                  <div class="sticker-brand">🛡️ SafeDriveTag</div>
+                  <div class="sticker-brand">🛡️ SafeDrive-Tag</div>
                   <div class="sticker-pill">Front Windshield</div>
                 </div>
 
@@ -325,7 +325,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
               <div class="cut-guide-label">✂ CUT HERE</div>
               <div class="sticker-inner-blue">
                 <div class="sticker-top-bar">
-                  <div class="sticker-brand">🛡️ SafeDriveTag</div>
+                  <div class="sticker-brand">🛡️ SafeDrive-Tag</div>
                   <div class="sticker-pill">Rear Glass / Visor</div>
                 </div>
 
@@ -523,7 +523,7 @@ export const downloadQrPng = (item = {}) => {
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = '11.5px -apple-system, BlinkMacSystemFont, sans-serif';
-      ctx.fillText('Official SafeDrive Tag • https://safedrivetag-website.vercel.app', 300, 725);
+      ctx.fillText('Official SafeDrive-Tag • https://safedrivetag-website.vercel.app', 300, 725);
 
       // Trigger Download
       const a = document.createElement('a');
