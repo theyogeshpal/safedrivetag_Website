@@ -9,6 +9,42 @@ export default function Home() {
 
   const [openFaq, setOpenFaq] = useState(0);
   const [activeStep, setActiveStep] = useState(1);
+  const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
+
+  const liveStats = [
+    { 
+      tag: "TRUSTED USERS", 
+      value: "9.5L+ Active Users", 
+      desc: "Protecting vehicles and luggage across India", 
+      icon: <Shield size={18} className="text-orange-500" />
+    },
+    { 
+      tag: "TOP RATING", 
+      value: "4.8 ★ User Rating", 
+      desc: "From over 50,000+ verified customer reviews", 
+      icon: <Star size={18} className="fill-amber-400 text-amber-400" />
+    },
+    { 
+      tag: "TOTAL SCANS", 
+      value: "2.4M+ Total Scans", 
+      desc: "Masked calls & emergency contacts bridged successfully", 
+      icon: <QrCode size={18} className="text-blue-500" />
+    },
+    { 
+      tag: "TODAY'S SCANS", 
+      value: "1,204 Scans Today", 
+      desc: "Live real-time updates from scanned tags across India", 
+      icon: <TrendingUp size={18} className="text-emerald-500" />
+    }
+  ];
+
+  // Auto-cycle live news ticker
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentNewsIndex((prev) => (prev + 1) % liveStats.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, [liveStats.length]);
 
   // Auto-redirect logged-in users or PWA standalone launch directly to Dashboard
   useEffect(() => {
@@ -128,61 +164,57 @@ export default function Home() {
               </button>
             </div>
             
-            {/* 3. 4 Soft-Tinted Metric Cards (Exact Reference) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-              {/* Card 1: TRUSTED USERS */}
-              <div className="bg-gradient-to-b from-white via-white to-orange-50/40 border border-orange-100 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs">
-                <div className="w-10 h-10 rounded-xl bg-orange-100/70 border border-orange-200/60 flex items-center justify-center text-orange-600 shrink-0">
-                  <Shield size={19} className="text-orange-600" />
-                </div>
-                <div>
-                  <span className="text-orange-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Trusted Users</span>
-                  <span className="text-gray-950 font-black text-lg leading-none block">9.5L+</span>
-                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">Across India</span>
+            {/* 3. Live News Chyron / Ticker Bar (Exact Broadcast TV News Style) */}
+            <div className="bg-white/95 border border-gray-200/90 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 shadow-sm flex items-center gap-3 overflow-hidden relative backdrop-blur-sm">
+              {/* Red LIVE Badge */}
+              <div className="bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-xs sm:text-sm px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl flex items-center gap-2 shrink-0 shadow-md">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                </span>
+                <span className="tracking-wider uppercase font-black">LIVE</span>
+              </div>
+
+              {/* News Headline & Description (Auto-cycling transition) */}
+              <div className="flex-1 min-w-0 overflow-hidden px-1">
+                <div 
+                  key={currentNewsIndex} 
+                  className="animate-fade-up flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-between"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-gray-100/80 border border-gray-200/50 flex items-center justify-center shrink-0">
+                      {liveStats[currentNewsIndex].icon}
+                    </div>
+                    <div className="truncate">
+                      <div className="flex items-center gap-2">
+                        <span className="font-black text-sm sm:text-base text-gray-950 truncate tracking-tight">
+                          {liveStats[currentNewsIndex].value}
+                        </span>
+                        <span className="text-[10px] text-orange-600 font-extrabold uppercase tracking-wider bg-orange-50 border border-orange-200/60 px-2 py-0.5 rounded-full shrink-0">
+                          {liveStats[currentNewsIndex].tag}
+                        </span>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-gray-500 font-medium truncate mt-0.5 sm:mt-0">
+                        {liveStats[currentNewsIndex].desc}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Card 2: RATING */}
-              <div className="bg-gradient-to-b from-white via-white to-amber-50/40 border border-amber-100 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs">
-                <div className="w-10 h-10 rounded-xl bg-amber-100/70 border border-amber-200/60 flex items-center justify-center text-amber-500 shrink-0">
-                  <Star size={19} className="fill-amber-400 text-amber-500" />
-                </div>
-                <div>
-                  <span className="text-amber-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Rating</span>
-                  <span className="text-gray-950 font-black text-lg leading-none flex items-center gap-1">
-                    4.8 <Star size={12} className="fill-amber-400 text-amber-400" />
-                  </span>
-                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">From 50K+ reviews</span>
-                </div>
-              </div>
-
-              {/* Card 3: TOTAL SCANS */}
-              <div className="bg-gradient-to-b from-white via-white to-blue-50/40 border border-blue-100 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs">
-                <div className="w-10 h-10 rounded-xl bg-blue-100/70 border border-blue-200/60 flex items-center justify-center text-blue-600 shrink-0">
-                  <QrCode size={19} className="text-blue-600" />
-                </div>
-                <div>
-                  <span className="text-blue-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Total Scans</span>
-                  <span className="text-blue-600 font-black text-lg leading-none block">2.4M+</span>
-                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">All time scans</span>
-                </div>
-              </div>
-
-              {/* Card 4: TODAY'S SCANS */}
-              <div className="bg-gradient-to-b from-white via-white to-emerald-50/40 border border-emerald-100 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100/70 border border-emerald-200/60 flex items-center justify-center text-emerald-600 shrink-0">
-                  <QrCode size={19} className="text-emerald-600" />
-                </div>
-                <div>
-                  <span className="text-emerald-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Today's Scans</span>
-                  <span className="text-emerald-700 font-black text-lg leading-none flex items-center gap-1">
-                    1,204 
-                    <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[9px]">
-                      <TrendingUp size={9} className="stroke-[3]" />
-                    </span>
-                  </span>
-                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">Live updates</span>
-                </div>
+              {/* Ticker Indicator Dots / Navigation */}
+              <div className="hidden sm:flex items-center gap-1.5 shrink-0 pr-1.5">
+                {liveStats.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setCurrentNewsIndex(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      currentNewsIndex === idx ? 'w-5 bg-red-600' : 'w-1.5 bg-gray-200 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
               </div>
             </div>
 
