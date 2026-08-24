@@ -26,6 +26,18 @@ body {
 
 
 
+/* GPU Compositor Hardware Acceleration for Buttery 60fps */
+.animate-marquee,
+.animate-float,
+.animate-radar-wave,
+.animate-play-glow,
+.animate-progress,
+.animate-scanline {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 @keyframes progress {
   0% { transform: scaleX(0); }
   100% { transform: scaleX(1); }

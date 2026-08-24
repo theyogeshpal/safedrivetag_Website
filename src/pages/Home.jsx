@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase, ShieldCheck, TrendingUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
@@ -19,13 +18,6 @@ export default function Home() {
       navigate('/dashboard', { replace: true });
     }
   }, [currentUser, navigate]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev >= 3 ? 1 : prev + 1));
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
 
   const faqs = [
     { q: "What is SafeDrive-Tag?", a: "SafeDrive-Tag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
@@ -446,13 +438,13 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity self-center">
-                <DotLottieReact
-                  src="https://lottie.host/4db68bbd-31f6-4cd8-84eb-189de081159a/IGmMCqhzpt.lottie"
-                  loop
-                  autoplay
-                  className="w-full h-full"
-                />
+              <div className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center self-center">
+                <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-0.5 shadow-lg flex items-center justify-center animate-play-glow">
+                  <div className="w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-2 text-center">
+                    <ShieldCheck size={28} className="text-orange-500 mb-1" />
+                    <span className="text-[9px] font-black text-gray-900 uppercase tracking-widest">100% SAFE</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -508,13 +500,15 @@ export default function Home() {
             <h2 className="text-orange-500 font-black tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-4">Support</h2>
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-black mb-4 sm:mb-6">Got Questions?</h3>
             <p className="text-sm sm:text-base md:text-lg text-black/60 mb-6 sm:mb-8">Everything you need to know about SafeDrive-Tag. If you can't find your answer, our support team is just a click away.</p>
-            <div className="relative rounded-[2rem] overflow-hidden border border-black/10 shadow-xl hidden md:flex items-center justify-center bg-white p-12 min-h-[300px]">
-              <DotLottieReact
-                src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f914/lottie.json"
-                loop
-                autoplay
-                className="w-full h-full max-h-[300px]"
-              />
+            <div className="relative rounded-[2rem] overflow-hidden border border-gray-200/80 shadow-md hidden md:flex flex-col items-center justify-center bg-white p-8 min-h-[260px] text-center">
+              <div className="w-16 h-16 rounded-2xl bg-orange-100/80 text-orange-600 flex items-center justify-center mb-4 shadow-inner">
+                <ShieldCheck size={32} />
+              </div>
+              <h4 className="text-lg font-black text-gray-950 mb-1">24/7 Priority Support</h4>
+              <p className="text-xs text-gray-500 font-medium max-w-xs">Have questions about order tracking, tag activation, or privacy? We are here to help!</p>
+              <a href="mailto:safedrivetag@gmail.com" className="mt-4 text-xs font-bold text-orange-600 hover:text-orange-700 underline">
+                safedrivetag@gmail.com
+              </a>
             </div>
           </div>
 
