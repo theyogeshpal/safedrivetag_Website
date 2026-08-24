@@ -36,12 +36,6 @@ export default function Home() {
           
           {/* Left Column (7 cols) */}
           <div className="lg:col-span-7 space-y-6 sm:space-y-7 animate-fade-up">
-            
-            {/* Top Pill Badge */}
-            <div className="inline-flex items-center gap-2 bg-gray-50/80 border border-gray-200/90 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-2xs">
-              <ShieldCheck size={14} className="text-gray-900" />
-              <span className="tracking-wide uppercase text-[11px] text-gray-700">TWO-WAY NUMBER MASKING • 100% PRIVACY</span>
-            </div>
 
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.12] tracking-tight">
