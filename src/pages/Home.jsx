@@ -90,7 +90,7 @@ export default function Home() {
           <img 
             src="/hero-car.png" 
             alt="Car Background" 
-            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-15 lg:opacity-20 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl" 
+            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-20 lg:opacity-25 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl mix-blend-multiply" 
           />
           
           {/* Light Grid Overlay */}
@@ -198,7 +198,7 @@ export default function Home() {
               {/* Dynamic Category Chevron / Arrow Badge */}
               <div 
                 key={`badge-${currentNewsIndex}`} 
-                className={`${liveStats[currentNewsIndex].badgeBg} animate-fade-up text-white font-black text-[11px] sm:text-xs pl-4 sm:pl-5 pr-5 sm:pr-6.5 py-2.5 sm:py-3 flex items-center gap-2 shrink-0 shadow-md relative [clip-path:polygon(0_0,calc(100%-12px)_0,100%_50%,calc(100%-12px)_100%,0_100%)]`}
+                className={`${liveStats[currentNewsIndex].badgeBg} animate-slide-in-left text-white font-black text-[11px] sm:text-xs pl-4 sm:pl-5 pr-5 sm:pr-6.5 py-2.5 sm:py-3 flex items-center gap-2 shrink-0 shadow-md relative [clip-path:polygon(0_0,calc(100%-12px)_0,100%_50%,calc(100%-12px)_100%,0_100%)]`}
               >
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80"></span>
@@ -213,7 +213,7 @@ export default function Home() {
               <div className="flex-1 min-w-0 overflow-hidden py-2 px-2.5 sm:px-3.5 flex items-center">
                 <div 
                   key={`content-${currentNewsIndex}`} 
-                  className="animate-fade-up flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-between w-full"
+                  className="animate-slide-in-right flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-between w-full"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="w-8 h-8 rounded-lg bg-gray-100/80 border border-gray-200/50 flex items-center justify-center shrink-0">
@@ -281,7 +281,7 @@ export default function Home() {
                 <img 
                   src="/hero-car.png" 
                   alt="SafeDrive-Tag on Car" 
-                  className="w-full max-w-[340px] object-contain drop-shadow-xl" 
+                  className="w-full max-w-[360px] object-contain drop-shadow-xl mix-blend-multiply transition-transform duration-500 hover:scale-105" 
                 />
 
                 {/* Dark Live QR Shield Pill */}
