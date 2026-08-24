@@ -220,18 +220,22 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- SECTION 2: WHAT IS SAFEDRIVE-TAG (LIGHT / WARM) --- */}
-      <section className="py-20 md:py-28 px-4 sm:px-6 bg-[#fcfaf5] overflow-hidden border-b border-black/5">
-        <div className="max-w-7xl mx-auto">
+      {/* --- SECTION 2: WHAT IS SAFEDRIVE-TAG (DARK THEME) --- */}
+      <section className="py-20 md:py-28 px-4 sm:px-6 bg-[#0a0f1d] text-white relative overflow-hidden">
+        {/* Ambient Dark Glows */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 md:mb-16">
-            <span className="text-orange-600 font-extrabold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About The Solution</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight">What is SafeDrive-Tag?</h2>
+            <span className="text-orange-500 font-extrabold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About The Tech</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">What is SafeDrive-Tag?</h2>
           </div>
           
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="max-w-xl mx-auto lg:max-w-none w-full">
-              <p className="text-base sm:text-lg text-black/75 leading-relaxed mb-8 sm:mb-10 font-medium">
+              <p className="text-base sm:text-lg text-white/75 leading-relaxed mb-8 sm:mb-10 font-medium">
                 SafeDrive-Tag is a weatherproof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
               </p>
               
@@ -243,9 +247,9 @@ export default function Home() {
                   { val: "4.9★", lbl: "User Rating" },
                   { val: "100%", lbl: "Privacy Guaranteed" }
                 ].map((stat, i) => (
-                  <div key={i} className="bg-[#fdf8d5] border border-[#f4e28e] rounded-2xl p-4 text-center shadow-xs hover:shadow-md transition-all">
-                    <div className="text-xl sm:text-2xl font-black text-black mb-1">{stat.val}</div>
-                    <div className="text-[10px] sm:text-xs text-[#6d5516] font-bold uppercase tracking-wider">{stat.lbl}</div>
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center shadow-lg backdrop-blur-md hover:border-orange-500/50 hover:bg-white/10 transition-all">
+                    <div className="text-xl sm:text-2xl font-black text-white mb-1">{stat.val}</div>
+                    <div className="text-[10px] sm:text-xs text-white/60 font-bold uppercase tracking-wider">{stat.lbl}</div>
                   </div>
                 ))}
               </div>
@@ -257,7 +261,7 @@ export default function Home() {
               {/* Top Pointers (Desktop) */}
               <div className="hidden lg:flex justify-between w-full px-4 mb-2 z-20">
                 <div className="flex flex-col items-center animate-fade-up">
-                  <div className="bg-gray-950 text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-gray-800">
+                  <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-white/20">
                     Unique QR per vehicle
                   </div>
                   <div className="w-0.5 h-6 bg-[#fcd34d]"></div>
@@ -265,7 +269,7 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col items-center animate-fade-up" style={{ animationDelay: '100ms' }}>
-                  <div className="bg-gray-950 text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-gray-800">
+                  <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-white/20">
                     Scan with any camera
                   </div>
                   <div className="w-0.5 h-6 bg-[#fcd34d]"></div>
@@ -310,7 +314,7 @@ export default function Home() {
                 <div className="flex flex-col items-center animate-fade-up" style={{ animationDelay: '200ms' }}>
                   <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
                   <div className="w-0.5 h-6 bg-[#fcd34d]"></div>
-                  <div className="bg-gray-950 text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-gray-800">
+                  <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-white/20">
                     SOS / Emergency label
                   </div>
                 </div>
@@ -318,7 +322,7 @@ export default function Home() {
                 <div className="flex flex-col items-center animate-fade-up" style={{ animationDelay: '300ms' }}>
                   <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
                   <div className="w-0.5 h-6 bg-[#fcd34d]"></div>
-                  <div className="bg-gray-950 text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-gray-800">
+                  <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-white/20">
                     Weather-proof sticker
                   </div>
                 </div>
@@ -326,10 +330,10 @@ export default function Home() {
 
               {/* Mobile Highlight Badges */}
               <div className="grid grid-cols-2 gap-2 mt-4 w-full lg:hidden">
-                <span className="bg-[#fdf8d5] border border-[#f4e28e] text-black text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ Unique QR Code</span>
-                <span className="bg-[#fdf8d5] border border-[#f4e28e] text-black text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ Any Phone Camera</span>
-                <span className="bg-[#fdf8d5] border border-[#f4e28e] text-black text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ SOS Emergency</span>
-                <span className="bg-[#fdf8d5] border border-[#f4e28e] text-black text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ 100% Weatherproof</span>
+                <span className="bg-white/10 border border-white/15 text-[#fcd34d] text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ Unique QR Code</span>
+                <span className="bg-white/10 border border-white/15 text-[#fcd34d] text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ Any Phone Camera</span>
+                <span className="bg-white/10 border border-white/15 text-[#fcd34d] text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ SOS Emergency</span>
+                <span className="bg-white/10 border border-white/15 text-[#fcd34d] text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ 100% Weatherproof</span>
               </div>
               
             </div>
@@ -337,7 +341,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- SECTION 3: HOW WE WORK (LIGHT / CLEAN) --- */}
+      {/* --- SECTION 3: HOW WE WORK (LIGHT THEME) --- */}
       <section className="py-20 md:py-28 px-4 sm:px-6 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
@@ -390,64 +394,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- SECTION 4: WHY US (DARK THEME FLAGSHIP) --- */}
-      <section className="py-20 md:py-28 px-4 sm:px-6 bg-black text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/15 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-green-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+      {/* --- SECTION 4: FOR EVERY VEHICLE & TRAVEL BAG (DARK THEME) --- */}
+      <section className="py-20 md:py-28 px-4 sm:px-6 bg-[#0d121f] text-white relative overflow-hidden">
+        {/* Glows */}
+        <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-orange-500 font-extrabold tracking-widest text-xs sm:text-sm uppercase mb-3 block">Why Choose SafeDrive-Tag</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white">Your Privacy & Safety First</h2>
-            <p className="text-sm sm:text-base md:text-lg text-white/70 max-w-xl mx-auto mt-3 font-medium">Engineered with cloud-level number masking and instant automated SOS dispatch.</p>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {[
-              { icon: <Lock size={26} />, title: "100% Privacy", desc: "Your real phone number is always hidden through our secure masked calling engine." },
-              { icon: <AlertTriangle size={26} />, title: "Multiple Options", desc: "Scan options include Wrong Parking, Accident, and generic emergency contacts." },
-              { icon: <Smartphone size={26} />, title: "No App Needed", desc: "Scannable directly from any default iOS or Android smartphone camera." },
-              { icon: <Zap size={26} />, title: "Instant Alerts", desc: "Receive immediate SMS and WhatsApp notifications the exact moment someone scans your tag." }
-            ].map((item, i) => (
-              <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-7 hover:-translate-y-2 transition-transform duration-300 shadow-2xl group hover:border-orange-500/60 hover:bg-white/10">
-                <div className="w-14 h-14 bg-orange-500/10 border border-orange-500/30 text-orange-500 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all shadow-inner">
-                  {item.icon}
-                </div>
-                <h4 className="font-extrabold text-white mb-2.5 text-lg sm:text-xl">{item.title}</h4>
-                <p className="text-white/65 text-xs sm:text-sm leading-relaxed font-medium">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- SECTION 5: FOR EVERY VEHICLE & TRAVEL BAG (LIGHT / WARM GOLDEN CARDS) --- */}
-      <section className="py-20 md:py-28 px-4 sm:px-6 bg-[#fcfaf5] border-y border-black/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-[#c29623] font-extrabold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">For Vehicles & Travel Belongings</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black mb-4">Cars. Bikes. Luggage. Backpacks.</h2>
-            <p className="text-sm sm:text-base md:text-lg text-black/65 max-w-2xl mx-auto font-medium">
+            <span className="text-amber-400 font-extrabold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">Universal Compatibility</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">Cars. Bikes. Luggage. Backpacks.</h2>
+            <p className="text-sm sm:text-base md:text-lg text-white/70 max-w-2xl mx-auto font-medium">
               SafeDrive-Tag protects your daily commute vehicles and your travel luggage — with instant emergency and lost bag recovery QR alerts.
             </p>
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
             {[
-              { icon: <Car size={34} className="text-blue-500 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399", highlight: true },
-              { icon: <Bike size={34} className="text-orange-500 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299", highlight: false },
-              { icon: <Briefcase size={34} className="text-indigo-600 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249", highlight: true },
-              { icon: <Car size={34} className="text-purple-600 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399", highlight: false },
-              { icon: <Car size={34} className="text-green-600 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299", highlight: false },
-              { icon: <Truck size={34} className="text-yellow-600 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399", highlight: false }
+              { icon: <Car size={34} className="text-blue-400 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399", highlight: true },
+              { icon: <Bike size={34} className="text-orange-400 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299", highlight: false },
+              { icon: <Briefcase size={34} className="text-indigo-400 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249", highlight: true },
+              { icon: <Car size={34} className="text-purple-400 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399", highlight: false },
+              { icon: <Car size={34} className="text-green-400 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299", highlight: false },
+              { icon: <Truck size={34} className="text-yellow-400 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399", highlight: false }
             ].map((v, i) => (
-              <div key={i} className={`bg-[#fdf8d5] rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1 ${v.highlight ? 'border-2 border-[#fcd34d] shadow-[0_10px_30px_rgba(252,211,77,0.3)] sm:scale-105 z-10' : 'border border-[#f4e28e] shadow-xs hover:shadow-md'}`}>
+              <div key={i} className={`bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 ${v.highlight ? 'border-2 border-orange-500 shadow-[0_10px_30px_rgba(249,115,22,0.25)] sm:scale-105 z-10' : 'border border-white/10 shadow-sm'}`}>
                 <div>
                   <div className="text-2xl sm:text-3xl mb-2.5 flex justify-center">{v.icon}</div>
-                  <h3 className="font-black text-black text-xs sm:text-sm md:text-base mb-1">{v.title}</h3>
-                  <p className="text-[10px] sm:text-[11px] text-black/60 font-medium mb-3 sm:mb-4 leading-relaxed">{v.desc}</p>
+                  <h3 className="font-black text-white text-xs sm:text-sm md:text-base mb-1">{v.title}</h3>
+                  <p className="text-[10px] sm:text-[11px] text-white/60 font-medium mb-3 sm:mb-4 leading-relaxed">{v.desc}</p>
                 </div>
-                <div className="bg-black text-[#fcd34d] text-[9px] sm:text-[10px] font-black px-3 py-1 rounded-full tracking-wide">
+                <div className="bg-orange-500 text-white text-[9px] sm:text-[10px] font-black px-3 py-1 rounded-full tracking-wide shadow-sm">
                   {v.price}
                 </div>
               </div>
@@ -456,8 +432,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- SECTION 6: BENTO GRID: FEATURES (LIGHT THEME) --- */}
-      <section className="py-20 sm:py-28 px-4 sm:px-6 relative bg-white">
+      {/* --- SECTION 5: BENTO GRID: FEATURES (LIGHT THEME) --- */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 relative bg-[#FAF8F5]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10 md:mb-14 animate-fade-up">
             <span className="text-orange-500 font-extrabold tracking-widest text-xs sm:text-sm uppercase mb-1 block">Cutting-Edge Innovation</span>
@@ -533,7 +509,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- SECTION 7: FAQ (DARK THEME) --- */}
+      {/* --- SECTION 6: FAQ (DARK THEME) --- */}
       <section className="py-20 md:py-28 px-4 sm:px-6 bg-[#0a0f1d] text-white relative overflow-hidden">
         {/* Ambient Glows */}
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
@@ -574,7 +550,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- SECTION 8: FINAL CTA BANNER (ORANGE ACCENT) --- */}
+      {/* --- SECTION 7: FINAL CTA BANNER (ORANGE ACCENT) --- */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 relative overflow-hidden bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-multiply"></div>
         <div className="relative z-10 max-w-3xl mx-auto text-center">
