@@ -26,7 +26,7 @@ export default function Footer() {
       <p>Secured by SafeDrive-Tag &copy; {new Date().getFullYear()}</p>
     </footer>
   ) : (
-    <footer className="relative bg-[#FAF9F6] text-gray-700 pt-16 pb-12 overflow-hidden border-t border-gray-200/80">
+    <footer className="relative bg-white text-gray-700 pt-16 pb-12 overflow-hidden border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 relative z-10">
         
         {/* Brand Column */}
