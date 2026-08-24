@@ -8,19 +8,13 @@ export default function Footer() {
   const isScanPage = location.pathname.startsWith('/scan');
 
   const FooterLink = ({ to, label, isExternal = false }) => (
-    <li className="group">
+    <li>
       {isExternal ? (
-        <a href={to} className="inline-flex items-center hover:text-orange-500 transition-all duration-300">
-          <span className="text-orange-500 opacity-0 -ml-4 w-0 overflow-hidden group-hover:w-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 mr-0 group-hover:mr-1 flex items-center justify-center">
-            <ChevronRight className="w-4 h-4 shrink-0" />
-          </span>
+        <a href={to} className="inline-block text-gray-600 hover:text-orange-600 transition-colors">
           {label}
         </a>
       ) : (
-        <Link to={to} className="inline-flex items-center hover:text-orange-500 transition-all duration-300">
-          <span className="text-orange-500 opacity-0 -ml-4 w-0 overflow-hidden group-hover:w-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 mr-0 group-hover:mr-1 flex items-center justify-center">
-            <ChevronRight className="w-4 h-4 shrink-0" />
-          </span>
+        <Link to={to} className="inline-block text-gray-600 hover:text-orange-600 transition-colors">
           {label}
         </Link>
       )}
