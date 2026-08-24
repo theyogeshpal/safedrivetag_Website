@@ -701,24 +701,22 @@ export default function Dashboard() {
                   {currentUser.name || 'Flipkart Customer'}
                 </h3>
               </div>
-            </div>
-
-            {/* Mobile Tab Navigation Bar (Horizontal Scroll on Mobile) */}
-            <div className="lg:hidden bg-white rounded-sm shadow-sm border border-gray-200/80 p-2 overflow-x-auto flex gap-2 no-scrollbar">
+            </div>            {/* Mobile Tab Navigation Bar (Sticky Horizontal Scroll on Mobile) */}
+            <div className="lg:hidden sticky top-16 z-30 bg-white/95 backdrop-blur-md rounded-lg shadow-sm border border-gray-200 p-1.5 overflow-x-auto flex gap-1.5 no-scrollbar">
               {[
-                { id: 'tags', label: `My Tags (${userTags.length})`, icon: <QrCode size={15} /> },
-                { id: 'orders', label: 'My Orders', icon: <Package size={15} /> },
-                { id: 'profile', label: 'Profile Info', icon: <User size={15} /> },
-                { id: 'addresses', label: 'Addresses', icon: <MapPin size={15} /> },
-                { id: 'notifications', label: 'Notifications', icon: <Bell size={15} /> },
+                { id: 'tags', label: `My Tags (${userTags.length})`, icon: <QrCode size={14} /> },
+                { id: 'orders', label: `Orders (${orders.length})`, icon: <Package size={14} /> },
+                { id: 'profile', label: 'Profile Info', icon: <User size={14} /> },
+                { id: 'addresses', label: 'Addresses', icon: <MapPin size={14} /> },
+                { id: 'notifications', label: 'Alerts', icon: <Bell size={14} /> },
               ].map((m) => (
                 <button
                   key={m.id}
                   onClick={() => setActiveTab(m.id)}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-sm text-xs font-semibold whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                     activeTab === m.id
-                      ? 'bg-[#2874f0] text-white'
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                      ? 'bg-[#2874f0] text-white shadow-xs'
+                      : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {m.icon}
@@ -862,13 +860,13 @@ export default function Dashboard() {
           {/* ======================================================== */}
           {/* RIGHT MAIN CONTENT AREA */}
           {/* ======================================================== */}
-          <div className="flex-1 w-full bg-white rounded-sm shadow-sm border border-gray-200/80 p-4 sm:p-7 min-h-[580px]">
+          <div className="flex-1 w-full bg-white rounded-lg shadow-sm border border-gray-200/80 p-3.5 sm:p-6 lg:p-7 min-h-[580px] min-w-0">
             
             {/* ---------------------------------------------------- */}
             {/* TAB 1: MY SAFEDRIVE TAGS */}
             {/* ---------------------------------------------------- */}
             {activeTab === 'tags' && (
-              <div className="space-y-6">
+              <div className="space-y-6 min-w-0">
                 
                 {/* Header with Title and Action Button */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-gray-100">
@@ -886,16 +884,16 @@ export default function Dashboard() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2.5">
+                  <div className="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
                     <button
                       onClick={() => setIsLinkModalOpen(true)}
-                      className="bg-[#2874f0] hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-sm text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+                      className="bg-[#2874f0] hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-md text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer"
                     >
-                      <Plus size={15} /> + LINK NEW TAG
+                      <Plus size={15} /> + LINK TAG
                     </button>
                     <Link
                       to="/shop"
-                      className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-sm text-xs flex items-center gap-1.5 shadow-sm transition-all"
+                      className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-md text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all text-center"
                     >
                       Buy More Tags
                     </Link>
@@ -1173,7 +1171,7 @@ export default function Dashboard() {
 
                           {/* Bottom Row: Actions Bar */}
                           <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2.5">
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                               <button
                                 onClick={() => setQrModalTag(tag)}
                                 className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
@@ -1614,88 +1612,93 @@ export default function Dashboard() {
                       .map((order) => (
                         <div
                           key={order.id}
-                          className="bg-white rounded-sm border border-gray-200 hover:border-gray-300 transition-all p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-5"
+                          className="bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all p-4 sm:p-5 flex flex-col gap-4 shadow-xs"
                         >
-                          {/* Product Info */}
-                          <div className="flex items-start gap-4 flex-1">
-                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-sm overflow-hidden flex-shrink-0 border border-gray-200">
-                              <img src={order.image} alt={order.title} className="w-full h-full object-cover" />
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-sm text-[#212121] hover:text-[#2874f0] cursor-pointer">
-                                {order.title}
-                              </h4>
-                              <p className="text-xs text-gray-500 mt-0.5 font-mono">Order ID: {order.id}</p>
-                              <div className="flex items-center gap-1.5 mt-1">
-                                <span className="text-xs text-gray-500 font-medium">Type:</span>
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                                  order.qrType === 'DIGITAL'
-                                    ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                                    : 'bg-blue-100 text-blue-700 border border-blue-200'
-                                }`}>
-                                  {order.qrType === 'DIGITAL' ? '⚡ Digital E-Kit' : '📦 Physical QR Kit'}
-                                </span>
+                          {/* Top Main Row (Product + Status + Actions) */}
+                          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 w-full">
+                            
+                            {/* Product Info */}
+                            <div className="flex items-start gap-3.5 sm:gap-4 flex-1 min-w-0">
+                              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0 border border-gray-200 shadow-2xs">
+                                <img src={order.image} alt={order.title} className="w-full h-full object-cover" />
                               </div>
-                              <p className="text-sm font-bold text-[#212121] mt-1">₹{order.price}</p>
+                              <div className="min-w-0 flex-1">
+                                <h4 className="font-bold text-sm sm:text-base text-[#212121] hover:text-[#2874f0] cursor-pointer truncate">
+                                  {order.title}
+                                </h4>
+                                <p className="text-[11px] text-gray-500 mt-0.5 font-mono">Order ID: {order.id}</p>
+                                <div className="flex items-center gap-1.5 mt-1">
+                                  <span className="text-[11px] text-gray-500 font-medium">Type:</span>
+                                  <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                                    order.qrType === 'DIGITAL'
+                                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                                      : 'bg-blue-100 text-blue-700 border border-blue-200'
+                                  }`}>
+                                    {order.qrType === 'DIGITAL' ? '⚡ Digital E-Kit' : '📦 Physical QR Kit'}
+                                  </span>
+                                </div>
+                                <p className="text-sm sm:text-base font-black text-[#212121] mt-1">₹{order.price}</p>
+                              </div>
                             </div>
-                          </div>
 
-                          {/* Status Column */}
-                          <div className="md:w-60">
-                            <div className="flex items-center gap-2">
-                              <span className={`w-2.5 h-2.5 rounded-full ${
-                                order.status === 'Delivered'
-                                  ? 'bg-green-600'
-                                  : order.status === 'Cancelled'
-                                    ? 'bg-red-600'
-                                    : 'bg-blue-600 animate-pulse'
-                              }`} />
-                              <span className="font-bold text-xs sm:text-sm text-[#212121]">{order.statusDate}</span>
+                            {/* Status Column */}
+                            <div className="w-full md:w-56 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100">
+                              <div className="flex items-center gap-2">
+                                <span className={`w-2.5 h-2.5 rounded-full ${
+                                  order.status === 'Delivered'
+                                    ? 'bg-green-600'
+                                    : order.status === 'Cancelled'
+                                      ? 'bg-red-600'
+                                      : 'bg-blue-600 animate-pulse'
+                                }`} />
+                                <span className="font-bold text-xs sm:text-sm text-[#212121]">{order.statusDate}</span>
+                              </div>
+                              <p className="text-[11px] text-gray-500 mt-1 pl-4.5">{order.statusDesc}</p>
                             </div>
-                            <p className="text-[11px] text-gray-500 mt-1 pl-4.5">{order.statusDesc}</p>
-                          </div>
 
-                          {/* Actions */}
-                          <div className="flex md:flex-col gap-2 w-full md:w-auto">
-                            <button
-                              onClick={() => downloadInvoicePdf(order, currentUser)}
-                              className="flex-1 md:flex-none border border-[#2874f0] text-[#2874f0] hover:bg-blue-50 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                              title="Direct 1-Click PDF Download"
-                            >
-                              <Download size={13} /> Invoice
-                            </button>
-
-                            {/* Physical Orders Have Courier & Stage Tracking */}
-                            {!(order.productType === 'DIGITAL' || order.qrType === 'DIGITAL' || order.name?.toLowerCase().includes('digital') || order.title?.toLowerCase().includes('digital')) && (
+                            {/* Actions */}
+                            <div className="flex flex-wrap md:flex-col gap-2 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-gray-100">
                               <button
-                                onClick={() => setTrackingModalOrder(order)}
-                                className="flex-1 md:flex-none bg-blue-50 hover:bg-blue-100 text-[#2874f0] border border-blue-200 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                                title="Track Shipping & Delivery Progress"
+                                onClick={() => downloadInvoicePdf(order, currentUser)}
+                                className="flex-1 md:flex-none border border-[#2874f0] text-[#2874f0] hover:bg-blue-50 px-3 py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                                title="Direct 1-Click PDF Download"
                               >
-                                <Truck size={13} /> Track Order
+                                <Download size={13} /> Invoice
                               </button>
-                            )}
 
-                            {/* Only Digital Orders Have Printable PDF Sticker Passes */}
-                            {(order.productType === 'DIGITAL' || order.qrType === 'DIGITAL' || order.name?.toLowerCase().includes('digital') || order.title?.toLowerCase().includes('digital')) && (
-                              <>
+                              {/* Physical Orders Have Courier & Stage Tracking */}
+                              {!(order.productType === 'DIGITAL' || order.qrType === 'DIGITAL' || order.name?.toLowerCase().includes('digital') || order.title?.toLowerCase().includes('digital')) && (
                                 <button
-                                  onClick={() => openDigitalPdf(order)}
-                                  className="flex-1 md:flex-none bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                                  title="Open Digital QR Kit PDF"
+                                  onClick={() => setTrackingModalOrder(order)}
+                                  className="flex-1 md:flex-none bg-blue-50 hover:bg-blue-100 text-[#2874f0] border border-blue-200 px-3 py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                                  title="Track Shipping & Delivery Progress"
                                 >
-                                  <Eye size={13} /> Open PDF
+                                  <Truck size={13} /> Track Order
                                 </button>
+                              )}
 
-                                <button
-                                  onClick={() => printDigitalPdfInColor(order)}
-                                  className="flex-1 md:flex-none bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-                                  title="Print High-Resolution Color PDF Badges"
-                                >
-                                  <Printer size={13} /> Print Color PDF
-                                </button>
-                              </>
-                            )}
+                              {/* Only Digital Orders Have Printable PDF Sticker Passes */}
+                              {(order.productType === 'DIGITAL' || order.qrType === 'DIGITAL' || order.name?.toLowerCase().includes('digital') || order.title?.toLowerCase().includes('digital')) && (
+                                <>
+                                  <button
+                                    onClick={() => openDigitalPdf(order)}
+                                    className="flex-1 md:flex-none bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                    title="Open Digital QR Kit PDF"
+                                  >
+                                    <Eye size={13} /> Open PDF
+                                  </button>
+
+                                  <button
+                                    onClick={() => printDigitalPdfInColor(order)}
+                                    className="flex-1 md:flex-none bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                                    title="Print High-Resolution Color PDF Badges"
+                                  >
+                                    <Printer size={13} /> Print Color PDF
+                                  </button>
+                                </>
+                              )}
+                            </div>
+
                           </div>
 
                           {/* Allocated QR Copies (Live Generated from Order) */}
