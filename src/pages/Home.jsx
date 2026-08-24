@@ -14,27 +14,31 @@ export default function Home() {
   const liveStats = [
     { 
       tag: "TRUSTED USERS", 
-      value: "9.5L+ Active Users", 
-      desc: "Protecting vehicles and luggage across India", 
-      icon: <Shield size={18} className="text-orange-500" />
+      value: "9.5L+ Across India", 
+      desc: "Protecting vehicles and luggage with smart QR tags", 
+      icon: <Shield size={18} className="text-orange-500" />,
+      badgeBg: "bg-gradient-to-r from-orange-600 to-amber-600"
     },
     { 
-      tag: "TOP RATING", 
+      tag: "RATING", 
       value: "4.8 ★ User Rating", 
       desc: "From over 50,000+ verified customer reviews", 
-      icon: <Star size={18} className="fill-amber-400 text-amber-400" />
+      icon: <Star size={18} className="fill-amber-400 text-amber-400" />,
+      badgeBg: "bg-gradient-to-r from-amber-500 to-orange-500"
     },
     { 
       tag: "TOTAL SCANS", 
-      value: "2.4M+ Total Scans", 
+      value: "2.4M+ All Time", 
       desc: "Masked calls & emergency contacts bridged successfully", 
-      icon: <QrCode size={18} className="text-blue-500" />
+      icon: <QrCode size={18} className="text-blue-500" />,
+      badgeBg: "bg-gradient-to-r from-blue-600 to-indigo-600"
     },
     { 
       tag: "TODAY'S SCANS", 
-      value: "1,204 Scans Today", 
-      desc: "Live real-time updates from scanned tags across India", 
-      icon: <TrendingUp size={18} className="text-emerald-500" />
+      value: "1,204 Live Scans", 
+      desc: "Live real-time scan updates across cities today", 
+      icon: <TrendingUp size={18} className="text-emerald-500" />,
+      badgeBg: "bg-gradient-to-r from-emerald-600 to-teal-600"
     }
   ];
 
@@ -164,21 +168,26 @@ export default function Home() {
               </button>
             </div>
             
-            {/* 3. Live News Chyron / Ticker Bar (Exact Broadcast TV News Style) */}
-            <div className="bg-white/95 border border-gray-200/90 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 shadow-sm flex items-center gap-3 overflow-hidden relative backdrop-blur-sm">
-              {/* Red LIVE Badge */}
-              <div className="bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-xs sm:text-sm px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl flex items-center gap-2 shrink-0 shadow-md">
-                <span className="relative flex h-2.5 w-2.5">
+            {/* 3. Live News Chyron / Ticker Bar */}
+            <div className="bg-white/95 border border-gray-200/90 rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 shadow-sm flex items-center gap-2.5 sm:gap-3.5 overflow-hidden relative backdrop-blur-sm">
+              {/* Dynamic Category Pill Badge (TODAY'S SCANS, TOTAL SCANS, TRUSTED USERS, RATING) */}
+              <div 
+                key={`badge-${currentNewsIndex}`} 
+                className={`${liveStats[currentNewsIndex].badgeBg} animate-fade-up text-white font-black text-[11px] sm:text-xs px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 shrink-0 shadow-md`}
+              >
+                <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                 </span>
-                <span className="tracking-wider uppercase font-black">LIVE</span>
+                <span className="tracking-wider uppercase whitespace-nowrap">
+                  {liveStats[currentNewsIndex].tag}
+                </span>
               </div>
 
               {/* News Headline & Description (Auto-cycling transition) */}
               <div className="flex-1 min-w-0 overflow-hidden px-1">
                 <div 
-                  key={currentNewsIndex} 
+                  key={`content-${currentNewsIndex}`} 
                   className="animate-fade-up flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-between"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -186,13 +195,8 @@ export default function Home() {
                       {liveStats[currentNewsIndex].icon}
                     </div>
                     <div className="truncate">
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-sm sm:text-base text-gray-950 truncate tracking-tight">
-                          {liveStats[currentNewsIndex].value}
-                        </span>
-                        <span className="text-[10px] text-orange-600 font-extrabold uppercase tracking-wider bg-orange-50 border border-orange-200/60 px-2 py-0.5 rounded-full shrink-0">
-                          {liveStats[currentNewsIndex].tag}
-                        </span>
+                      <div className="font-black text-sm sm:text-base text-gray-950 truncate tracking-tight">
+                        {liveStats[currentNewsIndex].value}
                       </div>
                       <p className="text-[11px] sm:text-xs text-gray-500 font-medium truncate mt-0.5 sm:mt-0">
                         {liveStats[currentNewsIndex].desc}
@@ -210,7 +214,7 @@ export default function Home() {
                     type="button"
                     onClick={() => setCurrentNewsIndex(idx)}
                     className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                      currentNewsIndex === idx ? 'w-5 bg-red-600' : 'w-1.5 bg-gray-200 hover:bg-gray-400'
+                      currentNewsIndex === idx ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-200 hover:bg-gray-400'
                     }`}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
