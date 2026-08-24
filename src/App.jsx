@@ -27,13 +27,17 @@ const DashboardNotifications = lazy(() => import('./pages/dashboard/DashboardNot
 const Admin = lazy(() => import('./pages/Admin'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
-// Fast fallback skeleton
+// Branded Fast Fallback Skeleton
 const RouteFallback = () => (
-  <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 animate-pulse">
-    <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center mb-3">
-      <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+  <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
+    <div className="relative w-16 h-16 mb-4">
+      <div className="absolute inset-0 rounded-2xl bg-blue-500/20 animate-ping" />
+      <div className="relative w-16 h-16 bg-[#2874f0] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25">
+        <div className="w-7 h-7 border-3 border-white border-t-transparent rounded-full animate-spin" />
+      </div>
     </div>
-    <p className="text-xs font-semibold text-gray-400">Loading page...</p>
+    <h3 className="text-sm font-black text-gray-800">Loading SafeDrive...</h3>
+    <p className="text-[11px] text-gray-500 mt-1">Please wait while we secure your connection</p>
   </div>
 );
 

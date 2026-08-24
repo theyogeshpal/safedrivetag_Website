@@ -9,7 +9,13 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem(STORAGE_KEY_USER);
-      return savedUser ? JSON.parse(savedUser) : null;
+      if (savedUser) return JSON.parse(savedUser);
+      // Fallback: If token exists in localStorage, initialize user
+      const token = localStorage.getItem('safedrive_token');
+      if (token) {
+        return { name: 'SafeDrive Customer', phone: '' };
+      }
+      return null;
     } catch {
       return null;
     }
@@ -18,6 +24,7 @@ export function AuthProvider({ children }) {
   const [dashboardData, setDashboardData] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(false);
+  const [isInitializingAuth, setIsInitializingAuth] = useState(true);
 
   // Sync user object to localStorage
   useEffect(() => {
@@ -35,15 +42,22 @@ export function AuthProvider({ children }) {
   // Fetch logged-in user profile on load if token exists
   const checkAuth = useCallback(async () => {
     const token = getAuthToken();
-    if (!token) return;
+    if (!token) {
+      setIsInitializingAuth(false);
+      return;
+    }
 
     try {
+      setIsLoadingAuth(true);
       const res = await api.getCurrentUser();
       if (res.success && res.user) {
         setCurrentUser(res.user);
       }
     } catch (err) {
       console.error('Failed to fetch current user profile', err);
+    } finally {
+      setIsLoadingAuth(false);
+      setIsInitializingAuth(false);
     }
   }, []);
 
@@ -135,8 +149,10 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         currentUser,
+        setCurrentUser,
         dashboardData,
         isLoadingAuth,
+        isInitializingAuth,
         isLoginModalOpen,
         openLoginModal,
         closeLoginModal,
