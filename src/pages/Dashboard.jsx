@@ -1247,12 +1247,12 @@ export default function Dashboard() {
                             </div>
                           </div>
 
-                          {/* Bottom Row: Actions Bar */}
-                          <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2.5">
-                            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                          {/* Bottom Row: Actions Bar (Responsive Grid on Mobile, Flex on Desktop) */}
+                          <div className="pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+                            <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
                               <button
                                 onClick={() => setQrModalTag(tag)}
-                                className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                               >
                                 <QrCode size={13} /> View QR Badge
                               </button>
@@ -1260,18 +1260,18 @@ export default function Dashboard() {
                               {tag.qrType === 'DIGITAL' && (
                                 <button
                                   onClick={() => printDigitalPdfInColor({ title: tag.vehicleName, publicToken: tag.publicToken || tag.id, vehicleNumber: tag.vehicleNumber })}
-                                  className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                  className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                                 >
-                                  <Printer size={13} /> Print Color Badge
+                                  <Printer size={13} /> Print Badge
                                 </button>
                               )}
 
                               <button
                                 onClick={() => handleToggleStatus(tag.id, tag.status)}
-                                className={`px-3 py-1.5 rounded text-xs font-bold transition-colors cursor-pointer ${
+                                className={`px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold transition-colors cursor-pointer text-center flex items-center justify-center gap-1 ${
                                   isActive
-                                    ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
-                                    : 'bg-green-50 text-green-700 hover:bg-green-100'
+                                    ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200'
+                                    : 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
                                 }`}
                               >
                                 {isActive ? 'Pause Protection' : 'Activate Protection'}
@@ -1279,31 +1279,33 @@ export default function Dashboard() {
 
                               <Link
                                 to={`/dashboard/tag/${tag.publicToken || tag.id}`}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs text-center"
                               >
-                                <Eye size={13} /> View Full Kit Details
+                                <Eye size={13} /> View Kit Details
                               </Link>
 
-                              <button
-                                onClick={() => setEditingTag(tag)}
-                                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                              >
-                                <Edit3 size={13} /> Edit
-                              </button>
+                              <div className="flex items-center gap-2 col-span-2 sm:col-span-1 justify-between sm:justify-start">
+                                <button
+                                  onClick={() => setEditingTag(tag)}
+                                  className="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                                >
+                                  <Edit3 size={13} /> Edit
+                                </button>
 
-                              <button
-                                onClick={() => handleDeleteTag(tag.id)}
-                                className="text-red-500 hover:bg-red-50 p-1.5 rounded text-xs transition-colors cursor-pointer"
-                                title="Unlink Tag"
-                              >
-                                <Trash2 size={14} />
-                              </button>
+                                <button
+                                  onClick={() => handleDeleteTag(tag.id)}
+                                  className="text-red-500 hover:bg-red-50 p-2 sm:p-1.5 rounded-md text-xs transition-colors cursor-pointer border border-red-200 sm:border-0"
+                                  title="Unlink Tag"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
                             </div>
 
                             <Link
                               to={`/q/${tag.publicToken || tag.id}`}
                               target="_blank"
-                              className="text-xs font-bold text-[#2874f0] hover:underline flex items-center gap-1"
+                              className="text-xs font-bold text-[#2874f0] hover:underline flex items-center gap-1 shrink-0 pt-1 sm:pt-0"
                             >
                               <ExternalLink size={12} /> Test Public QR Scan Page
                             </Link>
