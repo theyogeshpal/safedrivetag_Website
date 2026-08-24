@@ -67,7 +67,9 @@ export default function DashboardTags() {
   const loadDashboardData = useCallback(async () => {
     setIsLoadingDashboard(true);
     try {
-      // 1. Fetch Orders for allocated QR copies
+      const cleanUserPhone = currentUser?.phone ? String(currentUser.phone).replace(/\D/g, '').slice(-10) : '';
+
+      // 1. Fetch Orders for allocated QR kits
       let allocatedFromOrders = [];
       try {
         const ordersRes = await api.getUserOrders();
@@ -197,105 +199,110 @@ export default function DashboardTags() {
         console.error('Error loading orders for tags', e);
       }
 
-      // 2. Fetch Dashboard Kits
-      try {
-        const res = await api.getDashboard();
-        let mappedTags = [];
-        if (res.success) {
-          if (res.stats) {
-            setDashboardStats(res.stats);
-          }
-          if (res.kits && res.kits.length > 0) {
+      // 2. Fetch Dashboard Kits if user has no orders
+      let finalTagsList = [];
+      if (allocatedFromOrders.length > 0) {
+        finalTagsList = allocatedFromOrders;
+      } else {
+        try {
+          const res = await api.getDashboard();
+          if (res.success && res.kits && res.kits.length > 0) {
             res.kits.forEach((kit, idx) => {
-              const vehicleNo = kit.vehicle?.vehicleNumber || kit.vehicleNumber || kit.plateNumber || 'ACTIVE PROTECTED';
-              const vBrand = kit.vehicle?.vehicleBrand || kit.vehicleBrand || '';
-              const vName = kit.vehicle?.vehicleName || kit.vehicleName || kit.productName || 'My Vehicle';
-              const vehicleTitle = vBrand ? `${vBrand} ${vName}`.trim() : vName;
-              const primaryToken = kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || kit.publicToken || kit.token || `pk_live_${idx}`;
-              const baseKitCode = kit.kitId || kit.copies?.[0]?.copyCode?.replace(/C[0-9]+$/, '') || `SD00${idx + 1}`;
+              const kitPhone = kit.user?.phone ? String(kit.user.phone).replace(/\D/g, '').slice(-10) : '';
+              if (!cleanUserPhone || kitPhone === cleanUserPhone) {
+                const vehicleNo = kit.vehicle?.vehicleNumber || kit.vehicleNumber || kit.plateNumber || 'ACTIVE PROTECTED';
+                const vBrand = kit.vehicle?.vehicleBrand || kit.vehicleBrand || '';
+                const vName = kit.vehicle?.vehicleName || kit.vehicleName || kit.productName || 'My Vehicle';
+                const vehicleTitle = vBrand ? `${vBrand} ${vName}`.trim() : vName;
+                const primaryToken = kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || kit.publicToken || kit.token || `pk_live_${idx}`;
+                const baseKitCode = kit.kitId || kit.copies?.[0]?.copyCode?.replace(/C[0-9]+$/, '') || `SD00${idx + 1}`;
 
-              mappedTags.push({
-                id: baseKitCode,
-                kitId: baseKitCode,
-                publicToken: primaryToken,
-                primaryToken: primaryToken,
-                copyCode: baseKitCode,
-                copiesCount: kit.copies?.length || 2,
-                copies: kit.copies || [],
-                name: kit.user?.name || currentUser?.name || 'Owner',
-                phone: kit.user?.phone || currentUser?.phone,
-                emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
-                emergencyContacts: kit.vehicle?.emergencyContacts || [],
-                whatsapp: currentUser?.phone,
-                vehicleNumber: vehicleNo,
-                vehicleName: vehicleTitle,
-                vehicleType: kit.vehicle?.vehicleType || kit.vehicleType || 'Car',
-                status: 'active',
-                qrType: kit.qrType || 'DIGITAL',
-                registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-                callBalance: kit.wallet?.callBalance ?? 10,
-                messageBalance: kit.wallet?.messageBalance ?? 20,
-                scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
-                callMaskingEnabled: true,
-                whatsappAlertsEnabled: true,
-              });
+                finalTagsList.push({
+                  id: baseKitCode,
+                  kitId: baseKitCode,
+                  publicToken: primaryToken,
+                  primaryToken: primaryToken,
+                  copyCode: baseKitCode,
+                  copiesCount: kit.copies?.length || 2,
+                  copies: kit.copies || [],
+                  name: kit.user?.name || currentUser?.name || 'Owner',
+                  phone: kit.user?.phone || currentUser?.phone,
+                  emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
+                  emergencyContacts: kit.vehicle?.emergencyContacts || [],
+                  whatsapp: currentUser?.phone,
+                  vehicleNumber: vehicleNo,
+                  vehicleName: vehicleTitle,
+                  vehicleType: kit.vehicle?.vehicleType || kit.vehicleType || 'Car',
+                  status: 'active',
+                  qrType: kit.qrType || 'DIGITAL',
+                  registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+                  callBalance: kit.wallet?.callBalance ?? 10,
+                  messageBalance: kit.wallet?.messageBalance ?? 20,
+                  scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
+                  callMaskingEnabled: true,
+                  whatsappAlertsEnabled: true,
+                });
+              }
             });
           }
-        }
-
-        const existingTokens = new Set(
-          mappedTags.map(t => t.publicToken)
-            .concat(mappedTags.map(t => t.id))
-            .concat(mappedTags.map(t => t.copyCode))
-        );
-        const uniqueAllocated = allocatedFromOrders.filter(
-          at => !existingTokens.has(at.publicToken) && !existingTokens.has(at.id) && !existingTokens.has(at.copyCode)
-        );
-        const allTags = [...mappedTags, ...uniqueAllocated];
-
-        // Also merge local cache tags
-        try {
-          const localCache = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
-          Object.keys(localCache).forEach((tagKey) => {
-            const r = localCache[tagKey];
-            if (r && r.vehicleNumber && !existingTokens.has(tagKey) && !existingTokens.has(r.token) && !existingTokens.has(r.copyCode)) {
-              const isPhys = r.qrType === 'PHYSICAL' || r.vehicleType === 'PHYSICAL' || tagKey.toLowerCase().includes('phy') || !r.qrType;
-              allTags.push({
-                id: r.copyCode || r.token || tagKey,
-                publicToken: r.token || tagKey,
-                copyCode: r.copyCode || tagKey,
-                productId: isPhys ? 'Physical Safety Sticker Kit' : 'Digital QR Safety Pass',
-                name: r.name || currentUser?.name || 'Owner',
-                phone: r.phone || currentUser?.phone,
-                emergencyContact: r.emergencyContacts?.[0]?.number || null,
-                emergencyContacts: r.emergencyContacts || [],
-                whatsapp: r.whatsappNumber || currentUser?.phone,
-                vehicleNumber: r.vehicleNumber,
-                vehicleName: `${r.vehicleBrand || ''} ${r.vehicleName || ''}`.trim() || 'My Vehicle',
-                vehicleType: r.vehicleType || 'Car',
-                status: 'active',
-                qrType: isPhys ? 'PHYSICAL' : 'DIGITAL',
-                registeredAt: r.registeredAt || new Date().toISOString().split('T')[0],
-                callBalance: 10,
-                messageBalance: 20,
-                scansCount: 0,
-                callMaskingEnabled: true,
-                whatsappAlertsEnabled: true,
-              });
-              existingTokens.add(tagKey);
-            }
-          });
         } catch (e) {
-          console.error(e);
-        }
-
-        setUserTags(allTags);
-      } catch (e) {
-        console.error('Error fetching dashboard data', e);
-        if (allocatedFromOrders.length > 0) {
-          setUserTags(allocatedFromOrders);
+          console.error('Error fetching dashboard kits', e);
         }
       }
+
+      // Check local storage ONLY for this user's phone
+      try {
+        const localCache = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
+        const existingTokens = new Set(
+          finalTagsList.map(t => t.publicToken)
+            .concat(finalTagsList.map(t => t.id))
+            .concat(finalTagsList.map(t => t.copyCode))
+        );
+
+        Object.keys(localCache).forEach((tagKey) => {
+          const r = localCache[tagKey];
+          const tagPhone = r?.phone ? String(r.phone).replace(/\D/g, '').slice(-10) : '';
+          // Only add if phone matches logged in user!
+          if (cleanUserPhone && tagPhone === cleanUserPhone && r && r.vehicleNumber && !existingTokens.has(tagKey) && !existingTokens.has(r.token)) {
+            const isPhys = r.qrType === 'PHYSICAL' || r.vehicleType === 'PHYSICAL' || tagKey.toLowerCase().includes('phy') || !r.qrType;
+            finalTagsList.push({
+              id: r.copyCode || r.token || tagKey,
+              kitId: r.copyCode || r.token || tagKey,
+              publicToken: r.token || tagKey,
+              primaryToken: r.token || tagKey,
+              copyCode: r.copyCode || tagKey,
+              copiesCount: 2,
+              productId: isPhys ? 'Physical Safety Sticker Kit' : 'Digital QR Safety Pass',
+              name: r.name || currentUser?.name || 'Owner',
+              phone: r.phone || currentUser?.phone,
+              emergencyContact: r.emergencyContacts?.[0]?.number || null,
+              emergencyContacts: r.emergencyContacts || [],
+              whatsapp: r.whatsappNumber || currentUser?.phone,
+              vehicleNumber: r.vehicleNumber,
+              vehicleName: `${r.vehicleBrand || ''} ${r.vehicleName || ''}`.trim() || 'My Vehicle',
+              vehicleType: r.vehicleType || 'Car',
+              status: 'active',
+              qrType: isPhys ? 'PHYSICAL' : 'DIGITAL',
+              registeredAt: r.registeredAt || new Date().toISOString().split('T')[0],
+              callBalance: 10,
+              messageBalance: 20,
+              scansCount: 0,
+              callMaskingEnabled: true,
+              whatsappAlertsEnabled: true,
+            });
+            existingTokens.add(tagKey);
+          }
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      setUserTags(finalTagsList);
+      setDashboardStats(prev => ({
+        ...prev,
+        totalKits: finalTagsList.length,
+        activeProtectionCount: finalTagsList.length,
+      }));
     } catch (err) {
       console.error(err);
     } finally {
