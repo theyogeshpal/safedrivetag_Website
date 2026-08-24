@@ -691,26 +691,15 @@ export default function DashboardTags() {
 
                       {tag.qrType === 'DIGITAL' && (
                         <button
-                          onClick={() => printDigitalPdfInColor({ title: tag.vehicleName, publicToken: tag.publicToken || tag.id, vehicleNumber: tag.vehicleNumber })}
+                          onClick={() => printDigitalPdfInColor({ title: tag.vehicleName, publicToken: tag.primaryToken || tag.publicToken || tag.id, vehicleNumber: tag.vehicleNumber })}
                           className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                         >
                           <Printer size={13} /> Print Badge
                         </button>
                       )}
 
-                      <button
-                        onClick={() => handleToggleStatus(tag.id, tag.status)}
-                        className={`px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold transition-colors cursor-pointer text-center flex items-center justify-center gap-1 ${
-                          isActive
-                            ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200'
-                            : 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
-                        }`}
-                      >
-                        {isActive ? 'Pause Protection' : 'Activate Protection'}
-                      </button>
-
                       <Link
-                        to={`/dashboard/tag/${tag.publicToken || tag.id}`}
+                        to={`/dashboard/tag/${tag.primaryToken || tag.publicToken || tag.id}`}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs text-center"
                       >
                         <Eye size={13} /> View Kit Details
