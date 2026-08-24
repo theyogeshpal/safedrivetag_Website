@@ -17,7 +17,13 @@ const QRScan = lazy(() => import('./pages/QRScan'));
 const RegisterTag = lazy(() => import('./pages/RegisterTag'));
 const TagDetails = lazy(() => import('./pages/TagDetails'));
 const Login = lazy(() => import('./pages/Login'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Dashboard = lazy(() => import('./pages/dashboard/DashboardTags'));
+const DashboardTags = lazy(() => import('./pages/dashboard/DashboardTags'));
+const DashboardOrders = lazy(() => import('./pages/dashboard/DashboardOrders'));
+const DashboardProfile = lazy(() => import('./pages/dashboard/DashboardProfile'));
+const DashboardAddresses = lazy(() => import('./pages/dashboard/DashboardAddresses'));
+const DashboardLogs = lazy(() => import('./pages/dashboard/DashboardLogs'));
+const DashboardNotifications = lazy(() => import('./pages/dashboard/DashboardNotifications'));
 const Admin = lazy(() => import('./pages/Admin'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
@@ -63,7 +69,15 @@ function App() {
                 <Route path="/refund" element={<Legal />} />
                 <Route path="/shipping" element={<Legal />} />
                 <Route path="/login" element={<Login />} />
+                
+                {/* Modular User Dashboard Panel Routes */}
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard/tags" element={<DashboardTags />} />
+                <Route path="/dashboard/orders" element={<DashboardOrders />} />
+                <Route path="/dashboard/profile" element={<DashboardProfile />} />
+                <Route path="/dashboard/addresses" element={<DashboardAddresses />} />
+                <Route path="/dashboard/logs" element={<DashboardLogs />} />
+                <Route path="/dashboard/notifications" element={<DashboardNotifications />} />
                 <Route path="/dashboard/tag/:id" element={<TagDetails />} />
                 <Route path="/tag/:id" element={<TagDetails />} />
                 <Route path="/admin" element={<Admin />} />

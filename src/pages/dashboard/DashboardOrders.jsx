@@ -1,0 +1,389 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { 
+  Package, 
+  Search, 
+  Truck, 
+  CheckCircle2, 
+  FileText, 
+  Eye, 
+  X, 
+  Printer, 
+  Download, 
+  ChevronRight, 
+  MapPin, 
+  ExternalLink,
+  QrCode
+} from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
+import DashboardLayout from './DashboardLayout';
+import { downloadInvoicePdf } from '../../utils/invoiceGenerator';
+import { printDigitalPdfInColor } from '../../utils/digitalPdfGenerator';
+
+export default function DashboardOrders() {
+  const { currentUser } = useAuth();
+  const [orders, setOrders] = useState([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
+  const [orderSearchQuery, setOrderSearchQuery] = useState('');
+  const [orderStatusFilter, setOrderStatusFilter] = useState('ALL');
+
+  // Modals
+  const [trackingModalOrder, setTrackingModalOrder] = useState(null);
+  const [digitalPassModalOrder, setDigitalPassModalOrder] = useState(null);
+  const [activePassCopyIdx, setActivePassCopyIdx] = useState(0);
+
+  const loadOrders = useCallback(async () => {
+    setIsLoadingOrders(true);
+    try {
+      const res = await api.getUserOrders();
+      if (res.success && res.orders) {
+        setOrders(res.orders);
+      }
+    } catch (e) {
+      console.error('Error fetching orders', e);
+    } finally {
+      setIsLoadingOrders(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
+
+  const handleDownloadInvoice = (order) => {
+    try {
+      downloadInvoicePdf(order, currentUser);
+    } catch (err) {
+      console.error('Invoice download error', err);
+      alert('Could not download invoice at this moment.');
+    }
+  };
+
+  const filteredOrders = orders.filter((ord) => {
+    const q = orderSearchQuery.toLowerCase();
+    const matchesSearch = 
+      ord.orderNumber?.toLowerCase().includes(q) ||
+      ord.productName?.toLowerCase().includes(q) ||
+      ord.title?.toLowerCase().includes(q);
+
+    if (orderStatusFilter === 'ALL') return matchesSearch;
+    if (orderStatusFilter === 'DELIVERED') return matchesSearch && (ord.deliveryStatus === 'DELIVERED' || ord.status === 'DELIVERED');
+    if (orderStatusFilter === 'PROCESSING') return matchesSearch && (ord.deliveryStatus !== 'DELIVERED' && ord.status !== 'DELIVERED');
+    return matchesSearch;
+  });
+
+  return (
+    <DashboardLayout currentTab="orders" pageTitle="My Orders">
+      <div className="bg-white rounded-sm shadow-sm border border-gray-200/80 p-4 sm:p-6 space-y-6">
+        
+        {/* Header Title + Filters */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-lg sm:text-xl font-bold text-[#212121]">
+                My Orders
+              </h2>
+              <span className="bg-blue-50 text-[#2874f0] text-xs font-bold px-2 py-0.5 rounded border border-blue-200">
+                {orders.length} Total
+              </span>
+            </div>
+            <p className="text-xs text-[#878787] mt-0.5">
+              View invoices, printable digital passes, and track shipping deliveries
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Search input */}
+            <div className="relative flex-1 sm:w-64">
+              <input
+                type="text"
+                placeholder="Search orders..."
+                value={orderSearchQuery}
+                onChange={(e) => setOrderSearchQuery(e.target.value)}
+                className="w-full bg-gray-50 border border-gray-200 rounded-md py-1.5 pl-8 pr-3 text-xs outline-none focus:border-[#2874f0]"
+              />
+              <Search size={13} className="absolute left-2.5 top-2.5 text-gray-400" />
+            </div>
+
+            {/* Filter pills */}
+            <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-md text-xs font-bold">
+              {['ALL', 'PROCESSING', 'DELIVERED'].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setOrderStatusFilter(f)}
+                  className={`px-3 py-1 rounded transition-all cursor-pointer ${
+                    orderStatusFilter === f ? 'bg-white text-[#2874f0] shadow-xs' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Orders List */}
+        {isLoadingOrders ? (
+          <div className="py-12 text-center">
+            <div className="w-10 h-10 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-xs font-bold text-gray-700">Loading Orders...</p>
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="py-16 text-center border border-dashed border-gray-300 rounded-sm bg-gray-50/50">
+            <Package size={36} className="text-gray-300 mx-auto mb-3" />
+            <h3 className="text-base font-bold text-gray-800">No Orders Found</h3>
+            <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1 mb-5">
+              You haven't placed any orders matching this criteria yet.
+            </p>
+            <Link
+              to="/shop"
+              className="bg-[#2874f0] text-white text-xs font-bold px-6 py-2.5 rounded-sm shadow-sm"
+            >
+              Browse Safety Tags Store
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredOrders.map((ord) => {
+              const isDigital = ord.productType === 'DIGITAL' || ord.qrType === 'DIGITAL' || ord.productName?.toLowerCase().includes('digital');
+              const isDelivered = ord.deliveryStatus === 'DELIVERED' || ord.status === 'DELIVERED';
+
+              return (
+                <div
+                  key={ord._id || ord.orderNumber}
+                  className="border border-gray-200 rounded-sm p-4 sm:p-5 hover:border-gray-300 transition-all space-y-3.5 bg-white shadow-2xs"
+                >
+                  {/* Order Top Bar */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-100 text-xs">
+                    <div>
+                      <span className="text-gray-400 font-medium">Order: </span>
+                      <span className="font-mono font-bold text-gray-900">{ord.orderNumber}</span>
+                      <span className="text-gray-300 mx-2">•</span>
+                      <span className="text-gray-500">
+                        {ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recent'}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <span className="font-black text-gray-900 text-sm">
+                        ₹{ord.totalAmount || ord.amount || 299}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                        isDelivered ? 'bg-green-100 text-green-800' : 'bg-blue-50 text-blue-700 border border-blue-200'
+                      }`}>
+                        {isDelivered ? 'Delivered' : 'Confirmed & Active'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Order Body Details */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-12 h-12 rounded-md bg-gray-100 p-1 flex items-center justify-center shrink-0 border border-gray-200">
+                        <img 
+                          src={ord.imageUrl || "/logos/primary.jpeg"} 
+                          alt="Product" 
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-gray-900">
+                          {ord.productName || ord.title || 'SafeDrive Smart Vehicle Safety Tag'}
+                        </h4>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          Format: <strong className="text-purple-700 uppercase">{isDigital ? 'Digital E-Kit Pass' : 'Physical Sticker Kit'}</strong> • Qty: {ord.quantity || 1}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Actions on this Order */}
+                    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                      {isDigital && (
+                        <button
+                          onClick={() => {
+                            setActivePassCopyIdx(0);
+                            setDigitalPassModalOrder(ord);
+                          }}
+                          className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold px-3.5 py-1.5 rounded text-xs flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                        >
+                          <Eye size={13} /> View Digital Pass
+                        </button>
+                      )}
+
+                      {!isDigital && (
+                        <button
+                          onClick={() => setTrackingModalOrder(ord)}
+                          className="bg-blue-50 hover:bg-blue-100 text-[#2874f0] border border-blue-200 font-bold px-3 py-1.5 rounded text-xs flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Truck size={13} /> Track Delivery
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => handleDownloadInvoice(ord)}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-3 py-1.5 rounded text-xs flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <FileText size={13} /> Invoice
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      </div>
+
+      {/* ======================================================== */}
+      {/* IN-APP DIGITAL PASS MODAL */}
+      {/* ======================================================== */}
+      {digitalPassModalOrder && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm animate-fade-up">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 overflow-hidden text-center flex flex-col max-h-[90vh]">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-5 py-3.5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <QrCode size={18} />
+                <h3 className="text-sm font-bold">SafeDrive Digital Safety Pass Kit</h3>
+              </div>
+              <button
+                onClick={() => setDigitalPassModalOrder(null)}
+                className="text-white/80 hover:text-white cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-5 overflow-y-auto space-y-4">
+              {/* Copy Selector Tabs */}
+              {Array.isArray(digitalPassModalOrder.allocatedQRIds) && digitalPassModalOrder.allocatedQRIds.length > 1 && (
+                <div className="flex items-center justify-center gap-2 bg-gray-100 p-1 rounded-xl">
+                  {digitalPassModalOrder.allocatedQRIds.map((c, cIdx) => (
+                    <button
+                      key={cIdx}
+                      onClick={() => setActivePassCopyIdx(cIdx)}
+                      className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                        activePassCopyIdx === cIdx
+                          ? 'bg-purple-600 text-white shadow-xs'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      {c.copyCode || `Copy ${cIdx + 1}`}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Scannable Vector QR Card */}
+              {(() => {
+                const currentCopy = digitalPassModalOrder.allocatedQRIds?.[activePassCopyIdx] || {};
+                const token = currentCopy.publicToken || currentCopy.copyCode || digitalPassModalOrder._id;
+                const copyCode = currentCopy.copyCode || 'COPY-1';
+                const scanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
+
+                return (
+                  <div className="bg-[#fcfaff] border-2 border-purple-200 rounded-2xl p-5 text-center space-y-3 shadow-inner">
+                    <div className="bg-white p-3.5 rounded-xl border border-purple-100 inline-block shadow-md">
+                      <QRCodeSVG
+                        value={scanUrl}
+                        size={175}
+                        level="H"
+                        includeMargin={false}
+                        imageSettings={{
+                          src: "/logos/icon.png",
+                          height: 38,
+                          width: 38,
+                          excavate: true,
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <p className="font-mono font-black text-sm text-purple-950 uppercase tracking-wider">
+                        {copyCode}
+                      </p>
+                      <p className="text-xs text-gray-500 font-medium mt-0.5">
+                        {digitalPassModalOrder.productName || 'SafeDrive Digital QR Protection'}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <button
+                        onClick={() => printDigitalPdfInColor({
+                          title: digitalPassModalOrder.productName,
+                          publicToken: token,
+                          vehicleNumber: 'ACTIVE PROTECTED',
+                        })}
+                        className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                      >
+                        <Printer size={14} /> Print in Color
+                      </button>
+
+                      <Link
+                        to={`/q/${token}`}
+                        target="_blank"
+                        className="bg-white hover:bg-purple-50 text-purple-700 border border-purple-300 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all"
+                      >
+                        <ExternalLink size={14} /> Test Live Scan
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* PHYSICAL TRACKING MODAL */}
+      {/* ======================================================== */}
+      {trackingModalOrder && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 overflow-hidden text-left">
+            <div className="bg-[#2874f0] text-white px-5 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Truck size={18} />
+                <h3 className="text-sm font-bold">Tracking Order #{trackingModalOrder.orderNumber}</h3>
+              </div>
+              <button
+                onClick={() => setTrackingModalOrder(null)}
+                className="text-white/80 hover:text-white cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs">
+              <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-xl border border-blue-200">
+                <CheckCircle2 size={20} className="text-green-600 shrink-0" />
+                <div>
+                  <p className="font-bold text-gray-900">Order Dispatched & In Transit</p>
+                  <p className="text-[11px] text-gray-500">Estimated Delivery: Within 3-4 Business Days via Bluedart / Delhivery</p>
+                </div>
+              </div>
+
+              <div className="space-y-2 border-l-2 border-blue-500 pl-4 ml-2">
+                <p className="font-bold text-gray-800">1. Order Placed & Confirmed</p>
+                <p className="font-bold text-gray-800">2. Printed with High-Resolution Laminate</p>
+                <p className="font-bold text-[#2874f0]">3. Handed to Courier Partner</p>
+                <p className="text-gray-400 font-medium">4. Out for Delivery</p>
+              </div>
+
+              <button
+                onClick={() => setTrackingModalOrder(null)}
+                className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs uppercase"
+              >
+                Close Tracking
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </DashboardLayout>
+  );
+}
