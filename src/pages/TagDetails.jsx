@@ -125,40 +125,49 @@ export default function TagDetails() {
 
       // Build unified Tag Details Model
       const reg = locallyRegistered[id] || {};
-      const primaryToken = qrApiRes?.token || id;
-      const baseKitCode = id.replace(/C\d+$/, '') || 'SD022';
+      const primaryToken = qrApiRes?.token || qrApiRes?.publicToken || id;
+      const baseKitCode = qrApiRes?.kitId || (foundOrder?.orderNumber ? `KIT-${foundOrder.orderNumber.slice(-5)}` : `SD-${id.slice(0, 6).toUpperCase()}`);
       
-      const vBrand = qrApiRes?.vehicle?.vehicleBrand || reg.vehicleBrand || dashKit?.vehicle?.vehicleBrand || foundOrder?.productName || 'Honda';
-      const vName = qrApiRes?.vehicle?.vehicleName || reg.vehicleName || dashKit?.vehicle?.vehicleName || 'Activa';
-      const vPlate = qrApiRes?.vehicle?.vehicleNumber || qrApiRes?.vehicleNumber || reg.vehicleNumber || dashKit?.vehicle?.vehicleNumber || 'UP25 AB 4761';
-      const vType = qrApiRes?.vehicle?.vehicleType || reg.vehicleType || dashKit?.vehicle?.vehicleType || 'Car';
+      const vBrand = qrApiRes?.vehicle?.vehicleBrand || qrApiRes?.vehicleBrand || reg.vehicleBrand || dashKit?.vehicle?.vehicleBrand || foundOrder?.productName || 'SafeDrive';
+      const vName = qrApiRes?.vehicle?.vehicleName || qrApiRes?.vehicleName || reg.vehicleName || dashKit?.vehicle?.vehicleName || foundOrder?.title || 'Vehicle Smart Tag';
+      const vPlate = qrApiRes?.vehicle?.vehicleNumber || qrApiRes?.vehicleNumber || reg.vehicleNumber || dashKit?.vehicle?.vehicleNumber || 'PROTECTED';
+      const vType = qrApiRes?.vehicle?.vehicleType || qrApiRes?.vehicleType || reg.vehicleType || dashKit?.vehicle?.vehicleType || 'Car';
 
-      const emergencyList = qrApiRes?.emergencyContacts || qrApiRes?.vehicle?.emergencyContacts || reg.emergencyContacts || [
-        { name: 'Family Member 1', number: '7668301822' },
-        { name: 'Family Member 2', number: '8445046409' }
-      ];
+      const emergencyList = qrApiRes?.emergencyContacts || qrApiRes?.vehicle?.emergencyContacts || reg.emergencyContacts || (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
 
-      // Form copies (Default to 2 copies if not present)
+      // Form copies (from order or API or single token)
       let copies = [];
       if (matchedAllocated.length > 0) {
         copies = matchedAllocated.map((c, idx) => ({
-          copyCode: c.copyCode || `${baseKitCode}C${idx + 1}`,
-          publicToken: c.publicToken || c.copyCode,
+          copyCode: c.copyCode || `${baseKitCode}-C${idx + 1}`,
+          publicToken: c.publicToken || c.copyCode || id,
           qrType: c.qrType || foundOrder?.productType || 'DIGITAL',
         }));
+      } else if (qrApiRes?.copies && qrApiRes.copies.length > 0) {
+        copies = qrApiRes.copies;
+      } else if (dashKit?.copies && dashKit.copies.length > 0) {
+        copies = dashKit.copies;
       } else {
         copies = [
-          { copyCode: `${baseKitCode}C1`, publicToken: id, qrType: 'DIGITAL' },
-          { copyCode: `${baseKitCode}C2`, publicToken: `${id}_c2`, qrType: 'DIGITAL' },
+          { copyCode: `${baseKitCode}-C1`, publicToken: id, qrType: foundOrder?.qrType || 'DIGITAL' },
+          { copyCode: `${baseKitCode}-C2`, publicToken: `${id}_c2`, qrType: foundOrder?.qrType || 'DIGITAL' },
         ];
       }
+
+      const buyDate = foundOrder?.createdAt 
+        ? new Date(foundOrder.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+        : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      
+      const expiresDate = foundOrder?.createdAt 
+        ? new Date(new Date(foundOrder.createdAt).setFullYear(new Date(foundOrder.createdAt).getFullYear() + 1)).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+        : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
       const unified = {
         kitId: baseKitCode,
         currentTagId: id,
-        status: qrApiRes?.status === 'ACTIVE' || reg.status === 'active' || dashKit ? 'ACTIVE' : 'ACTIVE',
+        status: qrApiRes?.status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
         category: vType,
-        qrType: foundOrder?.qrType || 'DIGITAL',
+        qrType: foundOrder?.qrType || foundOrder?.productType || 'DIGITAL',
         totalStickers: copies.length,
         copies,
         vehicle: {
@@ -169,41 +178,30 @@ export default function TagDetails() {
         },
         emergencyContacts: emergencyList,
         owner: {
-          name: qrApiRes?.user?.name || reg.name || currentUser?.name || 'Yogesh Pal',
-          phone: qrApiRes?.user?.phone || reg.phone || currentUser?.phone || '7817095043',
-          email: currentUser?.email || 'yogeshpal1309@gmail.com',
-          whatsapp: reg.whatsappNumber || currentUser?.whatsappNumber || currentUser?.phone || '7817095043',
-          address: reg.address || currentUser?.address || 'bareilly, Bareilly, UTTAR PRADESH',
+          name: qrApiRes?.user?.name || qrApiRes?.name || reg.name || foundOrder?.name || currentUser?.name || 'Customer',
+          phone: qrApiRes?.user?.phone || qrApiRes?.phone || reg.phone || foundOrder?.phone || currentUser?.phone || '',
+          email: qrApiRes?.user?.email || qrApiRes?.email || currentUser?.email || 'N/A',
+          whatsapp: reg.whatsappNumber || currentUser?.whatsappNumber || currentUser?.phone || qrApiRes?.user?.phone || '',
+          address: reg.address || foundOrder?.deliveryAddress || foundOrder?.shippingAddress || currentUser?.deliveryAddress || currentUser?.address || 'India',
         },
         wallet: {
-          callBalance: qrApiRes?.wallet?.callBalance ?? dashKit?.wallet?.callBalance ?? 9,
+          callBalance: qrApiRes?.wallet?.callBalance ?? qrApiRes?.callBalance ?? dashKit?.wallet?.callBalance ?? 10,
           totalCalls: qrApiRes?.wallet?.totalCalls ?? 10,
-          callsUsed: 1,
-          messageBalance: qrApiRes?.wallet?.messageBalance ?? dashKit?.wallet?.messageBalance ?? 20,
+          callsUsed: (qrApiRes?.wallet?.totalCalls ?? 10) - (qrApiRes?.wallet?.callBalance ?? dashKit?.wallet?.callBalance ?? 10),
+          messageBalance: qrApiRes?.wallet?.messageBalance ?? qrApiRes?.messageBalance ?? dashKit?.wallet?.messageBalance ?? 20,
           totalMessages: qrApiRes?.wallet?.totalMessages ?? 20,
-          messagesUsed: 0,
+          messagesUsed: (qrApiRes?.wallet?.totalMessages ?? 20) - (qrApiRes?.wallet?.messageBalance ?? dashKit?.wallet?.messageBalance ?? 20),
         },
         order: {
-          orderNumber: foundOrder?.orderNumber || 'ORD-1787470251667-962',
-          buyDate: foundOrder?.createdAt ? new Date(foundOrder.createdAt).toLocaleDateString('en-GB') : '23/08/2026',
-          validity: '365 Days (1 Year)',
-          expiresOn: '22/08/2027',
+          orderNumber: foundOrder?.orderNumber || foundOrder?._id || `ORD-${id.slice(0, 8).toUpperCase()}`,
+          buyDate,
+          validity: '365 Days (1 Year Active)',
+          expiresOn: expiresDate,
           renewalFee: '₹199 / year',
-          amountPaid: foundOrder?.totalAmount ? `₹${foundOrder.totalAmount}` : '₹299',
-          paymentStatus: 'PAID',
+          amountPaid: foundOrder?.totalAmount || foundOrder?.amount ? `₹${foundOrder.totalAmount || foundOrder.amount}` : '₹299',
+          paymentStatus: foundOrder?.paymentStatus || 'PAID',
         },
-        scanLogs: [
-          { type: 'General Public Scan', time: '23/08/2026, 23:27:41', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 22:57:54', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 22:57:43', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 22:57:31', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 22:57:21', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 22:54:47', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 21:20:59', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 20:59:21', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 20:59:20', status: 'Recorded' },
-          { type: 'General Public Scan', time: '23/08/2026, 13:37:50', status: 'Recorded' },
-        ],
+        scanLogs: Array.isArray(qrApiRes?.scanLogs) ? qrApiRes.scanLogs : (Array.isArray(dashKit?.scans) ? dashKit.scans : []),
       };
 
       setTagData(unified);
@@ -470,26 +468,42 @@ export default function TagDetails() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {tagData.emergencyContacts.map((contact, idx) => (
-                  <div key={idx} className="bg-[#f8fafc] border border-gray-200 p-3.5 rounded-xl flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                        {idx === 0 ? 'PRIMARY CONTACT' : 'SECONDARY CONTACT'}
-                      </p>
-                      <p className="text-xs font-black text-gray-900 mt-0.5">{contact.name}</p>
-                      <p className="text-xs font-mono font-bold text-gray-600">{contact.number}</p>
+              {tagData.emergencyContacts.length === 0 ? (
+                <div className="py-6 text-center text-gray-500 bg-gray-50/70 rounded-xl border border-dashed border-gray-200 p-4">
+                  <Phone size={22} className="mx-auto mb-1.5 text-gray-400" />
+                  <p className="font-bold text-xs text-gray-700">No Emergency SOS Contacts Configured</p>
+                  <p className="text-[11px] text-gray-500 max-w-sm mx-auto mt-0.5 mb-3">
+                    Add family members to receive instant WhatsApp & SMS alerts when someone triggers emergency scan.
+                  </p>
+                  <button
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="bg-[#2874f0] hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-lg text-xs shadow-2xs transition-colors cursor-pointer"
+                  >
+                    + Add Emergency Contacts
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {tagData.emergencyContacts.map((contact, idx) => (
+                    <div key={idx} className="bg-[#f8fafc] border border-gray-200 p-3.5 rounded-xl flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                          {idx === 0 ? 'PRIMARY CONTACT' : 'SECONDARY CONTACT'}
+                        </p>
+                        <p className="text-xs font-black text-gray-900 mt-0.5">{contact.name}</p>
+                        <p className="text-xs font-mono font-bold text-gray-600">{contact.number}</p>
+                      </div>
+                      <a
+                        href={`tel:${contact.number}`}
+                        className="w-8 h-8 rounded-full bg-green-50 text-green-600 border border-green-200 flex items-center justify-center hover:bg-green-100 transition-colors"
+                        title="Direct Call"
+                      >
+                        <Phone size={14} />
+                      </a>
                     </div>
-                    <a
-                      href={`tel:${contact.number}`}
-                      className="w-8 h-8 rounded-full bg-green-50 text-green-600 border border-green-200 flex items-center justify-center hover:bg-green-100 transition-colors"
-                      title="Direct Call"
-                    >
-                      <Phone size={14} />
-                    </a>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* 3. OWNER PERSONAL & DELIVERY ADDRESS */}
@@ -538,32 +552,47 @@ export default function TagDetails() {
 
             {/* 4. RECENT QR SCANS & ALERTS */}
             <div className="bg-white border border-gray-200/90 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
-              <div className="flex items-center gap-2.5 border-b border-gray-100 pb-3">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-                  <Eye size={18} />
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                    <Eye size={18} />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-black text-gray-900">Recent QR Scans & Alerts</h2>
+                    <p className="text-[11px] text-gray-500">Real-time scan logs and call connections</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-sm font-black text-gray-900">Recent QR Scans & Alerts</h2>
-                  <p className="text-[11px] text-gray-500">History of public scans on this QR kit</p>
-                </div>
+                <span className="bg-green-50 text-green-700 border border-green-200 text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Live
+                </span>
               </div>
 
-              <div className="divide-y divide-gray-100 text-xs">
-                {tagData.scanLogs.map((log, idx) => (
-                  <div key={idx} className="py-2.5 flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <Eye size={14} className="text-gray-400" />
-                      <div>
-                        <span className="font-bold text-gray-800">{log.type}</span>
-                        <p className="text-[10px] text-gray-400">{log.time}</p>
+              {tagData.scanLogs.length === 0 ? (
+                <div className="py-6 text-center text-gray-500 bg-gray-50/50 rounded-xl border border-dashed border-gray-200 p-4">
+                  <Eye size={22} className="mx-auto mb-1.5 text-gray-400" />
+                  <p className="font-bold text-xs text-gray-700">No Scans Recorded Yet</p>
+                  <p className="text-[11px] text-gray-500 max-w-sm mx-auto mt-0.5">
+                    Your QR protection is 100% active. When someone scans your vehicle tag, instant activity logs will appear here.
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100 text-xs">
+                  {tagData.scanLogs.map((log, idx) => (
+                    <div key={idx} className="py-2.5 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <Eye size={14} className="text-gray-400" />
+                        <div>
+                          <span className="font-bold text-gray-800">{log.type || log.event || 'QR Sticker Scan'}</span>
+                          <p className="text-[10px] text-gray-400">{log.time || log.createdAt || 'Recent'}</p>
+                        </div>
                       </div>
+                      <span className="text-[10px] font-bold bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-200">
+                        {log.status || 'Recorded'}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-bold bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-200">
-                      {log.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
           </div>
