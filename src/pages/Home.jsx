@@ -39,59 +39,62 @@ export default function Home() {
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex items-center lg:items-start pt-24 sm:pt-28 lg:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-orange-50/30 via-white to-gray-50/20">
+      <section className="relative flex items-center lg:items-start pt-24 sm:pt-28 lg:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-orange-50/40 via-white to-[#faf8f5]">
         
-        {/* Background Ambient Glows & Grid */}
-        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
-        <div className="absolute top-10 left-1/4 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Dynamic Glowing Mesh Orbs & Tech Grid */}
+        <div className="absolute inset-0 bg-[radial-gradient(#ea580c_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.07] pointer-events-none" />
+        <div className="absolute -top-24 left-1/3 w-[500px] h-[500px] bg-gradient-to-tr from-orange-400/20 to-amber-300/20 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 -right-24 w-[400px] h-[400px] bg-gradient-to-bl from-blue-400/15 to-green-300/15 rounded-full blur-[90px] pointer-events-none" />
         
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center relative z-10 w-full">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-10 lg:gap-8 items-center relative z-10 w-full">
           
-          {/* Left Column: Copy & CTAs */}
-          <div className="space-y-6 animate-fade-up">
+          {/* Left Column (7 cols): High Impact Messaging & Actions */}
+          <div className="lg:col-span-7 space-y-6 sm:space-y-7 animate-fade-up">
             
             {/* Top Micro Pill Badge */}
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border border-orange-200/90 px-4 py-1.5 rounded-full text-xs font-bold text-orange-950 shadow-xs">
-              <span className="flex h-2 w-2 relative">
+            <div className="inline-flex items-center gap-2.5 bg-white/90 backdrop-blur-xl border border-orange-200/90 px-4 py-1.5 rounded-full text-xs font-bold text-orange-950 shadow-sm hover:border-orange-300 transition-colors">
+              <span className="flex h-2.5 w-2.5 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500"></span>
               </span>
-              <span>Next-Gen Smart QR Vehicle & Luggage Protection</span>
+              <span className="tracking-wide">🔥 9.5 Lakh+ Vehicles & Belongings Protected Across India</span>
             </div>
             
-            <h1 className="text-3xl sm:text-5xl lg:text-[58px] font-black text-gray-950 leading-[1.12] tracking-tight">
-              Stay reachable in emergencies, stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500">private.</span>
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.12] tracking-tight">
+              Stay reachable in emergencies, stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 underline decoration-orange-300/40 decoration-wavy">private.</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-lg font-medium">
+            {/* Description */}
+            <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-xl font-medium">
               SafeDrive-Tag — Smart QR emergency contacts for vehicles & travel bags. 🚗 🏍️ 🧳 Protect your car, bike & luggage without sharing your private phone number.
             </p>
 
-            {/* 3 Value Pillars */}
+            {/* 3 Core Value Badges */}
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 py-1">
-              <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md border border-gray-200/90 text-gray-800 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold shadow-2xs">
-                <span>🚫</span> <span>No spamming</span>
+              <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md border border-gray-200 text-gray-800 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold shadow-2xs hover:border-orange-300 hover:shadow-xs transition-all">
+                <span className="text-base">🚫</span> <span>No spamming</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md border border-gray-200/90 text-gray-800 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold shadow-2xs">
-                <span>📲</span> <span>No app needed</span>
+              <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md border border-gray-200 text-gray-800 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold shadow-2xs hover:border-orange-300 hover:shadow-xs transition-all">
+                <span className="text-base">📲</span> <span>No app needed</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md border border-gray-200/90 text-gray-800 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold shadow-2xs">
-                <span>🔒</span> <span>No number shared</span>
+              <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md border border-gray-200 text-gray-800 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold shadow-2xs hover:border-orange-300 hover:shadow-xs transition-all">
+                <span className="text-base">🔒</span> <span>No number shared</span>
               </div>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3.5 sm:gap-4 pt-1">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4 pt-1">
               <Link 
                 to="/shop" 
-                className="group relative inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-7 sm:px-9 py-3.5 sm:py-4 rounded-full font-black text-sm sm:text-base shadow-[0_8px_25px_rgba(249,115,22,0.35)] hover:shadow-[0_10px_30px_rgba(249,115,22,0.5)] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                className="group relative inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-8 sm:px-10 py-4 rounded-full font-black text-sm sm:text-base shadow-[0_10px_30px_rgba(249,115,22,0.4)] hover:shadow-[0_12px_35px_rgba(249,115,22,0.55)] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 overflow-hidden"
               >
+                <span className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
                 <span>Buy Safety Tag</span>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               
-              <button className="group inline-flex items-center justify-center gap-2.5 bg-white/90 backdrop-blur-md text-gray-800 border border-gray-200 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full font-bold text-sm sm:text-base transition-all hover:bg-gray-50 hover:border-gray-300 hover:shadow-xs cursor-pointer">
+              <button className="group inline-flex items-center justify-center gap-2.5 bg-white text-gray-800 border border-gray-200/90 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold text-sm sm:text-base transition-all hover:bg-gray-50 hover:border-gray-300 hover:shadow-xs cursor-pointer">
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
                   <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600 ml-0.5" fill="currentColor" />
                 </div>
@@ -99,29 +102,29 @@ export default function Home() {
               </button>
             </div>
             
-            {/* 4 Live Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-5 border-t border-gray-200/80 mt-6">
+            {/* 4 Live Metric Tiles */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-5 border-t border-gray-200/80 mt-6">
               
-              <div className="bg-white/80 backdrop-blur-md border border-orange-200/70 p-3 rounded-2xl flex flex-col justify-center shadow-2xs hover:shadow-xs transition-all">
-                <span className="text-orange-600 text-[10px] font-bold uppercase tracking-wider mb-0.5">Trusted Users</span>
-                <span className="text-gray-900 font-black text-base sm:text-lg leading-tight">9.5L+</span>
+              <div className="bg-white/90 backdrop-blur-md border border-orange-200/80 p-3.5 rounded-2xl flex flex-col justify-center shadow-xs hover:border-orange-300 transition-all">
+                <span className="text-orange-600 text-[10px] font-extrabold uppercase tracking-wider mb-0.5">Trusted Users</span>
+                <span className="text-gray-950 font-black text-lg leading-tight">9.5L+</span>
               </div>
               
-              <div className="bg-white/80 backdrop-blur-md border border-amber-200/70 p-3 rounded-2xl flex flex-col justify-center shadow-2xs hover:shadow-xs transition-all">
-                <span className="text-amber-600 text-[10px] font-bold uppercase tracking-wider mb-0.5">Rating</span>
-                <span className="text-gray-900 font-black text-base sm:text-lg leading-tight flex items-center gap-1">
+              <div className="bg-white/90 backdrop-blur-md border border-amber-200/80 p-3.5 rounded-2xl flex flex-col justify-center shadow-xs hover:border-amber-300 transition-all">
+                <span className="text-amber-600 text-[10px] font-extrabold uppercase tracking-wider mb-0.5">Rating</span>
+                <span className="text-gray-950 font-black text-lg leading-tight flex items-center gap-1">
                   4.8 <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
                 </span>
               </div>
 
-              <div className="bg-white/80 backdrop-blur-md border border-blue-200/70 p-3 rounded-2xl flex flex-col justify-center shadow-2xs hover:shadow-xs transition-all">
-                <span className="text-blue-600 text-[10px] font-bold uppercase tracking-wider mb-0.5">Total Scans</span>
-                <span className="text-gray-900 font-black text-base sm:text-lg leading-tight">2.4M+</span>
+              <div className="bg-white/90 backdrop-blur-md border border-blue-200/80 p-3.5 rounded-2xl flex flex-col justify-center shadow-xs hover:border-blue-300 transition-all">
+                <span className="text-blue-600 text-[10px] font-extrabold uppercase tracking-wider mb-0.5">Total Scans</span>
+                <span className="text-gray-950 font-black text-lg leading-tight">2.4M+</span>
               </div>
               
-              <div className="bg-white/80 backdrop-blur-md border border-green-200/70 p-3 rounded-2xl flex flex-col justify-center shadow-2xs hover:shadow-xs transition-all">
-                <span className="text-green-600 text-[10px] font-bold uppercase tracking-wider mb-0.5">Today's Scans</span>
-                <span className="text-gray-900 font-black text-base sm:text-lg leading-tight flex items-center gap-1.5">
+              <div className="bg-white/90 backdrop-blur-md border border-green-200/80 p-3.5 rounded-2xl flex flex-col justify-center shadow-xs hover:border-green-300 transition-all">
+                <span className="text-green-600 text-[10px] font-extrabold uppercase tracking-wider mb-0.5">Today's Scans</span>
+                <span className="text-gray-950 font-black text-lg leading-tight flex items-center gap-1.5">
                   1,204 
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -134,37 +137,70 @@ export default function Home() {
 
           </div>
 
-          {/* Right Column: Hero Showcase Visual */}
-          <div className="relative hidden lg:flex justify-center items-center animate-fade-up w-full h-full" style={{ animationDelay: '200ms' }}>
+          {/* Right Column (5 cols): Interactive Next-Gen Tech Visual Stage */}
+          <div className="lg:col-span-5 relative hidden lg:flex justify-center items-center animate-fade-up w-full" style={{ animationDelay: '200ms' }}>
             
-            {/* Top Floating Privacy Card */}
-            <div className="absolute top-2 right-6 xl:right-12 z-30 max-w-[320px] bg-white/95 backdrop-blur-xl border border-green-200/90 shadow-2xl shadow-green-900/10 rounded-2xl p-4 sm:p-5 flex gap-3.5 items-start animate-float">
-              <div className="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0 border border-green-200">
-                <Lock className="w-5 h-5" />
+            {/* Visual Glass Stage Background */}
+            <div className="relative w-full max-w-[480px] aspect-[4/5] rounded-3xl bg-gradient-to-br from-white/90 via-white/60 to-orange-50/40 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.08)] p-5 flex flex-col justify-between overflow-hidden">
+              
+              {/* Dynamic Laser Scanning Beam on Stage */}
+              <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent animate-scanline z-20 pointer-events-none opacity-80" />
+
+              {/* Top Floating Two-Way Privacy Card */}
+              <div className="relative z-30 bg-white/95 backdrop-blur-xl border border-green-200 shadow-lg shadow-green-900/5 rounded-2xl p-3.5 flex gap-3 items-start animate-float">
+                <div className="w-9 h-9 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0 border border-green-200">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-gray-950 mb-0.5">100% Two-Way Privacy</p>
+                  <p className="text-[10px] text-gray-600 leading-snug font-medium">Your details are completely safe! When someone scans your tag, they cannot see your number, and you cannot see theirs.</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-black text-gray-900 mb-0.5">100% Two-Way Privacy</p>
-                <p className="text-[11px] text-gray-600 leading-relaxed font-medium">Your details are completely safe! When someone scans your tag, they cannot see your number, and you cannot see theirs.</p>
+
+              {/* Center Vehicle & Simulated Smart Tag Sticker */}
+              <div className="relative flex-1 flex flex-col items-center justify-center my-3">
+                
+                {/* 3D Car Graphic */}
+                <img 
+                  src="/hero-car.png" 
+                  alt="SafeDrive-Tag on Car" 
+                  className="w-full max-w-[340px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500" 
+                />
+
+                {/* Simulated Holographic Tag Widget */}
+                <div className="absolute -bottom-2 bg-gray-950 text-white rounded-2xl px-4 py-3 border border-orange-500/40 shadow-2xl flex items-center gap-3 animate-pulse-glow z-30">
+                  <div className="w-10 h-10 bg-white rounded-lg p-1 shrink-0 flex items-center justify-center">
+                    <QrCode className="w-7 h-7 text-gray-950" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-green-500 animate-ping" />
+                      <span className="text-[11px] font-black tracking-wide text-orange-400 uppercase">Live QR Shield</span>
+                    </div>
+                    <p className="text-xs font-bold text-gray-100">Scan to Call Owner Privately</p>
+                  </div>
+                </div>
+
               </div>
+
+              {/* Bottom Notification Alert Toast */}
+              <div className="relative z-30 bg-white/95 backdrop-blur-xl border border-orange-200 shadow-lg rounded-2xl p-3 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-200">
+                    <Zap className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-gray-900">Instant Masked Cloud Call</p>
+                    <p className="text-[10px] text-gray-500 font-medium">WhatsApp Alert &bull; 0.4s Routing</p>
+                  </div>
+                </div>
+                <span className="bg-green-100 text-green-700 text-[10px] font-black px-2 py-0.5 rounded-full">
+                  ACTIVE
+                </span>
+              </div>
+
             </div>
 
-            {/* Bottom Floating Quick Scan Card */}
-            <div className="absolute bottom-4 left-4 z-30 bg-white/95 backdrop-blur-xl border border-orange-200/90 shadow-xl shadow-orange-900/10 rounded-2xl px-4 py-2.5 flex items-center gap-3 animate-float" style={{ animationDelay: '1.5s' }}>
-              <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-200">
-                <Zap className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-black text-gray-900 leading-tight">Instant Masked Bridge</p>
-                <p className="text-[10px] text-gray-500 font-medium">Scanned in 0.4s • Live Quotas</p>
-              </div>
-            </div>
-
-            {/* Hero Car Illustration */}
-            <img 
-              src="/hero-car.png" 
-              alt="SafeDrive-Tag on Car" 
-              className="relative z-10 w-full max-w-[150%] xl:max-w-[175%] scale-110 xl:scale-120 object-contain drop-shadow-2xl hover:scale-115 transition-transform duration-500 translate-x-6 xl:translate-x-12" 
-            />
           </div>
 
         </div>
