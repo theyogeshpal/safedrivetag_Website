@@ -90,7 +90,7 @@ export default function Home() {
           <img 
             src="/hero-car.png" 
             alt="Car Background" 
-            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-20 lg:opacity-25 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl mix-blend-multiply" 
+            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-15 lg:opacity-20 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl" 
           />
           
           {/* Light Grid Overlay */}
@@ -281,7 +281,7 @@ export default function Home() {
                 <img 
                   src="/hero-car.png" 
                   alt="SafeDrive-Tag on Car" 
-                  className="w-full max-w-[360px] object-contain drop-shadow-xl mix-blend-multiply transition-transform duration-500 hover:scale-105" 
+                  className="w-full max-w-[340px] object-contain drop-shadow-xl" 
                 />
 
                 {/* Dark Live QR Shield Pill */}
