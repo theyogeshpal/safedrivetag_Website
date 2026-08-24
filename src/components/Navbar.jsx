@@ -224,7 +224,16 @@ export default function Navbar() {
             </button>
           )}
           
-          <div className="mt-auto pt-6 border-t border-black/5">
+          <div className="mt-auto pt-4 border-t border-black/5 space-y-2.5">
+            <Link
+              to="/dashboard"
+              onClick={() => setMenuOpen(false)}
+              className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-5 py-3 rounded-xl font-bold text-sm text-center flex items-center justify-center gap-2 shadow-sm"
+            >
+              <img src="/logos/icon.png" alt="App" className="w-5 h-5 rounded bg-white p-0.5 object-contain" />
+              <span>Download Mobile App (PWA)</span>
+            </Link>
+
             <Link 
               to="/shop" 
               onClick={() => setMenuOpen(false)}

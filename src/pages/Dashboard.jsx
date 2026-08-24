@@ -728,17 +728,50 @@ export default function Dashboard() {
           <div className="w-full lg:w-[280px] flex-shrink-0 flex flex-col gap-3">
             
             {/* User Profile Card Header */}
-            <div className="bg-white rounded-sm shadow-sm border border-gray-200/80 p-3 sm:p-4 flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-full bg-[#2874f0] text-white flex items-center justify-center font-bold text-lg shadow-sm">
-                {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+            <div className="bg-white rounded-sm shadow-sm border border-gray-200/80 p-3 sm:p-4 flex items-center justify-between gap-3.5">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="w-12 h-12 rounded-full bg-[#2874f0] text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+                  {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-[11px] text-[#878787] font-medium leading-none mb-1">Hello,</p>
+                  <h3 className="text-sm sm:text-base font-bold text-[#212121] truncate">
+                    {currentUser.name || 'Flipkart Customer'}
+                  </h3>
+                </div>
               </div>
-              <div className="overflow-hidden">
-                <p className="text-[11px] text-[#878787] font-medium leading-none mb-1">Hello,</p>
-                <h3 className="text-sm sm:text-base font-bold text-[#212121] truncate">
-                  {currentUser.name || 'Flipkart Customer'}
-                </h3>
+
+              {/* Mobile Quick App Install Pill */}
+              <button
+                onClick={handleInstallPwa}
+                className="lg:hidden bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-[11px] px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1 shrink-0 cursor-pointer active:scale-95 transition-all"
+                title="Install SafeDrive App on Phone"
+              >
+                <Smartphone size={13} />
+                <span>App</span>
+              </button>
+            </div>
+
+            {/* Mobile Download App Banner Widget */}
+            {!isPwaInstalled && (
+              <div className="lg:hidden bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 rounded-xl p-3 text-white shadow-md flex items-center justify-between gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <img src="/logos/icon.png" alt="App" className="w-9 h-9 rounded-xl bg-white p-0.5 shrink-0 object-contain shadow-xs" />
+                  <div className="min-w-0">
+                    <p className="font-black text-xs leading-tight truncate">Install SafeDrive Mobile App</p>
+                    <p className="text-[10px] text-white/90 font-medium truncate">1-Tap Direct Dashboard & Alerts</p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleInstallPwa}
+                  className="bg-white text-orange-600 hover:bg-orange-50 font-black text-xs px-3.5 py-1.5 rounded-lg shadow-sm shrink-0 flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                >
+                  <Download size={13} /> Install
+                </button>
               </div>
-            </div>            {/* Mobile Tab Navigation Bar (Sticky Horizontal Scroll on Mobile) */}
+            )}
+
+            {/* Mobile Tab Navigation Bar (Sticky Horizontal Scroll on Mobile) */}
             <div className="lg:hidden sticky top-16 z-30 bg-white/95 backdrop-blur-md rounded-lg shadow-sm border border-gray-200 p-1.5 overflow-x-auto flex gap-1.5 no-scrollbar">
               {[
                 { id: 'tags', label: `My Tags (${userTags.length})`, icon: <QrCode size={14} /> },
@@ -760,6 +793,14 @@ export default function Dashboard() {
                   <span>{m.label}</span>
                 </button>
               ))}
+
+              <button
+                onClick={handleInstallPwa}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-black whitespace-nowrap transition-all cursor-pointer bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-xs shrink-0"
+              >
+                <Download size={13} />
+                <span>Download App</span>
+              </button>
             </div>
 
             {/* Flipkart Navigation Menu Box (Desktop) */}
