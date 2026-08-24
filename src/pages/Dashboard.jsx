@@ -1113,16 +1113,19 @@ export default function Dashboard() {
                                 {isActive ? 'Pause Protection' : 'Activate Protection'}
                               </button>
 
-                              <button
-                                onClick={() => setEditingTag(tag)}
-                                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                              >
                               <Link
                                 to={`/dashboard/tag/${tag.publicToken || tag.id}`}
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
                               >
                                 <Eye size={13} /> View Full Kit Details
                               </Link>
+
+                              <button
+                                onClick={() => setEditingTag(tag)}
+                                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                              >
+                                <Edit3 size={13} /> Edit
+                              </button>
 
                               <button
                                 onClick={() => handleDeleteTag(tag.id)}
