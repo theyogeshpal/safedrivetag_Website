@@ -39,184 +39,150 @@ export default function Home() {
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex items-center lg:items-start pt-24 lg:pt-28 pb-10 sm:pb-12 px-4 sm:px-6 overflow-hidden bg-white">
-        
-        {/* Abstract Glowing Orbs Removed */}
-        
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-10 items-center relative z-10 w-full">
-          <div className="space-y-5 sm:space-y-6 animate-fade-up">
+      <section className="relative flex items-center pt-24 lg:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-10 lg:gap-8 items-center relative z-10 w-full">
+          
+          {/* Left Column (7 cols) */}
+          <div className="lg:col-span-7 space-y-6 sm:space-y-7 animate-fade-up">
             
-            <h1 className="text-3xl sm:text-[42px] md:text-[56px] lg:text-[60px] font-black text-black leading-[1.15] tracking-tighter">
-              Stay reachable in emergencies, stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">private.</span>
+            {/* Top Pill Badge */}
+            <div className="inline-flex items-center gap-2 bg-gray-50/80 border border-gray-200/90 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-2xs">
+              <ShieldCheck size={14} className="text-gray-900" />
+              <span className="tracking-wide uppercase text-[11px] text-gray-700">TWO-WAY NUMBER MASKING • 100% PRIVACY</span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.12] tracking-tight">
+              Stay reachable in emergencies,<br />
+              <span className="text-orange-500">stay private.</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-black/60 leading-relaxed max-w-lg font-medium">
-              SafeDrive-Tag — Smart QR emergency contacts for vehicles & travel bags. 🚗 🏍️ 🧳 Protect your car, bike & luggage without sharing your private phone number.
+            {/* Description */}
+            <p className="text-base text-gray-600 leading-relaxed max-w-lg font-medium">
+              SafeDrive-Tag is the next-generation smart QR emergency contact tag for your vehicles and travel luggage. Protect your car, bike, and bags without ever exposing your private phone number.
             </p>
 
-            {/* Top 3 Value Props Bar */}
-            <div className="bg-white/95 backdrop-blur-md border border-gray-100/90 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-all grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2 items-center">
-              {/* Item 1 */}
-              <div className="flex items-center gap-3 px-2">
-                <div className="w-11 h-11 rounded-full bg-orange-50/80 border border-orange-200/60 flex items-center justify-center text-orange-500 shrink-0 shadow-inner">
-                  <span className="text-lg">🚫</span>
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No spamming</h4>
-                  <p className="text-[11px] text-gray-500 font-medium">100% spam-free</p>
-                </div>
+            {/* 3 Core Value Props Badges */}
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 py-0.5">
+              <div className="flex items-center gap-2 bg-white border border-gray-200/80 text-gray-800 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-2xs">
+                <CheckCircle size={16} className="text-emerald-500 fill-emerald-50" />
+                <span>Zero Spam Guaranteed</span>
               </div>
-
-              {/* Item 2 */}
-              <div className="flex items-center gap-3 px-2 sm:border-l sm:border-gray-100">
-                <div className="w-11 h-11 rounded-full bg-emerald-50/80 border border-emerald-200/60 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
-                  <QrCode size={19} className="text-emerald-600" />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No app needed</h4>
-                  <p className="text-[11px] text-gray-500 font-medium">Instantly works</p>
-                </div>
+              <div className="flex items-center gap-2 bg-white border border-gray-200/80 text-gray-800 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-2xs">
+                <Smartphone size={16} className="text-blue-500" />
+                <span>No App Required</span>
               </div>
-
-              {/* Item 3 */}
-              <div className="flex items-center gap-3 px-2 sm:border-l sm:border-gray-100">
-                <div className="w-11 h-11 rounded-full bg-amber-50/80 border border-amber-200/60 flex items-center justify-center text-amber-500 shrink-0 shadow-inner">
-                  <Lock size={18} className="text-amber-500" />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No number shared</h4>
-                  <p className="text-[11px] text-gray-500 font-medium">Your privacy protected</p>
-                </div>
+              <div className="flex items-center gap-2 bg-white border border-gray-200/80 text-gray-800 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-2xs">
+                <Lock size={16} className="text-orange-500" />
+                <span>Number Never Shared</span>
               </div>
             </div>
 
             {/* Action Buttons Row */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3.5 pt-1">
-              {/* Buy Safety Tag Button */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-1">
               <Link 
                 to="/shop" 
-                className="group flex-1 min-w-[240px] bg-gradient-to-r from-[#009b3a] via-[#00a843] to-[#00b84c] hover:from-[#008f35] hover:to-[#00a843] text-white p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl shadow-[0_10px_25px_rgba(0,168,67,0.3)] hover:shadow-[0_14px_32px_rgba(0,168,67,0.4)] transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-between gap-3 overflow-hidden relative"
+                className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-6 sm:px-8 py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-[#009b3a] flex items-center justify-center shadow-sm">
-                      <ShieldCheck size={20} className="fill-[#009b3a]/10" />
-                    </div>
-                  </div>
-                  <div className="text-left">
-                    <div className="font-black text-base sm:text-lg leading-tight tracking-tight text-white">Buy Safety Tag</div>
-                    <div className="text-[11px] sm:text-xs text-white/90 font-medium">Secure. Smart. Reliable.</div>
-                  </div>
-                </div>
-
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-[#009b3a] flex items-center justify-center shrink-0 shadow-md group-hover:translate-x-1 transition-transform">
-                  <ArrowRight size={18} className="stroke-[2.5]" />
-                </div>
+                <span>Buy Safety Tag</span>
+                <ArrowRight size={18} />
               </Link>
-
-              {/* Watch Video Button with Radiant Glowing Animation */}
+              
               <button 
                 type="button"
                 onClick={() => {
                   const el = document.getElementById('how-it-works');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="group relative bg-white hover:bg-orange-50/40 border border-gray-100 hover:border-orange-200/80 p-2.5 sm:p-3 pr-6 sm:pr-8 rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-[0_10px_30px_rgba(249,115,22,0.25)] transition-all duration-300 flex items-center gap-3.5 cursor-pointer text-left shrink-0 overflow-visible"
+                className="inline-flex items-center justify-center gap-2.5 bg-white hover:bg-gray-50 border border-gray-200/90 px-6 py-3.5 rounded-xl font-bold text-sm sm:text-base text-gray-800 shadow-2xs transition-all cursor-pointer"
               >
-                {/* Animated Glowing Play Icon with Radar Ripple Rings */}
-                <div className="relative w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center shrink-0">
-                  {/* Radar Pulse Wave 1 */}
-                  <span className="absolute inset-0 rounded-full bg-orange-500/30 animate-radar-wave pointer-events-none" />
-                  {/* Radar Pulse Wave 2 */}
-                  <span className="absolute inset-0 rounded-full bg-amber-400/35 animate-radar-wave pointer-events-none" style={{ animationDelay: '1s' }} />
-
-                  {/* Main Glowing Play Orb */}
-                  <div className="relative w-full h-full rounded-full bg-gradient-to-tr from-orange-500 via-amber-500 to-orange-400 p-0.5 flex items-center justify-center shadow-md animate-play-glow group-hover:scale-110 transition-transform">
-                    <div className="w-full h-full rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white shadow-inner">
-                      <Play size={16} className="fill-white ml-0.5 drop-shadow-xs" />
-                    </div>
-                  </div>
+                <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-orange-500">
+                  <Play size={12} className="fill-orange-500 ml-0.5" />
                 </div>
-
-                <div>
-                  <div className="font-extrabold text-sm sm:text-base text-gray-900 leading-tight group-hover:text-orange-600 transition-colors">Watch Video</div>
-                  <div className="text-[11px] sm:text-xs text-gray-500 font-medium">See how it works</div>
-                </div>
+                <span>See How It Works</span>
               </button>
             </div>
             
-            {/* 4 Stats Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-gray-100 mt-5">
-              {/* Card 1: TRUSTED USERS */}
-              <div className="bg-gradient-to-b from-white via-white to-orange-50/50 border border-orange-100/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs hover:shadow-sm transition-all relative overflow-hidden">
-                <div className="w-11 h-11 rounded-xl bg-orange-100/60 border border-orange-200/60 flex items-center justify-center text-orange-600 shrink-0 shadow-inner">
-                  <Shield size={20} className="fill-orange-500/10 text-orange-600" />
-                </div>
-                <div>
-                  <span className="text-orange-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Trusted Users</span>
-                  <span className="text-gray-950 font-black text-lg sm:text-xl leading-none block">9.5L+</span>
-                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">Across India</span>
-                </div>
+            {/* Social Proof Row */}
+            <div className="flex items-center gap-3 pt-2">
+              <div className="flex -space-x-2 overflow-hidden">
+                <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="User 1" />
+                <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="User 2" />
+                <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="User 3" />
               </div>
-
-              {/* Card 2: RATING */}
-              <div className="bg-gradient-to-b from-white via-white to-amber-50/50 border border-amber-100/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs hover:shadow-sm transition-all relative overflow-hidden">
-                <div className="w-11 h-11 rounded-xl bg-amber-100/60 border border-amber-200/60 flex items-center justify-center text-amber-500 shrink-0 shadow-inner">
-                  <Star size={20} className="fill-amber-400 text-amber-500" />
-                </div>
-                <div>
-                  <span className="text-amber-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Rating</span>
-                  <span className="text-gray-950 font-black text-lg sm:text-xl leading-none flex items-center gap-1">
-                    4.8 <Star size={13} className="fill-amber-400 text-amber-400" />
-                  </span>
-                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">From 50K+ reviews</span>
-                </div>
-              </div>
-
-              {/* Card 3: TOTAL SCANS */}
-              <div className="bg-gradient-to-b from-white via-white to-blue-50/50 border border-blue-100/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs hover:shadow-sm transition-all relative overflow-hidden">
-                <div className="w-11 h-11 rounded-xl bg-blue-100/60 border border-blue-200/60 flex items-center justify-center text-blue-600 shrink-0 shadow-inner">
-                  <QrCode size={20} className="text-blue-600" />
-                </div>
-                <div>
-                  <span className="text-blue-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Total Scans</span>
-                  <span className="text-blue-600 font-black text-lg sm:text-xl leading-none block">2.4M+</span>
-                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">All time scans</span>
-                </div>
-              </div>
-
-              {/* Card 4: TODAY'S SCANS */}
-              <div className="bg-gradient-to-b from-white via-white to-emerald-50/50 border border-emerald-100/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs hover:shadow-sm transition-all relative overflow-hidden">
-                <div className="w-11 h-11 rounded-xl bg-emerald-100/60 border border-emerald-200/60 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
-                  <QrCode size={20} className="text-emerald-600" />
-                </div>
-                <div>
-                  <span className="text-emerald-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Today's Scans</span>
-                  <span className="text-emerald-700 font-black text-lg sm:text-xl leading-none flex items-center gap-1.5">
-                    1,204 
-                    <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px]">
-                      <TrendingUp size={10} className="stroke-[3]" />
-                    </span>
-                  </span>
-                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">Live updates</span>
-                </div>
+              <div className="text-xs leading-snug">
+                <p className="font-bold text-gray-800">Trusted by 10,000+ vehicle owners</p>
+                <p className="text-gray-500 font-medium">across India 🧡</p>
               </div>
             </div>
+
           </div>
 
-          {/* Hero Side Image */}
-          <div className="relative hidden lg:flex justify-center items-center animate-fade-up w-full h-full" style={{ animationDelay: '200ms' }}>
+          {/* Right Column (5 cols): Clean White Stage Showcase Card */}
+          <div className="lg:col-span-5 relative hidden lg:flex justify-center items-center animate-fade-up w-full" style={{ animationDelay: '200ms' }}>
             
-            {/* Floating Privacy Banner (Top Right Area) */}
-            <div className="absolute top-4 right-12 xl:right-16 z-30 max-w-[340px] bg-white/95 backdrop-blur-md border border-green-200 shadow-xl shadow-green-900/5 rounded-2xl p-5 flex gap-4 items-start animate-float">
-              <Lock className="w-8 h-8 text-green-500 shrink-0 mt-1" />
-              <div>
-                <p className="text-base font-black text-black mb-1">100% Two-Way Privacy</p>
-                <p className="text-xs text-black/70 leading-relaxed font-medium">Your details are completely safe! When someone scans your tag, they cannot see your number, and you cannot see theirs.</p>
+            <div className="relative w-full max-w-[480px] bg-white rounded-3xl p-5 sm:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col gap-4">
+              
+              {/* Top Two-Way Privacy Card */}
+              <div className="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                  <Lock size={18} />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm text-gray-900 mb-0.5">100% Two-Way Number Masking</h4>
+                  <p className="text-[11px] text-gray-600 leading-snug font-medium">
+                    With SafeDrive-Tag's two-way masking, you can give out your phone number, and you can text them back. Complete anonymity.
+                  </p>
+                </div>
               </div>
+
+              {/* Center Car Graphic with Interactive Tag Pointer */}
+              <div className="relative bg-gray-50/70 rounded-2xl p-4 pt-6 flex flex-col items-center justify-center overflow-hidden border border-gray-100">
+                {/* Floating QR Tag pointer badge */}
+                <div className="absolute top-3 right-6 flex items-center gap-1.5 z-20">
+                  <div className="w-12 h-14 bg-white border border-gray-200 rounded-xl p-1 shadow-md flex flex-col items-center justify-center text-center">
+                    <QrCode size={24} className="text-gray-900 mb-0.5" />
+                    <span className="text-[7px] font-black tracking-widest text-orange-500">SCAN</span>
+                  </div>
+                  <div className="w-6 h-6 rounded-full border-2 border-orange-400 border-dashed animate-spin flex items-center justify-center opacity-60" style={{ animationDuration: '8s' }} />
+                </div>
+
+                <img 
+                  src="/hero-car.png" 
+                  alt="SafeDrive-Tag on Car" 
+                  className="w-full max-w-[340px] object-contain drop-shadow-xl" 
+                />
+
+                {/* Dark Live QR Shield Pill */}
+                <div className="w-full max-w-[360px] bg-[#0c1427] text-white rounded-2xl p-3 flex items-center gap-3.5 border border-white/10 shadow-xl mt-2">
+                  <div className="w-10 h-10 bg-white rounded-xl p-1.5 shrink-0 flex items-center justify-center text-gray-950 shadow-xs">
+                    <QrCode size={28} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black tracking-wider text-orange-400 uppercase">LIVE QR SHIELD</div>
+                    <div className="text-xs font-bold text-gray-100">Scan to Call Owner Privately</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Cloud Bridge Status Card */}
+              <div className="bg-orange-50/40 border border-orange-100 rounded-2xl p-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                    <Zap size={18} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-extrabold text-gray-900">Instant Masked Cloud Call</p>
+                    <p className="text-[10px] text-gray-500 font-medium">WhatsApp Alert &bull; Call & Text Forwarding</p>
+                  </div>
+                </div>
+                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-extrabold px-2.5 py-1 rounded-full">
+                  ACTIVE
+                </span>
+              </div>
+
             </div>
 
-            <img src="/hero-car.png" alt="SafeDrive-Tag on Car" className="relative z-10 w-full max-w-[150%] xl:max-w-[180%] scale-110 xl:scale-125 object-contain drop-shadow-2xl hover:scale-110 transition-transform duration-500 translate-x-8 xl:translate-x-16" />
           </div>
         </div>
       </section>
