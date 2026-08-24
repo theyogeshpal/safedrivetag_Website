@@ -64,6 +64,8 @@ export default function Dashboard() {
   const [qrModalTag, setQrModalTag] = useState(null);
   const [invoiceModalOrder, setInvoiceModalOrder] = useState(null);
   const [trackingModalOrder, setTrackingModalOrder] = useState(null);
+  const [digitalPdfModalOrder, setDigitalPdfModalOrder] = useState(null);
+  const [activeCopyIndex, setActiveCopyIndex] = useState(0);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
 
   // PWA App Installation State
@@ -1716,11 +1718,11 @@ export default function Dashboard() {
                               {(order.productType === 'DIGITAL' || order.qrType === 'DIGITAL' || order.name?.toLowerCase().includes('digital') || order.title?.toLowerCase().includes('digital')) && (
                                 <>
                                   <button
-                                    onClick={() => openDigitalPdf(order)}
+                                    onClick={() => { setDigitalPdfModalOrder(order); setActiveCopyIndex(0); }}
                                     className="flex-1 md:flex-none bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                                    title="Open Digital QR Kit PDF"
+                                    title="Open Digital QR Kit Passes Inside App"
                                   >
-                                    <Eye size={13} /> Open PDF
+                                    <Eye size={13} /> View Digital Passes
                                   </button>
 
                                   <button
@@ -2692,6 +2694,228 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* ======================================================== */}
+      {/* MODAL 6: DIGITAL QR KIT & PRINTABLE PASS IN-APP MODAL */}
+      {/* ======================================================== */}
+      {digitalPdfModalOrder && (() => {
+        const copies = Array.isArray(digitalPdfModalOrder.allocatedQRIds) && digitalPdfModalOrder.allocatedQRIds.length > 0
+          ? digitalPdfModalOrder.allocatedQRIds
+          : [{
+              publicToken: digitalPdfModalOrder.publicToken || digitalPdfModalOrder.id,
+              copyCode: 'SD-TAG-1',
+              qrType: 'DIGITAL'
+            }];
+        
+        const currentCopy = copies[activeCopyIndex] || copies[0];
+        const token = currentCopy.publicToken || currentCopy.copyCode || digitalPdfModalOrder.publicToken || digitalPdfModalOrder.id;
+        const copyCode = currentCopy.copyCode || `COPY-${activeCopyIndex + 1}`;
+        const liveScanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
+
+        return (
+          <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-md animate-fade-up">
+            <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-gray-200 overflow-hidden text-left max-h-[92vh] flex flex-col">
+              
+              {/* Modal Top Bar */}
+              <div className="bg-gradient-to-r from-orange-600 to-amber-500 text-white px-5 sm:px-6 py-4 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                    <QrCode size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-black">Official Digital QR Kit Passes</h3>
+                    <p className="text-[11px] text-orange-100 font-mono">
+                      Order: {digitalPdfModalOrder.id} • Live Scannable
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setDigitalPdfModalOrder(null)}
+                  className="text-white/80 hover:text-white cursor-pointer p-1"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs">
+                
+                {/* Copy Selection Tabs (if multiple copies) */}
+                {copies.length > 1 && (
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider shrink-0">
+                      Sticker Passes:
+                    </span>
+                    {copies.map((c, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setActiveCopyIndex(idx)}
+                        className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                          activeCopyIndex === idx
+                            ? 'bg-[#2874f0] text-white shadow-xs'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        <QrCode size={13} /> {c.copyCode || `Copy ${idx + 1}`}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Info Guide Card */}
+                <div className="bg-orange-50/80 border border-orange-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-orange-950 text-xs flex items-center gap-1.5">
+                      <span>🖨️ DIY Color Printing & Placement Guide</span>
+                    </p>
+                    <p className="text-[11px] text-orange-800 leading-relaxed">
+                      Print in full-color on sticker sheet or glossy paper. Cut along dotted lines and place on front windshield and rear visor.
+                    </p>
+                  </div>
+                  <div className="shrink-0 flex items-center gap-2">
+                    <span className="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-green-200 inline-flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-600 animate-pulse" /> Live Scannable
+                    </span>
+                  </div>
+                </div>
+
+                {/* Target Redirect URL bar */}
+                <div className="bg-gray-50 border border-gray-200 rounded-lg px-3.5 py-2 flex items-center justify-between gap-2 text-[11px] font-mono text-gray-600">
+                  <span className="text-gray-400 font-sans font-semibold">Live Target:</span>
+                  <span className="text-[#2874f0] truncate font-bold">{liveScanUrl}</span>
+                  <Link
+                    to={`/q/${token}`}
+                    target="_blank"
+                    className="text-gray-500 hover:text-[#2874f0] shrink-0 font-sans font-bold flex items-center gap-1 text-[10px] bg-white px-2 py-0.5 rounded border border-gray-200"
+                  >
+                    <ExternalLink size={10} /> Test Scan
+                  </Link>
+                </div>
+
+                {/* 2 Printable Passes Cards Side-by-Side */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  
+                  {/* PASS 1: Front Windshield Badge */}
+                  <div className="border-2 border-dashed border-orange-300 rounded-2xl p-2 bg-gradient-to-b from-orange-50/40 to-white flex flex-col items-center justify-between">
+                    <div className="w-full text-center pb-1">
+                      <span className="text-[9px] font-bold text-orange-400 uppercase tracking-widest">✂ CUT HERE</span>
+                    </div>
+
+                    <div className="w-full bg-gradient-to-br from-orange-500 to-amber-600 text-white rounded-xl p-4 flex flex-col items-center text-center shadow-md">
+                      <div className="w-full flex items-center justify-between mb-3 text-[10px] font-bold">
+                        <span className="flex items-center gap-1">🛡️ SafeDriveTag</span>
+                        <span className="bg-white/20 px-2 py-0.5 rounded-full">Front Windshield</span>
+                      </div>
+
+                      {/* Real Vector QR Code with Centered Logo */}
+                      <div className="bg-white p-2.5 rounded-xl border border-white/40 shadow-inner mb-3">
+                        <QRCodeSVG
+                          value={liveScanUrl}
+                          size={130}
+                          level="H"
+                          includeMargin={false}
+                          imageSettings={{
+                            src: '/logos/icon.png',
+                            x: undefined,
+                            y: undefined,
+                            height: 32,
+                            width: 32,
+                            excavate: true,
+                          }}
+                        />
+                      </div>
+
+                      <p className="font-black text-xs tracking-wider uppercase">SCAN TO CONTACT OWNER</p>
+                      <p className="text-[9px] text-white/80 mt-0.5">Parking Obstruction • Emergency • Lights ON</p>
+
+                      <div className="bg-white/20 font-mono font-bold text-[10px] px-2.5 py-0.5 rounded-full mt-2 border border-white/30">
+                        CODE: {copyCode}
+                      </div>
+
+                      <div className="w-full flex items-center justify-between mt-3 pt-2 border-t border-white/20 text-[9px] text-white/90">
+                        <span>🔒 100% Number Privacy</span>
+                        <span>⚡ Instant Masked Call</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PASS 2: Rear Glass / Visor Badge */}
+                  <div className="border-2 border-dashed border-slate-300 rounded-2xl p-2 bg-gradient-to-b from-slate-50/50 to-white flex flex-col items-center justify-between">
+                    <div className="w-full text-center pb-1">
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">✂ CUT HERE</span>
+                    </div>
+
+                    <div className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-xl p-4 flex flex-col items-center text-center shadow-md">
+                      <div className="w-full flex items-center justify-between mb-3 text-[10px] font-bold">
+                        <span className="flex items-center gap-1">🛡️ SafeDriveTag</span>
+                        <span className="bg-white/20 px-2 py-0.5 rounded-full">Rear Glass / Visor</span>
+                      </div>
+
+                      {/* Real Vector QR Code with Centered Logo */}
+                      <div className="bg-white p-2.5 rounded-xl border border-white/40 shadow-inner mb-3">
+                        <QRCodeSVG
+                          value={liveScanUrl}
+                          size={130}
+                          level="H"
+                          includeMargin={false}
+                          imageSettings={{
+                            src: '/logos/icon.png',
+                            x: undefined,
+                            y: undefined,
+                            height: 32,
+                            width: 32,
+                            excavate: true,
+                          }}
+                        />
+                      </div>
+
+                      <p className="font-black text-xs tracking-wider uppercase text-amber-400">SCAN IN EMERGENCY / ISSUE</p>
+                      <p className="text-[9px] text-slate-300 mt-0.5">Direct WhatsApp Alert & Family SOS</p>
+
+                      <div className="bg-white/20 font-mono font-bold text-[10px] px-2.5 py-0.5 rounded-full mt-2 border border-white/30">
+                        CODE: {copyCode}
+                      </div>
+
+                      <div className="w-full flex items-center justify-between mt-3 pt-2 border-t border-white/20 text-[9px] text-slate-300">
+                        <span>🚨 24/7 SOS Alert</span>
+                        <span>💬 WhatsApp Connect</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* Bottom Actions Footer */}
+              <div className="bg-gray-50 border-t border-gray-200 px-5 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => printDigitalPdfInColor(currentCopy)}
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                  >
+                    <Printer size={14} /> Print Color PDF Sheet
+                  </button>
+                  <button
+                    onClick={() => downloadQrPng(currentCopy)}
+                    className="bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                  >
+                    <Download size={14} /> Download Badge (PNG)
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setDigitalPdfModalOrder(null)}
+                  className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 font-bold px-4 py-2 rounded-lg text-xs transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+
+            </div>
+          </div>
+        );
+      })()}
 
     </div>
   );

@@ -4,10 +4,11 @@
  */
 
 export const generateDigitalPdfHtml = (item = {}) => {
-  const token = item.publicToken || item.token || item.id || 'pk_live_digital';
-  const title = item.title || item.name || 'SafeDrive Smart QR Vehicle Tag';
-  const copyCode = item.copyCode || item.id || 'SD-TAG';
-  const vehicleNo = item.vehicleNumber || 'YOUR-VEHICLE-NO';
+  const firstAlloc = Array.isArray(item.allocatedQRIds) && item.allocatedQRIds.length > 0 ? item.allocatedQRIds[0] : null;
+  const token = item.publicToken || firstAlloc?.publicToken || item.token || item.copyCode || item.id || 'pk_live_digital';
+  const title = item.title || item.name || item.vehicleName || 'SafeDrive Smart QR Vehicle Tag';
+  const copyCode = item.copyCode || firstAlloc?.copyCode || 'SD-TAG-1';
+  const vehicleNo = item.vehicleNumber || 'LIVE PROTECTED VEHICLE';
   
   // Real Live Scannable Redirect URL
   const liveScanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
