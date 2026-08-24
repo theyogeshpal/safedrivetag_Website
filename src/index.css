@@ -121,7 +121,7 @@ body {
 }
 
 /* ======================================================== */
-/* UNIFIED PREMIUM BUTTON ANIMATIONS & GREEN CLICK FEEDBACK */
+/* CLEAN MODERN BUTTON INTERACTIONS */
 /* ======================================================== */
 button,
 [role="button"],
@@ -130,95 +130,17 @@ button,
 .btn-action,
 .btn {
   position: relative;
-  overflow: hidden;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
-              background-color 0.25s ease, 
-              box-shadow 0.25s ease, 
-              border-color 0.25s ease, 
-              color 0.25s ease;
-  will-change: transform, background-color, box-shadow;
-  transform: translateZ(0);
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
+  will-change: transform;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Hover Lift Effect for Buttons */
-button:hover:not(:disabled),
-[role="button"]:hover,
-.btn-primary:hover,
-.btn-action:hover {
-  transform: translateY(-2px);
-}
-
-/* Click / Active State: Green Color Transformation + Glow */
-.btn-clicked-green,
+/* Subtle Click / Active State */
 button:active:not(:disabled),
 [role="button"]:active {
-  transform: translateY(1px) scale(0.96) !important;
-  background: #16a34a !important; /* Emerald Green */
-  background-color: #16a34a !important;
-  background-image: none !important;
-  border-color: #15803d !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 26px rgba(22, 163, 74, 0.75), inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
-  animation: greenButtonClick 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-}
-
-/* Do NOT apply to Navbar and Header navigation links */
-nav a,
-header nav a {
-  background-color: transparent !important;
-  animation: none !important;
-  box-shadow: none !important;
-}
-
-.btn-clicked-green *,
-button:active:not(:disabled) *,
-[role="button"]:active *,
-a.inline-flex[href*="shop"]:active *,
-a.inline-flex[href*="checkout"]:active * {
-  color: #ffffff !important;
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
-}
-
-@keyframes greenButtonClick {
-  0% {
-    transform: scale(0.94) translateY(1px);
-    background-color: #16a34a;
-    box-shadow: 0 0 30px rgba(22, 163, 74, 0.85);
-  }
-  35% {
-    transform: scale(1.03) translateY(-2px);
-    background-color: #15803d;
-    box-shadow: 0 0 36px rgba(22, 163, 74, 0.75);
-  }
-  100% {
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* Expanding Green Ripple Wave */
-.btn-ripple-wave {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.9) 0%, rgba(22, 163, 74, 0.6) 50%, rgba(22, 163, 74, 0) 80%);
-  transform: scale(0);
-  animation: rippleSpread 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-  pointer-events: none;
-  z-index: 99;
-}
-
-@keyframes rippleSpread {
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(4);
-    opacity: 0;
-  }
+  transform: scale(0.97);
 }
 
 .hover-lift {

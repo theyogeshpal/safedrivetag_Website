@@ -51,61 +51,11 @@ function ScrollToTop() {
   return null;
 }
 
-// Global Unified Button Click Animation with Active Emerald Green & Ripple Feedback
-function GlobalButtonClickEffects() {
-  useEffect(() => {
-    const handleGlobalClick = (e) => {
-      const btn = e.target.closest('button, [role="button"], a.btn, .btn-action, .btn-primary, .btn-secondary');
-      if (!btn || btn.disabled) return;
-
-      // Do NOT apply to navbar or footer text links
-      if (btn.closest('nav') || btn.closest('header nav') || btn.closest('footer')) return;
-
-      // Add green clicked class
-      btn.classList.add('btn-clicked-green');
-      
-      // Calculate ripple position
-      const rect = btn.getBoundingClientRect();
-      const ripple = document.createElement('span');
-      ripple.className = 'btn-ripple-wave';
-      const size = Math.max(rect.width, rect.height);
-      const x = e.clientX ? e.clientX - rect.left - size / 2 : rect.width / 2 - size / 2;
-      const y = e.clientY ? e.clientY - rect.top - size / 2 : rect.height / 2 - size / 2;
-      
-      ripple.style.width = ripple.style.height = `${size}px`;
-      ripple.style.left = `${x}px`;
-      ripple.style.top = `${y}px`;
-      
-      const originalPosition = window.getComputedStyle(btn).position;
-      if (originalPosition === 'static') {
-        btn.style.position = 'relative';
-      }
-      
-      btn.appendChild(ripple);
-
-      setTimeout(() => {
-        btn.classList.remove('btn-clicked-green');
-        if (ripple.parentNode) {
-          ripple.parentNode.removeChild(ripple);
-        }
-      }, 650);
-    };
-
-    document.addEventListener('click', handleGlobalClick, { capture: true, passive: true });
-    return () => {
-      document.removeEventListener('click', handleGlobalClick, { capture: true });
-    };
-  }, []);
-
-  return null;
-}
-
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <GlobalButtonClickEffects />
         <LoginModal />
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <Navbar />
