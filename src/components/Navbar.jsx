@@ -87,8 +87,8 @@ export default function Navbar() {
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag" 
-              className="h-11 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
-              style={{ maxHeight: '56px', width: 'auto' }}
+              className="h-16 sm:h-20 md:h-20 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              style={{ maxHeight: '78px', width: 'auto' }}
             />
           </Link>
         </div>
