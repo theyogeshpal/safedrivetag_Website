@@ -33,10 +33,10 @@ export default function Footer() {
     </footer>
   ) : (
     <footer className="relative bg-[#000000] text-white/80 pt-16 pb-12 overflow-hidden border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 relative z-10">
         
         {/* Brand Column */}
-        <div className="lg:col-span-4 pr-0 lg:pr-4">
+        <div className="col-span-2 lg:col-span-4 pr-0 lg:pr-4">
           <Link to="/" className="inline-flex items-center mb-6 group">
             <div className="bg-white rounded-2xl p-2 sm:p-2.5 shadow-lg border border-white/20 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
               <img 
@@ -68,8 +68,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Company Column */}
-        <div className="lg:col-span-2">
+        {/* Company Column (Side-by-Side on mobile) */}
+        <div className="col-span-1 lg:col-span-2">
           <h4 className="font-extrabold text-white mb-5 uppercase tracking-wider text-xs sm:text-sm">Company</h4>
           <ul className="space-y-3.5 text-sm font-medium">
             <FooterLink to="/about" label="About Us" />
@@ -78,8 +78,8 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Legal Column */}
-        <div className="lg:col-span-3">
+        {/* Legal Column (Side-by-Side on mobile) */}
+        <div className="col-span-1 lg:col-span-3">
           <h4 className="font-extrabold text-white mb-5 uppercase tracking-wider text-xs sm:text-sm">Legal</h4>
           <ul className="space-y-3.5 text-sm font-medium">
             <FooterLink to="/privacy" label="Privacy Policy" />
@@ -90,7 +90,7 @@ export default function Footer() {
         </div>
 
         {/* Reach Us Column */}
-        <div className="lg:col-span-3">
+        <div className="col-span-2 lg:col-span-3">
           <h4 className="font-extrabold text-white mb-5 uppercase tracking-wider text-xs sm:text-sm">Reach Us</h4>
           <ul className="space-y-3.5 text-sm font-medium">
             <li className="flex items-center gap-2.5">
