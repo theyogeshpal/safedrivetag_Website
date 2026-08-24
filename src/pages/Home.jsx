@@ -51,18 +51,9 @@ export default function Home() {
           {/* Left Column (7 cols): High Impact Messaging & Actions */}
           <div className="lg:col-span-7 space-y-6 sm:space-y-7 animate-fade-up">
             
-            {/* Top Micro Pill Badge */}
-            <div className="inline-flex items-center gap-2.5 bg-white/90 backdrop-blur-xl border border-orange-200/90 px-4 py-1.5 rounded-full text-xs font-bold text-orange-950 shadow-sm hover:border-orange-300 transition-colors">
-              <span className="flex h-2.5 w-2.5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500"></span>
-              </span>
-              <span className="tracking-wide">🔥 9.5 Lakh+ Vehicles & Belongings Protected Across India</span>
-            </div>
-            
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.12] tracking-tight">
-              Stay reachable in emergencies, stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 underline decoration-orange-300/40 decoration-wavy">private.</span>
+              Stay reachable in emergencies, stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500">private.</span>
             </h1>
 
             {/* Description */}
