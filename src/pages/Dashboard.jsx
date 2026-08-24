@@ -1095,12 +1095,14 @@ export default function Dashboard() {
                                 <QrCode size={13} /> View QR Badge
                               </button>
 
-                              <button
-                                onClick={() => printDigitalPdfInColor({ title: tag.vehicleName, publicToken: tag.publicToken || tag.id, vehicleNumber: tag.vehicleNumber })}
-                                className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-                              >
-                                <Printer size={13} /> Print Color Badge
-                              </button>
+                              {tag.qrType === 'DIGITAL' && (
+                                <button
+                                  onClick={() => printDigitalPdfInColor({ title: tag.vehicleName, publicToken: tag.publicToken || tag.id, vehicleNumber: tag.vehicleNumber })}
+                                  className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                >
+                                  <Printer size={13} /> Print Color Badge
+                                </button>
+                              )}
 
                               <button
                                 onClick={() => handleToggleStatus(tag.id, tag.status)}
