@@ -87,7 +87,7 @@ export default function Navbar() {
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag Logo" 
-              className="h-12 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+              className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
             />
           </Link>
         </div>
