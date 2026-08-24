@@ -83,11 +83,12 @@ export default function Navbar() {
         {/* 1. BRAND LOGO */}
         {/* ======================================================== */}
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2.5 relative z-50 cursor-pointer group">
+          <Link to="/" className="flex items-center gap-2.5 h-10 sm:h-11 shrink-0 relative z-50 cursor-pointer group">
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag Logo" 
               className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+              style={{ maxHeight: '38px', width: 'auto' }}
             />
           </Link>
         </div>

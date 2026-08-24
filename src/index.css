@@ -33,11 +33,6 @@ body {
   touch-action: manipulation;
 }
 
-/* Optimize image rendering and layout containment */
-img, svg, video {
-  max-width: 100%;
-  height: auto;
-}
 
 /* Custom Ultra-Slim Modern Smooth Scrollbar */
 ::-webkit-scrollbar {
