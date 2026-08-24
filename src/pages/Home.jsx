@@ -87,15 +87,7 @@ export default function Home() {
           <div className="absolute -top-24 -right-24 w-[600px] h-[600px] bg-orange-500/10 rounded-full blur-[120px]"></div>
           <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px]"></div>
           
-          {/* Large Car Image in Hero Background */}
-          <img 
-            src="/hero-car.png" 
-            alt="Car Background" 
-            decoding="async"
-            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-15 lg:opacity-20 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl" 
-          />
-          
-          {/* Light Grid Overlay */}
+          {/* Light Grid Overlay (Checkboxes/Grid Pattern) */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         </div>
 
