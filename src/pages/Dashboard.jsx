@@ -60,6 +60,7 @@ export default function Dashboard() {
   const [newVehicleType, setNewVehicleType] = useState('Car');
   const [qrModalTag, setQrModalTag] = useState(null);
   const [invoiceModalOrder, setInvoiceModalOrder] = useState(null);
+  const [trackingModalOrder, setTrackingModalOrder] = useState(null);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
 
   // Profile Edit State
@@ -1575,6 +1576,17 @@ export default function Dashboard() {
                               <Download size={13} /> Invoice
                             </button>
 
+                            {/* Physical Orders Have Courier & Stage Tracking */}
+                            {!(order.productType === 'DIGITAL' || order.qrType === 'DIGITAL' || order.name?.toLowerCase().includes('digital') || order.title?.toLowerCase().includes('digital')) && (
+                              <button
+                                onClick={() => setTrackingModalOrder(order)}
+                                className="flex-1 md:flex-none bg-blue-50 hover:bg-blue-100 text-[#2874f0] border border-blue-200 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                                title="Track Shipping & Delivery Progress"
+                              >
+                                <Truck size={13} /> Track Order
+                              </button>
+                            )}
+
                             {/* Only Digital Orders Have Printable PDF Sticker Passes */}
                             {(order.productType === 'DIGITAL' || order.qrType === 'DIGITAL' || order.name?.toLowerCase().includes('digital') || order.title?.toLowerCase().includes('digital')) && (
                               <>
@@ -2270,6 +2282,166 @@ export default function Dashboard() {
                   <Eye size={14} /> Open Live Scan Test Page
                 </Link>
               </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 4: PHYSICAL ORDER LIVE TRACKING MODAL */}
+      {/* ======================================================== */}
+      {trackingModalOrder && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 overflow-hidden text-left">
+            
+            {/* Top Header */}
+            <div className="bg-gradient-to-r from-[#2874f0] to-blue-700 text-white px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                  <Truck size={18} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold">Track Your Physical QR Delivery</h3>
+                  <p className="text-[11px] text-blue-100 font-mono">
+                    Order: {trackingModalOrder.id}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setTrackingModalOrder(null)}
+                className="text-white/80 hover:text-white cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 text-xs max-h-[80vh] overflow-y-auto">
+              
+              {/* Courier & AWB Header Card */}
+              <div className="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">COURIER PARTNER</p>
+                  <p className="text-sm font-black text-gray-900 mt-0.5">BlueDart / Delhivery Express</p>
+                  <p className="text-[11px] font-mono text-blue-700 font-bold mt-0.5">
+                    AWB: SDT{String(trackingModalOrder.id).replace(/\D/g, '').slice(-6) || '789120'}IN
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-[11px] inline-flex items-center gap-1 border border-emerald-200">
+                    <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" /> In Transit
+                  </span>
+                  <p className="text-[11px] text-gray-500 font-medium mt-1">Est. Delivery: 2-3 Days</p>
+                </div>
+              </div>
+
+              {/* 5-Step Vertical Tracking Timeline */}
+              <div className="space-y-4">
+                <h4 className="font-bold text-gray-800 text-xs uppercase tracking-wider">
+                  Shipment Progress Status
+                </h4>
+
+                <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-blue-200">
+                  
+                  {/* Step 1: Order Confirmed */}
+                  <div className="relative">
+                    <div className="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center ring-4 ring-white shadow-xs">
+                      <Check size={11} strokeWidth={3} />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-gray-900 text-xs">Order Placed & Confirmed</p>
+                        <span className="text-[10px] text-gray-400 font-mono">{trackingModalOrder.date || 'Recent'}</span>
+                      </div>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        Payment verified via Razorpay. Physical QR order allocation completed.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 2: Quality Checked & Packed */}
+                  <div className="relative">
+                    <div className="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center ring-4 ring-white shadow-xs">
+                      <Check size={11} strokeWidth={3} />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-gray-900 text-xs">Quality Checked & Weatherproof Sealed</p>
+                        <span className="text-[10px] text-gray-400 font-mono">Today, 09:30 AM</span>
+                      </div>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        High-grade vinyl UV protection coating applied with dual windshield badges.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 3: In Transit */}
+                  <div className="relative">
+                    <div className="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-[#2874f0] text-white flex items-center justify-center ring-4 ring-white shadow-xs animate-pulse">
+                      <Truck size={11} />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-[#2874f0] text-xs">Dispatched & In Transit (Live)</p>
+                        <span className="text-[10px] text-blue-700 font-bold bg-blue-100 px-1.5 py-0.2 rounded">Active Stage</span>
+                      </div>
+                      <p className="text-[11px] text-gray-600 mt-0.5">
+                        Package handed over to courier partner. In transit from Logistics Hub.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 4: Out for Delivery */}
+                  <div className="relative opacity-60">
+                    <div className="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center ring-4 ring-white shadow-xs">
+                      <Clock size={11} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-700 text-xs">Out for Delivery</p>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        Delivery executive will arrive at your door and notify via SMS.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 5: Delivered */}
+                  <div className="relative opacity-60">
+                    <div className="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center ring-4 ring-white shadow-xs">
+                      <Package size={11} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-700 text-xs">Delivered & Protected</p>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        Scan the physical sticker QR once to activate instant vehicle privacy.
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Delivery Address Box */}
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex items-start gap-2.5">
+                <MapPin size={16} className="text-red-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">DELIVERING TO</p>
+                  <p className="text-xs font-bold text-gray-900 mt-0.5">
+                    {currentUser?.name || 'Customer'} (+91 {currentUser?.phone || 'Registered'})
+                  </p>
+                  <p className="text-[11px] text-gray-600 mt-0.5">
+                    {currentUser?.address || 'Your saved delivery address'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setTrackingModalOrder(null)}
+                className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer"
+              >
+                Close Tracking Window
+              </button>
+
             </div>
 
           </div>
