@@ -85,7 +85,12 @@ export default function Navbar() {
         {/* ======================================================== */}
         <div className="flex items-center gap-3">
           <Link to="/" className="flex items-center shrink-0 relative z-50 cursor-pointer group">
-            <Logo className="h-8 sm:h-9 md:h-10 w-auto" />
+            <img 
+              src="/logos/primary.jpeg" 
+              alt="SafeDrive-Tag" 
+              className="h-9 sm:h-10 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              style={{ maxHeight: '40px', width: 'auto' }}
+            />
           </Link>
         </div>
 
@@ -239,7 +244,12 @@ export default function Navbar() {
       }`}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50/50">
           <div className="flex items-center">
-            <Logo className="h-7 sm:h-8 w-auto" />
+            <img 
+              src="/logos/primary.jpeg" 
+              alt="SafeDrive-Tag" 
+              className="h-8 w-auto object-contain" 
+              style={{ maxHeight: '34px', width: 'auto' }}
+            />
           </div>
           <button 
             onClick={() => setMenuOpen(false)} 
