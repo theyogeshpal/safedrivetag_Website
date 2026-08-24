@@ -55,8 +55,11 @@ function ScrollToTop() {
 function GlobalButtonClickEffects() {
   useEffect(() => {
     const handleGlobalClick = (e) => {
-      const btn = e.target.closest('button, [role="button"], a.btn, a[href*="shop"], a[href*="checkout"], .btn-action, .btn-primary, .btn-secondary');
+      const btn = e.target.closest('button, [role="button"], a.btn, .btn-action, .btn-primary, .btn-secondary');
       if (!btn || btn.disabled) return;
+
+      // Do NOT apply to navbar or footer text links
+      if (btn.closest('nav') || btn.closest('header nav') || btn.closest('footer')) return;
 
       // Add green clicked class
       btn.classList.add('btn-clicked-green');

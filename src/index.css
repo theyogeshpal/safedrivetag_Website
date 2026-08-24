@@ -65,10 +65,7 @@ button,
 .btn-primary,
 .btn-secondary,
 .btn-action,
-a.inline-flex[href*="shop"],
-a.inline-flex[href*="checkout"],
-a.flex[href*="shop"],
-a.btn {
+.btn {
   position: relative;
   overflow: hidden;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
@@ -83,21 +80,18 @@ a.btn {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Hover Lift Effect */
+/* Hover Lift Effect for Buttons */
 button:hover:not(:disabled),
 [role="button"]:hover,
-a.inline-flex[href*="shop"]:hover,
-a.inline-flex[href*="checkout"]:hover {
+.btn-primary:hover,
+.btn-action:hover {
   transform: translateY(-2px);
 }
 
 /* Click / Active State: Green Color Transformation + Glow */
 .btn-clicked-green,
 button:active:not(:disabled),
-[role="button"]:active,
-a.inline-flex[href*="shop"]:active,
-a.inline-flex[href*="checkout"]:active,
-a.flex[href*="shop"]:active {
+[role="button"]:active {
   transform: translateY(1px) scale(0.96) !important;
   background: #16a34a !important; /* Emerald Green */
   background-color: #16a34a !important;
@@ -106,6 +100,14 @@ a.flex[href*="shop"]:active {
   color: #ffffff !important;
   box-shadow: 0 0 26px rgba(22, 163, 74, 0.75), inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
   animation: greenButtonClick 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+/* Do NOT apply to Navbar and Header navigation links */
+nav a,
+header nav a {
+  background-color: transparent !important;
+  animation: none !important;
+  box-shadow: none !important;
 }
 
 .btn-clicked-green *,
