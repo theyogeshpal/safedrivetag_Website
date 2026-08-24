@@ -175,8 +175,10 @@ export default function LoginModal() {
         
         {/* Close Button */}
         <button
+          type="button"
           onClick={closeLoginModal}
-          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-black/60 hover:text-black transition-colors"
+          className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 flex items-center justify-center text-gray-600 hover:text-gray-950 transition-all z-30 cursor-pointer shadow-xs"
+          style={{ position: 'absolute', top: '16px', right: '16px' }}
           aria-label="Close modal"
         >
           <X size={18} />

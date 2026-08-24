@@ -762,10 +762,13 @@ export default function Checkout() {
           <div className="bg-white rounded-3xl p-7 sm:p-9 shadow-2xl max-w-md w-full relative animate-scale-up">
             
             <button
+              type="button"
               onClick={() => setIsOtpModalOpen(false)}
-              className="absolute top-5 right-5 text-black/40 hover:text-black p-1.5 rounded-full hover:bg-black/5 transition-all cursor-pointer"
+              className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-900 flex items-center justify-center transition-all cursor-pointer z-30"
+              style={{ position: 'absolute', top: '16px', right: '16px' }}
+              aria-label="Close modal"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
 
             <div className="text-center mb-6">
