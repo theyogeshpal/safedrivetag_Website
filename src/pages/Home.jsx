@@ -261,33 +261,52 @@ export default function Home() {
             </div>
             
             {/* Right Content: The Visual Tag with Pointers */}
-            <div className="relative flex justify-center items-center py-6 sm:py-10 lg:py-0 w-full max-w-md mx-auto">
+            <div className="relative flex flex-col justify-center items-center py-12 sm:py-16 w-full max-w-md mx-auto">
               
+              {/* Top Pointers (Desktop) */}
+              <div className="hidden lg:flex justify-between w-full px-4 mb-2 z-20">
+                <div className="flex flex-col items-center animate-fade-up">
+                  <div className="bg-gray-950 text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-gray-800">
+                    Unique QR per vehicle
+                  </div>
+                  <div className="w-0.5 h-6 bg-[#fcd34d]"></div>
+                  <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+                </div>
+
+                <div className="flex flex-col items-center animate-fade-up" style={{ animationDelay: '100ms' }}>
+                  <div className="bg-gray-950 text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-gray-800">
+                    Scan with any camera
+                  </div>
+                  <div className="w-0.5 h-6 bg-[#fcd34d]"></div>
+                  <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+                </div>
+              </div>
+
               {/* The Tag Itself */}
-              <div className="relative bg-[#fcd34d] rounded-2xl sm:rounded-3xl w-full shadow-2xl overflow-hidden flex flex-col border-2 sm:border-4 border-[#fcd34d]">
+              <div className="relative bg-[#fcd34d] rounded-2xl sm:rounded-3xl w-full shadow-2xl overflow-hidden flex flex-col border-2 sm:border-4 border-[#fcd34d] z-10 my-1">
                 {/* Yellow/Black striped border top */}
                 <div className="w-full h-2.5 sm:h-3 bg-[repeating-linear-gradient(45deg,#000,#000_10px,#fcd34d_10px,#fcd34d_20px)]"></div>
                 
                 {/* Tag Content */}
-                <div className="flex-1 p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 bg-white rounded-xl mx-1 my-1">
+                <div className="flex-1 p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-4 bg-white rounded-xl mx-1 my-1">
                   <div className="flex-1 w-full text-center sm:text-left">
                     <div className="font-black text-xl sm:text-2xl mb-1 flex items-center justify-center sm:justify-start text-black">
-                      SafeDrive<span className="bg-black text-white px-1.5 ml-1 rounded text-base sm:text-lg py-0.5">Tag</span>
+                      SafeDrive<span className="bg-black text-white px-1.5 ml-1 rounded text-base sm:text-lg py-0.5">-Tag</span>
                     </div>
-                    <div className="text-[8px] sm:text-[9px] text-gray-500 mb-3 sm:mb-4 font-bold tracking-wide">Vehicle alert sticker • safedrivetag.com</div>
-                    <h3 className="font-black text-lg sm:text-xl leading-tight mb-3 sm:mb-4 text-black">Scan to contact<br className="hidden sm:inline"/><span className="border-b-4 border-[#fcd34d] pb-0.5">the owner.</span></h3>
+                    <div className="text-[9px] text-gray-500 mb-3 font-bold tracking-wide">Vehicle alert sticker • safedrivetag.com</div>
+                    <h3 className="font-black text-lg sm:text-xl leading-tight mb-3 text-black">Scan to contact<br className="hidden sm:inline"/><span className="border-b-4 border-[#fcd34d] pb-0.5">the owner.</span></h3>
                     
-                    <div className="space-y-1.5 sm:space-y-2 text-xs font-bold text-black/80 text-left">
+                    <div className="space-y-1.5 text-xs font-bold text-black/80 text-left">
                       <div className="flex items-center gap-2"><span className="bg-black text-white w-5 h-5 rounded flex items-center justify-center text-[10px] shrink-0">P</span> Wrong Parking</div>
                       <div className="flex items-center gap-2"><span className="bg-black text-white w-5 h-5 rounded flex items-center justify-center text-[12px] shrink-0">!</span> Vehicle Issue</div>
                       <div className="flex items-center gap-2"><span className="bg-red-500 text-white px-1.5 h-5 rounded flex items-center justify-center text-[9px] tracking-widest shrink-0">SOS</span> Emergency</div>
                     </div>
-                    <div className="text-[8px] text-gray-400 mt-4 sm:mt-6 font-bold uppercase tracking-wider">Use phone camera or any QR scanner app to scan</div>
+                    <div className="text-[8px] text-gray-400 mt-4 font-bold uppercase tracking-wider">Use phone camera or any QR scanner app to scan</div>
                   </div>
                   
                   <div className="w-28 sm:w-32 shrink-0 flex flex-col items-center bg-[#fcd34d] p-2.5 sm:p-3 rounded-2xl">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://safedrivetag.com" alt="QR Code" className="w-full aspect-square bg-white rounded-xl p-1.5 sm:p-2" />
-                    <div className="mt-1.5 sm:mt-2 text-[9px] sm:text-[10px] font-black tracking-widest text-black">▲ SCAN ME ▲</div>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://safedrivetag.com" alt="QR Code" className="w-full aspect-square bg-white rounded-xl p-1.5 sm:p-2 shadow-sm" />
+                    <div className="mt-1.5 text-[9px] sm:text-[10px] font-black tracking-widest text-black">▲ SCAN ME ▲</div>
                   </div>
                 </div>
 
@@ -295,29 +314,31 @@ export default function Home() {
                 <div className="w-full h-2.5 sm:h-3 bg-[repeating-linear-gradient(45deg,#000,#000_10px,#fcd34d_10px,#fcd34d_20px)]"></div>
               </div>
 
-              {/* Pointers (absolute positioned) */}
-              <div className="absolute -top-3 left-[15%] hidden lg:flex flex-col items-center animate-fade-up">
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-black/20 shadow-md">Unique QR per vehicle</div>
-                <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
-                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+              {/* Bottom Pointers (Desktop) */}
+              <div className="hidden lg:flex justify-between w-full px-6 mt-2 z-20">
+                <div className="flex flex-col items-center animate-fade-up" style={{ animationDelay: '200ms' }}>
+                  <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+                  <div className="w-0.5 h-6 bg-[#fcd34d]"></div>
+                  <div className="bg-gray-950 text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-gray-800">
+                    SOS / Emergency label
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center animate-fade-up" style={{ animationDelay: '300ms' }}>
+                  <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+                  <div className="w-0.5 h-6 bg-[#fcd34d]"></div>
+                  <div className="bg-gray-950 text-[#fcd34d] text-[11px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border border-gray-800">
+                    Weather-proof sticker
+                  </div>
+                </div>
               </div>
 
-              <div className="absolute -top-3 right-[15%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '100ms' }}>
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-black/20 shadow-md">Scan with any camera</div>
-                <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
-                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
-              </div>
-
-              <div className="absolute -bottom-3 left-[20%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '200ms' }}>
-                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
-                <div className="w-0.5 h-8 bg-[#fcd34d] mt-0.5"></div>
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-black/20 shadow-md">SOS / Emergency label</div>
-              </div>
-
-              <div className="absolute -bottom-3 right-[20%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '300ms' }}>
-                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
-                <div className="w-0.5 h-8 bg-[#fcd34d] mt-0.5"></div>
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-black/20 shadow-md">Weather-proof sticker</div>
+              {/* Mobile Highlight Badges */}
+              <div className="grid grid-cols-2 gap-2 mt-4 w-full lg:hidden">
+                <span className="bg-[#fdf8d5] border border-[#f4e28e] text-black text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ Unique QR Code</span>
+                <span className="bg-[#fdf8d5] border border-[#f4e28e] text-black text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ Any Phone Camera</span>
+                <span className="bg-[#fdf8d5] border border-[#f4e28e] text-black text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ SOS Emergency</span>
+                <span className="bg-[#fdf8d5] border border-[#f4e28e] text-black text-[11px] font-bold px-3 py-1.5 rounded-xl text-center">✓ 100% Weatherproof</span>
               </div>
               
             </div>
