@@ -179,10 +179,31 @@ export default function TagDetails() {
       const vPlate = qrApiRes?.vehicle?.vehicleNumber || qrApiRes?.vehicleNumber || reg.vehicleNumber || dashKit?.vehicle?.vehicleNumber || (isRegistered ? 'REGISTERED' : 'Not Linked Yet');
       const vType = qrApiRes?.vehicle?.vehicleType || qrApiRes?.vehicleType || reg.vehicleType || dashKit?.vehicle?.vehicleType || 'Car';
 
+      // Check localStorage dedicated emergency contacts
+      let cachedEmergency = null;
+      try {
+        cachedEmergency = JSON.parse(localStorage.getItem('safedrive_emergency_contacts') || 'null');
+      } catch (e) {
+        console.error(e);
+      }
+
+      // Check all registered tags for emergency contacts array with 2 contacts
+      let fallbackTwoContacts = null;
+      for (const k of Object.keys(locallyRegistered)) {
+        const item = locallyRegistered[k];
+        if (Array.isArray(item?.emergencyContacts) && item.emergencyContacts.length >= 2) {
+          fallbackTwoContacts = item.emergencyContacts;
+          break;
+        }
+      }
+
       // Resolve emergencyList from all available sources
-      let rawContacts = qrApiRes?.emergencyContacts || 
-                         qrApiRes?.vehicle?.emergencyContacts || 
-                         reg?.emergencyContacts || 
+      let rawContacts = (Array.isArray(cachedEmergency) && cachedEmergency.length >= 2 ? cachedEmergency : null) ||
+                         (Array.isArray(qrApiRes?.emergencyContacts) && qrApiRes.emergencyContacts.length > 0 ? qrApiRes.emergencyContacts : null) || 
+                         (Array.isArray(qrApiRes?.vehicle?.emergencyContacts) && qrApiRes.vehicle.emergencyContacts.length > 0 ? qrApiRes.vehicle.emergencyContacts : null) || 
+                         (Array.isArray(reg?.emergencyContacts) && reg.emergencyContacts.length > 0 ? reg.emergencyContacts : null) || 
+                         fallbackTwoContacts ||
+                         cachedEmergency ||
                          dashKit?.emergencyContacts || 
                          dashKit?.vehicle?.emergencyContacts || 
                          (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
@@ -197,6 +218,7 @@ export default function TagDetails() {
           }));
       }
 
+      // If emergencyList is still empty, fall back to owner's registered phone
       if (emergencyList.length === 0 && (reg?.emergencyContact || reg?.phone || currentUser?.phone)) {
         const primaryNo = reg?.emergencyContact || reg?.phone || currentUser?.phone;
         emergencyList = [

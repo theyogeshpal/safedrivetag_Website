@@ -234,6 +234,7 @@ export default function RegisterTag() {
             existing[cc] = existing[token];
           }
           localStorage.setItem('safedrive_registered_tags', JSON.stringify(existing));
+          localStorage.setItem('safedrive_emergency_contacts', JSON.stringify(emergencyContacts));
         } catch (storageErr) {
           console.error('Error saving registered tag cache', storageErr);
         }
