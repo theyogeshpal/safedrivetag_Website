@@ -50,6 +50,14 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [liveStats.length]);
 
+  // Auto-cycle How We Work animated steps
+  useEffect(() => {
+    const stepTimer = setInterval(() => {
+      setActiveStep((prev) => (prev % 3) + 1);
+    }, 2800);
+    return () => clearInterval(stepTimer);
+  }, []);
+
   // Auto-redirect logged-in users or PWA standalone launch directly to Dashboard
   useEffect(() => {
     const isStandalonePWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
@@ -430,36 +438,60 @@ export default function Home() {
             </div>
             
             {/* Step 1 */}
-            <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(1)}>
-              <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-5 relative ${activeStep === 1 ? 'border-orange-500 scale-105 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
-                <Car className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 1 ? 'text-orange-500' : 'text-gray-800'}`} />
-                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 1 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>1</span>
+            <div 
+              className="relative z-10 flex flex-col items-center text-center group cursor-pointer" 
+              onClick={() => setActiveStep(1)}
+              onMouseEnter={() => setActiveStep(1)}
+            >
+              <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center transition-all duration-500 mb-5 relative ${
+                activeStep === 1 
+                  ? 'border-orange-500 scale-110 shadow-[0_0_35px_rgba(249,115,22,0.5)] ring-8 ring-orange-500/20 z-20' 
+                  : 'border-gray-100 shadow-md hover:border-orange-300'
+              }`}>
+                <Car className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 1 ? 'text-orange-500' : 'text-gray-700'}`} />
+                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 1 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>1</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 1 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-gray-200/80 shadow-sm'}`}>
+              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 1 ? 'shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
                 <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Stick the Tag</h4>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium">Place the premium QR sticker on your car or bike's windshield.</p>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(2)}>
-              <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-5 relative ${activeStep === 2 ? 'border-orange-500 scale-105 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
-                <QrCode className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 2 ? 'text-orange-500' : 'text-gray-800'}`} />
-                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 2 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>2</span>
+            <div 
+              className="relative z-10 flex flex-col items-center text-center group cursor-pointer" 
+              onClick={() => setActiveStep(2)}
+              onMouseEnter={() => setActiveStep(2)}
+            >
+              <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center transition-all duration-500 mb-5 relative ${
+                activeStep === 2 
+                  ? 'border-orange-500 scale-110 shadow-[0_0_35px_rgba(249,115,22,0.5)] ring-8 ring-orange-500/20 z-20' 
+                  : 'border-gray-100 shadow-md hover:border-orange-300'
+              }`}>
+                <QrCode className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 2 ? 'text-orange-500' : 'text-gray-700'}`} />
+                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 2 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>2</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-gray-200/80 shadow-sm'}`}>
+              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
                 <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Someone Scans It</h4>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium">In case of accident or wrong parking, any random person can scan it.</p>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(3)}>
-              <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-5 relative ${activeStep === 3 ? 'border-orange-500 scale-105 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
-                <Phone className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 3 ? 'text-orange-500' : 'text-gray-800'}`} />
-                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 3 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>3</span>
+            <div 
+              className="relative z-10 flex flex-col items-center text-center group cursor-pointer" 
+              onClick={() => setActiveStep(3)}
+              onMouseEnter={() => setActiveStep(3)}
+            >
+              <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center transition-all duration-500 mb-5 relative ${
+                activeStep === 3 
+                  ? 'border-orange-500 scale-110 shadow-[0_0_35px_rgba(249,115,22,0.5)] ring-8 ring-orange-500/20 z-20' 
+                  : 'border-gray-100 shadow-md hover:border-orange-300'
+              }`}>
+                <Phone className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 3 ? 'text-orange-500' : 'text-gray-700'}`} />
+                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 3 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>3</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 3 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-gray-200/80 shadow-sm'}`}>
+              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 3 ? 'shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
                 <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Direct Contact</h4>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium">They choose an option (e.g., Wrong Parking) and contact you via WhatsApp or Masked Call.</p>
               </div>
