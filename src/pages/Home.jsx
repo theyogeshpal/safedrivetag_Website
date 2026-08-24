@@ -259,7 +259,7 @@ export default function Home() {
 
       {/* --- MARQUEE --- */}
       <div className="w-full overflow-hidden my-4 sm:my-8">
-        <div className="border-y border-black/10 bg-white py-4 sm:py-5 overflow-hidden shadow-sm relative z-20 -rotate-2 scale-105">
+        <div className="border-y border-neutral-800 bg-[#0c0f17] py-4 sm:py-5 overflow-hidden shadow-md relative z-20 -rotate-2 scale-105">
           <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex items-center gap-8 sm:gap-12 px-4 sm:px-6">
@@ -270,8 +270,8 @@ export default function Home() {
                   { icon: <Zap />, text: "Instant Call Routing" },
                   { icon: <CheckCircle />, text: "Weatherproof Tags" },
                 ].map((item, j) => (
-                  <div key={j} className="flex items-center gap-2.5 sm:gap-3 text-black/60 font-bold uppercase tracking-wider text-xs sm:text-sm whitespace-nowrap">
-                    <span className="text-orange-500">{item.icon}</span> {item.text}
+                  <div key={j} className="flex items-center gap-2.5 sm:gap-3 text-gray-300 font-bold uppercase tracking-wider text-xs sm:text-sm whitespace-nowrap">
+                    <span className="text-orange-400">{item.icon}</span> {item.text}
                   </div>
                 ))}
               </div>
@@ -280,32 +280,35 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- WHAT IS SAFEDRIVETAG --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#fcfaf5] overflow-hidden">
-        <div className="max-w-7xl mx-auto">
+      {/* --- WHAT IS SAFEDRIVETAG (DARK SECTION) --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#080c14] text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-10 md:mb-16">
-            <span className="text-orange-500 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight">What is SafeDrive-Tag?</h2>
+            <span className="text-orange-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">What is SafeDrive-Tag?</h2>
           </div>
           
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="max-w-xl mx-auto lg:max-w-none w-full">
-              <p className="text-base sm:text-lg text-black/70 leading-relaxed mb-8 sm:mb-10 font-medium">
+              <p className="text-base sm:text-lg text-gray-300 leading-relaxed mb-8 sm:mb-10 font-medium">
                 SafeDrive-Tag is a weatherproof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
               </p>
               
               {/* Stat Boxes */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {[
-                  { val: "1200+", lbl: "Vehicles Protected" },
-                  { val: "5000+", lbl: "Scans Completed" },
-                  { val: "4.9★", lbl: "User Rating" },
-                  { val: "100%", lbl: "Privacy Guaranteed" }
+                  { val: "1200+", lbl: "Vehicles Protected", color: "text-orange-400" },
+                  { val: "5000+", lbl: "Scans Completed", color: "text-amber-400" },
+                  { val: "4.9★", lbl: "User Rating", color: "text-yellow-400" },
+                  { val: "100%", lbl: "Privacy Guaranteed", color: "text-emerald-400" }
                 ].map((stat, i) => (
-                  <div key={i} className="bg-[#fdf8d5] border border-[#f4e28e] rounded-xl p-3 sm:p-4 text-center shadow-sm">
-                    <div className="text-xl sm:text-2xl font-black text-black mb-1">{stat.val}</div>
-                    <div className="text-[10px] sm:text-xs text-black/60 font-bold uppercase tracking-wider">{stat.lbl}</div>
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 text-center shadow-lg backdrop-blur-sm hover:border-orange-500/40 transition-colors">
+                    <div className={`text-xl sm:text-2xl font-black mb-1 ${stat.color}`}>{stat.val}</div>
+                    <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">{stat.lbl}</div>
                   </div>
                 ))}
               </div>
@@ -322,11 +325,11 @@ export default function Home() {
                 {/* Tag Content */}
                 <div className="flex-1 p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 bg-white rounded-xl mx-1 my-1">
                   <div className="flex-1 w-full text-center sm:text-left">
-                    <div className="font-black text-xl sm:text-2xl mb-1 flex items-center justify-center sm:justify-start">
+                    <div className="font-black text-xl sm:text-2xl mb-1 flex items-center justify-center sm:justify-start text-black">
                       SafeDrive<span className="bg-black text-white px-1.5 ml-1 rounded text-base sm:text-lg py-0.5">Tag</span>
                     </div>
                     <div className="text-[8px] sm:text-[9px] text-gray-500 mb-3 sm:mb-4 font-bold tracking-wide">Vehicle alert sticker • safedrivetag.com</div>
-                    <h3 className="font-black text-lg sm:text-xl leading-tight mb-3 sm:mb-4">Scan to contact<br className="hidden sm:inline"/><span className="border-b-4 border-[#fcd34d] pb-0.5">the owner.</span></h3>
+                    <h3 className="font-black text-lg sm:text-xl leading-tight mb-3 sm:mb-4 text-black">Scan to contact<br className="hidden sm:inline"/><span className="border-b-4 border-[#fcd34d] pb-0.5">the owner.</span></h3>
                     
                     <div className="space-y-1.5 sm:space-y-2 text-xs font-bold text-black/80 text-left">
                       <div className="flex items-center gap-2"><span className="bg-black text-white w-5 h-5 rounded flex items-center justify-center text-[10px] shrink-0">P</span> Wrong Parking</div>
@@ -348,13 +351,13 @@ export default function Home() {
 
               {/* Pointers (absolute positioned) - Hidden on mobile, visible on lg */}
               <div className="absolute -top-2 left-[15%] hidden lg:flex flex-col items-center animate-fade-up">
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-black/20">Unique QR per vehicle</div>
+                <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-white/20 shadow-md">Unique QR per vehicle</div>
                 <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
                 <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
               </div>
 
               <div className="absolute -top-2 right-[15%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '100ms' }}>
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-black/20">Scan with any camera</div>
+                <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-white/20 shadow-md">Scan with any camera</div>
                 <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
                 <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
               </div>
@@ -362,13 +365,13 @@ export default function Home() {
               <div className="absolute -bottom-2 left-[20%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '200ms' }}>
                 <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
                 <div className="w-0.5 h-8 bg-[#fcd34d] mt-0.5"></div>
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-black/20">SOS / Emergency label</div>
+                <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-white/20 shadow-md">SOS / Emergency label</div>
               </div>
 
               <div className="absolute -bottom-2 right-[20%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '300ms' }}>
                 <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
                 <div className="w-0.5 h-8 bg-[#fcd34d] mt-0.5"></div>
-                <div className="bg-black text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-black/20">Weather-proof sticker</div>
+                <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-white/20 shadow-md">Weather-proof sticker</div>
               </div>
               
             </div>
@@ -376,86 +379,88 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- HOW IT WORKS --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-white relative overflow-hidden">
+      {/* --- HOW IT WORKS (LIGHT SECTION) --- */}
+      <section id="how-it-works" className="py-16 md:py-24 px-4 sm:px-6 bg-[#fcfaf7] relative overflow-hidden border-y border-gray-100">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-orange-500 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Process</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black">How We Work</h2>
-            <p className="text-sm sm:text-base text-black/60 mt-3 max-w-2xl mx-auto font-medium">We give you a premium tag to stick on your vehicle. Whenever there is a casualty, accident, or parking issue, anyone can scan it to contact you.</p>
+            <span className="text-orange-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Process</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950">How We Work</h2>
+            <p className="text-sm sm:text-base text-gray-600 mt-3 max-w-2xl mx-auto font-medium">We give you a premium tag to stick on your vehicle. Whenever there is a casualty, accident, or parking issue, anyone can scan it to contact you.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 sm:gap-8 relative">
             {/* The Connecting Line with Left-to-Right Fill Animation */}
-            <div className="hidden md:block absolute top-[48px] left-[16%] w-[68%] h-1 bg-black/5 z-0 overflow-hidden rounded-full">
+            <div className="hidden md:block absolute top-[48px] left-[16%] w-[68%] h-1 bg-gray-200 z-0 overflow-hidden rounded-full">
               <div className="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-1000 ease-in-out rounded-full" style={{ width: activeStep === 1 ? '0%' : activeStep === 2 ? '50%' : '100%' }}></div>
             </div>
             
             {/* Step 1 */}
             <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(1)}>
               <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-5 relative ${activeStep === 1 ? 'border-orange-500 scale-105 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
-                <Car className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 1 ? 'text-orange-500' : 'text-black/80'}`} />
-                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 1 ? 'bg-orange-500 text-white' : 'bg-black text-white'}`}>1</span>
+                <Car className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 1 ? 'text-orange-500' : 'text-gray-800'}`} />
+                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 1 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>1</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 1 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-black/5 shadow-sm'}`}>
-                <h4 className="font-black text-black mb-2 text-base sm:text-lg">Stick the Tag</h4>
-                <p className="text-black/60 text-xs sm:text-sm">Place the premium QR sticker on your car or bike's windshield.</p>
+              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 1 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-gray-200/80 shadow-sm'}`}>
+                <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Stick the Tag</h4>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Place the premium QR sticker on your car or bike's windshield.</p>
               </div>
             </div>
 
             {/* Step 2 */}
             <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(2)}>
               <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-5 relative ${activeStep === 2 ? 'border-orange-500 scale-105 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
-                <QrCode className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 2 ? 'text-orange-500' : 'text-black/80'}`} />
-                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 2 ? 'bg-orange-500 text-white' : 'bg-black text-white'}`}>2</span>
+                <QrCode className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 2 ? 'text-orange-500' : 'text-gray-800'}`} />
+                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 2 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>2</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-black/5 shadow-sm'}`}>
-                <h4 className="font-black text-black mb-2 text-base sm:text-lg">Someone Scans It</h4>
-                <p className="text-black/60 text-xs sm:text-sm">In case of accident or wrong parking, any random person can scan it.</p>
+              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-gray-200/80 shadow-sm'}`}>
+                <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Someone Scans It</h4>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">In case of accident or wrong parking, any random person can scan it.</p>
               </div>
             </div>
 
             {/* Step 3 */}
             <div className="relative z-10 flex flex-col items-center text-center group cursor-pointer" onMouseEnter={() => setActiveStep(3)}>
               <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 mb-5 relative ${activeStep === 3 ? 'border-orange-500 scale-105 shadow-orange-500/20' : 'border-white hover:border-orange-300'}`}>
-                <Phone className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 3 ? 'text-orange-500' : 'text-black/80'}`} />
-                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 3 ? 'bg-orange-500 text-white' : 'bg-black text-white'}`}>3</span>
+                <Phone className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 3 ? 'text-orange-500' : 'text-gray-800'}`} />
+                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 ${activeStep === 3 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>3</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 3 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-black/5 shadow-sm'}`}>
-                <h4 className="font-black text-black mb-2 text-base sm:text-lg">Direct Contact</h4>
-                <p className="text-black/60 text-xs sm:text-sm">They choose an option (e.g., Wrong Parking) and contact you via WhatsApp or Masked Call.</p>
+              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 3 ? 'shadow-xl shadow-orange-500/10 border-orange-200 -translate-y-1' : 'border-gray-200/80 shadow-sm'}`}>
+                <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Direct Contact</h4>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">They choose an option (e.g., Wrong Parking) and contact you via WhatsApp or Masked Call.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- FOR EVERY VEHICLE & TRAVEL BAG --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#fcfaf5]">
-        <div className="max-w-7xl mx-auto">
+      {/* --- FOR EVERY VEHICLE & TRAVEL BAG (DARK SECTION) --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#080c14] text-white relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-orange-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-[#c29623] font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">For Vehicles & Travel Belongings</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black mb-4">Cars. Bikes. Luggage. Backpacks.</h2>
-            <p className="text-sm sm:text-base md:text-lg text-black/60 max-w-2xl mx-auto font-medium">
+            <span className="text-orange-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">For Vehicles & Travel Belongings</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">Cars. Bikes. Luggage. Backpacks.</h2>
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto font-medium">
               SafeDrive-Tag protects your daily commute vehicles and your travel luggage — with instant emergency and lost bag recovery QR alerts.
             </p>
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
             {[
-              { icon: <Car size={34} className="text-blue-500 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399", highlight: true },
-              { icon: <Bike size={34} className="text-orange-500 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299", highlight: false },
-              { icon: <Briefcase size={34} className="text-indigo-600 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249", highlight: true },
-              { icon: <Car size={34} className="text-purple-600 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399", highlight: false },
-              { icon: <Car size={34} className="text-green-600 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299", highlight: false },
-              { icon: <Truck size={34} className="text-yellow-600 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399", highlight: false }
+              { icon: <Car size={34} className="text-blue-400 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399", highlight: true },
+              { icon: <Bike size={34} className="text-orange-400 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299", highlight: false },
+              { icon: <Briefcase size={34} className="text-indigo-400 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249", highlight: true },
+              { icon: <Car size={34} className="text-purple-400 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399", highlight: false },
+              { icon: <Car size={34} className="text-emerald-400 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299", highlight: false },
+              { icon: <Truck size={34} className="text-amber-400 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399", highlight: false }
             ].map((v, i) => (
-              <div key={i} className={`bg-[#fdf8d5] rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1 ${v.highlight ? 'border-2 border-[#fcd34d] shadow-[0_10px_30px_rgba(252,211,77,0.3)] sm:scale-105 z-10' : 'border border-[#f4e28e] shadow-sm'}`}>
+              <div key={i} className={`bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1.5 ${v.highlight ? 'border-2 border-orange-500 shadow-[0_10px_30px_rgba(249,115,22,0.25)] sm:scale-105 z-10 bg-gradient-to-b from-orange-500/15 to-white/5' : 'border border-white/10 hover:border-white/25 shadow-lg'}`}>
                 <div>
                   <div className="text-2xl sm:text-3xl mb-2.5 flex justify-center">{v.icon}</div>
-                  <h3 className="font-black text-black text-xs sm:text-sm md:text-base mb-1">{v.title}</h3>
-                  <p className="text-[10px] sm:text-[11px] text-black/60 font-medium mb-3 sm:mb-4 leading-relaxed">{v.desc}</p>
+                  <h3 className="font-black text-white text-xs sm:text-sm md:text-base mb-1">{v.title}</h3>
+                  <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mb-3 sm:mb-4 leading-relaxed">{v.desc}</p>
                 </div>
-                <div className="bg-black text-[#fcd34d] text-[9px] sm:text-[10px] font-black px-3 py-1 rounded-full tracking-wide">
+                <div className="bg-orange-500 text-white text-[9px] sm:text-[10px] font-black px-3 py-1 rounded-full tracking-wide shadow-xs">
                   {v.price}
                 </div>
               </div>
@@ -464,14 +469,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- WHY US --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-black text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-500/10 rounded-full blur-[80px] pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-green-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+      {/* --- WHY US (LIGHT SECTION) --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-white relative overflow-hidden border-y border-gray-100">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-orange-500 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Why Us</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white">Your Privacy & Safety First</h2>
+            <span className="text-orange-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Why Us</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950">Your Privacy & Safety First</h2>
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -481,88 +484,91 @@ export default function Home() {
               { icon: <Smartphone size={24} />, title: "No App Needed", desc: "Scannable directly from any default iOS or Android smartphone camera." },
               { icon: <Zap size={24} />, title: "Instant Alerts", desc: "Receive immediate SMS and WhatsApp notifications the exact moment someone scans your tag." }
             ].map((item, i) => (
-              <div key={i} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 sm:p-6 hover:-translate-y-1.5 transition-transform duration-300 shadow-xl group hover:border-orange-500/50">
-                <div className="w-12 h-12 bg-white/5 text-orange-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
+              <div key={i} className="bg-gradient-to-b from-white to-gray-50/80 border border-gray-200/90 rounded-2xl p-5 sm:p-6 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl hover:border-orange-400/80 group">
+                <div className="w-12 h-12 bg-orange-50 border border-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
                   {item.icon}
                 </div>
-                <h4 className="font-bold text-white mb-2 text-base sm:text-lg">{item.title}</h4>
-                <p className="text-white/60 text-xs sm:text-sm leading-relaxed">{item.desc}</p>
+                <h4 className="font-bold text-gray-950 mb-2 text-base sm:text-lg">{item.title}</h4>
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed font-medium">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* --- BENTO GRID: FEATURES --- */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 relative bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 md:mb-12 animate-fade-up">
-            <span className="text-orange-500 font-black tracking-widest text-xs sm:text-sm uppercase mb-1 block">Innovation</span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-black">Smart features, simple setup.</h2>
+      {/* --- BENTO GRID: SMART FEATURES (DARK SECTION) --- */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 relative bg-[#080c14] text-white overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-10 md:mb-14 animate-fade-up">
+            <span className="text-orange-400 font-black tracking-widest text-xs sm:text-sm uppercase mb-1 block">Innovation</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white">Smart features, simple setup.</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Big Bento 1 */}
-            <div className="md:col-span-2 bg-white border border-black/10 rounded-3xl p-6 sm:p-8 relative overflow-hidden group hover:border-orange-500/50 transition-colors shadow-sm hover:shadow-lg flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-colors z-0"></div>
+            <div className="md:col-span-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-8 relative overflow-hidden group hover:border-orange-500/50 transition-all shadow-xl flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-500/20 transition-colors z-0"></div>
               
               <div className="relative z-10 flex-1">
-                <div className="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mb-3 border border-orange-100">
+                <div className="w-10 h-10 bg-orange-500/20 text-orange-400 rounded-xl flex items-center justify-center mb-3 border border-orange-500/30">
                   <Phone className="w-5 h-5" />
                 </div>
-                <h4 className="text-xl sm:text-2xl font-black text-black mb-2">100% Two-Way Number Masking</h4>
-                <p className="text-black/60 text-sm sm:text-base max-w-md leading-relaxed">
-                  Total privacy for everyone. When a stranger scans and calls, <strong className="text-orange-500">their number is hidden from you</strong>, and <strong className="text-orange-500">your number is hidden from them</strong>. Complete anonymity guaranteed.
+                <h4 className="text-xl sm:text-2xl font-black text-white mb-2">100% Two-Way Number Masking</h4>
+                <p className="text-gray-300 text-sm sm:text-base max-w-md leading-relaxed font-medium">
+                  Total privacy for everyone. When a stranger scans and calls, <strong className="text-orange-400">their number is hidden from you</strong>, and <strong className="text-orange-400">your number is hidden from them</strong>. Complete anonymity guaranteed.
                 </p>
               </div>
 
               <div className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center self-center">
                 <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-0.5 shadow-lg flex items-center justify-center animate-play-glow">
-                  <div className="w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-2 text-center">
-                    <ShieldCheck size={28} className="text-orange-500 mb-1" />
-                    <span className="text-[9px] font-black text-gray-900 uppercase tracking-widest">100% SAFE</span>
+                  <div className="w-full h-full bg-[#0d1424] rounded-2xl flex flex-col items-center justify-center p-2 text-center border border-white/10">
+                    <ShieldCheck size={28} className="text-orange-400 mb-1" />
+                    <span className="text-[9px] font-black text-gray-200 uppercase tracking-widest">100% SAFE</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Small Bento 1 */}
-            <div className="bg-white border border-black/10 rounded-3xl p-6 relative overflow-hidden group hover:border-green-500/50 transition-colors shadow-sm hover:shadow-lg">
-              <div className="absolute -bottom-6 -right-6 text-[80px] sm:text-[100px] font-black text-black/[0.03] group-hover:text-green-50 transition-colors leading-none pointer-events-none">01</div>
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 relative overflow-hidden group hover:border-emerald-500/50 transition-all shadow-xl">
+              <div className="absolute -bottom-6 -right-6 text-[80px] sm:text-[100px] font-black text-white/[0.04] group-hover:text-emerald-500/10 transition-colors leading-none pointer-events-none">01</div>
               <div className="relative z-10">
-                <div className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-3 border border-green-100">
+                <div className="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center mb-3 border border-emerald-500/30">
                   <QrCode className="w-5 h-5" />
                 </div>
-                <h4 className="text-lg sm:text-xl font-black text-black mb-1">Universal Scan</h4>
-                <p className="text-black/60 text-xs sm:text-sm">Scannable by any default iOS or Android camera. No app downloads required.</p>
+                <h4 className="text-lg sm:text-xl font-black text-white mb-1">Universal Scan</h4>
+                <p className="text-gray-300 text-xs sm:text-sm font-medium">Scannable by any default iOS or Android camera. No app downloads required.</p>
               </div>
             </div>
 
             {/* Small Bento 2 */}
-            <div className="bg-white border border-black/10 rounded-3xl p-6 relative overflow-hidden group hover:border-green-500/50 transition-colors shadow-sm hover:shadow-lg">
-              <div className="absolute -bottom-6 -right-6 text-[80px] sm:text-[100px] font-black text-black/[0.03] group-hover:text-green-50 transition-colors leading-none pointer-events-none">02</div>
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 relative overflow-hidden group hover:border-emerald-500/50 transition-all shadow-xl">
+              <div className="absolute -bottom-6 -right-6 text-[80px] sm:text-[100px] font-black text-white/[0.04] group-hover:text-emerald-500/10 transition-colors leading-none pointer-events-none">02</div>
               <div className="relative z-10">
-                <div className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-3 border border-green-100">
+                <div className="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center mb-3 border border-emerald-500/30">
                   <BellRing className="w-5 h-5" />
                 </div>
-                <h4 className="text-lg sm:text-xl font-black text-black mb-1">Instant Alerts</h4>
-                <p className="text-black/60 text-xs sm:text-sm">Get WhatsApp and SMS notifications the moment someone scans your tag.</p>
+                <h4 className="text-lg sm:text-xl font-black text-white mb-1">Instant Alerts</h4>
+                <p className="text-gray-300 text-xs sm:text-sm font-medium">Get WhatsApp and SMS notifications the moment someone scans your tag.</p>
               </div>
             </div>
 
             {/* Big Bento 2 */}
-            <div className="md:col-span-2 bg-white border border-black/10 rounded-3xl p-6 sm:p-8 relative overflow-hidden group hover:border-orange-500/50 transition-colors shadow-sm hover:shadow-lg flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="md:col-span-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-8 relative overflow-hidden group hover:border-orange-500/50 transition-all shadow-xl flex flex-col md:flex-row items-start md:items-center gap-6">
               <div className="relative z-10 flex-1">
-                <div className="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mb-3 border border-orange-100">
+                <div className="w-10 h-10 bg-orange-500/20 text-orange-400 rounded-xl flex items-center justify-center mb-3 border border-orange-500/30">
                   <BellRing className="w-5 h-5" />
                 </div>
-                <h4 className="text-xl sm:text-2xl font-black text-black mb-2">Unlimited Push Notifications</h4>
-                <p className="text-black/60 text-sm sm:text-base leading-relaxed">Get instantly notified on your phone whenever someone scans your vehicle tag. Pay once and stay connected forever without any limits.</p>
+                <h4 className="text-xl sm:text-2xl font-black text-white mb-2">Unlimited Push Notifications</h4>
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed font-medium">Get instantly notified on your phone whenever someone scans your vehicle tag. Pay once and stay connected forever without any limits.</p>
               </div>
               <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 relative self-center">
-                <div className="absolute inset-0 border-[4px] border-orange-100 rounded-full border-t-orange-500 animate-spin" style={{ animationDuration: '3s' }}></div>
-                <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-lg sm:text-xl font-black text-black/40">∞</span>
+                <div className="absolute inset-0 border-[4px] border-white/10 rounded-full border-t-orange-500 animate-spin" style={{ animationDuration: '3s' }}></div>
+                <div className="absolute inset-2 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/15">
+                  <span className="text-lg sm:text-xl font-black text-white">∞</span>
                 </div>
               </div>
             </div>
@@ -570,15 +576,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- FAQ --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#fcfaf5]">
+      {/* --- FAQ (LIGHT SECTION) --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#fcfaf7] border-t border-gray-100">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           
           <div className="text-center md:text-left mb-6 md:mb-0 animate-fade-up">
-            <h2 className="text-orange-500 font-black tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-4">Support</h2>
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-black mb-4 sm:mb-6">Got Questions?</h3>
-            <p className="text-sm sm:text-base md:text-lg text-black/60 mb-6 sm:mb-8">Everything you need to know about SafeDrive-Tag. If you can't find your answer, our support team is just a click away.</p>
-            <div className="relative rounded-[2rem] overflow-hidden border border-gray-200/80 shadow-md hidden md:flex flex-col items-center justify-center bg-white p-8 min-h-[260px] text-center">
+            <h2 className="text-orange-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-4">Support</h2>
+            <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 mb-4 sm:mb-6">Got Questions?</h3>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 sm:mb-8 font-medium">Everything you need to know about SafeDrive-Tag. If you can't find your answer, our support team is just a click away.</p>
+            <div className="relative rounded-[2rem] overflow-hidden border border-gray-200/90 shadow-md hidden md:flex flex-col items-center justify-center bg-white p-8 min-h-[260px] text-center">
               <div className="w-16 h-16 rounded-2xl bg-orange-100/80 text-orange-600 flex items-center justify-center mb-4 shadow-inner">
                 <ShieldCheck size={32} />
               </div>
@@ -594,15 +600,15 @@ export default function Home() {
             {faqs.map(({ q, a }, i) => (
               <div
                 key={i}
-                className={`bg-white rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-300 shadow-sm ${openFaq === i ? 'border-orange-500 shadow-[0_0_20px_rgba(34,197,94,0.1)]' : 'border-black/5 hover:border-black/20'}`}
+                className={`bg-white rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-300 shadow-sm ${openFaq === i ? 'border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.12)] bg-orange-50/20' : 'border-gray-200/80 hover:border-gray-300'}`}
                 onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
               >
                 <div className="flex justify-between items-center px-5 sm:px-8 py-4 sm:py-6">
-                  <h4 className={`font-bold text-base sm:text-lg ${openFaq === i ? 'text-orange-600' : 'text-black/90'}`}>{q}</h4>
-                  <ChevronDown className={`w-5 h-5 transition-transform duration-300 shrink-0 ml-3 ${openFaq === i ? 'rotate-180 text-orange-500' : 'text-black/40'}`} />
+                  <h4 className={`font-bold text-base sm:text-lg ${openFaq === i ? 'text-orange-600' : 'text-gray-900'}`}>{q}</h4>
+                  <ChevronDown className={`w-5 h-5 transition-transform duration-300 shrink-0 ml-3 ${openFaq === i ? 'rotate-180 text-orange-500' : 'text-gray-400'}`} />
                 </div>
                 <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-40' : 'max-h-0'}`}>
-                  <p className="px-5 sm:px-8 pb-5 sm:pb-6 text-black/60 text-xs sm:text-sm leading-relaxed">{a}</p>
+                  <p className="px-5 sm:px-8 pb-5 sm:pb-6 text-gray-600 text-xs sm:text-sm leading-relaxed font-medium">{a}</p>
                 </div>
               </div>
             ))}
@@ -611,8 +617,7 @@ export default function Home() {
       </section>
 
       {/* --- CTA BANNER --- */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-orange-500"></div>
+      <section className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-multiply"></div>
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white mb-4 sm:mb-6 tracking-tight">Ready to drive smarter?</h2>
