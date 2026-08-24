@@ -27,21 +27,21 @@ export default function Footer() {
     </footer>
   ) : (
     <footer className="relative bg-[#060910] text-gray-300 pt-16 pb-12 overflow-hidden border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 relative z-10">
         
         {/* Brand Column */}
         <div className="col-span-2 lg:col-span-4 pr-0 lg:pr-4">
-          <Link to="/" className="inline-flex items-center mb-6 group bg-white px-3.5 py-2 rounded-2xl shadow-md">
+          <Link to="/" className="w-full sm:w-auto flex sm:inline-flex items-center justify-center sm:justify-start mb-6 group bg-white p-3 sm:px-4 sm:py-2.5 rounded-2xl sm:rounded-3xl shadow-md border border-white/10 hover:shadow-lg transition-all">
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag Logo" 
-              className="h-16 sm:h-20 md:h-22 w-auto max-w-[260px] sm:max-w-[300px] object-contain transition-transform duration-300 group-hover:scale-105 origin-left" 
+              className="h-14 sm:h-18 md:h-20 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105" 
             />
           </Link>
           <p className="text-sm text-gray-400 mb-6 font-medium leading-relaxed max-w-sm">
             SafeDrive-Tag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. 🚗 Shielding vehicles in wrong parking & emergency situations.
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
             <a href="https://www.instagram.com/safedrivetag/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">
               <FaInstagram className="w-4 h-4" />
             </a>
@@ -87,7 +87,7 @@ export default function Footer() {
           <ul className="space-y-3.5 text-sm font-medium">
             <li className="flex items-center gap-2.5">
               <Mail className="w-4 h-4 text-orange-400 shrink-0" />
-              <a href="mailto:safedrivetag@gmail.com" className="text-gray-400 hover:text-orange-400 transition-colors">safedrivetag@gmail.com</a>
+              <a href="mailto:safedrivetag@gmail.com" className="text-gray-400 hover:text-orange-400 transition-colors break-all">safedrivetag@gmail.com</a>
             </li>
             <li className="flex items-center gap-2.5">
               <Phone className="w-4 h-4 text-orange-400 shrink-0" />
@@ -101,9 +101,9 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 mt-14 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 font-medium">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-14 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 font-medium text-center md:text-left gap-4">
         <p>&copy; {new Date().getFullYear()} SafeDrive-Tag. All rights reserved.</p>
-        <div className="flex gap-6 mt-4 md:mt-0">
+        <div className="flex gap-6">
           <Link to="/privacy" className="hover:text-orange-400 transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="hover:text-orange-400 transition-colors">Terms of Service</Link>
         </div>
