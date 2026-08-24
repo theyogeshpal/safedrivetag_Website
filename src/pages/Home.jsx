@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
   const [openFaq, setOpenFaq] = useState(0);
   const [activeStep, setActiveStep] = useState(1);
+
+  // Auto-redirect logged-in users or PWA standalone launch directly to Dashboard
+  useEffect(() => {
+    const isStandalonePWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const hasToken = localStorage.getItem('safedrive_auth_token') || localStorage.getItem('safedrive_current_user');
+    if (currentUser || (isStandalonePWA && hasToken)) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     const interval = setInterval(() => {

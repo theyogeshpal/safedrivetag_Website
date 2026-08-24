@@ -39,7 +39,10 @@ import {
   Clock,
   RefreshCw,
   FileText,
-  Printer
+  Printer,
+  Smartphone,
+  Share2,
+  Sparkles
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -62,6 +65,49 @@ export default function Dashboard() {
   const [invoiceModalOrder, setInvoiceModalOrder] = useState(null);
   const [trackingModalOrder, setTrackingModalOrder] = useState(null);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
+
+  // PWA App Installation State
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showPwaModal, setShowPwaModal] = useState(false);
+  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+
+  useEffect(() => {
+    // Check if running as standalone PWA
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+      setIsPwaInstalled(true);
+    }
+
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    const handleAppInstalled = () => {
+      setIsPwaInstalled(true);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallPwa = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setIsPwaInstalled(true);
+      }
+      setDeferredPrompt(null);
+    } else {
+      setShowPwaModal(true);
+    }
+  };
 
   // Profile Edit State
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
@@ -776,6 +822,26 @@ export default function Dashboard() {
                     All Notifications
                   </button>
                 </div>
+              </div>
+
+              {/* DOWNLOAD PWA APP BUTTON */}
+              <div className="p-3 pb-0">
+                <button
+                  onClick={handleInstallPwa}
+                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white p-3 rounded-lg flex items-center justify-between text-xs font-bold shadow-sm transition-all cursor-pointer group"
+                  title="Install SafeDriveTag on Android & iOS"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                      <Smartphone size={15} />
+                    </div>
+                    <div className="text-left leading-tight">
+                      <p className="font-black text-white text-xs">Download App</p>
+                      <p className="text-[10px] text-white/80 font-medium">1-Tap Install PWA</p>
+                    </div>
+                  </div>
+                  <Download size={14} className="group-hover:translate-y-0.5 transition-transform shrink-0" />
+                </button>
               </div>
 
               {/* LOGOUT BUTTON */}
@@ -2463,6 +2529,93 @@ export default function Dashboard() {
                 className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer"
               >
                 Close Tracking Window
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 5: PWA APP INSTALLATION GUIDE MODAL */}
+      {/* ======================================================== */}
+      {showPwaModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 overflow-hidden text-left">
+            
+            {/* Top Header */}
+            <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src="/logos/icon.png" alt="App Icon" className="w-10 h-10 rounded-xl bg-white p-1 shadow-md object-contain" />
+                <div>
+                  <h3 className="text-sm font-black">Install SafeDrive Mobile App</h3>
+                  <p className="text-[11px] text-orange-100 font-medium">
+                    Fast 1-Tap Access & Vehicle Alerts
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowPwaModal(false)}
+                className="text-white/80 hover:text-white cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs">
+              
+              {/* Feature Highlights */}
+              <div className="grid grid-cols-2 gap-2.5 bg-orange-50/70 border border-orange-200/80 rounded-xl p-3 text-[11px]">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
+                  <span className="font-bold text-gray-800">1-Tap Direct Dashboard</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
+                  <span className="font-bold text-gray-800">Instant Push Alerts</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
+                  <span className="font-bold text-gray-800">Zero App Store Size</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
+                  <span className="font-bold text-gray-800">100% Secure & Private</span>
+                </div>
+              </div>
+
+              {/* Instructions tabs / cards for Android & iPhone */}
+              <div className="space-y-3 pt-1">
+                <div className="border border-gray-200 rounded-xl p-3.5 bg-gray-50/60">
+                  <p className="font-bold text-gray-900 text-xs flex items-center gap-1.5 mb-1.5">
+                    <span>📱 On Android (Chrome / Brave / Edge):</span>
+                  </p>
+                  <ol className="list-decimal list-inside space-y-1 text-[11px] text-gray-600 pl-1">
+                    <li>Tap the <strong>Three Dots (⋮)</strong> menu in browser top right.</li>
+                    <li>Select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+                    <li>Confirm <strong>"Install"</strong> — SafeDriveTag is now added to your home apps!</li>
+                  </ol>
+                </div>
+
+                <div className="border border-gray-200 rounded-xl p-3.5 bg-gray-50/60">
+                  <p className="font-bold text-gray-900 text-xs flex items-center gap-1.5 mb-1.5">
+                    <span>🍎 On iPhone / iOS (Safari):</span>
+                  </p>
+                  <ol className="list-decimal list-inside space-y-1 text-[11px] text-gray-600 pl-1">
+                    <li>Tap the <strong>Share (⎋)</strong> button at the bottom of Safari.</li>
+                    <li>Scroll down and tap <strong>"Add to Home Screen" (+)</strong>.</li>
+                    <li>Tap <strong>"Add"</strong> in top right — The app icon will appear on your iPhone screen!</li>
+                  </ol>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setShowPwaModal(false)}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer"
+              >
+                Got It, Thank You!
               </button>
 
             </div>
