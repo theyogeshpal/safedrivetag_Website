@@ -2470,14 +2470,16 @@ export default function Dashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-bold uppercase mb-1">Plate Number</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingTag.vehicleNumber}
-                    onChange={(e) => setEditingTag({ ...editingTag, vehicleNumber: e.target.value.toUpperCase() })}
-                    className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2 text-sm font-mono font-bold outline-none uppercase"
-                  />
+                  <label className="block text-gray-700 font-bold uppercase mb-1 flex items-center justify-between">
+                    <span>Plate Number</span>
+                    <span className="text-[10px] text-gray-400 font-normal flex items-center gap-0.5 lowercase">
+                      <Lock size={10} /> locked
+                    </span>
+                  </label>
+                  <div className="w-full bg-gray-100 border border-gray-300 text-gray-700 rounded-sm px-3 py-2 text-sm font-mono font-bold select-none cursor-not-allowed uppercase flex items-center justify-between">
+                    <span>{editingTag.vehicleNumber || 'LOCKED'}</span>
+                    <Lock size={13} className="text-gray-400" />
+                  </div>
                 </div>
               </div>
 

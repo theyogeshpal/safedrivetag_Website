@@ -850,14 +850,17 @@ export default function TagDetails() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-gray-600 font-bold mb-1">Vehicle Plate Number</label>
-                  <input
-                    type="text"
-                    required
-                    value={editFormData.vehicleNumber}
-                    onChange={(e) => setEditFormData({ ...editFormData, vehicleNumber: e.target.value.toUpperCase() })}
-                    className="w-full border border-gray-300 rounded-lg p-2 font-mono font-black uppercase text-sm"
-                  />
+                  <label className="block text-gray-600 font-bold mb-1 flex items-center justify-between">
+                    <span>Vehicle Plate Number</span>
+                    <span className="text-[10px] text-gray-400 font-normal flex items-center gap-0.5">
+                      <Lock size={10} /> Permanently Locked
+                    </span>
+                  </label>
+                  <div className="w-full bg-gray-100 border border-gray-300 text-gray-700 rounded-lg p-2 font-mono font-black uppercase text-sm select-none cursor-not-allowed flex items-center justify-between">
+                    <span>{editFormData.vehicleNumber || tagData.vehicle.plate || 'LOCKED'}</span>
+                    <Lock size={14} className="text-gray-400" />
+                  </div>
+                  <p className="text-[10px] text-gray-400 mt-1">Vehicle plate number is permanently locked to prevent unauthorized sticker transfers.</p>
                 </div>
               </div>
 
