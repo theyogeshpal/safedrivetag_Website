@@ -33,20 +33,20 @@ export default function Footer() {
     </footer>
   ) : (
     <footer className="relative bg-[#000000] text-white/80 pt-16 pb-12 overflow-hidden border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 relative z-10">
         
         {/* Brand Column */}
-        <div className="lg:col-span-2 pr-4">
+        <div className="lg:col-span-4 pr-0 lg:pr-4">
           <Link to="/" className="inline-flex items-center mb-6 group">
             <div className="bg-white rounded-2xl p-2 sm:p-2.5 shadow-lg border border-white/20 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
               <img 
                 src="/logos/primary.jpeg" 
                 alt="SafeDrive-Tag Logo" 
-                className="h-12 sm:h-14 md:h-16 w-auto object-contain" 
+                className="h-12 sm:h-14 md:h-15 w-auto object-contain" 
               />
             </div>
           </Link>
-          <p className="text-sm text-white/70 mb-6 font-medium leading-relaxed">
+          <p className="text-sm text-white/70 mb-6 font-medium leading-relaxed max-w-sm">
             SafeDrive-Tag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. 🚗 Shielding vehicles in wrong parking & emergency situations.
           </p>
           <div className="flex items-center gap-3">
@@ -68,20 +68,20 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div className="lg:col-span-1">
-          <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Company</h4>
-          <ul className="space-y-4 text-sm font-medium">
+        {/* Company Column */}
+        <div className="lg:col-span-2">
+          <h4 className="font-extrabold text-white mb-5 uppercase tracking-wider text-xs sm:text-sm">Company</h4>
+          <ul className="space-y-3.5 text-sm font-medium">
             <FooterLink to="/about" label="About Us" />
             <FooterLink to="/shop" label="Shop Tags" />
             <FooterLink to="/contact" label="Contact" />
           </ul>
         </div>
 
-        {/* Legal */}
-        <div className="lg:col-span-1">
-          <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Legal</h4>
-          <ul className="space-y-4 text-sm font-medium">
+        {/* Legal Column */}
+        <div className="lg:col-span-3">
+          <h4 className="font-extrabold text-white mb-5 uppercase tracking-wider text-xs sm:text-sm">Legal</h4>
+          <ul className="space-y-3.5 text-sm font-medium">
             <FooterLink to="/privacy" label="Privacy Policy" />
             <FooterLink to="/terms" label="Terms of Service" />
             <FooterLink to="/refund" label="Refund Policy" />
@@ -89,21 +89,21 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Contact */}
-        <div className="lg:col-span-1">
-          <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Reach Us</h4>
-          <ul className="space-y-4 text-sm font-medium">
-            <li className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-orange-500 shrink-0" />
-              <a href="mailto:safedrivetag@gmail.com" className="hover:text-white transition-colors break-all">safedrivetag@gmail.com</a>
+        {/* Reach Us Column */}
+        <div className="lg:col-span-3">
+          <h4 className="font-extrabold text-white mb-5 uppercase tracking-wider text-xs sm:text-sm">Reach Us</h4>
+          <ul className="space-y-3.5 text-sm font-medium">
+            <li className="flex items-center gap-2.5">
+              <Mail className="w-4 h-4 text-orange-500 shrink-0" />
+              <a href="mailto:safedrivetag@gmail.com" className="hover:text-orange-500 transition-colors">safedrivetag@gmail.com</a>
             </li>
-            <li className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-orange-500 shrink-0" />
-              <a href="tel:+919876543210" className="hover:text-white transition-colors">+91 98765 43210</a>
+            <li className="flex items-center gap-2.5">
+              <Phone className="w-4 h-4 text-orange-500 shrink-0" />
+              <a href="tel:+919876543210" className="hover:text-orange-500 transition-colors">+91 98765 43210</a>
             </li>
-            <li className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-orange-500 shrink-0" />
-              <span>123 Innovation Drive, Tech Park, India 400001</span>
+            <li className="flex items-start gap-2.5">
+              <MapPin className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+              <span className="leading-snug text-white/70">123 Innovation Drive, Tech Park, India 400001</span>
             </li>
           </ul>
         </div>
