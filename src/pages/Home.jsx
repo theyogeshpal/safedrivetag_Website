@@ -359,7 +359,7 @@ export default function Home() {
             </div>
             
             {/* Right Content: The Visual Tag with Pointers */}
-            <div className="relative flex justify-center items-center py-6 sm:py-10 lg:py-0 w-full max-w-md mx-auto">
+            <div className="relative flex justify-center items-center py-10 sm:py-14 lg:py-12 w-full max-w-md mx-auto">
               
               {/* The Tag Itself */}
               <div className="relative bg-[#fcd34d] rounded-2xl sm:rounded-3xl w-full shadow-2xl overflow-hidden flex flex-col border-2 sm:border-4 border-[#fcd34d]">
@@ -394,28 +394,36 @@ export default function Home() {
               </div>
 
               {/* Pointers (absolute positioned) - Hidden on mobile, visible on lg */}
-              <div className="absolute -top-2 left-[15%] hidden lg:flex flex-col items-center animate-fade-up">
-                <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-white/20 shadow-md">Unique QR per vehicle</div>
-                <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
-                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+              <div className="absolute -top-6 left-[6%] hidden lg:flex flex-col items-center animate-fade-up z-20">
+                <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                  Unique QR per vehicle
+                </div>
+                <div className="w-0.5 h-6 bg-amber-400"></div>
+                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
               </div>
 
-              <div className="absolute -top-2 right-[15%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '100ms' }}>
-                <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mb-1 border border-white/20 shadow-md">Scan with any camera</div>
-                <div className="w-0.5 h-8 bg-[#fcd34d]"></div>
-                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
+              <div className="absolute -top-6 right-[6%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '100ms' }}>
+                <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                  Scan with any camera
+                </div>
+                <div className="w-0.5 h-6 bg-amber-400"></div>
+                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
               </div>
 
-              <div className="absolute -bottom-2 left-[20%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '200ms' }}>
-                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
-                <div className="w-0.5 h-8 bg-[#fcd34d] mt-0.5"></div>
-                <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-white/20 shadow-md">SOS / Emergency label</div>
+              <div className="absolute -bottom-6 left-[8%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '200ms' }}>
+                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
+                <div className="w-0.5 h-6 bg-amber-400 mt-0.5"></div>
+                <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                  SOS / Emergency label
+                </div>
               </div>
 
-              <div className="absolute -bottom-2 right-[20%] hidden lg:flex flex-col items-center animate-fade-up" style={{ animationDelay: '300ms' }}>
-                <div className="w-2 h-2 bg-[#fcd34d] rounded-full"></div>
-                <div className="w-0.5 h-8 bg-[#fcd34d] mt-0.5"></div>
-                <div className="bg-white/10 backdrop-blur-md text-[#fcd34d] text-[10px] font-bold px-3 py-1.5 rounded-full mt-1 border border-white/20 shadow-md">Weather-proof sticker</div>
+              <div className="absolute -bottom-6 right-[8%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '300ms' }}>
+                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
+                <div className="w-0.5 h-6 bg-amber-400 mt-0.5"></div>
+                <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                  Weather-proof sticker
+                </div>
               </div>
               
             </div>
