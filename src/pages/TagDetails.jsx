@@ -160,7 +160,19 @@ export default function TagDetails() {
                            !!(qrApiRes?.vehicle?.vehicleNumber) || 
                            !!(dashKit?.vehicle?.vehicleNumber);
 
-      const baseKitCode = qrApiRes?.kitId || (foundOrder?.orderNumber ? `KIT-${foundOrder.orderNumber.slice(-5)}` : `SD-${id.slice(0, 6).toUpperCase()}`);
+      // Clean Kit Number Resolution (e.g. SD001C1 -> SD001)
+      const rawCode = matchedAllocated?.[0]?.copyCode || 
+                      qrApiRes?.kitId || 
+                      qrApiRes?.copyCode || 
+                      dashKit?.copies?.[0]?.copyCode || 
+                      dashKit?.kitId || 
+                      reg?.copyCode || 
+                      reg?.id || 
+                      '';
+
+      const baseKitCode = rawCode 
+        ? rawCode.replace(/[-_]?C[0-9]+$/i, '').replace(/[-_]?COPY[0-9]+$/i, '') 
+        : (qrApiRes?.kitId || (foundOrder?.orderNumber ? `SD001` : `SD001`));
       
       const vBrand = qrApiRes?.vehicle?.vehicleBrand || qrApiRes?.vehicleBrand || reg.vehicleBrand || dashKit?.vehicle?.vehicleBrand || (isRegistered ? 'Vehicle' : 'SafeDrive');
       const vName = qrApiRes?.vehicle?.vehicleName || qrApiRes?.vehicleName || reg.vehicleName || dashKit?.vehicle?.vehicleName || foundOrder?.title || 'Smart Vehicle Tag';
