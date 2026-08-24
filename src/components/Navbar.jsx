@@ -17,6 +17,7 @@ import {
   Shield
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Logo from './Logo';
 
 export default function Navbar() {
   const location = useLocation();
@@ -83,13 +84,8 @@ export default function Navbar() {
         {/* 1. BRAND LOGO */}
         {/* ======================================================== */}
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2.5 h-10 sm:h-15 shrink-0 relative z-50 cursor-pointer group">
-            <img 
-              src="/logos/primary.jpeg" 
-              alt="SafeDrive-Tag Logo" 
-              className="h-24 sm:h-20 md:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-              style={{ maxHeight: '78px', width: 'auto' }}
-            />
+          <Link to="/" className="flex items-center shrink-0 relative z-50 cursor-pointer group">
+            <Logo className="h-8 sm:h-9 md:h-10 w-auto" />
           </Link>
         </div>
 
@@ -242,13 +238,8 @@ export default function Navbar() {
         menuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50/50">
-          <div className="flex items-center gap-2">
-            <img 
-              src="/logos/primary.jpeg" 
-              alt="SafeDrive-Tag" 
-              className="h-8 w-auto object-contain" 
-              style={{ maxHeight: '32px' }}
-            />
+          <div className="flex items-center">
+            <Logo className="h-7 sm:h-8 w-auto" />
           </div>
           <button 
             onClick={() => setMenuOpen(false)} 

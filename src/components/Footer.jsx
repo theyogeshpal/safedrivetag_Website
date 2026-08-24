@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Phone, Mail, MapPin, ChevronRight } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaLinkedinIn, FaYoutube, FaXTwitter } from 'react-icons/fa6';
+import Logo from './Logo';
 
 export default function Footer() {
   const location = useLocation();
@@ -31,12 +32,8 @@ export default function Footer() {
         
         {/* Brand Column */}
         <div className="col-span-2 lg:col-span-4 pr-0 lg:pr-4">
-          <Link to="/" className="w-full sm:w-auto flex sm:inline-flex items-center justify-center sm:justify-start mb-6 group bg-white p-3 sm:px-4 sm:py-2.5 rounded-2xl sm:rounded-3xl shadow-md border border-white/10 hover:shadow-lg transition-all">
-            <img 
-              src="/logos/primary.jpeg" 
-              alt="SafeDrive-Tag Logo" 
-              className="h-14 sm:h-18 md:h-20 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105" 
-            />
+          <Link to="/" className="inline-flex items-center mb-6 group transition-transform duration-300 hover:scale-105">
+            <Logo theme="dark" className="h-10 sm:h-11 w-auto" />
           </Link>
           <p className="text-sm text-gray-400 mb-6 font-medium leading-relaxed max-w-sm">
             SafeDrive-Tag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. Shielding vehicles in wrong parking & emergency situations.
