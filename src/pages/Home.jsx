@@ -4,6 +4,45 @@ import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
 
+const liveStats = [
+  { 
+    tag: "TRUSTED USERS", 
+    value: "9.5L+ Across India", 
+    desc: "Protecting vehicles and luggage with smart QR tags", 
+    icon: <Shield size={18} className="text-orange-500" />,
+    badgeBg: "bg-gradient-to-r from-orange-600 to-amber-600"
+  },
+  { 
+    tag: "RATING", 
+    value: "4.8 ★ User Rating", 
+    desc: "From over 50,000+ verified customer reviews", 
+    icon: <Star size={18} className="fill-amber-400 text-amber-400" />,
+    badgeBg: "bg-gradient-to-r from-amber-500 to-orange-500"
+  },
+  { 
+    tag: "TOTAL SCANS", 
+    value: "2.4M+ All Time", 
+    desc: "Masked calls & emergency contacts bridged successfully", 
+    icon: <QrCode size={18} className="text-blue-500" />,
+    badgeBg: "bg-gradient-to-r from-blue-600 to-indigo-600"
+  },
+  { 
+    tag: "TODAY'S SCANS", 
+    value: "1,204 Live Scans", 
+    desc: "Live real-time scan updates across cities today", 
+    icon: <TrendingUp size={18} className="text-emerald-500" />,
+    badgeBg: "bg-gradient-to-r from-emerald-600 to-teal-600"
+  }
+];
+
+const faqs = [
+  { q: "What is SafeDrive-Tag?", a: "SafeDrive-Tag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
+  { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
+  { q: "Can I use SafeDrive-Tag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
+  { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
+  { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weatherproof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
+];
+
 export default function Home() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -12,44 +51,13 @@ export default function Home() {
   const [activeStep, setActiveStep] = useState(1);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
 
-  const liveStats = [
-    { 
-      tag: "TRUSTED USERS", 
-      value: "9.5L+ Across India", 
-      desc: "Protecting vehicles and luggage with smart QR tags", 
-      icon: <Shield size={18} className="text-orange-500" />,
-      badgeBg: "bg-gradient-to-r from-orange-600 to-amber-600"
-    },
-    { 
-      tag: "RATING", 
-      value: "4.8 ★ User Rating", 
-      desc: "From over 50,000+ verified customer reviews", 
-      icon: <Star size={18} className="fill-amber-400 text-amber-400" />,
-      badgeBg: "bg-gradient-to-r from-amber-500 to-orange-500"
-    },
-    { 
-      tag: "TOTAL SCANS", 
-      value: "2.4M+ All Time", 
-      desc: "Masked calls & emergency contacts bridged successfully", 
-      icon: <QrCode size={18} className="text-blue-500" />,
-      badgeBg: "bg-gradient-to-r from-blue-600 to-indigo-600"
-    },
-    { 
-      tag: "TODAY'S SCANS", 
-      value: "1,204 Live Scans", 
-      desc: "Live real-time scan updates across cities today", 
-      icon: <TrendingUp size={18} className="text-emerald-500" />,
-      badgeBg: "bg-gradient-to-r from-emerald-600 to-teal-600"
-    }
-  ];
-
   // Auto-cycle live news ticker
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentNewsIndex((prev) => (prev + 1) % liveStats.length);
     }, 3200);
     return () => clearInterval(timer);
-  }, [liveStats.length]);
+  }, []);
 
   // Auto-cycle How We Work animated steps
   useEffect(() => {
@@ -68,14 +76,6 @@ export default function Home() {
     }
   }, [currentUser, navigate]);
 
-  const faqs = [
-    { q: "What is SafeDrive-Tag?", a: "SafeDrive-Tag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
-    { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
-    { q: "Can I use SafeDrive-Tag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
-    { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
-    { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weatherproof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
-  ];
-
   return (
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
       
@@ -91,6 +91,7 @@ export default function Home() {
           <img 
             src="/hero-car.png" 
             alt="Car Background" 
+            decoding="async"
             className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-15 lg:opacity-20 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl" 
           />
           
@@ -282,6 +283,7 @@ export default function Home() {
                 <img 
                   src="/hero-car.png" 
                   alt="SafeDrive-Tag on Car" 
+                  decoding="async"
                   className="w-full max-w-[340px] object-contain drop-shadow-xl" 
                 />
 
@@ -385,6 +387,8 @@ export default function Home() {
                 <img 
                   src="/safedrivetag-sticker.jpg" 
                   alt="SafeDrive-Tag Vehicle QR Sticker" 
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-auto object-contain block select-none" 
                 />
 

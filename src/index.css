@@ -19,16 +19,47 @@
 html {
   scroll-behavior: smooth;
   font-family: 'Roboto Slab', serif, ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   font-family: 'Roboto Slab', serif, ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
+  touch-action: manipulation;
 }
 
+/* Optimize image rendering and layout containment */
+img, svg, video {
+  max-width: 100%;
+  height: auto;
+}
 
+/* Custom Ultra-Slim Modern Smooth Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f97316;
+}
 
-/* GPU Compositor Hardware Acceleration for Buttery 60fps */
+/* GPU Compositor Hardware Acceleration for Buttery 60fps & 120fps */
+.gpu-accelerate,
+.animate-fade-up,
+.animate-slide-in-left,
+.animate-slide-in-right,
 .animate-marquee,
 .animate-float,
 .animate-radar-wave,
@@ -37,9 +68,10 @@ body {
 .animate-watch-btn-icon,
 .animate-progress,
 .animate-scanline {
-  will-change: transform;
+  will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 @keyframes progress {
