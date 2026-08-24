@@ -80,38 +80,38 @@ export default function Home() {
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex items-center pt-24 lg:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white">
+      <section className="relative flex items-center pt-20 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden bg-white w-full">
         {/* Background Car Graphic with Smooth Gradient Overlay */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-end">
           {/* Subtle Ambient Radial Glow */}
           <div className="absolute -top-24 -right-24 w-[600px] h-[600px] bg-orange-500/10 rounded-full blur-[120px]"></div>
-          <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px]"></div>
+          <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px]"></div>
           
           {/* Light Grid Overlay (Checkboxes/Grid Pattern) */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-10 lg:gap-8 items-center relative z-10 w-full">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 lg:gap-8 items-center relative z-10 w-full min-w-0">
           
           {/* Left Column (7 cols) */}
-          <div className="lg:col-span-7 space-y-6 sm:space-y-7 animate-fade-up">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-7 animate-fade-up w-full min-w-0">
 
             {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.12] tracking-tight">
-              Stay reachable in emergencies,<br />
-              <span className="text-orange-500">stay private.</span>
+            <h1 className="text-3xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.14] tracking-tight">
+              Stay reachable in emergencies,<br className="hidden sm:inline" />
+              <span className="text-orange-500"> stay private.</span>
             </h1>
 
             {/* Description */}
-            <p className="text-base text-gray-600 leading-relaxed max-w-lg font-medium">
+            <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-lg font-medium">
               SafeDrive-Tag is the next-generation smart QR emergency contact tag for your vehicles and travel luggage. Protect your car, bike, and bags without ever exposing your private phone number.
             </p>
 
-            {/* 1. Top 3-Value Props Bar (Exact Reference) */}
-            <div className="bg-white/95 border border-gray-200/80 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-sm grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2 items-center">
+            {/* 1. Top 3-Value Props Bar */}
+            <div className="bg-white/95 border border-gray-200/80 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-sm grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-2 items-center w-full">
               {/* Item 1 */}
-              <div className="flex items-center gap-3 px-2">
-                <div className="w-11 h-11 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-500 shrink-0 shadow-inner">
+              <div className="flex items-center gap-3 px-1 sm:px-2">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-500 shrink-0 shadow-inner">
                   <span className="text-base font-bold">🚫</span>
                 </div>
                 <div>
@@ -121,9 +121,9 @@ export default function Home() {
               </div>
 
               {/* Item 2 */}
-              <div className="flex items-center gap-3 px-2 sm:border-l sm:border-gray-100">
-                <div className="w-11 h-11 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
-                  <QrCode size={19} className="text-emerald-600" />
+              <div className="flex items-center gap-3 px-1 sm:px-2 sm:border-l sm:border-gray-100">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-600 shrink-0 shadow-inner">
+                  <QrCode size={19} className="text-orange-600" />
                 </div>
                 <div>
                   <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No app needed</h4>
@@ -132,8 +132,8 @@ export default function Home() {
               </div>
 
               {/* Item 3 */}
-              <div className="flex items-center gap-3 px-2 sm:border-l sm:border-gray-100">
-                <div className="w-11 h-11 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-500 shrink-0 shadow-inner">
+              <div className="flex items-center gap-3 px-1 sm:px-2 sm:border-l sm:border-gray-100">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-500 shrink-0 shadow-inner">
                   <Lock size={18} className="text-amber-500" />
                 </div>
                 <div>
@@ -143,17 +143,17 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 2. Action Buttons Row (Exact Reference) */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3.5 pt-1">
+            {/* 2. Action Buttons Row */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1 w-full">
               {/* Buy Safety Tag Primary CTA */}
               <Link 
                 to="/shop" 
-                className="group flex-1 min-w-[240px] bg-gradient-to-r from-[#009b3a] via-[#00a843] to-[#00b84c] hover:from-[#008f35] hover:to-[#00a843] text-white p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl shadow-[0_10px_25px_rgba(0,168,67,0.3)] transition-all duration-200 flex items-center justify-between gap-3 overflow-hidden"
+                className="group flex-1 bg-gradient-to-r from-orange-500 via-orange-600 to-amber-600 hover:from-orange-600 hover:to-orange-500 text-white p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl shadow-[0_10px_25px_rgba(249,115,22,0.35)] transition-all duration-200 flex items-center justify-between gap-3 overflow-hidden active:scale-[0.98]"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">
-                    <div className="w-8 h-8 rounded-full bg-white text-[#009b3a] flex items-center justify-center shadow-sm">
-                      <ShieldCheck size={19} />
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-orange-600 flex items-center justify-center shadow-sm">
+                      <ShieldCheck size={18} />
                     </div>
                   </div>
                   <div className="text-left">
@@ -162,7 +162,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-[#009b3a] flex items-center justify-center shrink-0 shadow-md group-hover:translate-x-1 transition-transform">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-orange-600 flex items-center justify-center shrink-0 shadow-md group-hover:translate-x-1 transition-transform">
                   <ArrowRight size={18} className="stroke-[2.5]" />
                 </div>
               </Link>
@@ -174,10 +174,10 @@ export default function Home() {
                   const el = document.getElementById('how-it-works');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="animate-watch-btn-glow border p-2.5 sm:p-3 pr-6 sm:pr-7 rounded-2xl sm:rounded-3xl transition-all flex items-center gap-3.5 cursor-pointer text-left shrink-0 active:scale-95"
+                className="animate-watch-btn-glow border p-2.5 sm:p-3 px-5 sm:px-6 rounded-2xl sm:rounded-3xl transition-all flex items-center justify-center sm:justify-start gap-3.5 cursor-pointer text-left shrink-0 active:scale-[0.98]"
               >
-                <div className="w-11 h-11 rounded-full flex items-center justify-center animate-watch-btn-icon shrink-0">
-                  <Play size={16} className="animate-watch-btn-play ml-0.5" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center animate-watch-btn-icon shrink-0">
+                  <Play size={15} className="animate-watch-btn-play ml-0.5" />
                 </div>
 
                 <div>
@@ -187,12 +187,12 @@ export default function Home() {
               </button>
             </div>
             
-            {/* 3. Live News Chyron / Ticker Bar (Exact Broadcast TV News Style with Arrow Chevron Badge) */}
-            <div className="bg-white/95 border border-gray-200/90 rounded-2xl sm:rounded-3xl shadow-sm flex items-stretch overflow-hidden relative backdrop-blur-sm min-h-[50px] sm:min-h-[56px]">
+            {/* 3. Live News Chyron / Ticker Bar */}
+            <div className="bg-white/95 border border-gray-200/90 rounded-2xl sm:rounded-3xl shadow-sm flex items-stretch overflow-hidden relative backdrop-blur-sm min-h-[46px] sm:min-h-[56px] w-full">
               {/* Dynamic Category Chevron / Arrow Badge */}
               <div 
                 key={`badge-${currentNewsIndex}`} 
-                className={`${liveStats[currentNewsIndex].badgeBg} animate-slide-in-left text-white font-black text-[11px] sm:text-xs pl-4 sm:pl-5 pr-5 sm:pr-6.5 py-2.5 sm:py-3 flex items-center gap-2 shrink-0 shadow-md relative [clip-path:polygon(0_0,calc(100%-12px)_0,100%_50%,calc(100%-12px)_100%,0_100%)]`}
+                className={`${liveStats[currentNewsIndex].badgeBg} animate-slide-in-left text-white font-black text-[10px] sm:text-xs pl-3 sm:pl-5 pr-4 sm:pr-6.5 py-2.5 sm:py-3 flex items-center gap-1.5 sm:gap-2 shrink-0 shadow-md relative [clip-path:polygon(0_0,calc(100%-10px)_0,100%_50%,calc(100%-10px)_100%,0_100%)]`}
               >
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80"></span>
@@ -203,21 +203,21 @@ export default function Home() {
                 </span>
               </div>
 
-              {/* News Headline & Description (Auto-cycling transition) */}
-              <div className="flex-1 min-w-0 overflow-hidden py-2 px-2.5 sm:px-3.5 flex items-center">
+              {/* News Headline & Description */}
+              <div className="flex-1 min-w-0 overflow-hidden py-1.5 px-2 sm:px-3.5 flex items-center">
                 <div 
                   key={`content-${currentNewsIndex}`} 
-                  className="animate-slide-in-right flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-between w-full"
+                  className="animate-slide-in-right flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-between w-full min-w-0"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-gray-100/80 border border-gray-200/50 flex items-center justify-center shrink-0">
+                  <div className="flex items-center gap-2 min-w-0 w-full">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100/80 border border-gray-200/50 flex items-center justify-center shrink-0">
                       {liveStats[currentNewsIndex].icon}
                     </div>
-                    <div className="truncate">
-                      <div className="font-black text-sm sm:text-base text-gray-950 truncate tracking-tight">
+                    <div className="min-w-0 flex-1 truncate">
+                      <div className="font-black text-xs sm:text-base text-gray-950 truncate tracking-tight">
                         {liveStats[currentNewsIndex].value}
                       </div>
-                      <p className="text-[11px] sm:text-xs text-gray-500 font-medium truncate mt-0.5 sm:mt-0">
+                      <p className="text-[10px] sm:text-xs text-gray-500 font-medium truncate">
                         {liveStats[currentNewsIndex].desc}
                       </p>
                     </div>

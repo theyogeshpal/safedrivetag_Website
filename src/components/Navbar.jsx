@@ -17,7 +17,6 @@ import {
   Shield
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import Logo from './Logo';
 
 export default function Navbar() {
   const location = useLocation();
