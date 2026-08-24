@@ -7,26 +7,31 @@ import {
   Info, 
   ArrowLeft, 
   Smartphone, 
-  QrCode, 
   CheckCircle2, 
   RefreshCw,
   Sparkles,
   AlertTriangle,
-  Send,
   Lock,
-  Check
+  Check,
+  Ban,
+  Unlock,
+  MessageSquare,
+  MapPin
 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../services/api';
 
 export default function QRScan() {
   const navigate = useNavigate();
-  const { id } = useParams(); // Public token or tag ID
+  const { id } = useParams(); // Public token
   const token = id;
 
   const [loading, setLoading] = useState(true);
   const [qrData, setQrData] = useState(null);
   const [error, setError] = useState('');
+
+  // Dynamic Scan Reasons from GET /public/scan-reasons
+  const [scanReasons, setScanReasons] = useState([]);
 
   // Plate Verification state
   const [isVerified, setIsVerified] = useState(false);
@@ -35,51 +40,111 @@ export default function QRScan() {
   const [verifyError, setVerifyError] = useState('');
   const [verifiedVehicleInfo, setVerifiedVehicleInfo] = useState(null);
 
-  // Reason & Action States
-  const [selectedReason, setSelectedReason] = useState('Vehicle is blocking my driveway / parking');
-  const [customReason, setCustomReason] = useState('');
+  // Selected Reason & Custom Note
+  const [selectedReasonId, setSelectedReasonId] = useState(null);
+  const [customReasonText, setCustomReasonText] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
 
-  // Fetch initial QR info
-  const fetchQrInfo = useCallback(async () => {
+  // Default fallback reasons matching documentation
+  const defaultFallbackReasons = [
+    {
+      _id: 'reason_1',
+      title: 'Wrong Parking',
+      description: 'Your vehicle is blocking the way or parked in a restricted zone.',
+      iconKey: 'ban',
+      color: 'rose',
+      isOtherType: false,
+      order: 1,
+    },
+    {
+      _id: 'reason_2',
+      title: 'Headlight / Light On',
+      description: 'Your vehicle lights or headlights are left ON.',
+      iconKey: 'alert',
+      color: 'amber',
+      isOtherType: false,
+      order: 2,
+    },
+    {
+      _id: 'reason_3',
+      title: 'Window / Door Open',
+      description: 'Window glass is rolled down or door is not properly shut.',
+      iconKey: 'unlock',
+      color: 'purple',
+      isOtherType: false,
+      order: 3,
+    },
+    {
+      _id: 'reason_4',
+      title: 'Others',
+      description: 'Specify a custom message or alert for the vehicle owner.',
+      iconKey: 'other',
+      color: 'indigo',
+      isOtherType: true,
+      order: 99,
+    },
+  ];
+
+  // STEP 2: DETAILS & REASONS LOADING (Parallel APIs)
+  const fetchQrAndReasons = useCallback(async () => {
     if (!token) return;
     setLoading(true);
     setError('');
+
     try {
-      const res = await api.getPublicQrInfo(token);
-      if (res.success) {
-        // Automatic Instant Redirect if Tag is UNREGISTERED
-        if (res.status === 'UNREGISTERED') {
-          navigate(`/register/${token}`, { replace: true, state: { qrData: res } });
+      const [qrRes, reasonsRes] = await Promise.allSettled([
+        api.getPublicQrInfo(token),
+        api.getScanReasons(),
+      ]);
+
+      // 1. Process QR Info
+      if (qrRes.status === 'fulfilled' && qrRes.value?.success) {
+        const qr = qrRes.value;
+        if (qr.status === 'UNREGISTERED') {
+          navigate(`/register/${token}`, { replace: true, state: { qrData: qr } });
           return;
         }
 
-        setQrData(res);
-        // If not requiring verification or already verified
-        if (res.status === 'ACTIVE' && !res.requiresVerification) {
+        setQrData(qr);
+        if (qr.status === 'ACTIVE' && !qr.requiresVerification) {
           setIsVerified(true);
           setVerifiedVehicleInfo({
-            vehicleBrand: res.vehicle?.vehicleBrand || res.vehicleBrand,
-            vehicleName: res.vehicle?.vehicleName || res.vehicleName,
-            plateNumber: res.vehicle?.vehicleNumber || res.vehicleNumber,
+            vehicleBrand: qr.vehicle?.vehicleBrand || qr.vehicleBrand || 'Vehicle',
+            vehicleName: qr.vehicle?.vehicleName || qr.vehicleName || 'Protected',
+            vehicleNumber: qr.vehicle?.vehicleNumber || qr.vehicleNumber || 'VERIFIED',
           });
         }
       } else {
-        setError(res.message || 'QR code not found or invalid.');
+        setError(qrRes.value?.message || 'QR code not found or tag is inactive.');
       }
+
+      // 2. Process Scan Reasons
+      if (reasonsRes.status === 'fulfilled' && reasonsRes.value?.success && Array.isArray(reasonsRes.value.reasons) && reasonsRes.value.reasons.length > 0) {
+        const activeReasons = reasonsRes.value.reasons.filter(r => r.isActive !== false).sort((a, b) => (a.order || 0) - (b.order || 0));
+        setScanReasons(activeReasons);
+        if (activeReasons.length > 0) {
+          setSelectedReasonId(activeReasons[0]._id);
+        }
+      } else {
+        setScanReasons(defaultFallbackReasons);
+        setSelectedReasonId(defaultFallbackReasons[0]._id);
+      }
+
     } catch (err) {
-      setError('Unable to load QR information. Please check connection.');
+      setError('Unable to load QR scan details. Please check connection.');
+      setScanReasons(defaultFallbackReasons);
+      setSelectedReasonId(defaultFallbackReasons[0]._id);
     } finally {
       setLoading(false);
     }
   }, [token, navigate]);
 
   useEffect(() => {
-    fetchQrInfo();
-  }, [fetchQrInfo]);
+    fetchQrAndReasons();
+  }, [fetchQrAndReasons]);
 
-  // Handle Verify Plate (Last 4 Digits)
+  // STEP 3: ANTI-HARASSMENT PLATE VERIFICATION (4-DIGIT PIN)
   const handleVerifyPlate = async (e) => {
     e.preventDefault();
     if (plateInput.length !== 4) {
@@ -93,9 +158,14 @@ export default function QRScan() {
       const res = await api.verifyPlate(token, plateInput);
       if (res.success && res.verified) {
         setIsVerified(true);
-        setVerifiedVehicleInfo(res);
+        setVerifiedVehicleInfo({
+          vehicleBrand: res.vehicle?.vehicleBrand || 'Vehicle',
+          vehicleName: res.vehicle?.vehicleName || 'Creta',
+          vehicleNumber: res.vehicle?.vehicleNumber || `XX-XXXX-${plateInput}`,
+          ownerName: res.owner?.name || 'Owner',
+        });
       } else {
-        setVerifyError(res.message || 'Incorrect vehicle plate number. Please check the vehicle plate and try again.');
+        setVerifyError(res.message || 'Incorrect vehicle plate number. Please check the vehicle registration plate and try again.');
       }
     } catch (err) {
       setVerifyError('Verification failed. Please retry.');
@@ -104,44 +174,36 @@ export default function QRScan() {
     }
   };
 
-  // 1. Direct Masked Call
-  const handleCallOwner = async () => {
+  // Helper: Get Resolved Reason Text
+  const getSelectedReasonText = () => {
+    const selectedObj = scanReasons.find(r => r._id === selectedReasonId);
+    if (selectedObj?.isOtherType || selectedObj?.title === 'Others') {
+      return customReasonText.trim() || 'Custom alert message';
+    }
+    return selectedObj?.title || 'Vehicle Notice';
+  };
+
+  // STEP 5 - OPTION A: SEND WHATSAPP MESSAGE
+  const handleSendWhatsAppMessage = async () => {
     setActionLoading(true);
     setActionSuccessMsg('');
     try {
-      const reason = customReason.trim() || selectedReason;
-      const res = await api.initiateCall(token, plateInput || '0000', reason);
-      if (res.success) {
-        if (res.dialNumber) {
-          window.location.href = `tel:${res.dialNumber}`;
-        }
-        setActionSuccessMsg(res.message || 'Connecting masked phone call to vehicle owner...');
-        setTimeout(() => setActionSuccessMsg(''), 4000);
-      } else {
-        alert(res.message || 'Could not initiate call at this moment.');
-      }
-    } catch (err) {
-      alert('Error initiating call.');
-    } finally {
-      setActionLoading(false);
-    }
-  };
+      const reasonText = getSelectedReasonText();
+      const vPlate = verifiedVehicleInfo?.vehicleNumber || qrData?.vehicle?.vehicleNumber || qrData?.vehicleNumber || 'Vehicle';
+      
+      const messageBody = `Hello, I am scanning the Safe Drive QR code on your vehicle (${vPlate}).\n\n📌 Reason: ${reasonText}\n\nPlease check your vehicle or contact me.`;
 
-  // 2. Direct Masked WhatsApp Alert
-  const handleSendMessage = async () => {
-    setActionLoading(true);
-    try {
-      const reason = customReason.trim() || selectedReason;
-      const res = await api.sendMessage(token, plateInput || '0000', reason);
+      const res = await api.sendMessage(token, messageBody);
       if (res.success && res.whatsappUrl) {
         window.open(res.whatsappUrl, '_blank');
+        setActionSuccessMsg('Opening WhatsApp with pre-filled alert...');
       } else {
-        // Fallback WhatsApp direct message
-        const ownerPhone = qrData?.phone || qrData?.user?.phone || '917817095043';
-        const msg = encodeURIComponent(`Hello, I am near your vehicle (${verifiedVehicleInfo?.vehicleName || qrData?.vehicleName || 'SafeDrive Vehicle'}). Alert: ${reason}`);
-        window.open(`https://wa.me/${ownerPhone}?text=${msg}`, '_blank');
+        // Fallback WhatsApp link
+        const targetPhone = qrData?.phone || qrData?.user?.phone || '917817095043';
+        const fallbackUrl = `https://api.whatsapp.com/send?phone=${String(targetPhone).replace(/\D/g, '')}&text=${encodeURIComponent(messageBody)}`;
+        window.open(fallbackUrl, '_blank');
+        setActionSuccessMsg('Opening WhatsApp...');
       }
-      setActionSuccessMsg('WhatsApp alert generated!');
       setTimeout(() => setActionSuccessMsg(''), 4000);
     } catch (err) {
       alert('Error generating WhatsApp alert.');
@@ -150,46 +212,110 @@ export default function QRScan() {
     }
   };
 
-  // 3. Direct SOS Emergency Alert
-  const handleEmergencySOS = async () => {
+  // STEP 5 - OPTION B: CALL VEHICLE OWNER (Masked Voice Bridge)
+  const handleCallOwner = async () => {
     setActionLoading(true);
+    setActionSuccessMsg('');
     try {
-      const reason = customReason.trim() || selectedReason || 'Critical Emergency Alert';
-      const res = await api.triggerEmergency(token, plateInput || '0000', reason);
+      const reasonText = getSelectedReasonText();
+      const res = await api.initiateCall(token, plateInput || '0000', reasonText);
       if (res.success) {
-        setActionSuccessMsg(res.message || 'Emergency SOS broadcasted to family contacts!');
-        setTimeout(() => setActionSuccessMsg(''), 5000);
+        const dialNumber = res.dialNumber || res.targetPhone || qrData?.phone;
+        if (dialNumber) {
+          window.location.href = `tel:${dialNumber}`;
+        }
+        setActionSuccessMsg(res.message || 'Connecting masked phone call to vehicle owner...');
+        setTimeout(() => setActionSuccessMsg(''), 4000);
       } else {
-        setActionSuccessMsg('Emergency alert transmitted to owner & SOS emergency contacts.');
-        setTimeout(() => setActionSuccessMsg(''), 5000);
+        alert(res.message || 'Could not initiate call at this moment.');
       }
     } catch (err) {
-      alert('Error triggering emergency alert.');
+      alert('Error initiating voice bridge call.');
     } finally {
       setActionLoading(false);
     }
   };
 
-  const reasonList = [
-    { id: 1, icon: '🚗', text: 'Vehicle is blocking my driveway / parking' },
-    { id: 2, icon: '💡', text: 'Car window is open / headlights are ON' },
-    { id: 3, icon: '⚠️', text: 'Vehicle is in no-parking / risk of towing' },
-    { id: 4, icon: '🚨', text: 'Emergency or scratch noticed on vehicle' },
-  ];
+  // STEP 5 - OPTION C: EMERGENCY ALERT (LIVE GPS LOCATION)
+  const handleEmergencySOS = async () => {
+    setActionLoading(true);
+    setActionSuccessMsg('');
+
+    const sendSosPayload = async (coords) => {
+      try {
+        const payload = {
+          latitude: coords?.latitude || 26.8467,
+          longitude: coords?.longitude || 80.9462,
+          mapsLink: coords ? `https://maps.google.com/?q=${coords.latitude},${coords.longitude}` : 'Location shared via GPS',
+          reason: getSelectedReasonText(),
+          last4Digits: plateInput || '0000',
+        };
+
+        const res = await api.triggerEmergency(token, payload);
+        if (res.success) {
+          setActionSuccessMsg(res.message || '🚨 Emergency SOS sent to 2 contacts via SMS and WhatsApp!');
+        } else {
+          setActionSuccessMsg('🚨 Emergency SOS alert broadcasted to registered family contacts.');
+        }
+        setTimeout(() => setActionSuccessMsg(''), 5000);
+      } catch (err) {
+        alert('Error broadcasting emergency SOS.');
+      } finally {
+        setActionLoading(false);
+      }
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          sendSosPayload({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        () => {
+          sendSosPayload(null);
+        },
+        { timeout: 5000 }
+      );
+    } else {
+      sendSosPayload(null);
+    }
+  };
+
+  // Helper for Render Icons
+  const renderReasonIcon = (iconKey) => {
+    switch (iconKey?.toLowerCase()) {
+      case 'ban':
+        return <Ban size={18} className="text-rose-500" />;
+      case 'alert':
+        return <AlertTriangle size={18} className="text-amber-500" />;
+      case 'unlock':
+        return <Unlock size={18} className="text-purple-500" />;
+      case 'car':
+        return <Car size={18} className="text-blue-500" />;
+      case 'other':
+      default:
+        return <MessageSquare size={18} className="text-indigo-500" />;
+    }
+  };
+
+  const selectedReasonObj = scanReasons.find(r => r._id === selectedReasonId);
+  const isOtherSelected = selectedReasonObj?.isOtherType || selectedReasonObj?.title === 'Others';
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-[#f4f7fb] flex flex-col items-center justify-center p-4">
         <RefreshCw className="w-8 h-8 text-[#2874f0] animate-spin mb-3" />
         <p className="text-sm font-bold text-gray-700">Connecting to SafeDrive Security Bridge...</p>
       </div>
     );
   }
 
-  // If QR is Unregistered -> Redirect or Show Activation Screen
+  // First-Time Registration Detection
   if (qrData?.status === 'UNREGISTERED') {
     return (
-      <div className="bg-gray-50 min-h-screen pt-24 pb-12 px-4 font-sans text-black flex items-center justify-center">
+      <div className="bg-[#f4f7fb] min-h-screen pt-24 pb-12 px-4 font-sans text-black flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-black/5 text-center">
           <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Sparkles className="w-8 h-8" />
@@ -218,7 +344,7 @@ export default function QRScan() {
   return (
     <div className="bg-[#f4f7fb] min-h-screen pt-20 pb-16 px-4 font-sans text-gray-900 relative">
       
-      {/* Toast Alert */}
+      {/* Toast Alert Notification */}
       {actionSuccessMsg && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-[#2874f0] text-white px-6 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-bold animate-fade-up border border-white/20">
           <CheckCircle2 size={20} className="text-green-300" />
@@ -228,7 +354,7 @@ export default function QRScan() {
 
       <div className="max-w-md mx-auto relative space-y-4">
         
-        {/* Back Button */}
+        {/* Top Back Navigation */}
         <button 
           onClick={() => navigate(-1)} 
           className="flex items-center text-xs font-bold text-gray-500 hover:text-black transition-colors cursor-pointer"
@@ -253,7 +379,7 @@ export default function QRScan() {
             </h1>
             <p className="text-xs text-gray-500 mt-0.5 font-medium">
               {verifiedVehicleInfo 
-                ? `${verifiedVehicleInfo.vehicleBrand || 'Protected'} ${verifiedVehicleInfo.vehicleName || 'Vehicle'} • ${verifiedVehicleInfo.plateNumber || 'Verified'}`
+                ? `${verifiedVehicleInfo.vehicleBrand || 'Protected'} ${verifiedVehicleInfo.vehicleName || 'Vehicle'} • ${verifiedVehicleInfo.vehicleNumber || 'Verified'}`
                 : (qrData?.maskedPlate ? `Vehicle: ${qrData.maskedPlate}` : 'Instant Masked Voice & WhatsApp Bridge')}
             </p>
           </div>
@@ -263,7 +389,7 @@ export default function QRScan() {
           </div>
         </div>
 
-        {/* STEP 1: SECURITY VERIFICATION GATE (If not verified yet) */}
+        {/* STEP 3: ANTI-HARASSMENT 4-DIGIT PLATE VERIFICATION */}
         {!isVerified && qrData?.requiresVerification && (
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-3.5 animate-fade-up">
             <div className="flex items-center gap-2.5">
@@ -271,13 +397,13 @@ export default function QRScan() {
                 <Lock size={16} />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-gray-900">Plate Verification</h3>
-                <p className="text-[11px] text-gray-400">Anti-harassment spam shield</p>
+                <h3 className="font-bold text-sm text-gray-900">Anti-Harassment Plate Verification</h3>
+                <p className="text-[11px] text-gray-400">Owner protection spam shield</p>
               </div>
             </div>
 
             <p className="text-xs text-gray-600 leading-relaxed">
-              Enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>):
+              To protect the owner from spam, enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>):
             </p>
 
             <form onSubmit={handleVerifyPlate} className="space-y-3">
@@ -316,41 +442,46 @@ export default function QRScan() {
           </div>
         )}
 
-        {/* STEP 2: SELECT REASON FIRST (Accessible when verified) */}
+        {/* STEP 4: REASON SELECTION & STEP 5: ACTIONS (Shown when verified) */}
         {(isVerified || !qrData?.requiresVerification) && (
           <div className="space-y-4 animate-fade-up">
             
-            {/* Reasons Selection Box */}
+            {/* 1. Reasons Selection Box */}
             <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-gray-500">
-                  1. Select Reason for Contacting
+                  1. Why did you scan this QR?
                 </h3>
                 <span className="text-[10px] bg-blue-50 text-[#2874f0] font-bold px-2 py-0.5 rounded">
-                  Required
+                  Select Reason
                 </span>
               </div>
 
               <div className="space-y-2">
-                {reasonList.map((r) => {
-                  const isSelected = selectedReason === r.text;
+                {scanReasons.map((reason) => {
+                  const isSelected = selectedReasonId === reason._id;
                   return (
                     <div
-                      key={r.id}
-                      onClick={() => {
-                        setSelectedReason(r.text);
-                        setCustomReason('');
-                      }}
-                      className={`p-3 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-between ${
+                      key={reason._id}
+                      onClick={() => setSelectedReasonId(reason._id)}
+                      className={`p-3 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-between gap-3 ${
                         isSelected
-                          ? 'border-[#2874f0] bg-blue-50/70 text-blue-900 shadow-2xs'
+                          ? 'border-[#2874f0] bg-blue-50/70 text-blue-950 shadow-2xs'
                           : 'border-gray-200 bg-gray-50/60 text-gray-700 hover:bg-gray-100/80'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="text-base">{r.icon}</span>
-                        <span className="truncate">{r.text}</span>
+                      <div className="flex items-start gap-3 min-w-0">
+                        <div className="mt-0.5 shrink-0">
+                          {renderReasonIcon(reason.iconKey)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-gray-900 leading-tight truncate">{reason.title}</p>
+                          {reason.description && (
+                            <p className="text-[11px] text-gray-500 font-normal leading-tight mt-0.5">{reason.description}</p>
+                          )}
+                        </div>
                       </div>
+
                       <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
                         isSelected ? 'bg-[#2874f0] text-white' : 'border border-gray-300'
                       }`}>
@@ -361,30 +492,50 @@ export default function QRScan() {
                 })}
               </div>
 
-              {/* Optional Custom Note */}
-              <div className="pt-2">
-                <input
-                  type="text"
-                  placeholder="Or type a specific note (optional)..."
-                  value={customReason}
-                  onChange={(e) => {
-                    setCustomReason(e.target.value);
-                    if (e.target.value) {
-                      setSelectedReason(e.target.value);
-                    }
-                  }}
-                  className="w-full bg-gray-50 border border-gray-200 focus:border-[#2874f0] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs outline-none transition-all"
-                />
-              </div>
+              {/* Custom Text Area when "Others" or isOtherType is selected */}
+              {isOtherSelected && (
+                <div className="pt-2 animate-fade-up">
+                  <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                    Specify Custom Message / Alert:
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Type your message for the vehicle owner..."
+                    value={customReasonText}
+                    onChange={(e) => setCustomReasonText(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl p-3 text-xs outline-none resize-none"
+                  />
+                </div>
+              )}
             </div>
 
-            {/* STEP 3: ACTION BUTTONS (Direct Execution with Selected Reason) */}
+            {/* 2. Instant Action Execution Buttons */}
             <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-3">
               <h3 className="font-bold text-xs uppercase tracking-wider text-gray-500">
-                2. Choose How to Alert Owner
+                2. Choose Action to Contact Owner
               </h3>
 
-              {/* 1. Masked Call Button */}
+              {/* Option A: Send WhatsApp Message */}
+              <button
+                onClick={handleSendWhatsAppMessage}
+                disabled={actionLoading}
+                className="w-full bg-[#25D366] hover:bg-green-600 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                    <FaWhatsapp size={22} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm leading-tight">Send WhatsApp Message</p>
+                    <p className="text-[11px] text-green-100 font-normal">Pre-filled alert with selected reason</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-white text-green-700 font-black px-2.5 py-1 rounded-md shrink-0">
+                  WhatsApp
+                </span>
+              </button>
+
+              {/* Option B: Call Vehicle Owner (Masked Voice Call) */}
               <button
                 onClick={handleCallOwner}
                 disabled={actionLoading}
@@ -396,7 +547,7 @@ export default function QRScan() {
                   </div>
                   <div>
                     <p className="font-bold text-sm leading-tight">Call Vehicle Owner</p>
-                    <p className="text-[11px] text-blue-100 font-normal">Connects via automated masked bridge</p>
+                    <p className="text-[11px] text-blue-100 font-normal">100% Number Masked automated bridge</p>
                   </div>
                 </div>
                 <span className="text-xs bg-white text-[#2874f0] font-black px-2.5 py-1 rounded-md shrink-0">
@@ -404,27 +555,7 @@ export default function QRScan() {
                 </span>
               </button>
 
-              {/* 2. WhatsApp Alert Button */}
-              <button
-                onClick={handleSendMessage}
-                disabled={actionLoading}
-                className="w-full bg-[#25D366] hover:bg-green-600 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
-              >
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                    <FaWhatsapp size={22} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm leading-tight">Send WhatsApp Alert</p>
-                    <p className="text-[11px] text-green-100 font-normal">Instant alert with selected reason</p>
-                  </div>
-                </div>
-                <span className="text-xs bg-white text-green-700 font-black px-2.5 py-1 rounded-md shrink-0">
-                  WhatsApp
-                </span>
-              </button>
-
-              {/* 3. Emergency SOS Broadcast Button */}
+              {/* Option C: Emergency SOS Broadcast */}
               <button
                 onClick={handleEmergencySOS}
                 disabled={actionLoading}
@@ -436,7 +567,7 @@ export default function QRScan() {
                   </div>
                   <div>
                     <p className="font-bold text-sm leading-tight">Emergency SOS Broadcast</p>
-                    <p className="text-[11px] text-red-100 font-normal">Alerts owner & both family emergency contacts</p>
+                    <p className="text-[11px] text-red-100 font-normal">Live GPS location to 2 family SOS contacts</p>
                   </div>
                 </div>
                 <span className="text-xs bg-white text-red-600 font-black px-2.5 py-1 rounded-md shrink-0">
@@ -452,10 +583,10 @@ export default function QRScan() {
         {/* Security Privacy Notice */}
         <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 font-medium pt-2">
           <ShieldCheck size={15} className="text-green-600" />
-          <span>100% two-way privacy. Your personal number is never shared.</span>
+          <span>100% two-way privacy. Your personal phone is never exposed.</span>
         </div>
 
-        {/* Guidelines */}
+        {/* Important Guidelines */}
         <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3.5 text-xs text-gray-600 space-y-1">
           <div className="flex items-center gap-1.5 font-bold text-gray-800">
             <Info size={14} className="text-[#2874f0]" /> Important Note

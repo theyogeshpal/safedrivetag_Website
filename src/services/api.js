@@ -185,17 +185,24 @@ export const api = {
       body: { last4Digits, reason },
     }),
 
-  sendMessage: (token, last4Digits, reason) =>
+  sendMessage: (token, messageText) =>
     apiRequest(`/public/qr/${token}/message`, {
       method: 'POST',
-      body: { last4Digits, reason },
+      body: typeof messageText === 'string' ? { messageText } : messageText,
     }),
 
-  triggerEmergency: (token, last4Digits, location) =>
+  triggerEmergency: (token, data) =>
     apiRequest(`/public/qr/${token}/emergency`, {
       method: 'POST',
-      body: { last4Digits, location },
+      body: data || {},
     }),
+
+  // Admin Scan Reasons APIs
+  getAdminScanReasons: () => apiRequest('/admin/scan-reasons?showDeleted=true'),
+  createScanReason: (data) => apiRequest('/admin/scan-reasons', { method: 'POST', body: data }),
+  updateScanReason: (id, data) => apiRequest(`/admin/scan-reasons/${id}`, { method: 'PUT', body: data }),
+  deleteScanReason: (id) => apiRequest(`/admin/scan-reasons/${id}`, { method: 'DELETE' }),
+  restoreScanReason: (id) => apiRequest(`/admin/scan-reasons/${id}/restore`, { method: 'PUT' }),
 
   // --- 5. First-Time QR Registration API ---
   registerQrKit: (token, registrationData) =>
