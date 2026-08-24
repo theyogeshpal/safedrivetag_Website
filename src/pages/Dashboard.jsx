@@ -292,7 +292,20 @@ export default function Dashboard() {
               ord.allocatedQRIds.forEach((qr, qIdx) => {
                 const token = qr.publicToken || qr.copyCode || qr._id;
                 const copyCode = qr.copyCode || `COPY-${qIdx + 1}`;
-                const regInfo = locallyRegistered[token] || locallyRegistered[copyCode] || locallyRegistered[qr.copyCode];
+                const regInfo = locallyRegistered[token] || 
+                                locallyRegistered[copyCode] || 
+                                locallyRegistered[qr.copyCode] || 
+                                locallyRegistered[qr._id];
+
+                const isPhysical = ord.productName?.toLowerCase().includes('physical') || 
+                                   ord.title?.toLowerCase().includes('physical') || 
+                                   ord.productType === 'PHYSICAL' || 
+                                   qr.qrType === 'PHYSICAL' ||
+                                   copyCode?.startsWith('PHY') || 
+                                   token?.startsWith('PHY');
+
+                const resolvedQrType = isPhysical ? 'PHYSICAL' : (qr.qrType || ord.productType || 'DIGITAL');
+                const hasVehicle = !!(regInfo?.vehicleNumber || qr.vehicleNumber);
 
                 rawAllocated.push({
                   id: copyCode,
@@ -307,8 +320,8 @@ export default function Dashboard() {
                   vehicleNumber: regInfo?.vehicleNumber || qr.vehicleNumber || null,
                   vehicleName: regInfo ? `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() : `${ord.productName || 'SafeDrive Smart Tag'} (Copy ${qIdx + 1})`,
                   vehicleType: regInfo?.vehicleType || qr.qrFor || 'Car',
-                  status: regInfo ? 'active' : (qr.status === 'ACTIVE' ? 'active' : 'unregistered'),
-                  qrType: qr.qrType || ord.productType || 'DIGITAL',
+                  status: hasVehicle ? 'active' : (qr.status === 'ACTIVE' ? 'active' : 'unregistered'),
+                  qrType: resolvedQrType,
                   orderNumber: ord.orderNumber,
                   image: ord.productId?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
                   registeredAt: qr.createdAt?.split('T')[0] || ord.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
@@ -326,22 +339,29 @@ export default function Dashboard() {
           // Fetch Live Public QR API Data in Parallel for each token
           const liveQrResults = await Promise.allSettled(
             rawAllocated.map(async (at) => {
+              const regInfo = locallyRegistered[at.publicToken] || 
+                              locallyRegistered[at.copyCode] || 
+                              locallyRegistered[at.id];
+
               try {
                 const qrRes = await api.getPublicQrInfo(at.publicToken);
                 if (qrRes && qrRes.success) {
-                  const isLiveActive = qrRes.status === 'ACTIVE';
-                  const vNumber = qrRes.vehicle?.vehicleNumber || qrRes.vehicleNumber || at.vehicleNumber;
-                  const vBrand = qrRes.vehicle?.vehicleBrand || qrRes.vehicleBrand || '';
-                  const vModel = qrRes.vehicle?.vehicleName || qrRes.vehicleName || '';
+                  const isLiveActive = qrRes.status === 'ACTIVE' || !!(regInfo?.vehicleNumber) || (qrRes.vehicle?.vehicleNumber && qrRes.vehicle.vehicleNumber !== 'Not Linked Yet');
+                  const vNumber = (qrRes.vehicle?.vehicleNumber && qrRes.vehicle.vehicleNumber !== 'Not Linked Yet') 
+                    ? qrRes.vehicle.vehicleNumber 
+                    : (qrRes.vehicleNumber || regInfo?.vehicleNumber || at.vehicleNumber);
+                  
+                  const vBrand = qrRes.vehicle?.vehicleBrand || qrRes.vehicleBrand || regInfo?.vehicleBrand || '';
+                  const vModel = qrRes.vehicle?.vehicleName || qrRes.vehicleName || regInfo?.vehicleName || '';
                   const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : at.vehicleName;
-                  const eContacts = qrRes.emergencyContacts || qrRes.vehicle?.emergencyContacts || at.emergencyContacts;
+                  const eContacts = qrRes.emergencyContacts || qrRes.vehicle?.emergencyContacts || regInfo?.emergencyContacts || at.emergencyContacts;
 
                   return {
                     ...at,
-                    status: isLiveActive ? 'active' : (at.vehicleNumber ? 'active' : 'unregistered'),
+                    status: isLiveActive ? 'active' : (vNumber ? 'active' : 'unregistered'),
                     vehicleNumber: isLiveActive ? vNumber : (at.vehicleNumber || 'Unlinked Tag (Ready to Link)'),
                     vehicleName: vTitle,
-                    vehicleType: qrRes.vehicle?.vehicleType || qrRes.vehicleType || at.vehicleType,
+                    vehicleType: qrRes.vehicle?.vehicleType || qrRes.vehicleType || regInfo?.vehicleType || at.vehicleType,
                     emergencyContacts: eContacts,
                     emergencyContact: eContacts?.[0]?.number || at.emergencyContact,
                     totalCalls: qrRes.wallet?.totalCalls || qrRes.totalCalls || qrRes.initialCalls || 10,
@@ -354,6 +374,20 @@ export default function Dashboard() {
               } catch (e) {
                 console.error('Error fetching live QR info for token', at.publicToken, e);
               }
+
+              if (regInfo && regInfo.vehicleNumber) {
+                return {
+                  ...at,
+                  status: 'active',
+                  vehicleNumber: regInfo.vehicleNumber,
+                  vehicleName: `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() || at.vehicleName,
+                  vehicleType: regInfo.vehicleType || at.vehicleType,
+                  emergencyContacts: regInfo.emergencyContacts || at.emergencyContacts,
+                  emergencyContact: regInfo.emergencyContacts?.[0]?.number || at.emergencyContact,
+                  whatsapp: regInfo.whatsappNumber || at.whatsapp,
+                };
+              }
+
               return {
                 ...at,
                 vehicleNumber: at.vehicleNumber || 'Unlinked Tag (Ready to Link)',
@@ -443,6 +477,44 @@ export default function Dashboard() {
           at => !existingTokens.has(at.publicToken) && !existingTokens.has(at.id) && !existingTokens.has(at.copyCode)
         );
         const allTags = [...mappedTags, ...uniqueAllocated];
+
+        // Also merge any standalone registered physical tags from locallyRegistered
+        try {
+          const localCache = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
+          Object.keys(localCache).forEach((tagKey) => {
+            const r = localCache[tagKey];
+            if (r && r.vehicleNumber && !existingTokens.has(tagKey) && !existingTokens.has(r.token) && !existingTokens.has(r.copyCode)) {
+              const isPhys = r.qrType === 'PHYSICAL' || r.vehicleType === 'PHYSICAL' || tagKey.toLowerCase().includes('phy') || !r.qrType;
+              allTags.push({
+                id: r.copyCode || r.token || tagKey,
+                publicToken: r.token || tagKey,
+                copyCode: r.copyCode || tagKey,
+                productId: isPhys ? 'Physical Safety Sticker Kit' : 'Digital QR Safety Pass',
+                name: r.name || currentUser?.name || 'Owner',
+                phone: r.phone || currentUser?.phone,
+                emergencyContact: r.emergencyContacts?.[0]?.number || null,
+                emergencyContacts: r.emergencyContacts || [],
+                whatsapp: r.whatsappNumber || currentUser?.phone,
+                vehicleNumber: r.vehicleNumber,
+                vehicleName: `${r.vehicleBrand || ''} ${r.vehicleName || ''}`.trim() || 'My Vehicle',
+                vehicleType: r.vehicleType || 'Car',
+                status: 'active',
+                qrType: isPhys ? 'PHYSICAL' : 'DIGITAL',
+                registeredAt: r.registeredAt || new Date().toISOString().split('T')[0],
+                callBalance: 10,
+                messageBalance: 20,
+                scansCount: 0,
+                callMaskingEnabled: true,
+                whatsappAlertsEnabled: true,
+              });
+              existingTokens.add(tagKey);
+              if (r.token) existingTokens.add(r.token);
+              if (r.copyCode) existingTokens.add(r.copyCode);
+            }
+          });
+        } catch (localErr) {
+          console.error('Error merging local registered tags cache', localErr);
+        }
 
         if (allTags.length > 0) {
           setUserTags(allTags);
@@ -585,34 +657,63 @@ export default function Dashboard() {
     showNotification('Vehicle Tag updated successfully!');
   };
 
-  const handleLinkNewTag = (e) => {
+  const handleLinkNewTag = async (e) => {
     e.preventDefault();
     if (!newTagId.trim()) return;
 
     const formattedId = newTagId.trim().toUpperCase();
-    registerTag({
+    const cleanPhone = currentUser?.phone?.replace(/\D/g, '') || '';
+    const vPlate = newVehicleNumber ? newVehicleNumber.trim().toUpperCase() : 'REGISTERED';
+    const vTitle = newVehicleName?.trim() || 'My Vehicle';
+
+    const payload = {
       id: formattedId,
-      name: currentUser.name || 'Owner',
-      phone: currentUser.phone,
-      emergencyContact: currentUser.phone,
-      whatsapp: currentUser.phone,
-      vehicleName: newVehicleName || 'My Vehicle',
-      vehicleNumber: newVehicleNumber ? newVehicleNumber.toUpperCase() : 'Not Specified',
+      token: formattedId,
+      copyCode: formattedId,
+      name: currentUser?.name || 'Owner',
+      phone: cleanPhone,
+      whatsappNumber: cleanPhone,
+      vehicleBrand: 'Vehicle',
+      vehicleName: vTitle,
+      vehicleNumber: vPlate,
       vehicleType: newVehicleType || 'Car',
       status: 'active',
+      qrType: 'PHYSICAL',
       registeredAt: new Date().toISOString().split('T')[0],
-      scansCount: 0,
-      callMaskingEnabled: true,
-      whatsappAlertsEnabled: true,
-    });
+      emergencyContacts: currentUser?.emergencyContacts || [
+        { name: 'Emergency SOS Contact', number: cleanPhone }
+      ],
+    };
+
+    // Save to unified local cache
+    try {
+      const existing = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
+      existing[formattedId] = payload;
+      existing[newTagId.trim()] = payload;
+      localStorage.setItem('safedrive_registered_tags', JSON.stringify(existing));
+    } catch (err) {
+      console.error('Error saving local registered tag', err);
+    }
+
+    // Call backend registration endpoint
+    try {
+      await api.registerQrKit(formattedId, {
+        ...payload,
+        emergencyContacts: [
+          { name: 'Emergency SOS Contact', number: cleanPhone }
+        ],
+      });
+    } catch (apiErr) {
+      console.error('Backend register API error', apiErr);
+    }
 
     setNewTagId('');
     setNewVehicleName('');
     setNewVehicleNumber('');
     setNewVehicleType('Car');
     setIsLinkModalOpen(false);
-    setUserTags(getUserTags(currentUser.phone));
-    showNotification(`New Tag ${formattedId} linked to your account!`);
+    loadDashboardData();
+    showNotification(`Physical Tag ${formattedId} linked & activated successfully!`);
   };
 
   const handleDeleteTag = (tagId) => {
