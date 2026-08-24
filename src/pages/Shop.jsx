@@ -171,34 +171,16 @@ export default function Shop() {
                   <div>
                     {/* Product Visual Mockup */}
                     <div 
-                      className="relative bg-gradient-to-br from-orange-50/60 via-amber-50/30 to-slate-50 rounded-2xl p-3 sm:p-4 border border-orange-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5"
+                      className="relative bg-orange-50/40 rounded-2xl p-3 sm:p-4 border border-orange-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5 bg-white"
                     >
-                      {prod.imageUrl ? (
-                        <img 
-                          src={prod.imageUrl} 
-                          alt={prod.title}
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const fallback = e.currentTarget.nextElementSibling;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                          className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" 
-                        />
-                      ) : null}
-
-                      {/* Dummy Placeholder (When no image or image fails to load) */}
-                      <div 
-                        className={`w-full h-full rounded-xl bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-slate-100 flex-col items-center justify-center p-6 text-center relative overflow-hidden border border-orange-200/40 ${prod.imageUrl ? 'hidden' : 'flex'}`}
-                      >
-                        <div className="w-16 h-16 rounded-2xl bg-white shadow-md border border-orange-100 flex items-center justify-center text-orange-500 mb-2.5 relative z-10 group-hover:scale-110 group-hover:rotate-2 transition-transform duration-300">
-                          <QrCode size={34} className="stroke-[1.75]" />
-                          <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-[9px] font-black">
-                            ✓
-                          </span>
-                        </div>
-                        <span className="text-xs font-black text-gray-900 tracking-tight relative z-10">SafeDrive-Tag™</span>
-                        <span className="text-[10px] text-gray-500 font-bold tracking-wider uppercase mt-0.5 relative z-10">Official QR Safety Kit</span>
-                      </div>
+                      <img 
+                        src={prod.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg'} 
+                        alt={prod.title}
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
+                        }}
+                        className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500" 
+                      />
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-end p-4 z-20 pointer-events-none">
                         <span className="text-white text-xs font-bold flex items-center gap-1.5">

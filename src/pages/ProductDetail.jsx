@@ -182,33 +182,15 @@ export default function ProductDetail() {
           
           {/* Images Gallery - Strictly Backend Images */}
           <div className="md:w-1/2 flex flex-col gap-4">
-            <div className="w-full aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-orange-50/60 via-amber-50/30 to-slate-50 border border-black/5 relative group flex items-center justify-center">
-              {product.images && product.images.length > 0 && product.images[activeImage || 0] ? (
-                <img 
-                  src={product.images[activeImage] || product.images[0]} 
-                  alt={product.name} 
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    const fallback = e.currentTarget.nextElementSibling;
-                    if (fallback) fallback.style.display = 'flex';
-                  }}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                />
-              ) : null}
-              
-              {/* Dummy Placeholder */}
-              <div 
-                className={`w-full h-full rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-slate-100 flex-col items-center justify-center p-8 text-center relative overflow-hidden ${product.images && product.images.length > 0 && product.images[activeImage || 0] ? 'hidden' : 'flex'}`}
-              >
-                <div className="w-24 h-24 rounded-3xl bg-white shadow-xl border border-orange-100 flex items-center justify-center text-orange-500 mb-4 relative z-10 group-hover:scale-110 transition-transform duration-300">
-                  <QrCode size={52} className="stroke-[1.75]" />
-                  <span className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-black shadow-md">
-                    ✓
-                  </span>
-                </div>
-                <span className="text-base font-black text-gray-900 tracking-tight relative z-10">SafeDrive-Tag™</span>
-                <span className="text-xs text-gray-500 font-bold tracking-wider uppercase mt-1 relative z-10">Official QR Safety Kit</span>
-              </div>
+            <div className="w-full aspect-square rounded-2xl overflow-hidden bg-orange-50/20 border border-black/5 relative group flex items-center justify-center p-4 bg-white">
+              <img 
+                src={(product.images && product.images.length > 0 && product.images[activeImage || 0]) || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg'} 
+                alt={product.name} 
+                onError={(e) => {
+                  e.currentTarget.src = 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
+                }}
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
+              />
               
               <span className={`absolute top-4 left-4 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg z-20 ${
                 isDigitalProduct ? 'bg-purple-600' : 'bg-green-500'
