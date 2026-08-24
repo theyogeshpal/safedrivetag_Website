@@ -317,28 +317,29 @@ export default function RegisterTag() {
             </div>
 
             {/* 3-Step Wizard Progress Bar */}
-            <div className="grid grid-cols-3 gap-2 mb-6 text-center text-xs font-bold">
-              <div className={`py-2 px-3 rounded-xl border transition-all ${
+            {/* 3-Step Wizard Progress Bar (2-Row on Phone, 3-Cols on Desktop) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6 text-center text-xs font-bold">
+              <div className={`py-2 px-2.5 rounded-xl border transition-all ${
                 step === 1 
-                  ? 'bg-orange-500 text-white border-orange-500 shadow-xs' 
+                  ? 'bg-orange-500 text-white border-orange-500 shadow-xs font-black' 
                   : isPhoneVerified 
-                    ? 'bg-green-50 text-green-700 border-green-200' 
+                    ? 'bg-green-50 text-green-700 border-green-200 font-bold' 
                     : 'bg-gray-100 text-gray-500 border-gray-200'
               }`}>
                 1. Mobile Number
               </div>
-              <div className={`py-2 px-3 rounded-xl border transition-all ${
+              <div className={`py-2 px-2.5 rounded-xl border transition-all ${
                 step === 2 
-                  ? 'bg-orange-500 text-white border-orange-500 shadow-xs' 
+                  ? 'bg-orange-500 text-white border-orange-500 shadow-xs font-black' 
                   : isPhoneVerified 
-                    ? 'bg-green-50 text-green-700 border-green-200' 
+                    ? 'bg-green-50 text-green-700 border-green-200 font-bold' 
                     : 'bg-gray-100 text-gray-500 border-gray-200'
               }`}>
                 2. Verify OTP
               </div>
-              <div className={`py-2 px-3 rounded-xl border transition-all ${
+              <div className={`col-span-2 sm:col-span-1 py-2 px-2.5 rounded-xl border transition-all ${
                 step === 3 
-                  ? 'bg-orange-500 text-white border-orange-500 shadow-xs' 
+                  ? 'bg-orange-500 text-white border-orange-500 shadow-xs font-black' 
                   : 'bg-gray-100 text-gray-500 border-gray-200'
               }`}>
                 3. Vehicle & Contacts
