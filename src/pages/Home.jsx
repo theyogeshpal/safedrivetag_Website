@@ -447,16 +447,16 @@ export default function Home() {
           
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
             {[
-              { icon: <Car size={34} className="text-blue-400 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399", highlight: true },
-              { icon: <Bike size={34} className="text-orange-400 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299", highlight: false },
-              { icon: <Briefcase size={34} className="text-indigo-400 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249", highlight: true },
-              { icon: <Car size={34} className="text-purple-400 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399", highlight: false },
-              { icon: <Car size={34} className="text-emerald-400 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299", highlight: false },
-              { icon: <Truck size={34} className="text-amber-400 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399", highlight: false }
+              { icon: <Car size={34} className="text-blue-400 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399" },
+              { icon: <Bike size={34} className="text-orange-400 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299" },
+              { icon: <Briefcase size={34} className="text-indigo-400 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249" },
+              { icon: <Car size={34} className="text-purple-400 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399" },
+              { icon: <Car size={34} className="text-emerald-400 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299" },
+              { icon: <Truck size={34} className="text-amber-400 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399" }
             ].map((v, i) => (
-              <div key={i} className={`bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1.5 ${v.highlight ? 'border-2 border-orange-500 shadow-[0_10px_30px_rgba(249,115,22,0.25)] sm:scale-105 z-10 bg-gradient-to-b from-orange-500/15 to-white/5' : 'border border-white/10 hover:border-white/25 shadow-lg'}`}>
+              <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1.5 hover:border-orange-500/50 hover:bg-white/[0.08] hover:shadow-[0_10px_25px_rgba(249,115,22,0.15)] shadow-lg group">
                 <div>
-                  <div className="text-2xl sm:text-3xl mb-2.5 flex justify-center">{v.icon}</div>
+                  <div className="text-2xl sm:text-3xl mb-2.5 flex justify-center group-hover:scale-110 transition-transform">{v.icon}</div>
                   <h3 className="font-black text-white text-xs sm:text-sm md:text-base mb-1">{v.title}</h3>
                   <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mb-3 sm:mb-4 leading-relaxed">{v.desc}</p>
                 </div>
