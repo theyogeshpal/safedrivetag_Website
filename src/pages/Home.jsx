@@ -258,8 +258,8 @@ export default function Home() {
       </section>
 
       {/* --- MARQUEE --- */}
-      <div className="w-full overflow-hidden my-4 sm:my-8">
-        <div className="border-y border-neutral-800 bg-[#0c0f17] py-4 sm:py-5 overflow-hidden shadow-md relative z-20 -rotate-2 scale-105">
+      <div className="w-full overflow-hidden">
+        <div className="border-y border-neutral-800 bg-[#0c0f17] py-4 sm:py-5 overflow-hidden shadow-md relative z-20">
           <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex items-center gap-8 sm:gap-12 px-4 sm:px-6">
