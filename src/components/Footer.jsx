@@ -35,7 +35,7 @@ export default function Footer() {
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag Logo" 
-              className="h-24 sm:h-16 md:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+              className="h-14 sm:h-16 md:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
             />
           </Link>
           <p className="text-sm text-gray-600 mb-6 font-medium leading-relaxed max-w-sm">

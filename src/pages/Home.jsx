@@ -115,17 +115,15 @@ export default function Home() {
                   const el = document.getElementById('how-it-works');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="bg-white hover:bg-orange-50/40 border border-gray-200/90 p-2.5 sm:p-3 pr-6 sm:pr-7 rounded-2xl sm:rounded-3xl shadow-xs transition-all flex items-center gap-3.5 cursor-pointer text-left shrink-0"
+                className="animate-watch-btn-glow border p-2.5 sm:p-3 pr-6 sm:pr-7 rounded-2xl sm:rounded-3xl transition-all flex items-center gap-3.5 cursor-pointer text-left shrink-0 active:scale-95"
               >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 p-0.5 flex items-center justify-center shadow-md animate-play-glow">
-                  <div className="w-full h-full rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white shadow-inner">
-                    <Play size={16} className="fill-white ml-0.5" />
-                  </div>
+                <div className="w-11 h-11 rounded-full flex items-center justify-center animate-watch-btn-icon shrink-0">
+                  <Play size={16} className="animate-watch-btn-play ml-0.5" />
                 </div>
 
                 <div>
-                  <div className="font-extrabold text-sm sm:text-base text-gray-900 leading-tight">Watch Video</div>
-                  <div className="text-[11px] text-gray-500 font-medium">See how it works</div>
+                  <div className="font-extrabold text-sm sm:text-base leading-tight animate-watch-btn-title">Watch Video</div>
+                  <div className="text-[11px] font-medium animate-watch-btn-subtitle">See how it works</div>
                 </div>
               </button>
             </div>

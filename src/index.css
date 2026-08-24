@@ -31,6 +31,8 @@ body {
 .animate-float,
 .animate-radar-wave,
 .animate-play-glow,
+.animate-watch-btn-glow,
+.animate-watch-btn-icon,
 .animate-progress,
 .animate-scanline {
   will-change: transform;
@@ -262,4 +264,80 @@ a.inline-flex[href*="checkout"]:active * {
 
 .animate-radar-wave {
   animation: radarWave 2.2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+}
+
+/* Watch Video Button Glow/Fade Animation */
+@keyframes watchBtnGlow {
+  0%, 100% {
+    background-color: #ffffff;
+    border-color: rgba(229, 231, 235, 0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  50% {
+    background-color: #f97316;
+    border-color: #ea580c;
+    box-shadow: 0 10px 30px rgba(249, 115, 22, 0.5), 0 0 20px rgba(245, 158, 11, 0.35);
+  }
+}
+
+@keyframes watchBtnIconBg {
+  0%, 100% {
+    background-color: #f97316;
+    box-shadow: 0 2px 10px rgba(249, 115, 22, 0.35);
+    transform: scale(1);
+  }
+  50% {
+    background-color: #ffffff;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes watchBtnPlayIcon {
+  0%, 100% {
+    color: #ffffff;
+    fill: #ffffff;
+  }
+  50% {
+    color: #ea580c;
+    fill: #ea580c;
+  }
+}
+
+@keyframes watchBtnTitle {
+  0%, 100% {
+    color: #111827;
+  }
+  50% {
+    color: #ffffff;
+  }
+}
+
+@keyframes watchBtnSubtitle {
+  0%, 100% {
+    color: #6b7280;
+  }
+  50% {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.animate-watch-btn-glow {
+  animation: watchBtnGlow 2.4s ease-in-out infinite;
+}
+
+.animate-watch-btn-icon {
+  animation: watchBtnIconBg 2.4s ease-in-out infinite;
+}
+
+.animate-watch-btn-play {
+  animation: watchBtnPlayIcon 2.4s ease-in-out infinite;
+}
+
+.animate-watch-btn-title {
+  animation: watchBtnTitle 2.4s ease-in-out infinite;
+}
+
+.animate-watch-btn-subtitle {
+  animation: watchBtnSubtitle 2.4s ease-in-out infinite;
 }
