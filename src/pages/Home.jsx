@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase } from 'lucide-react';
+import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase, ShieldCheck, TrendingUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useAuth } from '../context/AuthContext';
@@ -54,61 +54,142 @@ export default function Home() {
               SafeDrive-Tag — Smart QR emergency contacts for vehicles & travel bags. 🚗 🏍️ 🧳 Protect your car, bike & luggage without sharing your private phone number.
             </p>
 
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3 py-1">
-              <span className="flex items-center gap-1.5 sm:gap-2 bg-[#fdf8d5] border border-[#f4e28e] text-[#6d5516] px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm">
-                <span className="text-sm sm:text-base leading-none">🚫</span> No spamming
-              </span>
-              <span className="flex items-center gap-1.5 sm:gap-2 bg-[#fdf8d5] border border-[#f4e28e] text-[#6d5516] px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm">
-                <span className="text-sm sm:text-base leading-none">📲</span> No app needed
-              </span>
-              <span className="flex items-center gap-1.5 sm:gap-2 bg-[#fdf8d5] border border-[#f4e28e] text-[#6d5516] px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm">
-                <span className="text-sm sm:text-base leading-none">🔒</span> No number shared
-              </span>
+            {/* Top 3 Value Props Bar */}
+            <div className="bg-white/95 backdrop-blur-md border border-gray-100/90 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-all grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2 items-center">
+              {/* Item 1 */}
+              <div className="flex items-center gap-3 px-2">
+                <div className="w-11 h-11 rounded-full bg-orange-50/80 border border-orange-200/60 flex items-center justify-center text-orange-500 shrink-0 shadow-inner">
+                  <span className="text-lg">🚫</span>
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No spamming</h4>
+                  <p className="text-[11px] text-gray-500 font-medium">100% spam-free</p>
+                </div>
+              </div>
+
+              {/* Item 2 */}
+              <div className="flex items-center gap-3 px-2 sm:border-l sm:border-gray-100">
+                <div className="w-11 h-11 rounded-full bg-emerald-50/80 border border-emerald-200/60 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
+                  <QrCode size={19} className="text-emerald-600" />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No app needed</h4>
+                  <p className="text-[11px] text-gray-500 font-medium">Instantly works</p>
+                </div>
+              </div>
+
+              {/* Item 3 */}
+              <div className="flex items-center gap-3 px-2 sm:border-l sm:border-gray-100">
+                <div className="w-11 h-11 rounded-full bg-amber-50/80 border border-amber-200/60 flex items-center justify-center text-amber-500 shrink-0 shadow-inner">
+                  <Lock size={18} className="text-amber-500" />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No number shared</h4>
+                  <p className="text-[11px] text-gray-500 font-medium">Your privacy protected</p>
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
-              <Link to="/shop" className="group relative inline-flex items-center justify-center gap-2 bg-green-500 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-black text-sm sm:text-base overflow-hidden transition-all hover:scale-105 hover:shadow-[0_10px_30px_rgba(34,197,94,0.3)]">
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-br from-green-400 to-green-600"></span>
-                <span className="relative flex items-center gap-2">
-                  Buy Safety Tag <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Link>
-              
-              <button className="group inline-flex items-center justify-center gap-2 bg-white text-black border-2 border-black/10 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full font-black text-sm sm:text-base transition-all hover:bg-black/5 hover:border-black/20 hover:scale-105">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                  <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600 ml-0.5" fill="currentColor" />
+            {/* Action Buttons Row */}
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3.5 pt-1">
+              {/* Buy Safety Tag Button */}
+              <Link 
+                to="/shop" 
+                className="group flex-1 min-w-[240px] bg-gradient-to-r from-[#009b3a] via-[#00a843] to-[#00b84c] hover:from-[#008f35] hover:to-[#00a843] text-white p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl shadow-[0_10px_25px_rgba(0,168,67,0.3)] hover:shadow-[0_14px_32px_rgba(0,168,67,0.4)] transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-between gap-3 overflow-hidden relative"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-[#009b3a] flex items-center justify-center shadow-sm">
+                      <ShieldCheck size={20} className="fill-[#009b3a]/10" />
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <div className="font-black text-base sm:text-lg leading-tight tracking-tight text-white">Buy Safety Tag</div>
+                    <div className="text-[11px] sm:text-xs text-white/90 font-medium">Secure. Smart. Reliable.</div>
+                  </div>
                 </div>
-                Watch Video
+
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-[#009b3a] flex items-center justify-center shrink-0 shadow-md group-hover:translate-x-1 transition-transform">
+                  <ArrowRight size={18} className="stroke-[2.5]" />
+                </div>
+              </Link>
+
+              {/* Watch Video Button */}
+              <button 
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('how-it-works');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="group bg-white hover:bg-gray-50/90 border border-gray-100/90 p-2.5 sm:p-3 pr-6 sm:pr-8 rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-3.5 cursor-pointer text-left shrink-0"
+              >
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 flex items-center justify-center shrink-0 shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
+                  <div className="w-full h-full rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white">
+                    <Play size={16} className="fill-white ml-0.5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="font-extrabold text-sm sm:text-base text-gray-900 leading-tight">Watch Video</div>
+                  <div className="text-[11px] sm:text-xs text-gray-500 font-medium">See how it works</div>
+                </div>
               </button>
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-5 border-t border-black/10 mt-5">
-              <div className="bg-orange-50/80 border border-orange-200/60 px-3 sm:px-4 py-2 rounded-xl flex flex-col justify-center cursor-default hover:bg-orange-100 transition-colors">
-                <span className="text-orange-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Trusted Users</span>
-                <span className="text-orange-700 font-black text-base sm:text-lg leading-none">9.5L+</span>
-              </div>
-              
-              <div className="bg-yellow-50/80 border border-yellow-200/60 px-3 sm:px-4 py-2 rounded-xl flex flex-col justify-center cursor-default hover:bg-yellow-100 transition-colors">
-                <span className="text-yellow-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Rating</span>
-                <span className="text-yellow-700 font-black text-base sm:text-lg leading-none flex items-center gap-1">
-                  4.8 <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
-                </span>
+            {/* 4 Stats Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-gray-100 mt-5">
+              {/* Card 1: TRUSTED USERS */}
+              <div className="bg-gradient-to-b from-white via-white to-orange-50/50 border border-orange-100/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs hover:shadow-sm transition-all relative overflow-hidden">
+                <div className="w-11 h-11 rounded-xl bg-orange-100/60 border border-orange-200/60 flex items-center justify-center text-orange-600 shrink-0 shadow-inner">
+                  <Shield size={20} className="fill-orange-500/10 text-orange-600" />
+                </div>
+                <div>
+                  <span className="text-orange-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Trusted Users</span>
+                  <span className="text-gray-950 font-black text-lg sm:text-xl leading-none block">9.5L+</span>
+                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">Across India</span>
+                </div>
               </div>
 
-              <div className="bg-blue-50/80 border border-blue-200/60 px-3 sm:px-4 py-2 rounded-xl flex flex-col justify-center cursor-default hover:bg-blue-100 transition-colors">
-                <span className="text-blue-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Total Scans</span>
-                <span className="text-blue-700 font-black text-base sm:text-lg leading-none">2.4M+</span>
-              </div>
-              
-              <div className="bg-green-50 border border-green-200 px-3 sm:px-4 py-2 rounded-xl flex flex-col justify-center shadow-sm cursor-default hover:shadow-md transition-all">
-                <span className="text-green-600 text-[9px] font-bold uppercase tracking-wider mb-0.5">Today's Scans</span>
-                <span className="text-green-700 font-black text-base sm:text-lg leading-none flex items-center gap-1.5">
-                  1,204 
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              {/* Card 2: RATING */}
+              <div className="bg-gradient-to-b from-white via-white to-amber-50/50 border border-amber-100/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs hover:shadow-sm transition-all relative overflow-hidden">
+                <div className="w-11 h-11 rounded-xl bg-amber-100/60 border border-amber-200/60 flex items-center justify-center text-amber-500 shrink-0 shadow-inner">
+                  <Star size={20} className="fill-amber-400 text-amber-500" />
+                </div>
+                <div>
+                  <span className="text-amber-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Rating</span>
+                  <span className="text-gray-950 font-black text-lg sm:text-xl leading-none flex items-center gap-1">
+                    4.8 <Star size={13} className="fill-amber-400 text-amber-400" />
                   </span>
-                </span>
+                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">From 50K+ reviews</span>
+                </div>
+              </div>
+
+              {/* Card 3: TOTAL SCANS */}
+              <div className="bg-gradient-to-b from-white via-white to-blue-50/50 border border-blue-100/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs hover:shadow-sm transition-all relative overflow-hidden">
+                <div className="w-11 h-11 rounded-xl bg-blue-100/60 border border-blue-200/60 flex items-center justify-center text-blue-600 shrink-0 shadow-inner">
+                  <QrCode size={20} className="text-blue-600" />
+                </div>
+                <div>
+                  <span className="text-blue-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Total Scans</span>
+                  <span className="text-blue-600 font-black text-lg sm:text-xl leading-none block">2.4M+</span>
+                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">All time scans</span>
+                </div>
+              </div>
+
+              {/* Card 4: TODAY'S SCANS */}
+              <div className="bg-gradient-to-b from-white via-white to-emerald-50/50 border border-emerald-100/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs hover:shadow-sm transition-all relative overflow-hidden">
+                <div className="w-11 h-11 rounded-xl bg-emerald-100/60 border border-emerald-200/60 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
+                  <QrCode size={20} className="text-emerald-600" />
+                </div>
+                <div>
+                  <span className="text-emerald-600 text-[10px] font-extrabold uppercase tracking-wider block mb-0.5">Today's Scans</span>
+                  <span className="text-emerald-700 font-black text-lg sm:text-xl leading-none flex items-center gap-1.5">
+                    1,204 
+                    <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px]">
+                      <TrendingUp size={10} className="stroke-[3]" />
+                    </span>
+                  </span>
+                  <span className="text-[10px] text-gray-500 font-medium block mt-0.5">Live updates</span>
+                </div>
               </div>
             </div>
           </div>
