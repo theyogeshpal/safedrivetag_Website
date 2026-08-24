@@ -1,0 +1,19 @@
+{
+  "name": "SafeDriveTag — India's #1 Smart Vehicle Tag",
+  "short_name": "SafeDriveTag",
+  "icons": [
+    {
+      "src": "/logos/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logos/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ea580c",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

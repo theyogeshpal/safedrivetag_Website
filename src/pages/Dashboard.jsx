@@ -1670,7 +1670,7 @@ export default function Dashboard() {
                                             level="H"
                                             includeMargin={false}
                                             imageSettings={{
-                                              src: "/logos/primary.jpeg",
+                                              src: "/logos/icon.png",
                                               x: undefined,
                                               y: undefined,
                                               height: 18,
@@ -2271,7 +2271,7 @@ export default function Dashboard() {
                   level="H"
                   includeMargin={false}
                   imageSettings={{
-                    src: "/logos/primary.jpeg",
+                    src: "/logos/icon.png",
                     x: undefined,
                     y: undefined,
                     height: 42,
