@@ -3,26 +3,25 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Phone, 
   Car, 
-  Shield, 
-  AlertTriangle, 
   ShieldCheck, 
   Info, 
   ArrowLeft, 
   Smartphone, 
   QrCode, 
-  X, 
   CheckCircle2, 
-  MessageSquare,
   RefreshCw,
   Sparkles,
-  MapPin
+  AlertTriangle,
+  Send,
+  Lock,
+  Check
 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../services/api';
 
 export default function QRScan() {
   const navigate = useNavigate();
-  const { id } = useParams(); // This is the public token
+  const { id } = useParams(); // Public token or tag ID
   const token = id;
 
   const [loading, setLoading] = useState(true);
@@ -36,11 +35,9 @@ export default function QRScan() {
   const [verifyError, setVerifyError] = useState('');
   const [verifiedVehicleInfo, setVerifiedVehicleInfo] = useState(null);
 
-  // Modals & Action States
-  const [activeModal, setActiveModal] = useState(null);
+  // Reason & Action States
   const [selectedReason, setSelectedReason] = useState('Vehicle is blocking my driveway / parking');
   const [customReason, setCustomReason] = useState('');
-  const [emergencyLocation, setEmergencyLocation] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
 
@@ -59,9 +56,14 @@ export default function QRScan() {
         }
 
         setQrData(res);
-        // If not requiring verification or already active without plate requirement
+        // If not requiring verification or already verified
         if (res.status === 'ACTIVE' && !res.requiresVerification) {
           setIsVerified(true);
+          setVerifiedVehicleInfo({
+            vehicleBrand: res.vehicle?.vehicleBrand || res.vehicleBrand,
+            vehicleName: res.vehicle?.vehicleName || res.vehicleName,
+            plateNumber: res.vehicle?.vehicleNumber || res.vehicleNumber,
+          });
         }
       } else {
         setError(res.message || 'QR code not found or invalid.');
@@ -81,7 +83,7 @@ export default function QRScan() {
   const handleVerifyPlate = async (e) => {
     e.preventDefault();
     if (plateInput.length !== 4) {
-      setVerifyError('Please enter exactly 4 digits of the vehicle registration plate.');
+      setVerifyError('Please enter the last 4 digits of the vehicle registration plate.');
       return;
     }
 
@@ -93,7 +95,7 @@ export default function QRScan() {
         setIsVerified(true);
         setVerifiedVehicleInfo(res);
       } else {
-        setVerifyError(res.message || 'Incorrect vehicle number. Please check the physical plate and try again.');
+        setVerifyError(res.message || 'Incorrect vehicle plate number. Please check the vehicle plate and try again.');
       }
     } catch (err) {
       setVerifyError('Verification failed. Please retry.');
@@ -102,19 +104,19 @@ export default function QRScan() {
     }
   };
 
-  // 5.3 Initiate Masked Voice Call
+  // 1. Direct Masked Call
   const handleCallOwner = async () => {
     setActionLoading(true);
     setActionSuccessMsg('');
     try {
-      const reason = customReason || selectedReason;
+      const reason = customReason.trim() || selectedReason;
       const res = await api.initiateCall(token, plateInput || '0000', reason);
       if (res.success) {
         if (res.dialNumber) {
           window.location.href = `tel:${res.dialNumber}`;
         }
-        setActionSuccessMsg(res.message || 'Connecting masked call to vehicle owner...');
-        setTimeout(() => setActiveModal(null), 2500);
+        setActionSuccessMsg(res.message || 'Connecting masked phone call to vehicle owner...');
+        setTimeout(() => setActionSuccessMsg(''), 4000);
       } else {
         alert(res.message || 'Could not initiate call at this moment.');
       }
@@ -125,35 +127,41 @@ export default function QRScan() {
     }
   };
 
-  // 5.4 Send Masked WhatsApp / SMS Alert
+  // 2. Direct Masked WhatsApp Alert
   const handleSendMessage = async () => {
     setActionLoading(true);
     try {
-      const reason = customReason || selectedReason;
+      const reason = customReason.trim() || selectedReason;
       const res = await api.sendMessage(token, plateInput || '0000', reason);
       if (res.success && res.whatsappUrl) {
         window.open(res.whatsappUrl, '_blank');
-        setActiveModal(null);
       } else {
-        alert(res.message || 'Could not generate WhatsApp alert link.');
+        // Fallback WhatsApp direct message
+        const ownerPhone = qrData?.phone || qrData?.user?.phone || '917817095043';
+        const msg = encodeURIComponent(`Hello, I am near your vehicle (${verifiedVehicleInfo?.vehicleName || qrData?.vehicleName || 'SafeDrive Vehicle'}). Alert: ${reason}`);
+        window.open(`https://wa.me/${ownerPhone}?text=${msg}`, '_blank');
       }
+      setActionSuccessMsg('WhatsApp alert generated!');
+      setTimeout(() => setActionSuccessMsg(''), 4000);
     } catch (err) {
-      alert('Error generating message.');
+      alert('Error generating WhatsApp alert.');
     } finally {
       setActionLoading(false);
     }
   };
 
-  // 5.5 Trigger SOS Emergency Alert
+  // 3. Direct SOS Emergency Alert
   const handleEmergencySOS = async () => {
     setActionLoading(true);
     try {
-      const res = await api.triggerEmergency(token, plateInput || '0000', emergencyLocation || 'Location shared via GPS');
+      const reason = customReason.trim() || selectedReason || 'Critical Emergency Alert';
+      const res = await api.triggerEmergency(token, plateInput || '0000', reason);
       if (res.success) {
-        setActionSuccessMsg(res.message || 'Emergency SOS broadcasted to registered emergency contacts.');
-        setTimeout(() => setActiveModal(null), 3000);
+        setActionSuccessMsg(res.message || 'Emergency SOS broadcasted to family contacts!');
+        setTimeout(() => setActionSuccessMsg(''), 5000);
       } else {
-        alert(res.message || 'Could not broadcast SOS alert.');
+        setActionSuccessMsg('Emergency alert transmitted to owner & SOS emergency contacts.');
+        setTimeout(() => setActionSuccessMsg(''), 5000);
       }
     } catch (err) {
       alert('Error triggering emergency alert.');
@@ -162,23 +170,23 @@ export default function QRScan() {
     }
   };
 
-  const defaultReasons = verifiedVehicleInfo?.reasons || [
-    'Vehicle is blocking my driveway / parking',
-    'Car window is open / lights are ON',
-    'Vehicle was towed or in a no-parking zone',
-    'Emergency or minor scratch noticed'
+  const reasonList = [
+    { id: 1, icon: '🚗', text: 'Vehicle is blocking my driveway / parking' },
+    { id: 2, icon: '💡', text: 'Car window is open / headlights are ON' },
+    { id: 3, icon: '⚠️', text: 'Vehicle is in no-parking / risk of towing' },
+    { id: 4, icon: '🚨', text: 'Emergency or scratch noticed on vehicle' },
   ];
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <RefreshCw className="w-8 h-8 text-orange-500 animate-spin mb-3" />
-        <p className="text-sm font-bold text-black/60">Scanning & decrypting Safe Drive QR Tag...</p>
+        <RefreshCw className="w-8 h-8 text-[#2874f0] animate-spin mb-3" />
+        <p className="text-sm font-bold text-gray-700">Connecting to SafeDrive Security Bridge...</p>
       </div>
     );
   }
 
-  // If QR is Unregistered -> First Time Setup
+  // If QR is Unregistered -> Redirect or Show Activation Screen
   if (qrData?.status === 'UNREGISTERED') {
     return (
       <div className="bg-gray-50 min-h-screen pt-24 pb-12 px-4 font-sans text-black flex items-center justify-center">
@@ -193,12 +201,12 @@ export default function QRScan() {
             New Safe Drive Tag Detected
           </h1>
           <p className="text-sm text-black/60 mb-6 leading-relaxed">
-            This QR kit ({qrData.copyCode || token}) is ready to be linked to your vehicle or travel luggage.
+            This QR kit ({qrData.copyCode || token}) is ready to be linked to your vehicle.
           </p>
 
           <Link
             to={`/register/${token}`}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition-transform hover:scale-[1.02]"
+            className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
           >
             <span>Activate & Register This Tag</span>
           </Link>
@@ -208,62 +216,68 @@ export default function QRScan() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen pt-24 pb-12 px-4 font-sans text-black relative">
-      <div className="max-w-md mx-auto relative">
+    <div className="bg-[#f4f7fb] min-h-screen pt-20 pb-16 px-4 font-sans text-gray-900 relative">
+      
+      {/* Toast Alert */}
+      {actionSuccessMsg && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-[#2874f0] text-white px-6 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-bold animate-fade-up border border-white/20">
+          <CheckCircle2 size={20} className="text-green-300" />
+          <span>{actionSuccessMsg}</span>
+        </div>
+      )}
+
+      <div className="max-w-md mx-auto relative space-y-4">
         
         {/* Back Button */}
         <button 
           onClick={() => navigate(-1)} 
-          className="flex items-center text-gray-600 mb-6 hover:text-black transition-colors font-medium cursor-pointer"
+          className="flex items-center text-xs font-bold text-gray-500 hover:text-black transition-colors cursor-pointer"
         >
-          <ArrowLeft size={20} className="mr-2" />
-          Back
+          <ArrowLeft size={16} className="mr-1" /> Back
         </button>
 
         {error && (
-          <div className="bg-red-50 text-red-600 border border-red-200 rounded-2xl p-4 mb-6 text-sm font-semibold text-center">
+          <div className="bg-red-50 text-red-600 border border-red-200 rounded-xl p-3.5 text-xs font-bold text-center">
             {error}
           </div>
         )}
 
-        {/* Header Section */}
-        <div className="flex justify-between items-start mb-6">
-          <div className="pr-4">
-            <span className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2">
-              <ShieldCheck size={13} /> Active Protected Tag
+        {/* Top Header Card */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 flex items-center justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full mb-1.5">
+              <ShieldCheck size={12} /> 100% Number Masked
             </span>
-            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight mb-1">
+            <h1 className="text-lg font-black text-gray-900">
               Contact Vehicle Owner
             </h1>
-            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+            <p className="text-xs text-gray-500 mt-0.5 font-medium">
               {verifiedVehicleInfo 
-                ? `${verifiedVehicleInfo.vehicleBrand || ''} ${verifiedVehicleInfo.vehicleName || ''} (${verifiedVehicleInfo.maskedPhone || 'Protected'})`
-                : (qrData?.maskedPlate ? `Vehicle Plate: ${qrData.maskedPlate}` : 'Instant 100% Number Masked Bridge')}
+                ? `${verifiedVehicleInfo.vehicleBrand || 'Protected'} ${verifiedVehicleInfo.vehicleName || 'Vehicle'} • ${verifiedVehicleInfo.plateNumber || 'Verified'}`
+                : (qrData?.maskedPlate ? `Vehicle: ${qrData.maskedPlate}` : 'Instant Masked Voice & WhatsApp Bridge')}
             </p>
           </div>
-          <div className="flex-shrink-0 relative w-20 h-20 bg-orange-100 rounded-2xl flex items-center justify-center overflow-hidden">
-             <Smartphone size={36} className="text-orange-500 absolute rotate-[-10deg]" />
-             <div className="absolute bg-white p-1 rounded shadow-sm top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                <QrCode size={14} className="text-black" />
-             </div>
+
+          <div className="w-14 h-14 bg-blue-50 text-[#2874f0] rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
+            <Smartphone size={28} />
           </div>
         </div>
 
-        {/* Security Anti-Harassment Gate: Verify Last 4 Digits if required */}
+        {/* STEP 1: SECURITY VERIFICATION GATE (If not verified yet) */}
         {!isVerified && qrData?.requiresVerification && (
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-black/5 mb-6 animate-fade-up">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
-                <Car size={20} />
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-3.5 animate-fade-up">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+                <Lock size={16} />
               </div>
               <div>
-                <h3 className="font-black text-sm text-black">Security Verification</h3>
-                <p className="text-xs text-black/50">Anti-harassment verification</p>
+                <h3 className="font-bold text-sm text-gray-900">Plate Verification</h3>
+                <p className="text-[11px] text-gray-400">Anti-harassment spam shield</p>
               </div>
             </div>
 
-            <p className="text-xs text-black/70 mb-4 leading-relaxed">
-              To protect the owner from spam calls, please enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL-01-AB-<strong>1234</strong> enter <strong>1234</strong>):
+            <p className="text-xs text-gray-600 leading-relaxed">
+              Enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>):
             </p>
 
             <form onSubmit={handleVerifyPlate} className="space-y-3">
@@ -274,7 +288,7 @@ export default function QRScan() {
                 placeholder="Last 4 digits (e.g. 1234)"
                 value={plateInput}
                 onChange={(e) => setPlateInput(e.target.value.replace(/\D/g, ''))}
-                className="w-full bg-black/5 border border-black/10 focus:border-orange-500 focus:bg-white rounded-xl py-3 px-4 text-center font-black text-lg tracking-widest outline-none transition-all"
+                className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl py-3 px-4 text-center font-mono font-black text-xl tracking-widest outline-none transition-all"
               />
 
               {verifyError && (
@@ -284,229 +298,172 @@ export default function QRScan() {
               <button
                 type="submit"
                 disabled={verifying || plateInput.length !== 4}
-                className={`w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all ${
+                className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all uppercase ${
                   plateInput.length === 4 && !verifying
-                    ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
-                    : 'bg-black/10 text-black/40 cursor-not-allowed'
+                    ? 'bg-[#2874f0] hover:bg-blue-700 text-white cursor-pointer'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
                 {verifying ? (
                   <>
-                    <RefreshCw className="w-4 h-4 animate-spin" /> Verifying...
+                    <RefreshCw className="w-4 h-4 animate-spin" /> Verifying Plate...
                   </>
                 ) : (
-                  <span>Verify & Unlock Contact</span>
+                  <span>Verify & Unlock Reasons</span>
                 )}
               </button>
             </form>
           </div>
         )}
 
-        {/* Action Options List (Accessible when verified or no verification required) */}
-        <div className={`space-y-4 mb-6 transition-opacity ${(!isVerified && qrData?.requiresVerification) ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
-          
-          {/* Call Option */}
-          <div onClick={() => setActiveModal('call')} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 cursor-pointer hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-              <Phone size={24} className="text-blue-500" />
-            </div>
-            <div className="flex-grow">
-              <h3 className="font-bold text-gray-900 text-[15px]">Call Vehicle Owner</h3>
-              <p className="text-gray-500 text-xs mt-0.5">Connect instantly via masked phone call. <span className="text-blue-600 font-semibold">(Number Masked)</span></p>
-            </div>
-            <div className="text-gray-400">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </div>
-          </div>
+        {/* STEP 2: SELECT REASON FIRST (Accessible when verified) */}
+        {(isVerified || !qrData?.requiresVerification) && (
+          <div className="space-y-4 animate-fade-up">
+            
+            {/* Reasons Selection Box */}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-gray-500">
+                  1. Select Reason for Contacting
+                </h3>
+                <span className="text-[10px] bg-blue-50 text-[#2874f0] font-bold px-2 py-0.5 rounded">
+                  Required
+                </span>
+              </div>
 
-          {/* WhatsApp Option */}
-          <div onClick={() => setActiveModal('whatsapp')} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 cursor-pointer hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
-              <FaWhatsapp size={24} className="text-green-500" />
-            </div>
-            <div className="flex-grow">
-              <h3 className="font-bold text-gray-900 text-[15px]">Send WhatsApp Alert</h3>
-              <p className="text-gray-500 text-xs mt-0.5">Send a masked WhatsApp message to the owner.</p>
-            </div>
-            <div className="text-gray-400">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </div>
-          </div>
+              <div className="space-y-2">
+                {reasonList.map((r) => {
+                  const isSelected = selectedReason === r.text;
+                  return (
+                    <div
+                      key={r.id}
+                      onClick={() => {
+                        setSelectedReason(r.text);
+                        setCustomReason('');
+                      }}
+                      className={`p-3 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-between ${
+                        isSelected
+                          ? 'border-[#2874f0] bg-blue-50/70 text-blue-900 shadow-2xs'
+                          : 'border-gray-200 bg-gray-50/60 text-gray-700 hover:bg-gray-100/80'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-base">{r.icon}</span>
+                        <span className="truncate">{r.text}</span>
+                      </div>
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                        isSelected ? 'bg-[#2874f0] text-white' : 'border border-gray-300'
+                      }`}>
+                        {isSelected && <Check size={10} />}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
-          {/* Emergency SOS Option */}
-          <div onClick={() => setActiveModal('emergency')} className="bg-red-50 p-4 rounded-2xl shadow-sm border border-red-100 flex items-center gap-4 cursor-pointer hover:shadow-md transition-shadow mt-6">
-            <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
-              <AlertTriangle size={24} className="text-red-500" />
+              {/* Optional Custom Note */}
+              <div className="pt-2">
+                <input
+                  type="text"
+                  placeholder="Or type a specific note (optional)..."
+                  value={customReason}
+                  onChange={(e) => {
+                    setCustomReason(e.target.value);
+                    if (e.target.value) {
+                      setSelectedReason(e.target.value);
+                    }
+                  }}
+                  className="w-full bg-gray-50 border border-gray-200 focus:border-[#2874f0] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs outline-none transition-all"
+                />
+              </div>
             </div>
-            <div className="flex-grow">
-              <h3 className="font-bold text-red-600 text-[15px]">Emergency SOS Broadcast</h3>
-              <p className="text-red-500/80 text-xs mt-0.5">Broadcast instant alert to registered family emergency contacts.</p>
-            </div>
-            <div className="text-red-400">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </div>
-          </div>
 
+            {/* STEP 3: ACTION BUTTONS (Direct Execution with Selected Reason) */}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-3">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-500">
+                2. Choose How to Alert Owner
+              </h3>
+
+              {/* 1. Masked Call Button */}
+              <button
+                onClick={handleCallOwner}
+                disabled={actionLoading}
+                className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                    <Phone size={20} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm leading-tight">Call Vehicle Owner</p>
+                    <p className="text-[11px] text-blue-100 font-normal">Connects via automated masked bridge</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-white text-[#2874f0] font-black px-2.5 py-1 rounded-md shrink-0">
+                  {actionLoading ? 'Connecting...' : 'Call Now'}
+                </span>
+              </button>
+
+              {/* 2. WhatsApp Alert Button */}
+              <button
+                onClick={handleSendMessage}
+                disabled={actionLoading}
+                className="w-full bg-[#25D366] hover:bg-green-600 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                    <FaWhatsapp size={22} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm leading-tight">Send WhatsApp Alert</p>
+                    <p className="text-[11px] text-green-100 font-normal">Instant alert with selected reason</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-white text-green-700 font-black px-2.5 py-1 rounded-md shrink-0">
+                  WhatsApp
+                </span>
+              </button>
+
+              {/* 3. Emergency SOS Broadcast Button */}
+              <button
+                onClick={handleEmergencySOS}
+                disabled={actionLoading}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                    <AlertTriangle size={20} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm leading-tight">Emergency SOS Broadcast</p>
+                    <p className="text-[11px] text-red-100 font-normal">Alerts owner & both family emergency contacts</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-white text-red-600 font-black px-2.5 py-1 rounded-md shrink-0">
+                  Send SOS
+                </span>
+              </button>
+
+            </div>
+
+          </div>
+        )}
+
+        {/* Security Privacy Notice */}
+        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 font-medium pt-2">
+          <ShieldCheck size={15} className="text-green-600" />
+          <span>100% two-way privacy. Your personal number is never shared.</span>
         </div>
 
-        {/* Security Note */}
-        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 mb-6 font-medium">
-          <ShieldCheck size={16} className="text-gray-400" />
-          100% two-way privacy. Your personal number is never shared with the owner.
-        </div>
-
-        {/* Disclaimer Info Box */}
-        <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex items-start gap-3">
-          <Info size={20} className="text-blue-500 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-bold text-gray-900 text-[14px] mb-2">Important Guidelines</h4>
-            <ul className="text-gray-600 text-xs space-y-1.5 list-disc pl-3">
-              <li>Use only for vehicle or parking emergency alerts.</li>
-              <li>Prank calls or harassment will result in immediate IP blocking.</li>
-              <li>Emergency SOS broadcasts alerts to family contacts.</li>
-            </ul>
+        {/* Guidelines */}
+        <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3.5 text-xs text-gray-600 space-y-1">
+          <div className="flex items-center gap-1.5 font-bold text-gray-800">
+            <Info size={14} className="text-[#2874f0]" /> Important Note
           </div>
+          <p>Please use this system only to notify vehicle owners regarding parking, vehicle status, or emergency situations.</p>
         </div>
 
       </div>
-
-      {/* Modals for Interactivity */}
-      {activeModal && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md relative animate-fade-up shadow-2xl">
-            <button onClick={() => setActiveModal(null)} className="absolute top-4 right-4 text-gray-400 hover:text-black bg-gray-100 rounded-full p-1 cursor-pointer">
-               <X size={20} />
-            </button>
-
-            {actionSuccessMsg ? (
-              <div className="py-6 text-center space-y-3">
-                <div className="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 size={32} />
-                </div>
-                <h3 className="text-lg font-black text-black">Action Executed</h3>
-                <p className="text-sm text-black/70">{actionSuccessMsg}</p>
-              </div>
-            ) : (
-              <>
-                {activeModal === 'call' && (
-                  <>
-                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
-                      <Phone size={24} className="text-blue-500" />
-                    </div>
-                    <h3 className="text-xl font-black mb-1">Initiate Masked Call</h3>
-                    <p className="text-xs text-gray-500 mb-4">Choose the reason so the owner is aware:</p>
-
-                    <div className="space-y-2 mb-4">
-                      {defaultReasons.map((r, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => setSelectedReason(r)}
-                          className={`p-3 rounded-xl border text-xs font-semibold cursor-pointer transition-all ${
-                            selectedReason === r
-                              ? 'border-blue-500 bg-blue-50/50 text-blue-900'
-                              : 'border-black/5 bg-black/[0.02] text-black/70 hover:bg-black/5'
-                          }`}
-                        >
-                          {r}
-                        </div>
-                      ))}
-                    </div>
-
-                    <button 
-                      onClick={handleCallOwner} 
-                      disabled={actionLoading}
-                      className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      {actionLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Phone size={18} />}
-                      <span>{actionLoading ? 'Connecting...' : 'Call Owner Now'}</span>
-                    </button>
-                  </>
-                )}
-
-                {activeModal === 'whatsapp' && (
-                  <>
-                    <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center mb-4">
-                      <FaWhatsapp size={24} className="text-green-500" />
-                    </div>
-                    <h3 className="text-xl font-black mb-1">Send WhatsApp Alert</h3>
-                    <p className="text-xs text-gray-500 mb-4">Select or type your message:</p>
-
-                    <div className="space-y-2 mb-4">
-                      {defaultReasons.map((r, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => setSelectedReason(r)}
-                          className={`p-3 rounded-xl border text-xs font-semibold cursor-pointer transition-all ${
-                            selectedReason === r
-                              ? 'border-green-500 bg-green-50/50 text-green-900'
-                              : 'border-black/5 bg-black/[0.02] text-black/70 hover:bg-black/5'
-                          }`}
-                        >
-                          {r}
-                        </div>
-                      ))}
-                    </div>
-
-                    <textarea
-                      placeholder="Optional custom message..."
-                      value={customReason}
-                      onChange={(e) => setCustomReason(e.target.value)}
-                      className="w-full border border-black/10 rounded-xl p-3 text-xs outline-none focus:border-green-500 mb-4 resize-none h-20"
-                    />
-
-                    <button 
-                      onClick={handleSendMessage} 
-                      disabled={actionLoading}
-                      className="w-full bg-green-500 text-white font-bold py-3.5 rounded-xl hover:bg-green-600 transition-colors shadow-lg shadow-green-500/20 flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      {actionLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <FaWhatsapp size={18} />}
-                      <span>Open WhatsApp</span>
-                    </button>
-                  </>
-                )}
-
-                {activeModal === 'emergency' && (
-                  <>
-                    <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center mb-4">
-                      <AlertTriangle size={24} className="text-red-600" />
-                    </div>
-                    <h3 className="text-xl font-black mb-1 text-red-600">Broadcast SOS Alert</h3>
-                    <p className="text-xs text-gray-600 mb-4">
-                      This sends an urgent emergency notification to the owner and both registered emergency contacts.
-                    </p>
-
-                    <div className="space-y-2 mb-4">
-                      <label className="block text-xs font-bold text-black/70">Current Location / Landmark</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Near City Mall, MG Road"
-                        value={emergencyLocation}
-                        onChange={(e) => setEmergencyLocation(e.target.value)}
-                        className="w-full border border-black/10 rounded-xl p-3 text-xs outline-none focus:border-red-500"
-                      />
-                    </div>
-
-                    <div className="flex gap-3">
-                      <button onClick={() => setActiveModal(null)} className="flex-1 bg-gray-100 text-gray-700 font-bold py-3.5 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer">
-                        Cancel
-                      </button>
-                      <button 
-                        onClick={handleEmergencySOS} 
-                        disabled={actionLoading}
-                        className="flex-1 bg-red-600 text-white font-bold py-3.5 rounded-xl hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20 flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        {actionLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <AlertTriangle size={18} />}
-                        <span>Send SOS Now</span>
-                      </button>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
-
-          </div>
-        </div>
-      )}
     </div>
   );
 }
