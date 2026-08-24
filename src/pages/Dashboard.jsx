@@ -1117,8 +1117,12 @@ export default function Dashboard() {
                                 onClick={() => setEditingTag(tag)}
                                 className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                               >
-                                <Edit3 size={13} /> Edit
-                              </button>
+                              <Link
+                                to={`/dashboard/tag/${tag.publicToken || tag.id}`}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+                              >
+                                <Eye size={13} /> View Full Kit Details
+                              </Link>
 
                               <button
                                 onClick={() => handleDeleteTag(tag.id)}
@@ -1130,11 +1134,11 @@ export default function Dashboard() {
                             </div>
 
                             <Link
-                              to={`/q/${tag.id}`}
+                              to={`/q/${tag.publicToken || tag.id}`}
                               target="_blank"
                               className="text-xs font-bold text-[#2874f0] hover:underline flex items-center gap-1"
                             >
-                              <Eye size={13} /> Test Public QR Scan Page <ExternalLink size={11} />
+                              <ExternalLink size={12} /> Test Public QR Scan Page
                             </Link>
                           </div>
 

@@ -14,6 +14,7 @@ import Checkout from './pages/Checkout';
 import Legal from './pages/Legal';
 import QRScan from './pages/QRScan';
 import RegisterTag from './pages/RegisterTag';
+import TagDetails from './pages/TagDetails';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
@@ -51,6 +52,8 @@ function App() {
               <Route path="/shipping" element={<Legal />} />
               <Route path="/login" element={<Login />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/tag/:id" element={<TagDetails />} />
+              <Route path="/tag/:id" element={<TagDetails />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/q/:id" element={<QRScan />} />
               <Route path="/qr/:id" element={<QRScan />} />
