@@ -124,13 +124,21 @@ export default function TagDetails() {
       }
 
       // Build unified Tag Details Model
-      const reg = locallyRegistered[id] || {};
-      const primaryToken = qrApiRes?.token || qrApiRes?.publicToken || id;
+      const reg = locallyRegistered[id] || 
+                  (dashKit?.copies?.[0]?.publicToken && locallyRegistered[dashKit.copies[0].publicToken]) || 
+                  (matchedAllocated?.[0]?.publicToken && locallyRegistered[matchedAllocated[0].publicToken]) || 
+                  {};
+
+      const isRegistered = (qrApiRes?.status === 'ACTIVE') || 
+                           !!(reg.vehicleNumber) || 
+                           !!(qrApiRes?.vehicle?.vehicleNumber) || 
+                           !!(dashKit?.vehicle?.vehicleNumber);
+
       const baseKitCode = qrApiRes?.kitId || (foundOrder?.orderNumber ? `KIT-${foundOrder.orderNumber.slice(-5)}` : `SD-${id.slice(0, 6).toUpperCase()}`);
       
-      const vBrand = qrApiRes?.vehicle?.vehicleBrand || qrApiRes?.vehicleBrand || reg.vehicleBrand || dashKit?.vehicle?.vehicleBrand || foundOrder?.productName || 'SafeDrive';
-      const vName = qrApiRes?.vehicle?.vehicleName || qrApiRes?.vehicleName || reg.vehicleName || dashKit?.vehicle?.vehicleName || foundOrder?.title || 'Vehicle Smart Tag';
-      const vPlate = qrApiRes?.vehicle?.vehicleNumber || qrApiRes?.vehicleNumber || reg.vehicleNumber || dashKit?.vehicle?.vehicleNumber || 'PROTECTED';
+      const vBrand = qrApiRes?.vehicle?.vehicleBrand || qrApiRes?.vehicleBrand || reg.vehicleBrand || dashKit?.vehicle?.vehicleBrand || (isRegistered ? 'Vehicle' : 'SafeDrive');
+      const vName = qrApiRes?.vehicle?.vehicleName || qrApiRes?.vehicleName || reg.vehicleName || dashKit?.vehicle?.vehicleName || foundOrder?.title || 'Smart Vehicle Tag';
+      const vPlate = qrApiRes?.vehicle?.vehicleNumber || qrApiRes?.vehicleNumber || reg.vehicleNumber || dashKit?.vehicle?.vehicleNumber || (isRegistered ? 'REGISTERED' : 'Not Linked Yet');
       const vType = qrApiRes?.vehicle?.vehicleType || qrApiRes?.vehicleType || reg.vehicleType || dashKit?.vehicle?.vehicleType || 'Car';
 
       const emergencyList = qrApiRes?.emergencyContacts || qrApiRes?.vehicle?.emergencyContacts || reg.emergencyContacts || (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
@@ -154,6 +162,8 @@ export default function TagDetails() {
         ];
       }
 
+      const isDigital = foundOrder?.qrType === 'DIGITAL' || foundOrder?.productType === 'DIGITAL' || qrApiRes?.qrType === 'DIGITAL';
+
       const buyDate = foundOrder?.createdAt 
         ? new Date(foundOrder.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
         : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -165,9 +175,11 @@ export default function TagDetails() {
       const unified = {
         kitId: baseKitCode,
         currentTagId: id,
-        status: qrApiRes?.status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
+        isRegistered,
+        isDigital,
+        status: isRegistered ? 'ACTIVE' : 'UNLINKED',
         category: vType,
-        qrType: foundOrder?.qrType || foundOrder?.productType || 'DIGITAL',
+        qrType: isDigital ? 'DIGITAL' : 'PHYSICAL',
         totalStickers: copies.length,
         copies,
         vehicle: {
@@ -212,9 +224,9 @@ export default function TagDetails() {
         name: unified.owner.name,
         phone: unified.owner.phone,
         whatsappNumber: unified.owner.whatsapp,
-        vehicleBrand: unified.vehicle.brand,
-        vehicleName: unified.vehicle.name,
-        vehicleNumber: unified.vehicle.plate,
+        vehicleBrand: unified.vehicle.brand === 'SafeDrive' ? '' : unified.vehicle.brand,
+        vehicleName: unified.vehicle.name === 'Smart Vehicle Tag' ? '' : unified.vehicle.name,
+        vehicleNumber: unified.vehicle.plate === 'Not Linked Yet' ? '' : unified.vehicle.plate,
         vehicleType: unified.vehicle.type,
         address: unified.owner.address,
         emergencyContact1Name: unified.emergencyContacts[0]?.name || '',
@@ -352,12 +364,17 @@ export default function TagDetails() {
                     <span>🏷️ Kit:</span>
                     <span className="font-mono">{tagData.kitId}</span>
                   </h1>
-                  <span className="bg-green-50 text-green-700 border border-green-200 px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> ACTIVE PROTECTION
+                  <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase flex items-center gap-1 border ${
+                    tagData.isRegistered
+                      ? 'bg-green-50 text-green-700 border-green-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${tagData.isRegistered ? 'bg-green-500' : 'bg-amber-500 animate-pulse'}`} />
+                    {tagData.isRegistered ? 'ACTIVE PROTECTION' : 'READY TO ACTIVATE'}
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 font-medium mt-1">
-                  Category: <strong className="text-gray-800">{tagData.category}</strong> • <span className="text-purple-600 font-bold uppercase">DIGITAL PASS</span> • {tagData.totalStickers} Physical Stickers in this kit
+                  Category: <strong className="text-gray-800">{tagData.category}</strong> • <span className="text-purple-600 font-bold uppercase">{tagData.isDigital ? 'DIGITAL E-KIT' : 'PHYSICAL KIT'}</span> • {tagData.totalStickers} {tagData.isDigital ? 'Printable Passes' : 'Physical Stickers'} in this kit
                 </p>
               </div>
             </div>
@@ -365,7 +382,7 @@ export default function TagDetails() {
             {/* Right Action Buttons */}
             <div className="flex items-center gap-2.5 self-start md:self-auto">
               <button
-                onClick={() => alert(`Subscription for ${tagData.kitId} is already 1-Year Active!`)}
+                onClick={() => alert(`Subscription for ${tagData.kitId} is active (Valid till ${tagData.order.expiresOn})`)}
                 className="bg-[#2874f0] hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
                 <RefreshCw size={13} /> Renew (₹199/yr)
@@ -420,27 +437,49 @@ export default function TagDetails() {
                     <p className="text-[11px] text-gray-500">Asset linked to this safety sticker</p>
                   </div>
                 </div>
-                <span className="bg-gray-100 text-gray-700 text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 border border-gray-200">
-                  <Lock size={11} className="text-gray-500" /> Locked & Protected
+                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 border ${
+                  tagData.isRegistered
+                    ? 'bg-green-50 text-green-700 border-green-200'
+                    : 'bg-amber-50 text-amber-700 border-amber-200'
+                }`}>
+                  <Lock size={11} className={tagData.isRegistered ? 'text-green-600' : 'text-amber-600'} />
+                  {tagData.isRegistered ? 'Locked & Protected' : 'Setup Pending'}
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">BRAND / MAKE</p>
-                  <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.brand}</p>
+              {!tagData.isRegistered ? (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <p className="font-bold text-amber-900 text-xs">Vehicle Link & Activation Pending</p>
+                    <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
+                      Link your vehicle registration number and 2 emergency contacts to activate instant scan and call privacy.
+                    </p>
+                  </div>
+                  <Link
+                    to={`/register/${tagData.currentTagId}`}
+                    className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-lg text-xs shrink-0 shadow-xs text-center transition-colors"
+                  >
+                    + Link Vehicle Now
+                  </Link>
                 </div>
-                <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">MODEL / NAME</p>
-                  <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.name}</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">BRAND / MAKE</p>
+                    <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.brand}</p>
+                  </div>
+                  <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">MODEL / NAME</p>
+                    <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.name}</p>
+                  </div>
+                  <div className="bg-purple-50/70 border border-purple-200 p-3.5 rounded-xl">
+                    <p className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">VEHICLE PLATE NUMBER</p>
+                    <p className="text-base font-black text-purple-950 font-mono tracking-wider mt-0.5 uppercase">
+                      {tagData.vehicle.plate}
+                    </p>
+                  </div>
                 </div>
-                <div className="bg-purple-50/70 border border-purple-200 p-3.5 rounded-xl">
-                  <p className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">VEHICLE PLATE NUMBER</p>
-                  <p className="text-base font-black text-purple-950 font-mono tracking-wider mt-0.5 uppercase">
-                    {tagData.vehicle.plate}
-                  </p>
-                </div>
-              </div>
+              )}
 
               <div className="text-[11px] text-gray-500 flex items-center gap-1.5 pt-1">
                 <Lock size={12} className="text-gray-400" />
