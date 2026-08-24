@@ -79,103 +79,119 @@ export default function DashboardTags() {
             console.error(e);
           }
 
-          const rawAllocated = [];
+          // Group allocated QR copies by Kit (1 Card per Vehicle Kit)
+          const rawAllocatedKits = [];
           ordersRes.orders.forEach((ord) => {
             if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
-              ord.allocatedQRIds.forEach((qr, qIdx) => {
-                const token = qr.publicToken || qr.copyCode || qr._id;
-                const copyCode = qr.copyCode || `COPY-${qIdx + 1}`;
-                const regInfo = locallyRegistered[token] || locallyRegistered[copyCode] || locallyRegistered[qr.copyCode] || locallyRegistered[qr._id];
+              const firstCopy = ord.allocatedQRIds[0];
+              const primaryToken = firstCopy.publicToken || firstCopy.copyCode || firstCopy._id || ord._id;
+              const baseKitCode = firstCopy.copyCode ? firstCopy.copyCode.replace(/C[0-9]+$/, '') : `SD00${rawAllocatedKits.length + 1}`;
 
-                const isPhysical = ord.productName?.toLowerCase().includes('physical') || 
-                                   ord.title?.toLowerCase().includes('physical') || 
-                                   ord.productType === 'PHYSICAL' || 
-                                   qr.qrType === 'PHYSICAL' ||
-                                   copyCode?.startsWith('PHY') || 
-                                   token?.startsWith('PHY');
+              // Check if any copy in this kit has local registration info
+              let regInfo = null;
+              for (const qr of ord.allocatedQRIds) {
+                const t = qr.publicToken || qr.copyCode || qr._id;
+                const cc = qr.copyCode;
+                if (locallyRegistered[t] || locallyRegistered[cc] || locallyRegistered[baseKitCode]) {
+                  regInfo = locallyRegistered[t] || locallyRegistered[cc] || locallyRegistered[baseKitCode];
+                  break;
+                }
+              }
 
-                const resolvedQrType = isPhysical ? 'PHYSICAL' : (qr.qrType || ord.productType || 'DIGITAL');
+              const isPhysical = ord.productName?.toLowerCase().includes('physical') || 
+                                 ord.title?.toLowerCase().includes('physical') || 
+                                 ord.productType === 'PHYSICAL' || 
+                                 firstCopy.qrType === 'PHYSICAL' ||
+                                 baseKitCode?.startsWith('PHY') || 
+                                 primaryToken?.startsWith('PHY');
 
-                rawAllocated.push({
-                  id: copyCode,
-                  publicToken: token,
-                  copyCode: copyCode,
-                  productId: qr.productId || ord.productName || 'SafeDrive Smart Tag',
-                  name: regInfo?.name || ord.customerName || currentUser?.name || 'Owner',
-                  phone: regInfo?.phone || ord.customerPhone || currentUser?.phone,
-                  emergencyContact: regInfo?.emergencyContacts?.[0]?.number || null,
-                  emergencyContacts: regInfo?.emergencyContacts || [],
-                  whatsapp: regInfo?.whatsappNumber || ord.customerPhone || currentUser?.phone,
-                  vehicleNumber: regInfo?.vehicleNumber || qr.vehicleNumber || null,
-                  vehicleName: regInfo ? `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() : `${ord.productName || 'SafeDrive Smart Tag'} (Copy ${qIdx + 1})`,
-                  vehicleType: regInfo?.vehicleType || qr.qrFor || 'Car',
-                  status: 'active',
-                  qrType: resolvedQrType,
-                  orderNumber: ord.orderNumber,
-                  registeredAt: qr.createdAt?.split('T')[0] || ord.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-                  callBalance: qr.initialCalls ?? 10,
-                  messageBalance: qr.initialMessages ?? 20,
-                  scansCount: 0,
-                  callMaskingEnabled: true,
-                  whatsappAlertsEnabled: true,
-                });
+              const resolvedQrType = isPhysical ? 'PHYSICAL' : (firstCopy.qrType || ord.productType || 'DIGITAL');
+
+              rawAllocatedKits.push({
+                id: baseKitCode,
+                kitId: baseKitCode,
+                primaryToken: primaryToken,
+                publicToken: primaryToken,
+                copyCode: baseKitCode,
+                copiesCount: ord.allocatedQRIds.length,
+                copies: ord.allocatedQRIds,
+                productId: ord.productName || 'SafeDrive Vehicle Safety Kit',
+                name: regInfo?.name || ord.customerName || currentUser?.name || 'Owner',
+                phone: regInfo?.phone || ord.customerPhone || currentUser?.phone,
+                emergencyContact: regInfo?.emergencyContacts?.[0]?.number || null,
+                emergencyContacts: regInfo?.emergencyContacts || [],
+                whatsapp: regInfo?.whatsappNumber || ord.customerPhone || currentUser?.phone,
+                vehicleNumber: regInfo?.vehicleNumber || firstCopy.vehicleNumber || 'ACTIVE PROTECTED',
+                vehicleName: regInfo ? `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() : (ord.productName || 'Vehicle Safety Kit'),
+                vehicleType: regInfo?.vehicleType || firstCopy.qrFor || 'Car',
+                status: 'active',
+                qrType: resolvedQrType,
+                orderNumber: ord.orderNumber,
+                registeredAt: ord.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+                callBalance: firstCopy.initialCalls ?? 10,
+                messageBalance: firstCopy.initialMessages ?? 20,
+                scansCount: 0,
+                callMaskingEnabled: true,
+                whatsappAlertsEnabled: true,
               });
             }
           });
 
-          // Fetch Live Public QR API Data in Parallel
+          // Fetch Live Public QR API Data in Parallel for each kit
           const liveQrResults = await Promise.allSettled(
-            rawAllocated.map(async (at) => {
-              const regInfo = locallyRegistered[at.publicToken] || locallyRegistered[at.copyCode] || locallyRegistered[at.id];
+            rawAllocatedKits.map(async (kit) => {
+              const regInfo = locallyRegistered[kit.primaryToken] || 
+                              locallyRegistered[kit.copyCode] || 
+                              locallyRegistered[kit.id];
               try {
-                const qrRes = await api.getPublicQrInfo(at.publicToken);
+                const qrRes = await api.getPublicQrInfo(kit.primaryToken);
                 if (qrRes && qrRes.success) {
                   const vNumber = (qrRes.vehicle?.vehicleNumber && qrRes.vehicle.vehicleNumber !== 'Not Linked Yet') 
                     ? qrRes.vehicle.vehicleNumber 
-                    : (qrRes.vehicleNumber || regInfo?.vehicleNumber || at.vehicleNumber);
+                    : (qrRes.vehicleNumber || regInfo?.vehicleNumber || kit.vehicleNumber);
                   
                   const vBrand = qrRes.vehicle?.vehicleBrand || qrRes.vehicleBrand || regInfo?.vehicleBrand || '';
                   const vModel = qrRes.vehicle?.vehicleName || qrRes.vehicleName || regInfo?.vehicleName || '';
-                  const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : at.vehicleName;
-                  const eContacts = qrRes.emergencyContacts || qrRes.vehicle?.emergencyContacts || regInfo?.emergencyContacts || at.emergencyContacts;
+                  const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : kit.vehicleName;
+                  const eContacts = qrRes.emergencyContacts || qrRes.vehicle?.emergencyContacts || regInfo?.emergencyContacts || kit.emergencyContacts;
 
                   return {
-                    ...at,
+                    ...kit,
                     status: 'active',
                     vehicleNumber: vNumber || 'ACTIVE PROTECTED',
                     vehicleName: vTitle,
-                    vehicleType: qrRes.vehicle?.vehicleType || qrRes.vehicleType || regInfo?.vehicleType || at.vehicleType,
+                    vehicleType: qrRes.vehicle?.vehicleType || qrRes.vehicleType || regInfo?.vehicleType || kit.vehicleType,
                     emergencyContacts: eContacts,
-                    emergencyContact: eContacts?.[0]?.number || at.emergencyContact,
+                    emergencyContact: eContacts?.[0]?.number || kit.emergencyContact,
                     totalCalls: qrRes.wallet?.totalCalls || qrRes.totalCalls || 10,
                     totalMessages: qrRes.wallet?.totalMessages || qrRes.totalMessages || 20,
-                    callBalance: qrRes.wallet?.callBalance ?? at.callBalance,
-                    messageBalance: qrRes.wallet?.messageBalance ?? at.messageBalance,
+                    callBalance: qrRes.wallet?.callBalance ?? kit.callBalance,
+                    messageBalance: qrRes.wallet?.messageBalance ?? kit.messageBalance,
                     scansCount: qrRes.scansCount ?? 0,
                   };
                 }
               } catch (e) {
-                console.error('Error fetching live QR info', e);
+                console.error('Error fetching live QR info for kit', kit.primaryToken, e);
               }
 
               if (regInfo && regInfo.vehicleNumber) {
                 return {
-                  ...at,
+                  ...kit,
                   status: 'active',
                   vehicleNumber: regInfo.vehicleNumber,
-                  vehicleName: `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() || at.vehicleName,
-                  vehicleType: regInfo.vehicleType || at.vehicleType,
-                  emergencyContacts: regInfo.emergencyContacts || at.emergencyContacts,
-                  emergencyContact: regInfo.emergencyContacts?.[0]?.number || at.emergencyContact,
-                  whatsapp: regInfo.whatsappNumber || at.whatsapp,
+                  vehicleName: `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() || kit.vehicleName,
+                  vehicleType: regInfo.vehicleType || kit.vehicleType,
+                  emergencyContacts: regInfo.emergencyContacts || kit.emergencyContacts,
+                  emergencyContact: regInfo.emergencyContacts?.[0]?.number || kit.emergencyContact,
+                  whatsapp: regInfo.whatsappNumber || kit.whatsapp,
                 };
               }
 
-              return at;
+              return kit;
             })
           );
 
-          allocatedFromOrders = liveQrResults.map((r, i) => (r.status === 'fulfilled' ? r.value : rawAllocated[i]));
+          allocatedFromOrders = liveQrResults.map((r, i) => (r.status === 'fulfilled' ? r.value : rawAllocatedKits[i]));
         }
       } catch (e) {
         console.error('Error loading orders for tags', e);
@@ -195,54 +211,34 @@ export default function DashboardTags() {
               const vBrand = kit.vehicle?.vehicleBrand || kit.vehicleBrand || '';
               const vName = kit.vehicle?.vehicleName || kit.vehicleName || kit.productName || 'My Vehicle';
               const vehicleTitle = vBrand ? `${vBrand} ${vName}`.trim() : vName;
+              const primaryToken = kit.copies?.[0]?.publicToken || kit.copies?.[0]?.copyCode || kit.publicToken || kit.token || `pk_live_${idx}`;
+              const baseKitCode = kit.kitId || kit.copies?.[0]?.copyCode?.replace(/C[0-9]+$/, '') || `SD00${idx + 1}`;
 
-              if (Array.isArray(kit.copies) && kit.copies.length > 0) {
-                kit.copies.forEach((copy, cIdx) => {
-                  mappedTags.push({
-                    id: copy.copyCode || `SD-${idx + 1}C${cIdx + 1}`,
-                    publicToken: copy.publicToken || copy.copyCode,
-                    copyCode: copy.copyCode || `COPY-${cIdx + 1}`,
-                    name: kit.user?.name || currentUser?.name || 'Owner',
-                    phone: kit.user?.phone || currentUser?.phone,
-                    emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
-                    emergencyContacts: kit.vehicle?.emergencyContacts || [],
-                    whatsapp: currentUser?.phone,
-                    vehicleNumber: vehicleNo,
-                    vehicleName: `${vehicleTitle} (Copy ${cIdx + 1})`,
-                    vehicleType: kit.vehicle?.vehicleType || kit.vehicleType || 'Car',
-                    status: 'active',
-                    qrType: kit.qrType || 'DIGITAL',
-                    registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-                    callBalance: kit.wallet?.callBalance ?? 10,
-                    messageBalance: kit.wallet?.messageBalance ?? 20,
-                    scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
-                    callMaskingEnabled: true,
-                    whatsappAlertsEnabled: true,
-                  });
-                });
-              } else {
-                mappedTags.push({
-                  id: kit.copyCode || kit.productId || `SD-${idx + 1}`,
-                  publicToken: kit.publicToken || kit.token || `pk_live_${idx}`,
-                  copyCode: kit.copyCode || `SD-${idx + 1}`,
-                  name: kit.user?.name || currentUser?.name || 'Owner',
-                  phone: kit.user?.phone || currentUser?.phone,
-                  emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
-                  emergencyContacts: kit.vehicle?.emergencyContacts || [],
-                  whatsapp: currentUser?.phone,
-                  vehicleNumber: vehicleNo,
-                  vehicleName: vehicleTitle,
-                  vehicleType: kit.vehicle?.vehicleType || kit.vehicleType || 'Car',
-                  status: 'active',
-                  qrType: kit.qrType || 'DIGITAL',
-                  registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-                  callBalance: kit.wallet?.callBalance ?? 10,
-                  messageBalance: kit.wallet?.messageBalance ?? 20,
-                  scansCount: 0,
-                  callMaskingEnabled: true,
-                  whatsappAlertsEnabled: true,
-                });
-              }
+              mappedTags.push({
+                id: baseKitCode,
+                kitId: baseKitCode,
+                publicToken: primaryToken,
+                primaryToken: primaryToken,
+                copyCode: baseKitCode,
+                copiesCount: kit.copies?.length || 2,
+                copies: kit.copies || [],
+                name: kit.user?.name || currentUser?.name || 'Owner',
+                phone: kit.user?.phone || currentUser?.phone,
+                emergencyContact: kit.vehicle?.emergencyContacts?.[0]?.number || currentUser?.phone,
+                emergencyContacts: kit.vehicle?.emergencyContacts || [],
+                whatsapp: currentUser?.phone,
+                vehicleNumber: vehicleNo,
+                vehicleName: vehicleTitle,
+                vehicleType: kit.vehicle?.vehicleType || kit.vehicleType || 'Car',
+                status: 'active',
+                qrType: kit.qrType || 'DIGITAL',
+                registeredAt: kit.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+                callBalance: kit.wallet?.callBalance ?? 10,
+                messageBalance: kit.wallet?.messageBalance ?? 20,
+                scansCount: (kit.wallet?.totalCallsUsed || 0) + (kit.wallet?.totalMessagesUsed || 0),
+                callMaskingEnabled: true,
+                whatsappAlertsEnabled: true,
+              });
             });
           }
         }
