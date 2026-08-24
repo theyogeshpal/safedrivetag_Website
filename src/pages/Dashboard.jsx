@@ -163,15 +163,32 @@ export default function Dashboard() {
               ord.orderNumber || 
               ord._id;
 
+            let resolvedStatus = 'In Transit';
+            if (ord.orderStatus === 'DELIVERED') {
+              resolvedStatus = 'Delivered';
+            } else if (ord.orderStatus === 'CANCELLED' || ord.status === 'CANCELLED') {
+              resolvedStatus = 'Cancelled';
+            } else if (isDigital && (ord.paymentStatus === 'PAID' || ord.status === 'PAID')) {
+              resolvedStatus = 'Delivered';
+            } else {
+              resolvedStatus = 'In Transit';
+            }
+
             return {
               id: ord.orderNumber || ord._id || `ORD-${idx + 1}`,
               title: ord.productName || ord.items?.[0]?.title || ord.items?.[0]?.name || ord.productId?.title || ord.productId?.name || (isDigital ? 'Digital Kit' : 'SafeDrive Car Safety QR Protection Kit'),
               image: ord.productId?.imageUrl || ord.items?.[0]?.imageUrl || ord.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
               price: ord.amount || ord.totalAmount || 299,
               date: ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent',
-              status: ord.paymentStatus === 'PAID' ? 'Delivered' : ord.orderStatus === 'DELIVERED' ? 'Delivered' : 'Delivered',
-              statusDate: ord.createdAt ? `Ordered on ${new Date(ord.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Processing',
-              statusDesc: isDigital ? 'Instant Digital Kit - Ready to Print & Use' : (ord.deliveryAddress ? `Delivery to: ${ord.deliveryAddress}` : 'Express Pan-India Shipping'),
+              status: resolvedStatus,
+              statusDate: resolvedStatus === 'Delivered' 
+                ? (isDigital ? 'Instant Digital Pass' : (ord.deliveredAt ? `Delivered on ${new Date(ord.deliveredAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}` : `Delivered`))
+                : resolvedStatus === 'Cancelled'
+                  ? 'Cancelled'
+                  : `In Transit • Expected in 2-3 Days`,
+              statusDesc: isDigital 
+                ? 'Instant Digital Kit - Ready to Print & Use' 
+                : (ord.deliveryAddress ? `Courier Shipping to: ${ord.deliveryAddress}` : 'Express Courier Dispatch in progress'),
               vehicleType: isDigital ? 'Digital E-Kit' : 'Physical QR Kit',
               qrType: isDigital ? 'DIGITAL' : 'PHYSICAL',
               publicToken: resolvedToken,
@@ -1560,7 +1577,13 @@ export default function Dashboard() {
                           {/* Status Column */}
                           <div className="md:w-60">
                             <div className="flex items-center gap-2">
-                              <span className="w-2.5 h-2.5 rounded-full bg-green-600" />
+                              <span className={`w-2.5 h-2.5 rounded-full ${
+                                order.status === 'Delivered'
+                                  ? 'bg-green-600'
+                                  : order.status === 'Cancelled'
+                                    ? 'bg-red-600'
+                                    : 'bg-blue-600 animate-pulse'
+                              }`} />
                               <span className="font-bold text-xs sm:text-sm text-[#212121]">{order.statusDate}</span>
                             </div>
                             <p className="text-[11px] text-gray-500 mt-1 pl-4.5">{order.statusDesc}</p>
