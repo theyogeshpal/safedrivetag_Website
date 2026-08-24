@@ -317,7 +317,7 @@ export default function ProductDetail() {
               <button 
                 type="button"
                 onClick={handleBuyNow}
-                className="flex-1 bg-green-500 text-white flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-base hover:bg-green-600 transition-all shadow-[0_8px_30px_rgba(34,197,94,0.3)] hover:-translate-y-0.5 cursor-pointer"
+                className="flex-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-base transition-all shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:-translate-y-0.5 cursor-pointer"
               >
                 <span>Buy Now — ₹{product.price * qty}</span>
                 <ArrowRight size={18} />

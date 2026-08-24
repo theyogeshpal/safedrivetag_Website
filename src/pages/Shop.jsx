@@ -213,45 +213,20 @@ export default function Shop() {
                     </p>
 
                     {/* Pricing Row */}
-                    <div className="flex items-baseline justify-between mb-4 pb-3.5 border-b border-black/5">
-                      <div>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-2xl sm:text-3xl font-black text-black">₹{prod.price}</span>
-                          {prod.originalPrice && (
-                            <span className="text-xs font-bold text-black/40 line-through">₹{prod.originalPrice}</span>
-                          )}
-                          {discountPercent > 0 && (
-                            <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full border border-green-200">
-                              {discountPercent}% OFF
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-black/50 font-medium text-[11px]">Includes QR Kit + {prod.validityDays || 365}d Quota</span>
+                    <div className="flex items-center justify-between mb-4 pb-3.5 border-b border-black/5">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl sm:text-3xl font-black text-black">₹{prod.price}</span>
+                        {prod.originalPrice && (
+                          <span className="text-xs font-bold text-black/40 line-through">₹{prod.originalPrice}</span>
+                        )}
+                        {discountPercent > 0 && (
+                          <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full border border-green-200">
+                            {discountPercent}% OFF
+                          </span>
+                        )}
                       </div>
                       <div className="text-[11px] font-bold text-black/50 text-right">
                         Renewal: <span className="text-orange-600 font-extrabold">₹{prod.renewalAmount || 199}/yr</span>
-                      </div>
-                    </div>
-
-                    {/* Quota Row */}
-                    <div className="bg-orange-50/40 border border-orange-100/80 rounded-xl p-2.5 grid grid-cols-3 gap-1.5 text-center mb-5">
-                      <div>
-                        <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                          <Phone size={11} className="text-orange-600" /> {prod.initialCalls || 10}
-                        </div>
-                        <div className="text-[9px] text-black/50 font-semibold mt-0.5">Free Calls</div>
-                      </div>
-                      <div className="border-x border-orange-200/60">
-                        <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                          <MessageSquare size={11} className="text-emerald-600" /> {prod.initialMessages || 20}
-                        </div>
-                        <div className="text-[9px] text-black/50 font-semibold mt-0.5">Free SMS/WA</div>
-                      </div>
-                      <div>
-                        <div className="text-xs font-black text-black flex items-center justify-center gap-1">
-                          <Clock size={11} className="text-purple-600" /> {prod.validityDays || 365}d
-                        </div>
-                        <div className="text-[9px] text-black/50 font-semibold mt-0.5">Validity</div>
                       </div>
                     </div>
 
@@ -263,7 +238,7 @@ export default function Shop() {
                         </p>
                         {prod.features.slice(0, 4).map((feat, i) => (
                           <div key={i} className="flex items-center gap-2 text-xs font-semibold text-black/80">
-                            <div className="w-3.5 h-3.5 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
+                            <div className="w-3.5 h-3.5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
                               <Check size={10} strokeWidth={3} />
                             </div>
                             <span className="line-clamp-1">{feat}</span>
@@ -276,7 +251,7 @@ export default function Shop() {
                   {/* CTA Button */}
                   <button
                     onClick={(e) => handleOrderNow(e, prod)}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(34,197,94,0.25)] transition-all text-xs sm:text-sm cursor-pointer hover:scale-[1.01]"
+                    className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(249,115,22,0.25)] transition-all text-xs sm:text-sm cursor-pointer hover:scale-[1.01]"
                   >
                     <span>Order Now — ₹{prod.price}</span>
                     <ArrowRight size={15} />
