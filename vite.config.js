@@ -8,14 +8,22 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: {
-    chunkSizeWarningLimit: 800,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-core': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-icons': ['lucide-react', 'react-icons'],
-          'vendor-qr': ['qrcode.react'],
-          'vendor-api': ['axios'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('lucide-react') || id.includes('react-icons')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('qrcode.react')) {
+              return 'vendor-qr';
+            }
+            return 'vendor-libs';
+          }
         }
       }
     }
