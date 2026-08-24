@@ -176,27 +176,27 @@ export default function Home() {
               </button>
             </div>
             
-            {/* 3. Live News Chyron / Ticker Bar */}
-            <div className="bg-white/95 border border-gray-200/90 rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 shadow-sm flex items-center gap-2.5 sm:gap-3.5 overflow-hidden relative backdrop-blur-sm">
-              {/* Dynamic Category Pill Badge (TODAY'S SCANS, TOTAL SCANS, TRUSTED USERS, RATING) */}
+            {/* 3. Live News Chyron / Ticker Bar (Exact Broadcast TV News Style with Arrow Chevron Badge) */}
+            <div className="bg-white/95 border border-gray-200/90 rounded-2xl sm:rounded-3xl shadow-sm flex items-stretch overflow-hidden relative backdrop-blur-sm min-h-[50px] sm:min-h-[56px]">
+              {/* Dynamic Category Chevron / Arrow Badge */}
               <div 
                 key={`badge-${currentNewsIndex}`} 
-                className={`${liveStats[currentNewsIndex].badgeBg} animate-fade-up text-white font-black text-[11px] sm:text-xs px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 shrink-0 shadow-md`}
+                className={`${liveStats[currentNewsIndex].badgeBg} animate-fade-up text-white font-black text-[11px] sm:text-xs pl-4 sm:pl-5 pr-5 sm:pr-6.5 py-2.5 sm:py-3 flex items-center gap-2 shrink-0 shadow-md relative [clip-path:polygon(0_0,calc(100%-12px)_0,100%_50%,calc(100%-12px)_100%,0_100%)]`}
               >
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                 </span>
-                <span className="tracking-wider uppercase whitespace-nowrap">
+                <span className="tracking-wider uppercase whitespace-nowrap font-black">
                   {liveStats[currentNewsIndex].tag}
                 </span>
               </div>
 
               {/* News Headline & Description (Auto-cycling transition) */}
-              <div className="flex-1 min-w-0 overflow-hidden px-1">
+              <div className="flex-1 min-w-0 overflow-hidden py-2 px-2.5 sm:px-3.5 flex items-center">
                 <div 
                   key={`content-${currentNewsIndex}`} 
-                  className="animate-fade-up flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-between"
+                  className="animate-fade-up flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-between w-full"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="w-8 h-8 rounded-lg bg-gray-100/80 border border-gray-200/50 flex items-center justify-center shrink-0">
@@ -215,7 +215,7 @@ export default function Home() {
               </div>
 
               {/* Ticker Indicator Dots / Navigation */}
-              <div className="hidden sm:flex items-center gap-1.5 shrink-0 pr-1.5">
+              <div className="hidden sm:flex items-center gap-1.5 shrink-0 pr-4 self-center">
                 {liveStats.map((_, idx) => (
                   <button
                     key={idx}
