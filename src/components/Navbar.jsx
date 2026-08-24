@@ -52,21 +52,21 @@ export default function Navbar() {
   };
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3 md:py-4' : (isHome ? 'bg-transparent py-4 md:py-6' : 'bg-white py-4 md:py-6')}`}>
-      <div className="max-w-7xl mx-auto px-5 md:px-6 flex items-center justify-between">
+    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 pointer-events-auto ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3 md:py-4' : (isHome ? 'bg-transparent py-4 md:py-6' : 'bg-white py-4 md:py-6')}`}>
+      <div className="max-w-7xl mx-auto px-5 md:px-6 flex items-center justify-between relative z-50">
         
         {/* Brand / Logo */}
-        <Link to="/" className="flex items-center gap-2 relative z-50">
+        <Link to="/" className="flex items-center gap-2 relative z-50 cursor-pointer">
           <img src="/logos/primary.jpeg" alt="SafeDriveTag Logo" className="h-8 sm:h-11 w-auto object-contain rounded-md" />
         </Link>
 
         {/* Desktop Links */}
-        <nav className="hidden md:flex items-center gap-7">
+        <nav className="hidden md:flex items-center gap-7 relative z-50">
           {links.map(({ to, label }) => (
             <Link
               key={to}
               to={to}
-              className={`text-sm font-bold transition-all px-4 py-2 rounded-full ${
+              className={`text-sm font-bold transition-all px-4 py-2 rounded-full cursor-pointer ${
                 path === to 
                   ? 'bg-orange-50 text-orange-600 shadow-[inset_0_0_0_1px_rgba(249,115,22,0.2)]' 
                   : 'text-black/70 hover:text-black hover:bg-black/5'
