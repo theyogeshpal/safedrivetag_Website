@@ -121,6 +121,7 @@ export default function Dashboard() {
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
   // Addresses State
+  const [editingAddress, setEditingAddress] = useState(null);
   const [showAddAddress, setShowAddAddress] = useState(false);
   const [addresses, setAddresses] = useState(() => {
     try {
@@ -645,38 +646,28 @@ export default function Dashboard() {
     showNotification('Profile details updated successfully!');
   };
 
-  const handleAddAddress = (e) => {
+  const handleUpdateAddress = async (e) => {
     e.preventDefault();
-    if (!newAddress.name || !newAddress.phone || !newAddress.pincode || !newAddress.address) {
-      alert('Please fill in all required address fields');
+    if (!editingAddress.name || !editingAddress.phone || !editingAddress.address) {
+      alert('Please fill in required name, phone and address fields');
       return;
     }
-    const newAddrObj = {
-      id: `addr-${Date.now()}`,
-      ...newAddress,
-      isDefault: addresses.length === 0
-    };
-    const updated = [...addresses, newAddrObj];
+    const updated = addresses.map(a => a.id === editingAddress.id ? editingAddress : a);
+    if (updated.length === 0) {
+      updated.push(editingAddress);
+    }
     setAddresses(updated);
     try {
       const userId = currentUser?._id || currentUser?.id || currentUser?.phone || 'guest';
       localStorage.setItem(`safedrive_addresses_${userId}`, JSON.stringify(updated));
-    } catch (e) {
-      console.error(e);
+      await api.updateProfile({
+        address: `${editingAddress.address}, ${editingAddress.locality || ''}, ${editingAddress.city || ''}, ${editingAddress.state || ''} - ${editingAddress.pincode || ''}`
+      });
+    } catch (err) {
+      console.error('Error saving updated address to backend', err);
     }
-    setNewAddress({
-      name: '',
-      phone: '',
-      pincode: '',
-      locality: '',
-      address: '',
-      city: '',
-      state: 'Delhi',
-      landmark: '',
-      type: 'HOME'
-    });
-    setShowAddAddress(false);
-    showNotification('New delivery address saved!');
+    setEditingAddress(null);
+    showNotification('Delivery address updated successfully!');
   };
 
   const handleDeleteAddress = (id) => {
@@ -1847,132 +1838,135 @@ export default function Dashboard() {
             {/* ---------------------------------------------------- */}
             {/* TAB 4: MANAGE ADDRESSES (Pure Flipkart Design) */}
             {/* ---------------------------------------------------- */}
+            {/* ---------------------------------------------------- */}
+            {/* TAB: MANAGE DELIVERY ADDRESS */}
+            {/* ---------------------------------------------------- */}
             {activeTab === 'addresses' && (
               <div className="space-y-6">
                 
                 {/* Header with Title */}
-                <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-                  <h3 className="text-base font-bold text-[#212121]">Manage Addresses</h3>
+                <div className="pb-4 border-b border-gray-100">
+                  <h3 className="text-base font-bold text-[#212121]">Delivery Address</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Your official physical QR kit shipping address. Click edit to update your delivery location.
+                  </p>
                 </div>
 
-                {/* + ADD A NEW ADDRESS Button / Form */}
-                {!showAddAddress ? (
-                  <button
-                    onClick={() => setShowAddAddress(true)}
-                    className="w-full border border-dashed border-[#2874f0] bg-[#f5faff] hover:bg-blue-50 text-[#2874f0] font-bold text-xs uppercase tracking-wider py-3.5 px-4 rounded-sm flex items-center gap-2 cursor-pointer transition-colors"
-                  >
-                    <Plus size={16} /> + ADD A NEW ADDRESS
-                  </button>
-                ) : (
-                  <div className="border border-blue-200 bg-[#f5faff] rounded-sm p-4 sm:p-6 animate-fade-up">
-                    <h4 className="text-xs font-bold text-[#2874f0] uppercase tracking-wider mb-4">
-                      ADD A NEW DELIVERY ADDRESS
-                    </h4>
-                    <form onSubmit={handleAddAddress} className="space-y-4 text-xs">
+                {/* EDIT ADDRESS INLINE FORM */}
+                {editingAddress ? (
+                  <div className="border border-blue-200 bg-[#f5faff] rounded-xl p-4 sm:p-6 animate-fade-up shadow-sm">
+                    <div className="flex items-center justify-between pb-3 mb-4 border-b border-blue-200/60">
+                      <h4 className="text-xs font-bold text-[#2874f0] uppercase tracking-wider flex items-center gap-1.5">
+                        <Edit3 size={14} /> EDIT DELIVERY ADDRESS
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setEditingAddress(null)}
+                        className="text-gray-400 hover:text-gray-700 cursor-pointer"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleUpdateAddress} className="space-y-4 text-xs">
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-gray-600 font-semibold mb-1">Full Name *</label>
+                          <label className="block text-gray-700 font-bold mb-1">Full Name *</label>
                           <input
                             type="text"
                             required
-                            placeholder="e.g. Rahul Sharma"
-                            value={newAddress.name}
-                            onChange={(e) => setNewAddress({ ...newAddress, name: e.target.value })}
-                            className="w-full bg-white border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none focus:border-[#2874f0]"
+                            placeholder="e.g. Rahul Singh"
+                            value={editingAddress.name || ''}
+                            onChange={(e) => setEditingAddress({ ...editingAddress, name: e.target.value })}
+                            className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-[#2874f0] shadow-2xs"
                           />
                         </div>
                         <div>
-                          <label className="block text-gray-600 font-semibold mb-1">10-digit mobile number *</label>
+                          <label className="block text-gray-700 font-bold mb-1">10-Digit Mobile Number *</label>
                           <input
                             type="tel"
                             required
                             pattern="[0-9]{10}"
                             placeholder="e.g. 9876543210"
-                            value={newAddress.phone}
-                            onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value.replace(/\D/g, '') })}
-                            className="w-full bg-white border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none focus:border-[#2874f0]"
+                            value={editingAddress.phone || ''}
+                            onChange={(e) => setEditingAddress({ ...editingAddress, phone: e.target.value.replace(/\D/g, '') })}
+                            className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-[#2874f0] shadow-2xs"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-gray-600 font-semibold mb-1">Pincode *</label>
+                          <label className="block text-gray-700 font-bold mb-1">Pincode *</label>
                           <input
                             type="text"
                             required
-                            placeholder="e.g. 110001"
-                            value={newAddress.pincode}
-                            onChange={(e) => setNewAddress({ ...newAddress, pincode: e.target.value })}
-                            className="w-full bg-white border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none focus:border-[#2874f0]"
+                            placeholder="e.g. 212120"
+                            value={editingAddress.pincode || ''}
+                            onChange={(e) => setEditingAddress({ ...editingAddress, pincode: e.target.value })}
+                            className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-[#2874f0] shadow-2xs"
                           />
                         </div>
                         <div>
-                          <label className="block text-gray-600 font-semibold mb-1">Locality *</label>
+                          <label className="block text-gray-700 font-bold mb-1">Locality / Landmark</label>
                           <input
                             type="text"
-                            required
-                            placeholder="e.g. Connaught Place"
-                            value={newAddress.locality}
-                            onChange={(e) => setNewAddress({ ...newAddress, locality: e.target.value })}
-                            className="w-full bg-white border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none focus:border-[#2874f0]"
+                            placeholder="e.g. Near Metro Station / Aliganj"
+                            value={editingAddress.locality || ''}
+                            onChange={(e) => setEditingAddress({ ...editingAddress, locality: e.target.value })}
+                            className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-[#2874f0] shadow-2xs"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-gray-600 font-semibold mb-1">Address (Area and Street) *</label>
+                        <label className="block text-gray-700 font-bold mb-1">Address (House No., Building, Street) *</label>
                         <textarea
                           required
                           rows={2}
-                          placeholder="House No., Building Name, Street"
-                          value={newAddress.address}
-                          onChange={(e) => setNewAddress({ ...newAddress, address: e.target.value })}
-                          className="w-full bg-white border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none focus:border-[#2874f0]"
+                          placeholder="Complete House No., Building Name, Street"
+                          value={editingAddress.address || ''}
+                          onChange={(e) => setEditingAddress({ ...editingAddress, address: e.target.value })}
+                          className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-[#2874f0] shadow-2xs"
                         />
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-gray-600 font-semibold mb-1">City / District / Town *</label>
+                          <label className="block text-gray-700 font-bold mb-1">City / District / Town *</label>
                           <input
                             type="text"
                             required
-                            placeholder="e.g. New Delhi"
-                            value={newAddress.city}
-                            onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
-                            className="w-full bg-white border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none focus:border-[#2874f0]"
+                            placeholder="e.g. Lucknow / Delhi"
+                            value={editingAddress.city || ''}
+                            onChange={(e) => setEditingAddress({ ...editingAddress, city: e.target.value })}
+                            className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-[#2874f0] shadow-2xs"
                           />
                         </div>
                         <div>
-                          <label className="block text-gray-600 font-semibold mb-1">State *</label>
-                          <select
-                            value={newAddress.state}
-                            onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
-                            className="w-full bg-white border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none focus:border-[#2874f0]"
-                          >
-                            <option value="Delhi">Delhi</option>
-                            <option value="Haryana">Haryana</option>
-                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Karnataka">Karnataka</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            <option value="Rajasthan">Rajasthan</option>
-                          </select>
+                          <label className="block text-gray-700 font-bold mb-1">State *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. Uttar Pradesh"
+                            value={editingAddress.state || ''}
+                            onChange={(e) => setEditingAddress({ ...editingAddress, state: e.target.value })}
+                            className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-[#2874f0] shadow-2xs"
+                          />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-gray-600 font-semibold mb-1.5">Address Type</label>
+                        <label className="block text-gray-700 font-bold mb-1.5">Address Type</label>
                         <div className="flex items-center gap-6">
                           <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-700">
                             <input
                               type="radio"
                               name="addrType"
                               value="HOME"
-                              checked={newAddress.type === 'HOME'}
-                              onChange={(e) => setNewAddress({ ...newAddress, type: e.target.value })}
+                              checked={editingAddress.type === 'HOME'}
+                              onChange={(e) => setEditingAddress({ ...editingAddress, type: e.target.value })}
                               className="accent-[#2874f0]"
                             />
                             <span>Home (All day delivery)</span>
@@ -1982,11 +1976,11 @@ export default function Dashboard() {
                               type="radio"
                               name="addrType"
                               value="WORK"
-                              checked={newAddress.type === 'WORK'}
-                              onChange={(e) => setNewAddress({ ...newAddress, type: e.target.value })}
+                              checked={editingAddress.type === 'WORK'}
+                              onChange={(e) => setEditingAddress({ ...editingAddress, type: e.target.value })}
                               className="accent-[#2874f0]"
                             />
-                            <span>Work (Delivery between 10 AM - 5 PM)</span>
+                            <span>Work (Delivery 10 AM - 5 PM)</span>
                           </label>
                         </div>
                       </div>
@@ -1994,14 +1988,14 @@ export default function Dashboard() {
                       <div className="flex items-center gap-3 pt-3">
                         <button
                           type="submit"
-                          className="bg-[#fb641b] text-white px-7 py-2.5 rounded-sm font-bold text-xs shadow-sm hover:bg-orange-600 transition-colors cursor-pointer uppercase"
+                          className="bg-[#2874f0] hover:bg-blue-700 text-white px-7 py-2.5 rounded-md font-bold text-xs shadow-sm transition-colors cursor-pointer uppercase"
                         >
-                          SAVE ADDRESS
+                          SAVE CHANGES
                         </button>
                         <button
                           type="button"
-                          onClick={() => setShowAddAddress(false)}
-                          className="text-gray-500 font-bold hover:text-gray-800 px-4 py-2 cursor-pointer"
+                          onClick={() => setEditingAddress(null)}
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-5 py-2.5 rounded-md text-xs transition-colors cursor-pointer"
                         >
                           CANCEL
                         </button>
@@ -2009,60 +2003,70 @@ export default function Dashboard() {
 
                     </form>
                   </div>
-                )}
-
-                {/* Addresses List */}
-                {addresses.length === 0 ? (
-                  <div className="py-12 text-center border border-dashed border-gray-300 rounded-lg bg-gray-50/60 p-6">
-                    <div className="w-12 h-12 rounded-full bg-blue-50 text-[#2874f0] flex items-center justify-center mx-auto mb-2.5">
-                      <MapPin size={22} />
-                    </div>
-                    <h4 className="font-bold text-sm text-[#212121]">No Saved Addresses Found</h4>
-                    <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1 mb-4">
-                      You have not added any delivery address yet. Click "+ ADD A NEW ADDRESS" to save one.
-                    </p>
-                    <button
-                      onClick={() => setShowAddAddress(true)}
-                      className="bg-[#2874f0] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-md shadow-xs cursor-pointer transition-colors"
-                    >
-                      + Add Delivery Address
-                    </button>
-                  </div>
                 ) : (
+                  /* Addresses Display Cards */
                   <div className="space-y-3">
-                    {addresses.map((addr) => (
-                      <div
-                        key={addr.id}
-                        className="bg-white rounded-lg border border-gray-200 p-4 sm:p-5 relative hover:border-gray-300 transition-all shadow-xs"
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2.5">
-                            <span className="text-[10px] font-black bg-gray-100 text-gray-700 px-2 py-0.5 rounded uppercase">
-                              {addr.type}
-                            </span>
-                            <span className="font-bold text-sm text-[#212121]">{addr.name}</span>
-                            <span className="font-bold text-xs text-gray-700">{addr.phone}</span>
-                          </div>
+                    {addresses.length === 0 ? (
+                      <div className="py-10 text-center border border-dashed border-gray-300 rounded-xl bg-gray-50/60 p-6">
+                        <div className="w-12 h-12 rounded-full bg-blue-50 text-[#2874f0] flex items-center justify-center mx-auto mb-2.5">
+                          <MapPin size={22} />
+                        </div>
+                        <h4 className="font-bold text-sm text-[#212121]">No Saved Address Found</h4>
+                        <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1 mb-4">
+                          Add your delivery address to receive physical vehicle stickers and courier tracking.
+                        </p>
+                        <button
+                          onClick={() => setEditingAddress({
+                            id: `addr-1`,
+                            name: currentUser?.name || 'Customer',
+                            phone: currentUser?.phone || '',
+                            pincode: '',
+                            locality: '',
+                            address: '',
+                            city: '',
+                            state: 'Delhi',
+                            landmark: '',
+                            type: 'HOME',
+                            isDefault: true
+                          })}
+                          className="bg-[#2874f0] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-md shadow-xs cursor-pointer transition-colors"
+                        >
+                          + Set Delivery Address
+                        </button>
+                      </div>
+                    ) : (
+                      addresses.map((addr) => (
+                        <div
+                          key={addr.id}
+                          className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 p-4 sm:p-5 relative transition-all shadow-xs"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-[10px] font-black bg-blue-50 text-[#2874f0] border border-blue-200 px-2 py-0.5 rounded uppercase">
+                                {addr.type || 'HOME'}
+                              </span>
+                              <span className="font-bold text-sm text-[#212121]">{addr.name}</span>
+                              <span className="font-bold text-xs text-gray-700">{addr.phone}</span>
+                            </div>
 
-                          <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleDeleteAddress(addr.id)}
-                              className="text-red-500 hover:text-red-700 text-xs font-bold p-1.5 rounded hover:bg-red-50 cursor-pointer transition-colors"
-                              title="Delete Address"
+                              onClick={() => setEditingAddress({ ...addr })}
+                              className="bg-blue-50 hover:bg-blue-100 text-[#2874f0] border border-blue-200 text-xs font-bold px-3 py-1.5 rounded-md flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                              title="Edit Delivery Address"
                             >
-                              <Trash2 size={15} />
+                              <Edit3 size={13} /> Edit Address
                             </button>
                           </div>
-                        </div>
 
-                        <p className="text-xs text-gray-600 leading-relaxed pr-8">
-                          {addr.address}{addr.locality ? `, ${addr.locality}` : ''}{addr.city ? `, ${addr.city}` : ''}{addr.state ? `, ${addr.state}` : ''} {addr.pincode ? `- ${addr.pincode}` : ''}
-                        </p>
-                        {addr.landmark && (
-                          <p className="text-[11px] text-gray-400 mt-1">Landmark: {addr.landmark}</p>
-                        )}
-                      </div>
-                    ))}
+                          <p className="text-xs text-gray-600 leading-relaxed pr-4">
+                            {addr.address}{addr.locality ? `, ${addr.locality}` : ''}{addr.city ? `, ${addr.city}` : ''}{addr.state ? `, ${addr.state}` : ''} {addr.pincode ? `- ${addr.pincode}` : ''}
+                          </p>
+                          {addr.landmark && (
+                            <p className="text-[11px] text-gray-400 mt-1">Landmark: {addr.landmark}</p>
+                          )}
+                        </div>
+                      ))
+                    )}
                   </div>
                 )}
 
