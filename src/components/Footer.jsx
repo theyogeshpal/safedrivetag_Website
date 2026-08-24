@@ -32,12 +32,12 @@ export default function Footer() {
         
         {/* Brand Column */}
         <div className="col-span-2 lg:col-span-4 pr-0 lg:pr-4">
-          <Link to="/" className="inline-flex items-center mb-6 bg-white p-2 sm:px-3 sm:py-2 rounded-2xl shadow-md border border-white/10 group hover:shadow-lg transition-all">
+          <Link to="/" className="inline-flex items-center mb-6 bg-white p-2.5 sm:px-4 sm:py-2.5 rounded-2xl shadow-md border border-white/10 group hover:shadow-lg transition-all">
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag Logo" 
-              className="h-10 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-              style={{ maxHeight: '44px', width: 'auto' }}
+              className="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+              style={{ maxHeight: '56px', width: 'auto' }}
             />
           </Link>
           <p className="text-sm text-gray-400 mb-6 font-medium leading-relaxed max-w-sm">

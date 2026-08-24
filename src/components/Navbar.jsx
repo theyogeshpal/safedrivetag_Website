@@ -84,12 +84,12 @@ export default function Navbar() {
         {/* 1. BRAND LOGO */}
         {/* ======================================================== */}
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center shrink-0 relative z-50 cursor-pointer group">
+          <Link to="/" className="flex items-center shrink-0 relative z-50 cursor-pointer group py-0.5">
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag" 
-              className="h-9 sm:h-10 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
-              style={{ maxHeight: '40px', width: 'auto' }}
+              className="h-11 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              style={{ maxHeight: '56px', width: 'auto' }}
             />
           </Link>
         </div>
@@ -247,8 +247,8 @@ export default function Navbar() {
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag" 
-              className="h-8 w-auto object-contain" 
-              style={{ maxHeight: '34px', width: 'auto' }}
+              className="h-10 sm:h-11 w-auto object-contain" 
+              style={{ maxHeight: '46px', width: 'auto' }}
             />
           </div>
           <button 
