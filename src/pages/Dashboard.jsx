@@ -241,6 +241,39 @@ export default function Dashboard() {
           });
           setOrders(mappedOrders);
 
+          // Extract purchase delivery address from user orders (the address entered during checkout)
+          const orderWithAddress = ordersRes.orders.find(o => o.deliveryAddress || o.shippingAddress || o.address);
+          if (orderWithAddress) {
+            const purchaseAddrText = orderWithAddress.deliveryAddress || orderWithAddress.shippingAddress || orderWithAddress.address;
+            const purchaseName = orderWithAddress.name || orderWithAddress.customerName || currentUser?.name || 'Customer';
+            const purchasePhone = orderWithAddress.phone || orderWithAddress.customerPhone || currentUser?.phone || '';
+            const purchasePincode = orderWithAddress.pincode || (purchaseAddrText.match(/\b\d{6}\b/) ? purchaseAddrText.match(/\b\d{6}\b/)[0] : '');
+            const purchaseCity = orderWithAddress.city || '';
+            const purchaseState = orderWithAddress.state || 'Delhi';
+
+            const orderAddrObj = {
+              id: `addr-order-${orderWithAddress._id || orderWithAddress.orderNumber || '1'}`,
+              name: purchaseName,
+              phone: purchasePhone,
+              pincode: purchasePincode,
+              locality: '',
+              address: purchaseAddrText,
+              city: purchaseCity,
+              state: purchaseState,
+              landmark: '',
+              type: 'HOME',
+              isDefault: true,
+            };
+
+            setAddresses([orderAddrObj]);
+            try {
+              const userId = currentUser?._id || currentUser?.id || currentUser?.phone || 'guest';
+              localStorage.setItem(`safedrive_addresses_${userId}`, JSON.stringify([orderAddrObj]));
+            } catch (e) {
+              console.error(e);
+            }
+          }
+
           // Load locally registered tags cache
           let locallyRegistered = {};
           try {
