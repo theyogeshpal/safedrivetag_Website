@@ -67,10 +67,10 @@ export default function Navbar() {
   };
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 pointer-events-auto ${
+    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 pointer-events-auto bg-white border-b border-gray-100 ${
       scrolled 
-        ? 'bg-white/90 backdrop-blur-xl shadow-[0_4px_25px_rgba(0,0,0,0.06)] border-b border-gray-200/70 py-2.5 sm:py-3' 
-        : (isHome ? 'bg-white/70 backdrop-blur-md border-b border-gray-100/60 py-3.5 sm:py-4' : 'bg-white/95 backdrop-blur-md shadow-xs border-b border-gray-100 py-3 sm:py-4')
+        ? 'shadow-[0_4px_25px_rgba(0,0,0,0.06)] py-2.5 sm:py-3' 
+        : 'shadow-xs py-3 sm:py-3.5'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between relative z-50">
         
