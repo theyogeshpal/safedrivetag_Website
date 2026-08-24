@@ -39,7 +39,7 @@ export default function Footer() {
             />
           </Link>
           <p className="text-sm text-gray-400 mb-6 font-medium leading-relaxed max-w-sm">
-            SafeDrive-Tag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. 🚗 Shielding vehicles in wrong parking & emergency situations.
+            SafeDrive-Tag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. Shielding vehicles in wrong parking & emergency situations.
           </p>
           <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
             <a href="https://www.instagram.com/safedrivetag/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">
