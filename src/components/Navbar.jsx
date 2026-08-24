@@ -83,12 +83,12 @@ export default function Navbar() {
         {/* 1. BRAND LOGO */}
         {/* ======================================================== */}
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2.5 h-10 sm:h-11 shrink-0 relative z-50 cursor-pointer group">
+          <Link to="/" className="flex items-center gap-2.5 h-10 sm:h-15 shrink-0 relative z-50 cursor-pointer group">
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag Logo" 
-              className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-              style={{ maxHeight: '38px', width: 'auto' }}
+              className="h-24 sm:h-20 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+              style={{ maxHeight: '78px', width: 'auto' }}
             />
           </Link>
         </div>
@@ -238,17 +238,22 @@ export default function Navbar() {
         />
       )}
 
-      <div className={`fixed top-0 right-0 h-full w-[300px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
-        menuOpen ? 'translate-x-0' : 'translate-x-full'
+      <div className={`fixed top-0 left-0 h-full w-[300px] max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
+        menuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50/50">
           <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-orange-500" />
-            <span className="font-black text-base text-gray-900">SafeDrive Menu</span>
+            <img 
+              src="/logos/primary.jpeg" 
+              alt="SafeDrive-Tag" 
+              className="h-8 w-auto object-contain" 
+              style={{ maxHeight: '32px' }}
+            />
           </div>
           <button 
             onClick={() => setMenuOpen(false)} 
             className="text-gray-400 hover:text-gray-900 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            aria-label="Close menu"
           >
             <X size={20} />
           </button>
