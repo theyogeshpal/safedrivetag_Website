@@ -1571,21 +1571,26 @@ export default function Dashboard() {
                               <Download size={13} /> Invoice
                             </button>
 
-                            <button
-                              onClick={() => openDigitalPdf(order)}
-                              className="flex-1 md:flex-none bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                              title="Open Digital QR Kit PDF"
-                            >
-                              <Eye size={13} /> Open PDF
-                            </button>
+                            {/* Only Digital Orders Have Printable PDF Sticker Passes */}
+                            {(order.productType === 'DIGITAL' || order.qrType === 'DIGITAL' || order.name?.toLowerCase().includes('digital') || order.title?.toLowerCase().includes('digital')) && (
+                              <>
+                                <button
+                                  onClick={() => openDigitalPdf(order)}
+                                  className="flex-1 md:flex-none bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                  title="Open Digital QR Kit PDF"
+                                >
+                                  <Eye size={13} /> Open PDF
+                                </button>
 
-                            <button
-                              onClick={() => printDigitalPdfInColor(order)}
-                              className="flex-1 md:flex-none bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-                              title="Print High-Resolution Color PDF Badges"
-                            >
-                              <Printer size={13} /> Print Color PDF
-                            </button>
+                                <button
+                                  onClick={() => printDigitalPdfInColor(order)}
+                                  className="flex-1 md:flex-none bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-sm text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                                  title="Print High-Resolution Color PDF Badges"
+                                >
+                                  <Printer size={13} /> Print Color PDF
+                                </button>
+                              </>
+                            )}
                           </div>
 
                           {/* Allocated QR Copies (Live Generated from Order) */}
