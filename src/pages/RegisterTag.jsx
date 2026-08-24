@@ -206,6 +206,18 @@ export default function RegisterTag() {
         },
       ];
 
+      const payload = {
+        name: name.trim() || currentUser?.name || 'Vehicle Owner',
+        phone: cleanPhone || currentUser?.phone || '',
+        whatsappNumber: formData.whatsappNumber?.replace(/\D/g, '') || cleanPhone || currentUser?.phone || '',
+        vehicleBrand: formData.vehicleBrand?.trim() || 'Hyundai',
+        vehicleName: formData.vehicleName?.trim() || 'Creta',
+        vehicleNumber: formData.vehicleNumber?.trim().toUpperCase(),
+        vehicleType: formData.vehicleType || 'Car',
+        address: formData.address?.trim() || currentUser?.address || '',
+        emergencyContacts,
+      };
+
       const res = await api.registerQrKit(token, payload);
       if (res.success || res.status === 200 || res.message?.toLowerCase().includes('success') || res.kit) {
         // Cache locally for instant Dashboard reflection
