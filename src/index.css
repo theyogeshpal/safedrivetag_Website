@@ -120,3 +120,33 @@ body {
 .animate-shimmer {
   animation: shimmer 3s infinite;
 }
+
+@keyframes playGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.4), 0 0 30px rgba(245, 158, 11, 0.25);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(249, 115, 22, 0.75), 0 0 45px rgba(245, 158, 11, 0.5);
+    transform: scale(1.06);
+  }
+}
+
+.animate-play-glow {
+  animation: playGlow 2.2s ease-in-out infinite;
+}
+
+@keyframes radarWave {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+.animate-radar-wave {
+  animation: radarWave 2.2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+}

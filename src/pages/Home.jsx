@@ -114,22 +114,32 @@ export default function Home() {
                 </div>
               </Link>
 
-              {/* Watch Video Button */}
+              {/* Watch Video Button with Radiant Glowing Animation */}
               <button 
                 type="button"
                 onClick={() => {
                   const el = document.getElementById('how-it-works');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="group bg-white hover:bg-gray-50/90 border border-gray-100/90 p-2.5 sm:p-3 pr-6 sm:pr-8 rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-3.5 cursor-pointer text-left shrink-0"
+                className="group relative bg-white hover:bg-orange-50/40 border border-gray-100 hover:border-orange-200/80 p-2.5 sm:p-3 pr-6 sm:pr-8 rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-[0_10px_30px_rgba(249,115,22,0.25)] transition-all duration-300 flex items-center gap-3.5 cursor-pointer text-left shrink-0 overflow-visible"
               >
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 flex items-center justify-center shrink-0 shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
-                  <div className="w-full h-full rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white">
-                    <Play size={16} className="fill-white ml-0.5" />
+                {/* Animated Glowing Play Icon with Radar Ripple Rings */}
+                <div className="relative w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center shrink-0">
+                  {/* Radar Pulse Wave 1 */}
+                  <span className="absolute inset-0 rounded-full bg-orange-500/30 animate-radar-wave pointer-events-none" />
+                  {/* Radar Pulse Wave 2 */}
+                  <span className="absolute inset-0 rounded-full bg-amber-400/35 animate-radar-wave pointer-events-none" style={{ animationDelay: '1s' }} />
+
+                  {/* Main Glowing Play Orb */}
+                  <div className="relative w-full h-full rounded-full bg-gradient-to-tr from-orange-500 via-amber-500 to-orange-400 p-0.5 flex items-center justify-center shadow-md animate-play-glow group-hover:scale-110 transition-transform">
+                    <div className="w-full h-full rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white shadow-inner">
+                      <Play size={16} className="fill-white ml-0.5 drop-shadow-xs" />
+                    </div>
                   </div>
                 </div>
+
                 <div>
-                  <div className="font-extrabold text-sm sm:text-base text-gray-900 leading-tight">Watch Video</div>
+                  <div className="font-extrabold text-sm sm:text-base text-gray-900 leading-tight group-hover:text-orange-600 transition-colors">Watch Video</div>
                   <div className="text-[11px] sm:text-xs text-gray-500 font-medium">See how it works</div>
                 </div>
               </button>
