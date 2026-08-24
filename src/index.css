@@ -58,7 +58,7 @@ body {
 }
 
 /* ======================================================== */
-/* UNIFIED PREMIUM BUTTON ANIMATIONS & ACTIVE GREEN EFFECT  */
+/* UNIFIED PREMIUM BUTTON ANIMATIONS & GREEN CLICK FEEDBACK */
 /* ======================================================== */
 button,
 [role="button"],
@@ -70,11 +70,12 @@ a.inline-flex[href*="checkout"],
 a.flex[href*="shop"],
 a.btn {
   position: relative;
+  overflow: hidden;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
-              background-color 0.2s ease, 
-              box-shadow 0.2s ease, 
-              border-color 0.2s ease, 
-              color 0.2s ease;
+              background-color 0.25s ease, 
+              box-shadow 0.25s ease, 
+              border-color 0.25s ease, 
+              color 0.25s ease;
   will-change: transform, background-color, box-shadow;
   transform: translateZ(0);
   cursor: pointer;
@@ -90,26 +91,69 @@ a.inline-flex[href*="checkout"]:hover {
   transform: translateY(-2px);
 }
 
-/* Click / Active State: Smooth Press Down + Vibrant Emerald Green Flash */
+/* Click / Active State: Green Color Transformation + Glow */
+.btn-clicked-green,
 button:active:not(:disabled),
 [role="button"]:active,
 a.inline-flex[href*="shop"]:active,
 a.inline-flex[href*="checkout"]:active,
 a.flex[href*="shop"]:active {
   transform: translateY(1px) scale(0.96) !important;
-  background-color: #16a34a !important; /* Emerald Green */
+  background: #16a34a !important; /* Emerald Green */
+  background-color: #16a34a !important;
   background-image: none !important;
   border-color: #15803d !important;
   color: #ffffff !important;
-  box-shadow: 0 0 22px rgba(22, 163, 74, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 0 26px rgba(22, 163, 74, 0.75), inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  animation: greenButtonClick 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
-button:active:not(:disabled) svg,
-[role="button"]:active svg,
-a.inline-flex[href*="shop"]:active svg,
-a.inline-flex[href*="checkout"]:active svg {
+.btn-clicked-green *,
+button:active:not(:disabled) *,
+[role="button"]:active *,
+a.inline-flex[href*="shop"]:active *,
+a.inline-flex[href*="checkout"]:active * {
   color: #ffffff !important;
+  fill: #ffffff !important;
   stroke: #ffffff !important;
+}
+
+@keyframes greenButtonClick {
+  0% {
+    transform: scale(0.94) translateY(1px);
+    background-color: #16a34a;
+    box-shadow: 0 0 30px rgba(22, 163, 74, 0.85);
+  }
+  35% {
+    transform: scale(1.03) translateY(-2px);
+    background-color: #15803d;
+    box-shadow: 0 0 36px rgba(22, 163, 74, 0.75);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Expanding Green Ripple Wave */
+.btn-ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.9) 0%, rgba(22, 163, 74, 0.6) 50%, rgba(22, 163, 74, 0) 80%);
+  transform: scale(0);
+  animation: rippleSpread 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+  pointer-events: none;
+  z-index: 99;
+}
+
+@keyframes rippleSpread {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
 
 .hover-lift {
