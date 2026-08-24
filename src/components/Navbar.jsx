@@ -67,11 +67,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 pointer-events-auto bg-white border-b border-gray-100 ${
-      scrolled 
-        ? 'shadow-[0_4px_25px_rgba(0,0,0,0.06)] py-2.5 sm:py-3' 
-        : 'shadow-xs py-3 sm:py-3.5'
-    }`}>
+    <header className="fixed top-0 left-0 w-full z-50 transition-all duration-200 pointer-events-auto bg-white border-b border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.04)] py-2.5 sm:py-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between relative z-50">
         
         {/* ======================================================== */}
@@ -82,30 +78,30 @@ export default function Navbar() {
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag Logo" 
-              className="h-11 sm:h-13 md:h-15 w-auto object-contain rounded-xl transition-transform duration-300 group-hover:scale-105" 
+              className="h-11 sm:h-12 md:h-13 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
             />
           </Link>
         </div>
 
         {/* ======================================================== */}
-        {/* 2. DESKTOP CENTER NAVIGATION (Glass Pill) */}
+        {/* 2. DESKTOP CENTER NAVIGATION (Clean Links with Active Underline) */}
         {/* ======================================================== */}
-        <nav className="hidden md:flex items-center gap-1.5 bg-gray-50/80 p-1.5 rounded-full border border-gray-200/70 shadow-[inset_0_1px_3px_rgba(0,0,0,0.04)] backdrop-blur-md relative z-50">
+        <nav className="hidden md:flex items-center gap-8 lg:gap-10 relative z-50">
           {links.map(({ to, label, badge }) => {
             const isActive = path === to;
             return (
               <Link
                 key={to}
                 to={to}
-                className={`relative px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                className={`relative py-2 text-sm transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-white text-gray-900 shadow-sm border border-gray-200/80'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
+                    ? 'text-gray-950 font-extrabold after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-orange-500 after:rounded-full'
+                    : 'text-gray-600 hover:text-gray-950 font-semibold'
                 }`}
               >
                 <span>{label}</span>
                 {badge && (
-                  <span className="text-[9px] bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-1.5 py-0.2 rounded-full shadow-2xs">
+                  <span className="text-[10px] bg-orange-500 text-white font-black px-2 py-0.5 rounded-full shadow-2xs tracking-wide">
                     {badge}
                   </span>
                 )}
@@ -117,16 +113,16 @@ export default function Navbar() {
         {/* ======================================================== */}
         {/* 3. RIGHT ACTIONS & USER MENU */}
         {/* ======================================================== */}
-        <div className="flex items-center gap-3 sm:gap-4 relative z-50">
+        <div className="flex items-center gap-4 sm:gap-6 relative z-50">
           
           {/* User Logged In Profile Pill */}
           {currentUser ? (
             <div className="relative hidden md:block" ref={dropdownRef}>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2.5 bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 text-gray-900 pl-2 pr-3.5 py-1.5 rounded-full font-bold text-xs border border-orange-200/80 shadow-xs transition-all cursor-pointer"
+                className="flex items-center gap-2.5 bg-gray-50 hover:bg-gray-100 text-gray-900 pl-2 pr-3.5 py-1.5 rounded-xl font-bold text-xs border border-gray-200 shadow-2xs transition-all cursor-pointer"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center text-xs font-black shadow-xs">
+                <div className="w-7 h-7 rounded-lg bg-orange-500 text-white flex items-center justify-center text-xs font-black shadow-xs">
                   {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div className="text-left leading-tight hidden lg:block">
@@ -193,19 +189,19 @@ export default function Navbar() {
           ) : (
             <button
               onClick={openLoginModal}
-              className="hidden md:flex items-center gap-1.5 text-gray-700 hover:text-gray-900 font-bold text-xs px-3.5 py-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+              className="hidden md:flex items-center gap-1.5 text-gray-700 hover:text-gray-950 font-bold text-sm px-2 py-1.5 transition-colors cursor-pointer"
             >
-              <LogIn size={15} className="text-orange-500" />
+              <User size={18} className="text-gray-500" />
               <span>Login</span>
             </button>
           )}
 
-          {/* Attractive Buy Safety Tag CTA Button */}
+          {/* Clean Buy Safety Tag CTA Button */}
           <Link
             to="/shop"
-            className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs px-5 py-2.5 rounded-full shadow-[0_4px_18px_rgba(249,115,22,0.35)] hover:shadow-[0_6px_22px_rgba(249,115,22,0.5)] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+            className="hidden sm:inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
           >
-            <ShieldCheck size={16} />
+            <ShoppingBag size={17} className="text-white" />
             <span>Buy Safety Tag</span>
           </Link>
 
