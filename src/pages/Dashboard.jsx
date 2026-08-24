@@ -1160,8 +1160,8 @@ export default function Dashboard() {
                 ) : (
                   <div className="space-y-4">
                     {userTags.map((tag) => {
-                      const isUnlinked = tag.status === 'unregistered' || !tag.vehicleNumber || tag.vehicleNumber.includes('Unlinked') || tag.vehicleNumber.includes('Ready');
-                      const isActive = tag.status === 'active' && !isUnlinked;
+                      const isUnlinked = tag.status === 'unregistered';
+                      const isActive = tag.status !== 'paused' && !isUnlinked;
                       return (
                         <div
                           key={tag.id}
@@ -1221,7 +1221,7 @@ export default function Dashboard() {
                                 {isUnlinked ? (
                                   <div className="mt-1">
                                     <p className="text-xs text-amber-700 font-semibold mb-1">
-                                      No vehicle linked yet
+                                      Activation Pending
                                     </p>
                                     <Link
                                       to={`/register/${tag.publicToken || tag.id}`}
@@ -1232,7 +1232,9 @@ export default function Dashboard() {
                                   </div>
                                 ) : (
                                   <p className="font-mono text-sm font-black text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-300 tracking-wider uppercase inline-block mt-1">
-                                    {tag.vehicleNumber}
+                                    {tag.vehicleNumber && !tag.vehicleNumber.includes('Unlinked') && !tag.vehicleNumber.includes('Ready') 
+                                      ? tag.vehicleNumber 
+                                      : 'ACTIVE PROTECTED'}
                                   </p>
                                 )}
 
@@ -1262,28 +1264,16 @@ export default function Dashboard() {
                                   <span className="font-bold text-gray-800">
                                     +91 {String(tag.emergencyContact).replace(/\D/g, '').slice(-10)}
                                   </span>
-                                ) : isUnlinked ? (
-                                  <span className="text-amber-700 font-semibold bg-amber-50 px-1.5 py-0.2 rounded text-[10px]">
-                                    Configure during linking
-                                  </span>
                                 ) : (
-                                  <span className="font-bold text-gray-800">+91 {String(tag.phone).replace(/\D/g, '').slice(-10)}</span>
+                                  <span className="font-bold text-gray-800">+91 {String(tag.phone || currentUser?.phone || '').replace(/\D/g, '').slice(-10)}</span>
                                 )}
                               </div>
                               <div className="flex items-center gap-2">
                                 <MessageCircle size={12} className="text-emerald-600" />
                                 <span className="text-gray-500 font-medium">WhatsApp Alerts:</span>
-                                {tag.whatsapp ? (
-                                  <span className="font-bold text-gray-800">
-                                    +91 {String(tag.whatsapp).replace(/\D/g, '').slice(-10)}
-                                  </span>
-                                ) : isUnlinked ? (
-                                  <span className="text-amber-700 font-semibold bg-amber-50 px-1.5 py-0.2 rounded text-[10px]">
-                                    Configure during linking
-                                  </span>
-                                ) : (
-                                  <span className="font-bold text-gray-800">+91 {String(tag.phone).replace(/\D/g, '').slice(-10)}</span>
-                                )}
+                                <span className="font-bold text-gray-800">
+                                  +91 {String(tag.whatsapp || tag.phone || currentUser?.phone || '').replace(/\D/g, '').slice(-10)}
+                                </span>
                               </div>
                             </div>
 
