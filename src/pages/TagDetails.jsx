@@ -280,6 +280,7 @@ export default function TagDetails() {
       const unified = {
         kitId: baseKitCode,
         currentTagId: id,
+        securityCode: qrApiRes?.securityCode || reg.securityCode || dashKit?.securityCode || foundOrder?.securityCode || null,
         isRegistered,
         isDigital,
         status: isRegistered ? 'ACTIVE' : 'UNLINKED',
@@ -582,21 +583,31 @@ export default function TagDetails() {
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl">
+                <div className={`grid grid-cols-2 gap-3 ${tagData.securityCode ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
+                  <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl col-span-1">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">BRAND / MAKE</p>
                     <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.brand}</p>
                   </div>
-                  <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl">
+                  <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl col-span-1">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">MODEL / NAME</p>
                     <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.name}</p>
                   </div>
-                  <div className="bg-purple-50/70 border border-purple-200 p-3.5 rounded-xl">
-                    <p className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">VEHICLE PLATE NUMBER</p>
+                  <div className="bg-purple-50/70 border border-purple-200 p-3.5 rounded-xl col-span-2 sm:col-span-1">
+                    <p className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">PLATE / ID</p>
                     <p className="text-base font-black text-purple-950 font-mono tracking-wider mt-0.5 uppercase">
                       {tagData.vehicle.plate}
                     </p>
                   </div>
+                  {tagData.securityCode && (
+                    <div className="bg-orange-50 border border-orange-200 p-3.5 rounded-xl col-span-2 sm:col-span-1">
+                      <p className="text-[10px] font-bold text-orange-700 uppercase tracking-wider flex items-center gap-1">
+                        <Lock size={10} /> SECURITY PIN
+                      </p>
+                      <p className="text-base font-black text-orange-900 font-mono tracking-wider mt-0.5 uppercase">
+                        {tagData.securityCode}
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
