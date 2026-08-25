@@ -117,6 +117,9 @@ export default function TagDetails() {
       }
 
       // Build unified Tag Details Model
+      const userRegisteredStr = localStorage.getItem('safedrive_user_registered_tags');
+      const locallyRegistered = userRegisteredStr ? JSON.parse(userRegisteredStr) : {};
+
       let reg = locallyRegistered[id] || 
                 (dashKit?.copies?.[0]?.publicToken && locallyRegistered[dashKit.copies[0].publicToken]) || 
                 (matchedAllocated?.[0]?.publicToken && locallyRegistered[matchedAllocated[0].publicToken]) || 

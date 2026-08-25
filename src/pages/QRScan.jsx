@@ -429,6 +429,9 @@ export default function QRScan() {
     );
   }
 
+  const isVehicle = qrData?.isVehicle !== false && qrData?.qrFor !== 'Luggage' && qrData?.vehicleType !== 'Luggage' && !qrData?.qrFor?.toLowerCase().includes('digital pass');
+  const itemCategory = qrData?.qrFor || qrData?.vehicleType || (isVehicle ? 'Vehicle' : 'Item');
+
   return (
     <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 font-sans text-gray-900 relative">
       
@@ -457,12 +460,12 @@ export default function QRScan() {
               <ShieldCheck size={12} /> 100% Number Masked
             </span>
             <h1 className="text-lg font-black text-gray-900">
-              Contact Vehicle Owner
+              Contact {itemCategory} Owner
             </h1>
             <p className="text-xs text-gray-500 mt-0.5 font-medium">
               {verifiedVehicleInfo 
-                ? `${verifiedVehicleInfo.vehicleBrand || 'Protected'} ${verifiedVehicleInfo.vehicleName || 'Vehicle'} • ${verifiedVehicleInfo.vehicleNumber || 'Verified'}`
-                : (qrData?.maskedPlate ? `Vehicle: ${qrData.maskedPlate}` : 'Instant Masked Voice & WhatsApp Bridge')}
+                ? `${verifiedVehicleInfo.vehicleBrand || 'Protected'} ${verifiedVehicleInfo.vehicleName || itemCategory} • ${verifiedVehicleInfo.vehicleNumber || 'Verified'}`
+                : (qrData?.maskedPlate ? `${itemCategory}: ${qrData.maskedPlate}` : 'Instant Masked Voice & WhatsApp Bridge')}
             </p>
           </div>
 
@@ -479,21 +482,27 @@ export default function QRScan() {
                 <Lock size={16} />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-gray-900">Anti-Harassment Plate Verification</h3>
+                <h3 className="font-bold text-sm text-gray-900">Anti-Harassment Security Verification</h3>
                 <p className="text-[11px] text-gray-400">Owner protection spam shield</p>
               </div>
             </div>
 
-            <p className="text-xs text-gray-600 leading-relaxed">
-              To protect the owner from spam, enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>):
-            </p>
+            {isVehicle ? (
+              <p className="text-xs text-gray-600 leading-relaxed">
+                To protect the owner from spam, enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>) OR the <strong>4-digit PIN</strong> on the tag:
+              </p>
+            ) : (
+              <p className="text-xs text-gray-600 leading-relaxed">
+                To protect the owner from spam, enter the <strong>4-digit Security PIN</strong> printed on the tag (or the last 4 digits of the item code):
+              </p>
+            )}
 
             <form onSubmit={handleVerifyPlate} className="space-y-3">
               <input
                 type="text"
                 maxLength={4}
                 autoFocus
-                placeholder="Last 4 digits (e.g. 1234)"
+                placeholder={isVehicle ? "Last 4 digits or PIN (e.g. 1234)" : "4-digit PIN (e.g. 5781)"}
                 value={plateInput}
                 onChange={(e) => setPlateInput(e.target.value.replace(/\D/g, ''))}
                 className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl py-3 px-4 text-center font-mono font-black text-xl tracking-widest outline-none transition-all"
