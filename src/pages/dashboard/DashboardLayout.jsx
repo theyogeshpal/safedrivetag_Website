@@ -31,19 +31,50 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
   useEffect(() => {
     async function checkActiveTags() {
       try {
-        const res = await api.getDashboard();
-        if (res.success) {
+        let count = 0;
+        const [dashRes, ordersRes] = await Promise.allSettled([
+          api.getDashboard(),
+          api.getUserOrders(),
+        ]);
+
+        if (dashRes.status === 'fulfilled' && dashRes.value?.success) {
+          const res = dashRes.value;
           const rawList = Array.isArray(res.qrCodes) 
             ? res.qrCodes 
             : (Array.isArray(res.kits) ? res.kits : []);
-          const activeCount = res.stats?.activeQRs ?? rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active').length;
-          setActiveTagsCount(activeCount);
-        } else {
-          setActiveTagsCount(0);
+          const activeKits = rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
+          count = Math.max(count, res.stats?.activeQRs || 0, activeKits.length);
         }
+
+        if (count === 0 && ordersRes.status === 'fulfilled' && ordersRes.value?.success && Array.isArray(ordersRes.value.orders)) {
+          for (const ord of ordersRes.value.orders) {
+            if (ord.isClaimed || ord.isActivated) {
+              count++;
+              continue;
+            }
+            if (Array.isArray(ord.allocatedQRIds)) {
+              for (const qr of ord.allocatedQRIds) {
+                if (qr.status === 'ACTIVE' || qr.isRegistered) {
+                  count++;
+                  break;
+                }
+                if (qr.publicToken || qr.copyCode) {
+                  try {
+                    const pubRes = await api.getPublicQrInfo(qr.publicToken || qr.copyCode);
+                    if (pubRes && pubRes.success && pubRes.status === 'ACTIVE') {
+                      count++;
+                      break;
+                    }
+                  } catch (e) {}
+                }
+              }
+            }
+          }
+        }
+
+        setActiveTagsCount(count);
       } catch (err) {
         console.error('Error verifying active tags count', err);
-        setActiveTagsCount(0);
       }
     }
     if (currentUser) {

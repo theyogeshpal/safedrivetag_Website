@@ -13,26 +13,50 @@ export default function DashboardLogs() {
     const fetchLogs = async () => {
       setLoading(true);
       try {
-        const res = await api.getDashboard();
-        if (res.success) {
+        let activeCount = 0;
+        const allScans = [];
+
+        const [dashRes, ordersRes] = await Promise.allSettled([
+          api.getDashboard(),
+          api.getUserOrders(),
+        ]);
+
+        if (dashRes.status === 'fulfilled' && dashRes.value?.success) {
+          const res = dashRes.value;
           const rawList = Array.isArray(res.qrCodes) 
             ? res.qrCodes 
             : (Array.isArray(res.kits) ? res.kits : []);
           const activeList = rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
-          const count = res.stats?.activeQRs ?? activeList.length;
-          
-          const allScans = [];
+          activeCount = Math.max(activeCount, res.stats?.activeQRs || 0, activeList.length);
+
           activeList.forEach(k => {
             if (Array.isArray(k.scans)) {
               k.scans.forEach(s => allScans.push({ ...s, tagId: k.kitId || k.productId || k.copyCode || k._id }));
             }
           });
-          setLogs(allScans);
-          setHasActiveTags(count > 0);
-        } else {
-          setHasActiveTags(false);
-          setLogs([]);
         }
+
+        if (activeCount === 0 && ordersRes.status === 'fulfilled' && ordersRes.value?.success && Array.isArray(ordersRes.value.orders)) {
+          for (const ord of ordersRes.value.orders) {
+            if (Array.isArray(ord.allocatedQRIds)) {
+              for (const qr of ord.allocatedQRIds) {
+                const token = qr.publicToken || qr.copyCode || ord._id;
+                try {
+                  const pubRes = await api.getPublicQrInfo(token);
+                  if (pubRes && pubRes.success && (pubRes.status === 'ACTIVE' || pubRes.isRegistered || qr.status === 'ACTIVE')) {
+                    activeCount++;
+                    if (Array.isArray(pubRes.scans)) {
+                      pubRes.scans.forEach(s => allScans.push({ ...s, tagId: token }));
+                    }
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+        }
+
+        setLogs(allScans);
+        setHasActiveTags(activeCount > 0);
       } catch (err) {
         console.error(err);
         setHasActiveTags(false);

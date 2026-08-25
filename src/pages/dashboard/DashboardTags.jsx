@@ -73,6 +73,8 @@ export default function DashboardTags() {
         localStorage.removeItem('safedrive_registered_tags');
       } catch (e) {}
 
+      let finalTagsList = [];
+
       const res = await api.getDashboard();
       if (res.success) {
         const rawList = Array.isArray(res.qrCodes) 
@@ -124,22 +126,83 @@ export default function DashboardTags() {
             };
           });
 
-        setUserTags(activeList);
-        setDashboardStats({
-          totalKits: res.stats?.totalQRs ?? activeList.length,
-          totalCallsLeft: res.stats?.totalCalls ?? activeList.reduce((sum, t) => sum + (t.callBalance || 0), 0),
-          totalMessagesLeft: res.stats?.totalMessages ?? activeList.reduce((sum, t) => sum + (t.messageBalance || 0), 0),
-          activeProtectionCount: res.stats?.activeQRs ?? activeList.length,
-        });
-      } else {
-        setUserTags([]);
-        setDashboardStats({
-          totalKits: 0,
-          totalCallsLeft: 0,
-          totalMessagesLeft: 0,
-          activeProtectionCount: 0,
-        });
+        if (activeList.length > 0) {
+          finalTagsList = activeList;
+        }
       }
+
+      // If no active tags from getDashboard, check User Orders with live Public QR API verification
+      if (finalTagsList.length === 0) {
+        try {
+          const ordersRes = await api.getUserOrders();
+          if (ordersRes.success && Array.isArray(ordersRes.orders)) {
+            for (const ord of ordersRes.orders) {
+              if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
+                for (const qr of ord.allocatedQRIds) {
+                  const token = qr.publicToken || qr.copyCode || ord._id;
+                  const copyCode = qr.copyCode || token;
+                  
+                  try {
+                    const pubRes = await api.getPublicQrInfo(token);
+                    if (pubRes && pubRes.success && (pubRes.status === 'ACTIVE' || pubRes.isRegistered || qr.status === 'ACTIVE')) {
+                      const vBrand = pubRes.vehicle?.vehicleBrand || pubRes.vehicleBrand || '';
+                      const vModel = pubRes.vehicle?.vehicleName || pubRes.vehicleName || ord.productName || '';
+                      const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : (pubRes.qrFor ? `${pubRes.qrFor} Safety Tag` : (ord.productName || 'SafeDrive Tag'));
+                      const vPlate = pubRes.vehicle?.vehicleNumber || pubRes.vehicleNumber || '';
+                      
+                      const eContacts = Array.isArray(pubRes.emergencyContacts) && pubRes.emergencyContacts.length > 0
+                        ? pubRes.emergencyContacts
+                        : (Array.isArray(pubRes.vehicle?.emergencyContacts) && pubRes.vehicle.emergencyContacts.length > 0
+                            ? pubRes.vehicle.emergencyContacts
+                            : [
+                                ...(pubRes.emergencyContact1 ? [{ name: pubRes.emergencyContact1.name || 'Primary Contact', number: pubRes.emergencyContact1.phone || pubRes.emergencyContact1.number }] : []),
+                                ...(pubRes.emergencyContact2 ? [{ name: pubRes.emergencyContact2.name || 'Secondary Contact', number: pubRes.emergencyContact2.phone || pubRes.emergencyContact2.number }] : [])
+                              ]);
+
+                      finalTagsList.push({
+                        id: copyCode,
+                        kitId: copyCode,
+                        publicToken: token,
+                        primaryToken: token,
+                        copyCode: copyCode,
+                        productId: ord.productName || 'SafeDrive Smart Safety Kit',
+                        name: pubRes.owner?.name || pubRes.name || currentUser?.name || 'Owner',
+                        phone: pubRes.owner?.phone || pubRes.phone || currentUser?.phone || '',
+                        emergencyContact: eContacts[0]?.number || eContacts[0]?.phone || null,
+                        emergencyContacts: eContacts,
+                        whatsapp: pubRes.whatsappNumber || currentUser?.phone,
+                        vehicleNumber: vPlate,
+                        vehicleName: vTitle,
+                        vehicleType: pubRes.vehicle?.vehicleType || pubRes.qrFor || ord.qrFor || 'Luggage',
+                        status: 'active',
+                        qrType: ord.productType || 'DIGITAL',
+                        registeredAt: pubRes.registeredAt || ord.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+                        callBalance: pubRes.wallet?.callBalance ?? pubRes.callBalance ?? 10,
+                        messageBalance: pubRes.wallet?.messageBalance ?? pubRes.messageBalance ?? 20,
+                        scansCount: pubRes.scansCount ?? 0,
+                        callMaskingEnabled: true,
+                        whatsappAlertsEnabled: true,
+                      });
+                    }
+                  } catch (e) {
+                    console.error('Error fetching public info for token', token, e);
+                  }
+                }
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Error checking user orders for active tags', e);
+        }
+      }
+
+      setUserTags(finalTagsList);
+      setDashboardStats({
+        totalKits: finalTagsList.length,
+        totalCallsLeft: finalTagsList.reduce((sum, t) => sum + (t.callBalance || 0), 0),
+        totalMessagesLeft: finalTagsList.reduce((sum, t) => sum + (t.messageBalance || 0), 0),
+        activeProtectionCount: finalTagsList.length,
+      });
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
       setUserTags([]);
