@@ -10,7 +10,7 @@ export default function PageHero({
   className = ''
 }) {
   return (
-    <section className={`relative bg-[#0A0A0A] pt-28 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 text-center overflow-hidden ${className}`}>
+    <section className={`relative bg-[#0A0A0A] pt-32 sm:pt-36 lg:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 text-center overflow-hidden ${className}`}>
       {/* Texture Pattern Overlay */}
       <div 
         className="absolute inset-0 carbon-texture-bg opacity-40 pointer-events-none"

@@ -166,7 +166,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
   ];
 
   return (
-    <div className="min-h-screen bg-[#f1f3f6] text-[#212121] pt-28 sm:pt-32 pb-20 font-sans">
+    <div className="min-h-screen bg-[#f1f3f6] text-[#212121] pt-32 sm:pt-36 pb-20 font-sans">
       
       {/* Toast Alert Message */}
       {saveSuccessMsg && (

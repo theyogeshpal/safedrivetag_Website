@@ -76,8 +76,66 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 transition-all duration-200 pointer-events-auto bg-white border-b border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.04)] py-2.5 sm:py-3">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between relative z-50">
+    <header className="fixed top-0 left-0 w-full z-50 transition-all duration-200 pointer-events-auto bg-white border-b border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+      
+      {/* ======================================================== */}
+      {/* 0. TOP SUB-HEADER ANNOUNCEMENT & HELPLINE BAR */}
+      {/* ======================================================== */}
+      <div className="bg-gradient-to-r from-gray-950 via-slate-900 to-gray-950 text-white border-b border-gray-800 text-[11px] font-medium">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-4">
+          
+          {/* Left: Special Launch Offer Pill */}
+          <div className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 shadow-xs">
+              🔥 Special Offer
+            </span>
+            <span className="text-gray-300 hidden sm:inline">
+              Smart Vehicle QR Safety Tag at just <strong className="text-white font-bold">₹299</strong>
+            </span>
+            <span className="text-emerald-400 font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
+              Free Pan-India Delivery
+            </span>
+          </div>
+
+          {/* Center / Highlight: Privacy Guarantee */}
+          <div className="hidden lg:flex items-center gap-3 text-gray-400">
+            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+              <ShieldCheck size={13} className="text-emerald-400" /> 100% Privacy Protected
+            </span>
+            <span className="text-gray-600">•</span>
+            <span className="flex items-center gap-1 text-orange-400 font-semibold">
+              <PhoneCall size={12} className="text-orange-400" /> 2-Way Number Masking
+            </span>
+          </div>
+
+          {/* Right: Helpline & Quick Links */}
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0 text-xs">
+            <a 
+              href="tel:+919695078159" 
+              className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"
+            >
+              <PhoneCall size={11} className="text-orange-400" />
+              <span className="hidden xs:inline">24x7 Helpline:</span>
+              <span className="font-bold text-white tracking-wide">+91 96950 78159</span>
+            </a>
+
+            <span className="text-gray-700 hidden sm:inline">|</span>
+
+            <Link 
+              to="/dashboard/orders" 
+              className="hidden sm:flex items-center gap-1 text-gray-300 hover:text-orange-400 transition-colors font-semibold text-[11px]"
+            >
+              <Package size={12} />
+              <span>Track Order</span>
+            </Link>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Main Navbar Row */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between relative z-50 py-2 sm:py-2.5">
         
         {/* ======================================================== */}
         {/* 1. BRAND LOGO */}

@@ -80,7 +80,7 @@ export default function Home() {
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex items-center pt-20 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden bg-white w-full">
+      <section className="relative flex items-center pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden bg-white w-full">
         {/* Background Graphic with Smooth Gradient Overlay */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-end">
           {/* Subtle Ambient Radial Glow (Dual Orange & Emerald Green) */}
