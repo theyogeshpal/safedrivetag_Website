@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Bell, ShieldCheck, Smartphone, CheckCircle2, Send, Zap, Volume2 } from 'lucide-react';
+import { Bell, ShieldCheck, Smartphone, CheckCircle2, Send, Zap, Volume2, BellRing } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
-import { showToast, customSwal } from '../../utils/swal';
+import { showToast, customSwal, playNotificationBellSound } from '../../utils/swal';
 
 export default function DashboardNotifications() {
   const [notifications, setNotifications] = useState([
@@ -27,6 +27,8 @@ export default function DashboardNotifications() {
     setIsTesting(true);
 
     try {
+      // 0. Play Audible High-Quality Notification Bell Sound Chime
+      playNotificationBellSound();
       // 1. Browser Native Push Notification Check & Request
       if ('Notification' in window) {
         let perm = Notification.permission;
@@ -98,14 +100,28 @@ export default function DashboardNotifications() {
             </p>
           </div>
 
-          <button
-            onClick={handleTestPushNotification}
-            disabled={isTesting}
-            className="bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-50"
-          >
-            <Zap size={14} className={isTesting ? 'animate-spin' : ''} />
-            <span>{isTesting ? 'Testing Notification...' : 'Test Push Notification'}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                playNotificationBellSound();
+                showToast.success('🔔 Ringing alert bell chime!');
+              }}
+              className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 text-xs font-black px-3.5 py-2.5 rounded-xl shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+              title="Test Alert Bell Sound Chime"
+            >
+              <Volume2 size={15} className="text-amber-600 animate-pulse" />
+              <span>Ring Bell 🔔</span>
+            </button>
+
+            <button
+              onClick={handleTestPushNotification}
+              disabled={isTesting}
+              className="bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-50"
+            >
+              <Zap size={14} className={isTesting ? 'animate-spin' : ''} />
+              <span>{isTesting ? 'Testing Notification...' : 'Test Push Notification'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Live Notification Status Banner */}
@@ -116,22 +132,23 @@ export default function DashboardNotifications() {
             </div>
             <div>
               <p className="text-xs sm:text-sm font-black text-gray-900 flex items-center gap-2">
-                <span>Real-Time Alert Dispatcher</span>
+                <span>Real-Time Alert Dispatcher & Audio Chime</span>
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">
                   Always Active
                 </span>
               </p>
               <p className="text-[11px] text-gray-600 mt-0.5">
-                SafeDrive delivers automated instant alerts via Browser Push, SMS, and WhatsApp whenever someone scans your QR pass.
+                SafeDrive delivers automated instant alerts with audible bell chimes, Browser Push, SMS, and WhatsApp whenever someone scans your QR pass.
               </p>
             </div>
           </div>
 
           <button
             onClick={handleTestPushNotification}
-            className="text-emerald-700 hover:text-emerald-800 bg-white border border-emerald-300 font-black text-xs px-3 py-1.5 rounded-lg shadow-2xs transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto"
+            className="text-emerald-700 hover:text-emerald-800 bg-white border border-emerald-300 font-black text-xs px-3.5 py-1.5 rounded-lg shadow-2xs transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto flex items-center gap-1.5"
           >
-            ⚡ Click to Test
+            <BellRing size={13} className="text-emerald-600 animate-bounce" />
+            <span>⚡ Test Push & Bell</span>
           </button>
         </div>
 
