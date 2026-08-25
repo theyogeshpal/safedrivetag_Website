@@ -163,7 +163,7 @@ export default function LoginModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 pt-20 sm:pt-28 overflow-y-auto">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
@@ -171,7 +171,7 @@ export default function LoginModal() {
       />
 
       {/* Modal Card */}
-      <div className="relative bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl z-10 border border-black/5 animate-fade-up overflow-hidden">
+      <div className="relative bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl z-10 border border-black/5 animate-fade-up overflow-hidden my-auto mt-8 sm:mt-12">
         
         {/* Close Button */}
         <button
