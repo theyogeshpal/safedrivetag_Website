@@ -332,7 +332,7 @@ export default function QRScan() {
 
           <Link
             to={`/register/${token}`}
-            className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
+            className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
           >
             <span>Activate & Register This Tag</span>
           </Link>
@@ -539,7 +539,7 @@ export default function QRScan() {
               <button
                 onClick={handleCallOwner}
                 disabled={actionLoading}
-                className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
               >
                 <div className="flex items-center gap-3 text-left">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
@@ -547,10 +547,10 @@ export default function QRScan() {
                   </div>
                   <div>
                     <p className="font-bold text-sm leading-tight">Call Vehicle Owner</p>
-                    <p className="text-[11px] text-blue-100 font-normal">100% Number Masked automated bridge</p>
+                    <p className="text-[11px] text-orange-100 font-normal">100% Number Masked automated bridge</p>
                   </div>
                 </div>
-                <span className="text-xs bg-white text-[#2874f0] font-black px-2.5 py-1 rounded-md shrink-0">
+                <span className="text-xs bg-white text-orange-600 font-black px-2.5 py-1 rounded-md shrink-0">
                   {actionLoading ? 'Connecting...' : 'Call Now'}
                 </span>
               </button>

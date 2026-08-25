@@ -2,6 +2,9 @@
 
 @theme {
   --color-primary: #f97316;
+  --color-primary-dark: #ea580c;
+  --color-secondary-green: #10b981;
+  --color-secondary-green-dark: #059669;
   --color-dark: #0a0a0a;
   --font-sans: 'Roboto Slab', serif, ui-sans-serif, system-ui, sans-serif;
 }
@@ -10,9 +13,11 @@
   --color-primary: #f97316;
   --color-primary-dark: #ea580c;
   --color-primary-light: #fff7ed;
+  --color-green-500: #10b981;
+  --color-green-600: #059669;
+  --color-green-50: #ecfdf5;
   --color-dark: #0a0a0a;
   --color-white: #ffffff;
-  --color-green-500: #22c55e;
   --font-sans: 'Roboto Slab', serif, ui-sans-serif, system-ui, sans-serif;
 }
 

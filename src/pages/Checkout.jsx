@@ -541,7 +541,7 @@ export default function Checkout() {
               {/* Step 1: Shipping Details */}
               <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-black/5 space-y-5">
                 <div className="flex items-center gap-4 pb-4 border-b border-black/5">
-                  <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-black text-sm">1</div>
+                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-sm">1</div>
                   <h2 className="text-xl font-black text-black">Delivery & Contact Details</h2>
                 </div>
                 
@@ -725,7 +725,7 @@ export default function Checkout() {
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-2xl font-black text-base transition-all shadow-[0_8px_30px_rgba(34,197,94,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                  className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white py-4 rounded-2xl font-black text-base transition-all shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                 >
                   {isSubmitting ? (
                     <>
@@ -742,10 +742,10 @@ export default function Checkout() {
 
                 <div className="mt-6 space-y-2.5">
                   <div className="flex items-center justify-center gap-2 text-[11px] font-bold text-black/50">
-                    <ShieldCheck size={15} className="text-green-600" /> SECURE 256-BIT RAZORPAY ENCRYPTION
+                    <ShieldCheck size={15} className="text-emerald-600" /> SECURE 256-BIT RAZORPAY ENCRYPTION
                   </div>
                   <div className="flex items-center justify-center gap-2 text-[11px] font-bold text-black/50">
-                    <Truck size={15} className="text-blue-500" /> GUARANTEED SAFE DISPATCH
+                    <Truck size={15} className="text-orange-500" /> GUARANTEED SAFE EXPRESS DISPATCH
                   </div>
                 </div>
               </div>

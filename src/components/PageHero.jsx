@@ -20,6 +20,10 @@ export default function PageHero({
         }}
       />
 
+      {/* Dual Ambient Radial Glow (Orange on Right, Emerald Green on Left) */}
+      <div className="absolute -top-20 -right-20 w-96 h-96 bg-orange-500/15 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-emerald-500/15 rounded-full blur-[100px] pointer-events-none" />
+
       <div className="relative z-10 max-w-4xl mx-auto space-y-4 sm:space-y-5 animate-fade-up">
         {/* Top Pill */}
         {badge && (

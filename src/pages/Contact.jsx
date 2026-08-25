@@ -37,33 +37,36 @@ export default function Contact() {
           <div className="space-y-6">
             {[
               {
-                icon: <MessageCircle className="w-7 h-7 text-green-600" />,
-                bg: 'bg-green-50',
-                border: 'border-green-100',
+                icon: <MessageCircle className="w-7 h-7 text-emerald-600" />,
+                bg: 'bg-emerald-50',
+                border: 'border-emerald-200',
                 title: 'WhatsApp',
-                sub: 'Fastest way to reach us',
+                sub: 'Fastest way to reach us (Instant)',
                 action: 'Chat on WhatsApp',
+                actionColor: 'text-emerald-600 group-hover:text-emerald-700',
                 href: 'https://wa.me/919876543210?text=Hello%20SafeDrive-Tag%20Team',
               },
               {
-                icon: <Mail className="w-7 h-7 text-green-600" />,
-                bg: 'bg-green-50',
-                border: 'border-green-100',
+                icon: <Mail className="w-7 h-7 text-orange-500" />,
+                bg: 'bg-orange-50',
+                border: 'border-orange-200',
                 title: 'Email',
-                sub: 'For orders & support',
+                sub: 'For orders, billing & support',
                 action: 'safedrivetag@gmail.com',
+                actionColor: 'text-orange-600 group-hover:text-orange-700',
                 href: 'mailto:safedrivetag@gmail.com',
               },
               {
-                icon: <Phone className="w-7 h-7 text-orange-500" />,
-                bg: 'bg-orange-50',
-                border: 'border-orange-100',
-                title: 'Phone',
-                sub: 'Mon-Fri, 9am - 6pm',
+                icon: <Phone className="w-7 h-7 text-emerald-600" />,
+                bg: 'bg-emerald-50',
+                border: 'border-emerald-200',
+                title: 'Helpline Call',
+                sub: 'Mon-Sat, 9am - 8pm',
                 action: '+91 98765 43210',
+                actionColor: 'text-emerald-600 group-hover:text-emerald-700',
                 href: 'tel:+919876543210',
               },
-            ].map(({ icon, bg, border, title, sub, action, href }) => (
+            ].map(({ icon, bg, border, title, sub, action, actionColor, href }) => (
               <a
                 key={title}
                 href={href}
@@ -77,7 +80,7 @@ export default function Contact() {
                 <div>
                   <h3 className="font-bold text-black text-lg">{title}</h3>
                   <p className="text-sm text-black/50 mb-1">{sub}</p>
-                  <span className="text-sm font-semibold text-orange-600 group-hover:text-orange-700 transition-colors">{action}</span>
+                  <span className={`text-sm font-bold transition-colors ${actionColor}`}>{action}</span>
                 </div>
               </a>
             ))}
@@ -90,18 +93,18 @@ export default function Contact() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-black/80">Name</label>
-                  <input type="text" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="Your name" />
+                  <input type="text" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="Your name" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-black/80">Email</label>
-                  <input type="email" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="you@email.com" />
+                  <input type="email" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="you@email.com" />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-[1fr_2fr] gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-black/80">Code</label>
-                  <select className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-black appearance-none">
+                  <select className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black appearance-none">
                     <option>🇮🇳 +91</option>
                     <option>🇺🇸 +1</option>
                     <option>🇬🇧 +44</option>
@@ -110,13 +113,13 @@ export default function Contact() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-black/80">Phone</label>
-                  <input type="tel" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="Phone number" />
+                  <input type="tel" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="Phone number" />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-bold text-black/80">Topic</label>
-                <select className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-black">
+                <select className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black">
                   <option>General Question</option>
                   <option>Order Support</option>
                   <option>Feedback</option>
@@ -126,17 +129,17 @@ export default function Contact() {
 
               <div className="space-y-2">
                 <label className="text-sm font-bold text-black/80">Message</label>
-                <textarea rows="4" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-black placeholder:text-black/40 resize-none" placeholder="How can we help?" />
+                <textarea rows="4" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40 resize-none" placeholder="How can we help?" />
               </div>
 
               <div className="flex items-start gap-3 pt-2">
-                <input type="checkbox" id="terms" className="mt-1 w-4 h-4 rounded border-black/20 text-orange-500 focus:ring-orange-500" />
+                <input type="checkbox" id="terms" className="mt-1 w-4 h-4 rounded border-black/20 text-emerald-600 focus:ring-emerald-500" />
                 <label htmlFor="terms" className="text-sm text-black/50 font-medium">
-                  I agree to the <Link to="#" className="text-orange-600 hover:underline">Terms & Conditions</Link>. We won't spam you.
+                  I agree to the <Link to="/terms" className="text-emerald-700 font-bold hover:underline">Terms & Conditions</Link>. We won't spam you.
                 </label>
               </div>
 
-              <button type="button" className="w-full bg-green-500 text-white font-bold text-lg py-4 rounded-xl hover:bg-green-600 transition-colors shadow-md hover:shadow-green-500/30">
+              <button type="button" className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white font-black text-lg py-4 rounded-xl transition-all shadow-md hover:shadow-lg shadow-orange-500/20 cursor-pointer">
                 Send Message
               </button>
             </form>

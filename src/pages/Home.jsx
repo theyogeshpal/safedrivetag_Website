@@ -9,8 +9,8 @@ const liveStats = [
     tag: "TRUSTED USERS", 
     value: "9.5L+ Across India", 
     desc: "Protecting vehicles and luggage with smart QR tags", 
-    icon: <Shield size={18} className="text-orange-500" />,
-    badgeBg: "bg-gradient-to-r from-orange-600 to-amber-600"
+    icon: <Shield size={18} className="text-emerald-500" />,
+    badgeBg: "bg-gradient-to-r from-emerald-600 to-teal-600"
   },
   { 
     tag: "RATING", 
@@ -23,8 +23,8 @@ const liveStats = [
     tag: "TOTAL SCANS", 
     value: "2.4M+ All Time", 
     desc: "Masked calls & emergency contacts bridged successfully", 
-    icon: <QrCode size={18} className="text-blue-500" />,
-    badgeBg: "bg-gradient-to-r from-blue-600 to-indigo-600"
+    icon: <QrCode size={18} className="text-orange-500" />,
+    badgeBg: "bg-gradient-to-r from-orange-600 to-amber-600"
   },
   { 
     tag: "TODAY'S SCANS", 
@@ -81,25 +81,34 @@ export default function Home() {
       
       {/* --- HERO SECTION --- */}
       <section className="relative flex items-center pt-20 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden bg-white w-full">
-        {/* Background Car Graphic with Smooth Gradient Overlay */}
+        {/* Background Graphic with Smooth Gradient Overlay */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-end">
-          {/* Subtle Ambient Radial Glow */}
+          {/* Subtle Ambient Radial Glow (Dual Orange & Emerald Green) */}
           <div className="absolute -top-24 -right-24 w-[600px] h-[600px] bg-orange-500/10 rounded-full blur-[120px]"></div>
-          <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px]"></div>
+          <div className="absolute top-1/2 left-1/4 w-[450px] h-[450px] bg-emerald-500/10 rounded-full blur-[110px]"></div>
           
+          {/* 1. SEPARATE HERO BACKGROUND IMAGE TAG */}
+          <img 
+            src="/hero-bg.png" 
+            alt="Hero Background" 
+            decoding="async"
+            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-15 lg:opacity-20 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl" 
+          />
+
           {/* Light Grid Overlay (Checkboxes/Grid Pattern) */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         </div>
-
+      
         <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 lg:gap-8 items-center relative z-10 w-full min-w-0">
           
           {/* Left Column (7 cols) */}
           <div className="lg:col-span-7 space-y-5 sm:space-y-7 animate-fade-up w-full min-w-0">
 
-            {/* Headline */}
+            {/* Headline with Dual Orange & Green Highlights */}
             <h1 className="text-3xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.14] tracking-tight">
               Stay reachable in emergencies,<br className="hidden sm:inline" />
-              <span className="text-orange-500"> stay private.</span>
+              <span className="text-orange-500"> stay safe.</span>
+              <span className="text-emerald-600"> Stay private.</span>
             </h1>
 
             {/* Description */}
@@ -107,7 +116,7 @@ export default function Home() {
               SafeDrive-Tag is the next-generation smart QR emergency contact tag for your vehicles and travel luggage. Protect your car, bike, and bags without ever exposing your private phone number.
             </p>
 
-            {/* 1. Top 3-Value Props Bar */}
+            {/* 1. Top 3-Value Props Bar with Orange & Green Harmony */}
             <div className="bg-white/95 border border-gray-200/80 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-sm grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-2 items-center w-full">
               {/* Item 1 */}
               <div className="flex items-center gap-3 px-1 sm:px-2">
@@ -122,8 +131,8 @@ export default function Home() {
 
               {/* Item 2 */}
               <div className="flex items-center gap-3 px-1 sm:px-2 sm:border-l sm:border-gray-100">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-600 shrink-0 shadow-inner">
-                  <QrCode size={19} className="text-orange-600" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
+                  <QrCode size={19} className="text-emerald-600" />
                 </div>
                 <div>
                   <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No app needed</h4>
@@ -133,8 +142,8 @@ export default function Home() {
 
               {/* Item 3 */}
               <div className="flex items-center gap-3 px-1 sm:px-2 sm:border-l sm:border-gray-100">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-500 shrink-0 shadow-inner">
-                  <Lock size={18} className="text-amber-500" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
+                  <Lock size={18} className="text-emerald-600" />
                 </div>
                 <div>
                   <h4 className="font-extrabold text-sm text-gray-900 leading-tight">No number shared</h4>
@@ -148,21 +157,21 @@ export default function Home() {
               {/* Buy Safety Tag Primary CTA */}
               <Link 
                 to="/shop" 
-                className="group flex-1 bg-gradient-to-r from-orange-500 via-orange-600 to-amber-600 hover:from-orange-600 hover:to-orange-500 text-white p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl shadow-[0_10px_25px_rgba(249,115,22,0.35)] transition-all duration-200 flex items-center justify-between gap-3 overflow-hidden active:scale-[0.98]"
+                className="group flex-1 bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl shadow-[0_10px_25px_rgba(249,115,22,0.3)] transition-all duration-200 flex items-center justify-between gap-3 overflow-hidden active:scale-[0.98]"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-orange-600 flex items-center justify-center shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-emerald-600 flex items-center justify-center shadow-sm">
                       <ShieldCheck size={18} />
                     </div>
                   </div>
                   <div className="text-left">
                     <div className="font-black text-base sm:text-lg leading-tight tracking-tight text-white">Buy Safety Tag</div>
-                    <div className="text-[11px] text-white/90 font-medium">Secure. Smart. Reliable.</div>
+                    <div className="text-[11px] text-white/90 font-medium">Secure &bull; Smart &bull; Reliable</div>
                   </div>
                 </div>
 
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-orange-600 flex items-center justify-center shrink-0 shadow-md group-hover:translate-x-1 transition-transform">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-emerald-700 flex items-center justify-center shrink-0 shadow-md group-hover:translate-x-1 transition-transform">
                   <ArrowRight size={18} className="stroke-[2.5]" />
                 </div>
               </Link>
@@ -248,8 +257,8 @@ export default function Home() {
             
             <div className="relative w-full max-w-[480px] bg-white rounded-3xl p-5 sm:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col gap-4">
               
-              {/* Top Two-Way Privacy Card */}
-              <div className="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 flex items-start gap-3.5">
+              {/* Top Two-Way Privacy Card (Emerald Green) */}
+              <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 flex items-start gap-3.5">
                 <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                   <Lock size={18} />
                 </div>
@@ -267,9 +276,9 @@ export default function Home() {
                 <div className="absolute top-3 right-6 flex items-center gap-1.5 z-20">
                   <div className="w-12 h-14 bg-white border border-gray-200 rounded-xl p-1 shadow-md flex flex-col items-center justify-center text-center">
                     <QrCode size={24} className="text-gray-900 mb-0.5" />
-                    <span className="text-[7px] font-black tracking-widest text-orange-500">SCAN</span>
+                    <span className="text-[7px] font-black tracking-widest text-emerald-600">SCAN</span>
                   </div>
-                  <div className="w-6 h-6 rounded-full border-2 border-orange-400 border-dashed animate-spin flex items-center justify-center opacity-60" style={{ animationDuration: '8s' }} />
+                  <div className="w-6 h-6 rounded-full border-2 border-emerald-500 border-dashed animate-spin flex items-center justify-center opacity-60" style={{ animationDuration: '8s' }} />
                 </div>
 
                 <img 
@@ -279,22 +288,25 @@ export default function Home() {
                   className="w-full max-w-[340px] object-contain drop-shadow-xl" 
                 />
 
-                {/* Dark Live QR Shield Pill */}
+                {/* Dark Live QR Shield Pill with Emerald Green live dot */}
                 <div className="w-full max-w-[360px] bg-[#0c1427] text-white rounded-2xl p-3 flex items-center gap-3.5 border border-white/10 shadow-xl mt-2">
                   <div className="w-10 h-10 bg-white rounded-xl p-1.5 shrink-0 flex items-center justify-center text-gray-950 shadow-xs">
                     <QrCode size={28} />
                   </div>
                   <div>
-                    <div className="text-[10px] font-black tracking-wider text-orange-400 uppercase">LIVE QR SHIELD</div>
+                    <div className="text-[10px] font-black tracking-wider text-emerald-400 uppercase flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                      LIVE QR SHIELD
+                    </div>
                     <div className="text-xs font-bold text-gray-100">Scan to Call Owner Privately</div>
                   </div>
                 </div>
               </div>
 
               {/* Bottom Cloud Bridge Status Card */}
-              <div className="bg-orange-50/40 border border-orange-100 rounded-2xl p-3.5 flex items-center justify-between">
+              <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                     <Zap size={18} />
                   </div>
                   <div>
@@ -302,7 +314,7 @@ export default function Home() {
                     <p className="text-[10px] text-gray-500 font-medium">WhatsApp Alert &bull; Call & Text Forwarding</p>
                   </div>
                 </div>
-                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-extrabold px-2.5 py-1 rounded-full">
+                <span className="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs">
                   ACTIVE
                 </span>
               </div>
@@ -313,21 +325,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- MARQUEE --- */}
+      {/* --- MARQUEE WITH DUAL ORANGE & GREEN ICONS --- */}
       <div className="w-full overflow-hidden">
         <div className="border-y border-neutral-800 bg-[#0c0f17] py-4 sm:py-5 overflow-hidden shadow-md relative z-20">
           <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex items-center gap-8 sm:gap-12 px-4 sm:px-6">
                 {[
-                  { icon: <Lock />, text: "100% Privacy Preserved" },
-                  { icon: <Smartphone />, text: "Works Without Any App" },
-                  { icon: <Shield />, text: "24/7 Reliable Service" },
-                  { icon: <Zap />, text: "Instant Call Routing" },
-                  { icon: <CheckCircle />, text: "Weatherproof Tags" },
+                  { icon: <Lock className="text-emerald-400" />, text: "100% Privacy Preserved" },
+                  { icon: <Smartphone className="text-orange-400" />, text: "Works Without Any App" },
+                  { icon: <Shield className="text-emerald-400" />, text: "24/7 Reliable Service" },
+                  { icon: <Zap className="text-orange-400" />, text: "Instant Call Routing" },
+                  { icon: <CheckCircle className="text-emerald-400" />, text: "Weatherproof Tags" },
                 ].map((item, j) => (
                   <div key={j} className="flex items-center gap-2.5 sm:gap-3 text-gray-300 font-bold uppercase tracking-wider text-xs sm:text-sm whitespace-nowrap">
-                    <span className="text-orange-400">{item.icon}</span> {item.text}
+                    <span>{item.icon}</span> {item.text}
                   </div>
                 ))}
               </div>
@@ -339,11 +351,11 @@ export default function Home() {
       {/* --- WHAT IS SAFEDRIVETAG (DARK SECTION) --- */}
       <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#080c14] text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-10 md:mb-16">
-            <span className="text-orange-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About</span>
+            <span className="text-emerald-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">What is SafeDrive-Tag?</h2>
           </div>
           
@@ -358,11 +370,11 @@ export default function Home() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {[
                   { val: "1200+", lbl: "Vehicles Protected", color: "text-orange-400" },
-                  { val: "5000+", lbl: "Scans Completed", color: "text-amber-400" },
-                  { val: "4.9★", lbl: "User Rating", color: "text-yellow-400" },
+                  { val: "5000+", lbl: "Scans Completed", color: "text-emerald-400" },
+                  { val: "4.9★", lbl: "User Rating", color: "text-amber-400" },
                   { val: "100%", lbl: "Privacy Guaranteed", color: "text-emerald-400" }
                 ].map((stat, i) => (
-                  <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 text-center shadow-lg backdrop-blur-sm hover:border-orange-500/40 transition-colors">
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 text-center shadow-lg backdrop-blur-sm hover:border-emerald-500/40 transition-colors">
                     <div className={`text-xl sm:text-2xl font-black mb-1 ${stat.color}`}>{stat.val}</div>
                     <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">{stat.lbl}</div>
                   </div>
@@ -408,33 +420,33 @@ export default function Home() {
 
               {/* Pointers (absolute positioned) - Hidden on mobile, visible on lg */}
               <div className="absolute -top-6 left-[6%] hidden lg:flex flex-col items-center animate-fade-up z-20">
-                <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                <div className="bg-[#0f172a] text-orange-400 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-orange-500/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
                   Unique QR per vehicle
                 </div>
-                <div className="w-0.5 h-6 bg-amber-400"></div>
-                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
+                <div className="w-0.5 h-6 bg-orange-400"></div>
+                <div className="w-2.5 h-2.5 bg-orange-400 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)]"></div>
               </div>
 
               <div className="absolute -top-6 right-[6%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '100ms' }}>
-                <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                <div className="bg-[#0f172a] text-emerald-400 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-emerald-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
                   Scan with any camera
                 </div>
-                <div className="w-0.5 h-6 bg-amber-400"></div>
-                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
+                <div className="w-0.5 h-6 bg-emerald-400"></div>
+                <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
               </div>
 
               <div className="absolute -bottom-6 left-[8%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '200ms' }}>
-                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
-                <div className="w-0.5 h-6 bg-amber-400 mt-0.5"></div>
-                <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                <div className="w-2.5 h-2.5 bg-orange-400 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)]"></div>
+                <div className="w-0.5 h-6 bg-orange-400 mt-0.5"></div>
+                <div className="bg-[#0f172a] text-orange-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-orange-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
                   Wrong Parking & SOS Alert
                 </div>
               </div>
 
               <div className="absolute -bottom-6 right-[8%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '300ms' }}>
-                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
-                <div className="w-0.5 h-6 bg-amber-400 mt-0.5"></div>
-                <div className="bg-[#0f172a] text-amber-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-amber-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                <div className="w-0.5 h-6 bg-emerald-400 mt-0.5"></div>
+                <div className="bg-[#0f172a] text-emerald-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-emerald-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
                   Weather-proof sticker
                 </div>
               </div>
@@ -448,14 +460,14 @@ export default function Home() {
       <section id="how-it-works" className="py-16 md:py-24 px-4 sm:px-6 bg-[#fcfaf7] relative overflow-hidden border-y border-gray-100">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-orange-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Process</span>
+            <span className="text-emerald-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Process</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950">How We Work</h2>
             <p className="text-sm sm:text-base text-gray-600 mt-3 max-w-2xl mx-auto font-medium">We give you a premium tag to stick on your vehicle. Whenever there is a casualty, accident, or parking issue, anyone can scan it to contact you.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 sm:gap-8 relative">
             {/* The Connecting Line with Left-to-Right Fill Animation */}
             <div className="hidden md:block absolute top-[48px] left-[16%] w-[68%] h-1 bg-gray-200 z-0 overflow-hidden rounded-full">
-              <div className="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-1000 ease-in-out rounded-full" style={{ width: activeStep === 1 ? '0%' : activeStep === 2 ? '50%' : '100%' }}></div>
+              <div className="h-full bg-gradient-to-r from-orange-400 via-amber-400 to-emerald-500 transition-all duration-1000 ease-in-out rounded-full" style={{ width: activeStep === 1 ? '0%' : activeStep === 2 ? '50%' : '100%' }}></div>
             </div>
             
             {/* Step 1 */}
@@ -478,7 +490,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2 (Emerald Green Highlight) */}
             <div 
               className="relative z-10 flex flex-col items-center text-center group cursor-pointer" 
               onClick={() => setActiveStep(2)}
@@ -486,13 +498,13 @@ export default function Home() {
             >
               <div className={`w-20 sm:w-24 h-20 sm:h-24 bg-white border-4 rounded-full flex items-center justify-center transition-all duration-500 mb-5 relative ${
                 activeStep === 2 
-                  ? 'border-orange-500 scale-110 shadow-[0_0_35px_rgba(249,115,22,0.5)] ring-8 ring-orange-500/20 z-20' 
-                  : 'border-gray-100 shadow-md hover:border-orange-300'
+                  ? 'border-emerald-500 scale-110 shadow-[0_0_35px_rgba(16,185,129,0.5)] ring-8 ring-emerald-500/20 z-20' 
+                  : 'border-gray-100 shadow-md hover:border-emerald-300'
               }`}>
-                <QrCode className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 2 ? 'text-orange-500' : 'text-gray-700'}`} />
-                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 2 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>2</span>
+                <QrCode className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 2 ? 'text-emerald-600' : 'text-gray-700'}`} />
+                <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 2 ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white'}`}>2</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
+              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'shadow-xl shadow-emerald-500/15 border-emerald-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
                 <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Someone Scans It</h4>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium">In case of accident or wrong parking, any random person can scan it.</p>
               </div>
@@ -523,11 +535,11 @@ export default function Home() {
 
       {/* --- FOR EVERY VEHICLE & TRAVEL BAG (DARK SECTION) --- */}
       <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#080c14] text-white relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-orange-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-orange-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">For Vehicles & Travel Belongings</span>
+            <span className="text-emerald-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">For Vehicles & Travel Belongings</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">Cars. Bikes. Luggage. Backpacks.</h2>
             <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto font-medium">
               SafeDrive-Tag protects your daily commute vehicles and your travel luggage — with instant emergency and lost bag recovery QR alerts.
@@ -536,20 +548,20 @@ export default function Home() {
           
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
             {[
-              { icon: <Car size={34} className="text-blue-400 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399" },
-              { icon: <Bike size={34} className="text-orange-400 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299" },
-              { icon: <Briefcase size={34} className="text-indigo-400 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249" },
-              { icon: <Car size={34} className="text-purple-400 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399" },
-              { icon: <Car size={34} className="text-emerald-400 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299" },
-              { icon: <Truck size={34} className="text-amber-400 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399" }
+              { icon: <Car size={34} className="text-blue-400 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399", color: "bg-orange-500" },
+              { icon: <Bike size={34} className="text-orange-400 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299", color: "bg-emerald-600" },
+              { icon: <Briefcase size={34} className="text-emerald-400 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249", color: "bg-emerald-600" },
+              { icon: <Car size={34} className="text-purple-400 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399", color: "bg-orange-500" },
+              { icon: <Car size={34} className="text-emerald-400 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299", color: "bg-emerald-600" },
+              { icon: <Truck size={34} className="text-amber-400 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399", color: "bg-orange-500" }
             ].map((v, i) => (
-              <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1.5 hover:border-orange-500/50 hover:bg-white/[0.08] hover:shadow-[0_10px_25px_rgba(249,115,22,0.15)] shadow-lg group">
+              <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/50 hover:bg-white/[0.08] hover:shadow-[0_10px_25px_rgba(16,185,129,0.15)] shadow-lg group">
                 <div>
                   <div className="text-2xl sm:text-3xl mb-2.5 flex justify-center group-hover:scale-110 transition-transform">{v.icon}</div>
                   <h3 className="font-black text-white text-xs sm:text-sm md:text-base mb-1">{v.title}</h3>
                   <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mb-3 sm:mb-4 leading-relaxed">{v.desc}</p>
                 </div>
-                <div className="bg-orange-500 text-white text-[9px] sm:text-[10px] font-black px-3 py-1 rounded-full tracking-wide shadow-xs">
+                <div className={`${v.color} text-white text-[9px] sm:text-[10px] font-black px-3 py-1 rounded-full tracking-wide shadow-xs`}>
                   {v.price}
                 </div>
               </div>
@@ -562,19 +574,19 @@ export default function Home() {
       <section className="py-16 md:py-24 px-4 sm:px-6 bg-white relative overflow-hidden border-y border-gray-100">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-orange-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Why Us</span>
+            <span className="text-emerald-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Why Us</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950">Your Privacy & Safety First</h2>
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {[
-              { icon: <Lock size={24} />, title: "100% Privacy", desc: "Your real phone number is always hidden through our secure masked calling engine." },
-              { icon: <AlertTriangle size={24} />, title: "Multiple Options", desc: "Scan options include Wrong Parking, Accident, and generic emergency contacts." },
-              { icon: <Smartphone size={24} />, title: "No App Needed", desc: "Scannable directly from any default iOS or Android smartphone camera." },
-              { icon: <Zap size={24} />, title: "Instant Alerts", desc: "Receive immediate SMS and WhatsApp notifications the exact moment someone scans your tag." }
+              { icon: <Lock size={24} className="text-emerald-600" />, iconBg: "bg-emerald-50 border-emerald-100 text-emerald-600", hoverBorder: "hover:border-emerald-400/80", title: "100% Privacy", desc: "Your real phone number is always hidden through our secure masked calling engine." },
+              { icon: <AlertTriangle size={24} className="text-orange-600" />, iconBg: "bg-orange-50 border-orange-100 text-orange-600", hoverBorder: "hover:border-orange-400/80", title: "Multiple Options", desc: "Scan options include Wrong Parking, Accident, and generic emergency contacts." },
+              { icon: <Smartphone size={24} className="text-emerald-600" />, iconBg: "bg-emerald-50 border-emerald-100 text-emerald-600", hoverBorder: "hover:border-emerald-400/80", title: "No App Needed", desc: "Scannable directly from any default iOS or Android smartphone camera." },
+              { icon: <Zap size={24} className="text-orange-600" />, iconBg: "bg-orange-50 border-orange-100 text-orange-600", hoverBorder: "hover:border-orange-400/80", title: "Instant Alerts", desc: "Receive immediate SMS and WhatsApp notifications the exact moment someone scans your tag." }
             ].map((item, i) => (
-              <div key={i} className="bg-gradient-to-b from-white to-gray-50/80 border border-gray-200/90 rounded-2xl p-5 sm:p-6 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl hover:border-orange-400/80 group">
-                <div className="w-12 h-12 bg-orange-50 border border-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
+              <div key={i} className={`bg-gradient-to-b from-white to-gray-50/80 border border-gray-200/90 rounded-2xl p-5 sm:p-6 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl ${item.hoverBorder} group`}>
+                <div className={`w-12 h-12 ${item.iconBg} border rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner`}>
                   {item.icon}
                 </div>
                 <h4 className="font-bold text-gray-950 mb-2 text-base sm:text-lg">{item.title}</h4>
@@ -592,29 +604,29 @@ export default function Home() {
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-10 md:mb-14 animate-fade-up">
-            <span className="text-orange-400 font-black tracking-widest text-xs sm:text-sm uppercase mb-1 block">Innovation</span>
+            <span className="text-emerald-400 font-black tracking-widest text-xs sm:text-sm uppercase mb-1 block">Innovation</span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white">Smart features, simple setup.</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Big Bento 1 */}
-            <div className="md:col-span-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-8 relative overflow-hidden group hover:border-orange-500/50 transition-all shadow-xl flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-500/20 transition-colors z-0"></div>
+            {/* Big Bento 1 (Emerald Green Security Theme) */}
+            <div className="md:col-span-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-8 relative overflow-hidden group hover:border-emerald-500/50 transition-all shadow-xl flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors z-0"></div>
               
               <div className="relative z-10 flex-1">
-                <div className="w-10 h-10 bg-orange-500/20 text-orange-400 rounded-xl flex items-center justify-center mb-3 border border-orange-500/30">
+                <div className="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center mb-3 border border-emerald-500/30">
                   <Phone className="w-5 h-5" />
                 </div>
                 <h4 className="text-xl sm:text-2xl font-black text-white mb-2">100% Two-Way Number Masking</h4>
                 <p className="text-gray-300 text-sm sm:text-base max-w-md leading-relaxed font-medium">
-                  Total privacy for everyone. When a stranger scans and calls, <strong className="text-orange-400">their number is hidden from you</strong>, and <strong className="text-orange-400">your number is hidden from them</strong>. Complete anonymity guaranteed.
+                  Total privacy for everyone. When a stranger scans and calls, <strong className="text-emerald-400">their number is hidden from you</strong>, and <strong className="text-emerald-400">your number is hidden from them</strong>. Complete anonymity guaranteed.
                 </p>
               </div>
 
               <div className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center self-center">
-                <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-0.5 shadow-lg flex items-center justify-center animate-play-glow">
+                <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 p-0.5 shadow-lg flex items-center justify-center animate-play-glow">
                   <div className="w-full h-full bg-[#0d1424] rounded-2xl flex flex-col items-center justify-center p-2 text-center border border-white/10">
-                    <ShieldCheck size={28} className="text-orange-400 mb-1" />
+                    <ShieldCheck size={28} className="text-emerald-400 mb-1" />
                     <span className="text-[9px] font-black text-gray-200 uppercase tracking-widest">100% SAFE</span>
                   </div>
                 </div>
@@ -622,10 +634,10 @@ export default function Home() {
             </div>
 
             {/* Small Bento 1 */}
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 relative overflow-hidden group hover:border-emerald-500/50 transition-all shadow-xl">
-              <div className="absolute -bottom-6 -right-6 text-[80px] sm:text-[100px] font-black text-white/[0.04] group-hover:text-emerald-500/10 transition-colors leading-none pointer-events-none">01</div>
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 relative overflow-hidden group hover:border-orange-500/50 transition-all shadow-xl">
+              <div className="absolute -bottom-6 -right-6 text-[80px] sm:text-[100px] font-black text-white/[0.04] group-hover:text-orange-500/10 transition-colors leading-none pointer-events-none">01</div>
               <div className="relative z-10">
-                <div className="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center mb-3 border border-emerald-500/30">
+                <div className="w-10 h-10 bg-orange-500/20 text-orange-400 rounded-xl flex items-center justify-center mb-3 border border-orange-500/30">
                   <QrCode className="w-5 h-5" />
                 </div>
                 <h4 className="text-lg sm:text-xl font-black text-white mb-1">Universal Scan</h4>
@@ -670,16 +682,16 @@ export default function Home() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           
           <div className="text-center md:text-left mb-6 md:mb-0 animate-fade-up">
-            <h2 className="text-orange-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-4">Support</h2>
+            <h2 className="text-emerald-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-4">Support</h2>
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 mb-4 sm:mb-6">Got Questions?</h3>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 sm:mb-8 font-medium">Everything you need to know about SafeDrive-Tag. If you can't find your answer, our support team is just a click away.</p>
             <div className="relative rounded-[2rem] overflow-hidden border border-gray-200/90 shadow-md hidden md:flex flex-col items-center justify-center bg-white p-8 min-h-[260px] text-center">
-              <div className="w-16 h-16 rounded-2xl bg-orange-100/80 text-orange-600 flex items-center justify-center mb-4 shadow-inner">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 shadow-inner border border-emerald-100">
                 <ShieldCheck size={32} />
               </div>
               <h4 className="text-lg font-black text-gray-950 mb-1">24/7 Priority Support</h4>
               <p className="text-xs text-gray-500 font-medium max-w-xs">Have questions about order tracking, tag activation, or privacy? We are here to help!</p>
-              <a href="mailto:safedrivetag@gmail.com" className="mt-4 text-xs font-bold text-orange-600 hover:text-orange-700 underline">
+              <a href="mailto:safedrivetag@gmail.com" className="mt-4 text-xs font-bold text-emerald-600 hover:text-emerald-700 underline">
                 safedrivetag@gmail.com
               </a>
             </div>
@@ -706,13 +718,13 @@ export default function Home() {
       </section>
 
       {/* --- CTA BANNER --- */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden bg-gradient-to-r from-orange-600 via-orange-500 to-emerald-600">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-multiply"></div>
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white mb-4 sm:mb-6 tracking-tight">Ready to drive smarter?</h2>
           <p className="text-orange-100 text-base sm:text-xl font-medium mb-8 sm:mb-10 max-w-xl mx-auto">Join 9.5 lakh+ vehicle owners who park with absolute peace of mind.</p>
-          <Link to="/shop" className="inline-flex items-center gap-2.5 sm:gap-3 bg-white text-orange-600 px-7 sm:px-10 py-4 sm:py-5 rounded-full font-black text-base sm:text-xl hover:scale-105 transition-transform shadow-2xl">
-            Get Your Tag Now <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          <Link to="/shop" className="inline-flex items-center gap-2.5 sm:gap-3 bg-white text-gray-950 px-7 sm:px-10 py-4 sm:py-5 rounded-full font-black text-base sm:text-xl hover:scale-105 transition-transform shadow-2xl">
+            <span className="text-orange-600 font-black">Get Your Tag Now</span> <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
           </Link>
         </div>
       </section>

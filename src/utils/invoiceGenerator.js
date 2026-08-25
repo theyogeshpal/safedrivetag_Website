@@ -1,20 +1,73 @@
 /**
  * SafeDrive Direct 1-Click Tax Invoice Generator & PDF Downloader
- * Renders official Tax Invoice with SafeDrive Logo, Watermark, GST details, and triggers instant browser print/save-as-PDF.
+ * Dynamically renders official Tax Invoice with SafeDrive Logo, Watermark, GST details,
+ * and triggers instant browser print/save-as-PDF.
  */
 
 export const downloadInvoicePdf = (order, currentUser) => {
   if (!order) return;
 
-  const invoiceNo = `INV-2026-${order.id?.toString().replace(/\D/g, '').slice(-4) || '8912'}`;
-  const invoiceDate = order.date || new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-  const totalAmount = Number(order.price) || 299;
+  // 1. Dynamic Order Identifiers & Dates
+  const orderId = order.orderNumber || order.orderId || order._id || order.id || `ORD-${Date.now().toString().slice(-6)}`;
+  const invoiceNo = order.invoiceNumber || `INV-${new Date().getFullYear()}-${orderId.toString().replace(/\D/g, '').slice(-4) || '8912'}`;
   
-  // GST Calculation (18% Inclusive: Base = Total / 1.18)
+  const rawDate = order.createdAt || order.orderDate || order.date;
+  const invoiceDate = rawDate 
+    ? new Date(rawDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  // 2. Dynamic Customer & Shipping Info
+  const customerName = order.customerName || order.name || currentUser?.name || 'Valued Customer';
+  const customerPhone = order.customerPhone || order.phone || currentUser?.phone || '9876543210';
+  const customerEmail = order.customerEmail || order.email || currentUser?.email || 'support@safedrivetag.com';
+  
+  const customerState = order.state || currentUser?.state || 'Uttar Pradesh';
+  const placeOfSupply = `${customerState} (09)`;
+
+  // Resolve Shipping Address
+  let shippingAddressText = order.shippingAddress;
+  if (!shippingAddressText && order.address) {
+    shippingAddressText = `${order.address}, ${order.city || ''} ${order.state || ''} ${order.pincode ? '- ' + order.pincode : ''}`.trim();
+  }
+  if (!shippingAddressText && order.statusDesc) {
+    shippingAddressText = order.statusDesc.replace(/^Delivery to:\s*/i, '').trim();
+  }
+  if (!shippingAddressText && currentUser?.address) {
+    shippingAddressText = currentUser.address;
+  }
+  if (!shippingAddressText) {
+    shippingAddressText = 'Pan-India Express Delivery Address';
+  }
+
+  // 3. Dynamic Product Details & Pricing
+  const isDigital = order.productType === 'DIGITAL' || 
+                    order.qrType === 'DIGITAL' || 
+                    order.productName?.toLowerCase().includes('digital') || 
+                    order.title?.toLowerCase().includes('digital');
+
+  const itemTitle = order.productName || order.title || order.name || 'SafeDrive Smart Vehicle QR Safety Kit';
+  const itemSubtitle = order.description || (isDigital 
+    ? 'Instant Printable QR Safety Pass + 1-Year Cloud Calling Bridge & WhatsApp Alerts'
+    : '3M Waterproof Reflective QR Stickers + 1-Year Cloud Calling Bridge & Instant WhatsApp Alerts');
+
+  const quantity = Math.max(1, Number(order.quantity) || 1);
+  const totalAmount = Number(order.totalAmount || order.amount || order.price) || 299;
+  
+  // Dynamic GST Calculation (18% Inclusive: Base = Total / 1.18)
   const baseAmount = Math.round((totalAmount / 1.18) * 100) / 100;
+  const unitBasePrice = Math.round((baseAmount / quantity) * 100) / 100;
   const totalGst = Math.round((totalAmount - baseAmount) * 100) / 100;
   const cgst = Math.round((totalGst / 2) * 100) / 100;
   const sgst = Math.round((totalGst / 2) * 100) / 100;
+
+  // 4. Dynamic Payment Gateway Info
+  const paymentId = order.paymentId || 
+                    order.razorpayPaymentId || 
+                    order.razorpay_payment_id || 
+                    order.transactionId || 
+                    `pay_${orderId.toString().replace(/\D/g, '').slice(-8) || 'online'}`;
+  
+  const paymentStatus = order.paymentStatus || 'PAID (Razorpay)';
 
   const logoUrl = window.location.origin + '/logos/primary.jpeg';
 
@@ -244,8 +297,9 @@ export const downloadInvoicePdf = (order, currentUser) => {
               <div class="meta-text">
                 <strong>Invoice No:</strong> ${invoiceNo}<br />
                 <strong>Invoice Date:</strong> ${invoiceDate}<br />
-                <strong>Order ID:</strong> ${order.id}<br />
-                <strong>Payment Status:</strong> <span style="color: #16a34a; font-weight: 800;">PAID (Razorpay)</span>
+                <strong>Order ID:</strong> <span style="font-family: monospace; font-weight: bold;">${orderId}</span><br />
+                <strong>Payment ID:</strong> <span style="font-family: monospace; font-size: 10.5px; color: #4b5563;">${paymentId}</span><br />
+                <strong>Payment Status:</strong> <span style="color: #16a34a; font-weight: 800;">${paymentStatus}</span>
               </div>
             </div>
           </div>
@@ -254,16 +308,16 @@ export const downloadInvoicePdf = (order, currentUser) => {
           <div class="addresses-row">
             <div class="address-col">
               <div class="col-heading">Billed To (Customer):</div>
-              <div class="customer-name">${currentUser?.name || 'Authorized Buyer'}</div>
-              <div>Phone: +91 ${currentUser?.phone || '9876543210'}</div>
-              <div>Email: ${currentUser?.email || 'customer@example.com'}</div>
-              <div>Place of Supply: Uttar Pradesh (09)</div>
+              <div class="customer-name">${customerName}</div>
+              <div>Phone: +91 ${customerPhone.replace(/^91/, '')}</div>
+              <div>Email: ${customerEmail}</div>
+              <div>Place of Supply: ${placeOfSupply}</div>
             </div>
             <div class="address-col">
               <div class="col-heading">Shipping Address:</div>
-              <div class="customer-name">${currentUser?.name || 'Customer'}</div>
-              <div>${order.statusDesc?.replace('Delivery to: ', '') || currentUser?.address || 'Plot 55, Sector 10, Noida, Uttar Pradesh - 201301'}</div>
-              <div style="color: #15803d; font-weight: 700; margin-top: 3px;">Express Pan-India Shipping (Dispatched)</div>
+              <div class="customer-name">${customerName}</div>
+              <div style="word-break: break-word;">${shippingAddressText}</div>
+              <div style="color: #15803d; font-weight: 700; margin-top: 3px;">${isDigital ? 'Instant Digital Pass Delivery (Activated)' : 'Express Pan-India Shipping (Dispatched)'}</div>
             </div>
           </div>
 
@@ -283,12 +337,12 @@ export const downloadInvoicePdf = (order, currentUser) => {
               <tr>
                 <td style="font-weight: bold; color: #9ca3af;">1</td>
                 <td>
-                  <strong style="color: #111827; font-size: 12.5px;">${order.title || 'SafeDrive Smart Vehicle QR Safety Kit'}</strong><br />
-                  <span style="font-size: 10px; color: #6b7280;">3M Waterproof Reflective QR Stickers + 1-Year Cloud Calling Bridge & Instant WhatsApp SOS Alerts</span>
+                  <strong style="color: #111827; font-size: 12.5px;">${itemTitle}</strong><br />
+                  <span style="font-size: 10px; color: #6b7280;">${itemSubtitle}</span>
                 </td>
                 <td class="text-center" style="font-family: monospace; color: #4b5563;">8523</td>
-                <td class="text-center" style="font-weight: 800;">1</td>
-                <td class="text-right">₹${baseAmount.toFixed(2)}</td>
+                <td class="text-center" style="font-weight: 800;">${quantity}</td>
+                <td class="text-right">₹${unitBasePrice.toFixed(2)}</td>
                 <td class="text-right" style="font-weight: 800;">₹${totalAmount.toFixed(2)}</td>
               </tr>
             </tbody>
@@ -370,3 +424,4 @@ export const downloadInvoicePdf = (order, currentUser) => {
 };
 
 export default downloadInvoicePdf;
+

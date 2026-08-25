@@ -195,7 +195,7 @@ export default function Shop() {
                         <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-200/60 font-bold text-[10px] px-2 py-0.5 rounded-md">
                           <Tag size={10} /> {prod.qrType === 'DIGITAL' ? 'Digital Pass' : 'Physical Sticker Kit'}
                         </span>
-                        <span className="inline-flex items-center gap-1 bg-[#fdf8d5] text-[#6d5516] border border-[#f4e28e] font-bold text-[10px] px-2 py-0.5 rounded-md">
+                        <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] px-2 py-0.5 rounded-md">
                           <Package size={10} /> Pan-India Delivery
                         </span>
                       </div>
@@ -220,7 +220,7 @@ export default function Shop() {
                           <span className="text-xs font-bold text-black/40 line-through">₹{prod.originalPrice}</span>
                         )}
                         {discountPercent > 0 && (
-                          <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full border border-green-200">
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-black">
                             {discountPercent}% OFF
                           </span>
                         )}
@@ -238,7 +238,7 @@ export default function Shop() {
                         </p>
                         {prod.features.slice(0, 4).map((feat, i) => (
                           <div key={i} className="flex items-center gap-2 text-xs font-semibold text-black/80">
-                            <div className="w-3.5 h-3.5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                            <div className="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                               <Check size={10} strokeWidth={3} />
                             </div>
                             <span className="line-clamp-1">{feat}</span>

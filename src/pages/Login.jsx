@@ -267,7 +267,7 @@ export default function Login() {
                 disabled={isLoading || otp.join('').length < 4}
                 className={`w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg transition-all ${
                   otp.join('').length >= 4 && !isLoading
-                    ? 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/25 cursor-pointer hover:scale-[1.01]'
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/25 cursor-pointer hover:scale-[1.01]'
                     : 'bg-black/10 text-black/40 cursor-not-allowed'
                 }`}
               >

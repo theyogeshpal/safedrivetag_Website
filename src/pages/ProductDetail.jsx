@@ -272,7 +272,7 @@ export default function ProductDetail() {
               {product.oldPrice > product.price && (
                 <>
                   <span className="text-xl sm:text-2xl text-black/40 line-through mb-1">₹{product.oldPrice}</span>
-                  <span className="mb-2 ml-1 bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                  <span className="mb-2 ml-1 bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full border border-emerald-200">
                     Save ₹{product.oldPrice - product.price}
                   </span>
                 </>
@@ -287,7 +287,7 @@ export default function ProductDetail() {
               <ul className="space-y-2.5">
                 {product.features.map((f, index) => (
                   <li key={index} className="flex items-start gap-2.5 text-black/80 font-semibold text-xs sm:text-sm">
-                    <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                    <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <span>{f}</span>
                   </li>
                 ))}
@@ -317,7 +317,7 @@ export default function ProductDetail() {
               <button 
                 type="button"
                 onClick={handleBuyNow}
-                className="flex-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-base transition-all shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:-translate-y-0.5 cursor-pointer"
+                className="flex-1 bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-base transition-all shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:-translate-y-0.5 cursor-pointer"
               >
                 <span>Buy Now — ₹{product.price * qty}</span>
                 <ArrowRight size={18} />
@@ -327,7 +327,7 @@ export default function ProductDetail() {
             {/* Trust Badges */}
             <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-black/5">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
                   <Truck className="w-4 h-4" />
                 </div>
                 <div>
@@ -336,7 +336,7 @@ export default function ProductDetail() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-100">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>

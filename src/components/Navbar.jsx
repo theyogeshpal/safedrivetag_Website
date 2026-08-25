@@ -111,7 +111,7 @@ export default function Navbar() {
               >
                 <span>{label}</span>
                 {badge && (
-                  <span className="text-[10px] bg-orange-500 text-white font-black px-2 py-0.5 rounded-full shadow-2xs tracking-wide">
+                  <span className="text-[10px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full shadow-2xs tracking-wide">
                     {badge}
                   </span>
                 )}
@@ -342,7 +342,7 @@ export default function Navbar() {
             <Link 
               to="/shop" 
               onClick={() => setMenuOpen(false)}
-              className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-5 py-3 rounded-xl font-black text-xs text-center flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25"
+              className="bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 text-white px-5 py-3 rounded-xl font-black text-xs text-center flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25"
             >
               <ShieldCheck size={16} />
               <span>Buy Safety Tag</span>

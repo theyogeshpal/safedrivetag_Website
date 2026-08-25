@@ -27,6 +27,10 @@ export default function Footer() {
     </footer>
   ) : (
     <footer className="relative bg-[#060910] text-gray-300 pt-16 pb-12 overflow-hidden border-t border-white/10">
+      {/* Ambient background glows */}
+      <div className="absolute top-0 right-1/4 w-80 h-80 bg-orange-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 relative z-10">
         
         {/* Brand Column */}
@@ -38,7 +42,7 @@ export default function Footer() {
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag Logo" 
-              className="h-12 sm:h-14 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105" 
+              className="h-14 sm:h-14 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105" 
               style={{ maxHeight: '56px', width: 'auto' }}
             />
           </Link>
@@ -49,13 +53,13 @@ export default function Footer() {
             <a href="https://www.instagram.com/safedrivetag/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">
               <FaInstagram className="w-4 h-4" />
             </a>
-            <a href="https://www.facebook.com/safedrivetag" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">
+            <a href="https://www.facebook.com/safedrivetag" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-emerald-600 hover:text-white hover:border-emerald-600 hover:-translate-y-1 transition-all">
               <FaFacebookF className="w-4 h-4" />
             </a>
             <a href="https://x.com/safedrivetag" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">
               <FaXTwitter className="w-4 h-4" />
             </a>
-            <a href="https://www.linkedin.com/company/safedrivetag/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">
+            <a href="https://www.linkedin.com/company/safedrivetag/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-emerald-600 hover:text-white hover:border-emerald-600 hover:-translate-y-1 transition-all">
               <FaLinkedinIn className="w-4 h-4" />
             </a>
             <a href="https://www.youtube.com/@SafeDriveTag" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">

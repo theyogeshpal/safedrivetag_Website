@@ -11,15 +11,50 @@ import {
   Activity, 
   Smartphone, 
   Download,
-  CheckCircle2
+  CheckCircle2,
+  Lock,
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 
 export default function DashboardLayout({ children, currentTab, pageTitle, saveSuccessMsg }) {
   const navigate = useNavigate();
   const { currentUser, logout, isInitializingAuth, isLoadingAuth } = useAuth();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+  const [activeTagsCount, setActiveTagsCount] = useState(() => {
+    try {
+      const locallyRegistered = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
+      return Object.keys(locallyRegistered).length;
+    } catch {
+      return 0;
+    }
+  });
+
+  useEffect(() => {
+    async function checkActiveTags() {
+      try {
+        let count = 0;
+        try {
+          const locallyRegistered = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
+          count = Object.keys(locallyRegistered).length;
+        } catch (e) {}
+
+        const ordersRes = await api.getUserOrders();
+        if (ordersRes.success && ordersRes.orders) {
+          const allocated = ordersRes.orders.filter(ord => Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0);
+          count = Math.max(count, allocated.length);
+        }
+        setActiveTagsCount(count);
+      } catch (err) {
+        console.error('Error verifying active tags count', err);
+      }
+    }
+    if (currentUser) {
+      checkActiveTags();
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -56,7 +91,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
   // 1. Animated Full Screen Dashboard Loader
   if (isInitializingAuth || (isLoadingAuth && !currentUser)) {
     return (
-      <div className="min-h-screen bg-[#f1f3f6] flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-[#f1f3f6] flex flex-col items-center justify-center p-6 text-center pt-24">
         <div className="relative w-20 h-20 mb-5">
           <div className="absolute inset-0 rounded-3xl bg-[#2874f0]/20 animate-ping" />
           <div className="relative w-20 h-20 bg-gradient-to-tr from-[#2874f0] to-blue-600 rounded-3xl flex items-center justify-center shadow-xl shadow-blue-500/30">
@@ -79,7 +114,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
   // 2. Unauthenticated State
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-[#f1f3f6] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#f1f3f6] flex items-center justify-center p-4 pt-28">
         <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center space-y-4">
           <div className="w-16 h-16 bg-blue-50 text-[#2874f0] rounded-full flex items-center justify-center mx-auto">
             <User size={32} />
@@ -99,19 +134,19 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
 
   const menuItems = [
     { id: 'orders', label: 'My Orders', path: '/dashboard/orders', icon: <Package size={16} /> },
-    { id: 'tags', label: 'My SafeDrive-Tags', path: '/dashboard/tags', icon: <QrCode size={16} /> },
-    { id: 'logs', label: 'Activity Logs', path: '/dashboard/logs', icon: <Activity size={16} /> },
+    { id: 'tags', label: 'My SafeDrive-Tags', path: '/dashboard/tags', icon: <QrCode size={16} />, requiresTag: true },
+    { id: 'logs', label: 'Activity Logs', path: '/dashboard/logs', icon: <Activity size={16} />, requiresTag: true },
     { id: 'profile', label: 'Profile Info', path: '/dashboard/profile', icon: <User size={16} /> },
     { id: 'addresses', label: 'Addresses', path: '/dashboard/addresses', icon: <MapPin size={16} /> },
     { id: 'notifications', label: 'Alerts', path: '/dashboard/notifications', icon: <Bell size={16} /> },
   ];
 
   return (
-    <div className="min-h-screen bg-[#f1f3f6] text-[#212121] pt-20 sm:pt-24 pb-16 font-sans">
+    <div className="min-h-screen bg-[#f1f3f6] text-[#212121] pt-28 sm:pt-32 pb-20 font-sans">
       
       {/* Toast Alert Message */}
       {saveSuccessMsg && (
-        <div className="fixed top-20 right-5 z-50 bg-[#2874f0] text-white px-5 py-3 rounded shadow-xl flex items-center gap-3 animate-fade-up text-sm font-medium border border-white/20">
+        <div className="fixed top-24 right-5 z-50 bg-[#2874f0] text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-3 animate-fade-up text-sm font-medium border border-white/20">
           <CheckCircle2 size={18} className="text-green-300" />
           <span>{saveSuccessMsg}</span>
         </div>
@@ -186,20 +221,39 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
 
             {/* Mobile Tab Navigation Bar (Sticky Horizontal Scroll on Mobile) */}
             <div className="lg:hidden sticky top-16 z-30 bg-white/95 backdrop-blur-md rounded-lg shadow-sm border border-gray-200 p-1.5 overflow-x-auto flex gap-1.5 no-scrollbar">
-              {menuItems.map((m) => (
-                <Link
-                  key={m.id}
-                  to={m.path}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    currentTab === m.id
-                      ? 'bg-[#2874f0] text-white shadow-xs'
-                      : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {m.icon}
-                  <span>{m.label}</span>
-                </Link>
-              ))}
+              {menuItems.map((m) => {
+                const isItemDisabled = m.requiresTag && activeTagsCount === 0;
+                if (isItemDisabled) {
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => {
+                        alert("No Active SafeDrive-Tag Found!\n\nThis page is disabled because no QR tag is currently linked/activated on your account.\n\nPlease purchase or activate a tag to unlock.");
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-bold whitespace-nowrap bg-gray-100/60 text-gray-400 opacity-60 cursor-not-allowed border border-dashed border-gray-300"
+                      title="Activation Required"
+                    >
+                      <Lock size={12} className="text-gray-400" />
+                      <span>{m.label} (Locked)</span>
+                    </button>
+                  );
+                }
+                return (
+                  <Link
+                    key={m.id}
+                    to={m.path}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                      currentTab === m.id
+                        ? 'bg-[#2874f0] text-white shadow-xs'
+                        : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {m.icon}
+                    <span>{m.label}</span>
+                  </Link>
+                );
+              })}
 
               <button
                 onClick={handleInstallPwa}
@@ -236,22 +290,58 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                   <span>VEHICLE TAGS & SAFETY</span>
                 </div>
                 <div className="space-y-1 pl-7">
-                  <Link
-                    to="/dashboard/tags"
-                    className={`block py-1.5 text-xs font-semibold transition-colors ${
-                      currentTab === 'tags' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
-                    }`}
-                  >
-                    My SafeDrive-Tags
-                  </Link>
-                  <Link
-                    to="/dashboard/logs"
-                    className={`block py-1.5 text-xs font-semibold transition-colors ${
-                      currentTab === 'logs' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
-                    }`}
-                  >
-                    Scan & SOS Activity Logs
-                  </Link>
+                  {activeTagsCount === 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        alert("No Active SafeDrive-Tag Found!\n\nThis page is disabled because no QR tag is currently linked/activated on your account.\n\nPlease purchase or activate a tag to unlock.");
+                      }}
+                      className="w-full flex items-center justify-between py-1.5 text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed group text-left"
+                      title="No Active QR Tag - Activation Required"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span>My SafeDrive-Tags</span>
+                        <Lock size={12} className="text-gray-400" />
+                      </span>
+                      <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">
+                        Disabled
+                      </span>
+                    </button>
+                  ) : (
+                    <Link
+                      to="/dashboard/tags"
+                      className={`block py-1.5 text-xs font-semibold transition-colors ${
+                        currentTab === 'tags' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
+                      }`}
+                    >
+                      My SafeDrive-Tags
+                    </Link>
+                  )}
+
+                  {activeTagsCount === 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        alert("No Active SafeDrive-Tag Found!\n\nActivity Logs are disabled until you have an active QR tag linked to your account.");
+                      }}
+                      className="w-full flex items-center justify-between py-1.5 text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed group text-left"
+                      title="No Active QR Tag - Activation Required"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span>Scan & SOS Activity Logs</span>
+                        <Lock size={12} className="text-gray-400" />
+                      </span>
+                    </button>
+                  ) : (
+                    <Link
+                      to="/dashboard/logs"
+                      className={`block py-1.5 text-xs font-semibold transition-colors ${
+                        currentTab === 'logs' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
+                      }`}
+                    >
+                      Scan & SOS Activity Logs
+                    </Link>
+                  )}
                 </div>
               </div>
 

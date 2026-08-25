@@ -502,20 +502,33 @@ export default function DashboardTags() {
             <h3 className="text-base font-bold text-gray-800">Loading Your SafeDrive-Tags...</h3>
           </div>
         ) : userTags.length === 0 ? (
-          <div className="py-14 text-center border border-dashed border-gray-300 rounded-sm bg-gray-50/50">
-            <div className="w-16 h-16 bg-blue-50 text-[#2874f0] rounded-full flex items-center justify-center mx-auto mb-3">
-              <QrCode size={30} />
+          <div className="py-12 px-4 text-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50/80 max-w-2xl mx-auto my-4 shadow-sm">
+            <div className="w-16 h-16 bg-amber-50 text-amber-600 border border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
+              <Lock size={32} />
             </div>
-            <h3 className="text-base font-bold text-[#212121]">No Vehicle Tags Linked Yet</h3>
-            <p className="text-xs text-[#878787] max-w-sm mx-auto mt-1 mb-5">
-              Link your SafeDrive QR sticker to start receiving private alerts without sharing your personal number.
+            <span className="inline-block bg-amber-100 text-amber-800 text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full mb-3 border border-amber-200">
+              🔒 Tag Management Disabled — Activation Required
+            </span>
+            <h3 className="text-xl font-black text-[#212121] tracking-tight">No Active SafeDrive-Tag Found</h3>
+            <p className="text-xs sm:text-sm text-[#878787] max-w-md mx-auto mt-2 mb-6 leading-relaxed font-medium">
+              This section is disabled because no active QR tag is linked to your account yet. Once you activate your QR sticker or purchase a safety kit, full tag controls, two-way masking, and emergency alerts will unlock here.
             </p>
-            <button
-              onClick={() => setIsLinkModalOpen(true)}
-              className="bg-[#2874f0] text-white text-xs font-bold px-6 py-2.5 rounded-sm shadow-sm cursor-pointer"
-            >
-              + LINK FIRST TAG
-            </button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsLinkModalOpen(true)}
+                className="w-full sm:w-auto bg-[#2874f0] hover:bg-blue-700 text-white text-xs font-black px-6 py-3 rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Plus size={16} />
+                <span>+ LINK / ACTIVATE EXISTING TAG</span>
+              </button>
+              <Link
+                to="/shop"
+                className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-black px-6 py-3 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2"
+              >
+                <span>BUY A SAFETY TAG (@ ₹299)</span>
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
