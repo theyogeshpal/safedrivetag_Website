@@ -25,7 +25,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
     item.image || 
     item.imageUrl || 
     (Array.isArray(item.images) && item.images[0]) || 
-    'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
+    '/images/sticker_template.jpg';
 
   const cardsHtml = copiesList.map((c, index) => {
     const copyToken = c.publicToken || c.token || c.copyCode || token;
@@ -35,16 +35,16 @@ export const generateDigitalPdfHtml = (item = {}) => {
     const label = copiesList.length > 1 ? `✂ CUT HERE • COPY ${index + 1}` : `✂ CUT HERE • OFFICIAL TAG`;
 
     return `
-      <div class="printable-card" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 14px; background: #fafafa; position: relative; max-width: 360px; width: 100%;">
-        <div class="cut-guide-label" style="position: absolute; top: -10px; right: 14px; background: #e2e8f0; color: #475569; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; z-index: 10;">${label}</div>
+      <div class="printable-card" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 14px; background: #fafafa; position: relative; max-width: 540px; width: 100%;">
+        <div class="cut-guide-label" style="position: absolute; top: -10px; right: 14px; background: #e2e8f0; color: #475569; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; z-index: 10;">${label}</div>
         
         <div style="position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.1); background: #ffffff;">
           <img src="${cardImage}" alt="SafeDrive Card" style="width: 100%; height: auto; display: block;" />
           
           <!-- Live Scannable Dynamic QR Code overlayed directly in the card's QR space -->
-          <div style="position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 6px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
+          <div style="position: absolute; top: 41%; left: 74.5%; transform: translate(-50%, -50%); background: #ffffff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
             <div style="position: relative; display: inline-block;">
-              <img src="${qrImg}" alt="QR" style="width: 135px; height: 135px; display: block;" />
+              <img src="${qrImg}" alt="QR" style="width: 155px; height: 155px; display: block;" />
               <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid #ea580c;">
                 <img src="/logos/icon.png" style="width: 18px; height: 18px; object-fit: contain;" />
               </div>
