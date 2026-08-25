@@ -29,14 +29,14 @@ export default function RegisterTag() {
   const navigate = useNavigate();
   const { currentUser, setAuthenticatedSession } = useAuth();
 
-  // Wizard Step: 1 = Phone Entry, 2 = OTP Verification, 3 = Vehicle & 2 Emergency Contacts
-  const [step, setStep] = useState(currentUser?.phone ? 3 : 1);
+  // Wizard Step: 1 = Phone Entry & OTP Send, 2 = OTP Verification, 3 = Vehicle & Emergency Contacts
+  const [step, setStep] = useState(1);
   
   // Phone & Auth State
   const [name, setName] = useState(currentUser?.name || '');
   const [phone, setPhone] = useState(currentUser?.phone || '');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [isPhoneVerified, setIsPhoneVerified] = useState(!!currentUser?.phone);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const otpInputRefs = useRef([]);
 
   // Vehicle & Mandatory 2 Emergency Contacts Details
