@@ -99,11 +99,13 @@ export default function Footer() {
             </li>
             <li className="flex items-center gap-2.5">
               <Phone className="w-4 h-4 text-orange-400 shrink-0" />
-              <a href="tel:+919876543210" className="text-gray-400 hover:text-orange-400 transition-colors">+91 98765 43210</a>
+              <a href="tel:+919695078159" className="text-gray-400 hover:text-orange-400 transition-colors">+91 96950 78159</a>
             </li>
             <li className="flex items-start gap-2.5">
               <MapPin className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
-              <span className="leading-snug text-gray-400">123 Innovation Drive, Tech Park, India 400001</span>
+              <span className="leading-relaxed text-gray-400 text-xs sm:text-sm">
+                SafeDrive Tech Innovations, Gomti Nagar, Lucknow, UP, India 226010
+              </span>
             </li>
           </ul>
         </div>

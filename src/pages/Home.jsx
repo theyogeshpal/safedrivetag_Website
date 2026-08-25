@@ -348,35 +348,35 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- WHAT IS SAFEDRIVETAG (DARK SECTION) --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#080c14] text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+      {/* --- WHAT IS SAFEDRIVETAG (SLATE NEUTRAL LIGHT SECTION) --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#f8fafc] text-gray-900 relative overflow-hidden border-b border-gray-100">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-10 md:mb-16">
-            <span className="text-emerald-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">What is SafeDrive-Tag?</h2>
+            <span className="text-emerald-600 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">What is SafeDrive-Tag?</h2>
           </div>
           
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="max-w-xl mx-auto lg:max-w-none w-full">
-              <p className="text-base sm:text-lg text-gray-300 leading-relaxed mb-8 sm:mb-10 font-medium">
+              <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8 sm:mb-10 font-medium">
                 SafeDrive-Tag is a weatherproof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
               </p>
               
               {/* Stat Boxes */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {[
-                  { val: "1200+", lbl: "Vehicles Protected", color: "text-orange-400" },
-                  { val: "5000+", lbl: "Scans Completed", color: "text-emerald-400" },
-                  { val: "4.9★", lbl: "User Rating", color: "text-amber-400" },
-                  { val: "100%", lbl: "Privacy Guaranteed", color: "text-emerald-400" }
+                  { val: "1200+", lbl: "Vehicles Protected", color: "text-orange-500" },
+                  { val: "5000+", lbl: "Scans Completed", color: "text-emerald-600" },
+                  { val: "4.9★", lbl: "User Rating", color: "text-amber-500" },
+                  { val: "100%", lbl: "Privacy Guaranteed", color: "text-emerald-600" }
                 ].map((stat, i) => (
-                  <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 text-center shadow-lg backdrop-blur-sm hover:border-emerald-500/40 transition-colors">
+                  <div key={i} className="bg-white border border-gray-200/80 rounded-2xl p-3 sm:p-4 text-center shadow-sm hover:border-emerald-500/50 hover:shadow-md transition-all">
                     <div className={`text-xl sm:text-2xl font-black mb-1 ${stat.color}`}>{stat.val}</div>
-                    <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">{stat.lbl}</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider">{stat.lbl}</div>
                   </div>
                 ))}
               </div>
@@ -386,7 +386,7 @@ export default function Home() {
             <div className="relative flex justify-center items-center py-8 sm:py-12 lg:py-12 w-full max-w-xl mx-auto">
               
               {/* The Official SafeDrive-Tag Sticker Card */}
-              <div className="relative w-full rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border-2 border-white/10 bg-white group transition-transform duration-300 hover:scale-[1.02]">
+              <div className="relative w-full rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-gray-200 bg-white group transition-transform duration-300 hover:scale-[1.02]">
                 {/* Sticker Template Image */}
                 <img 
                   src="/safedrivetag-sticker.jpg" 
@@ -420,7 +420,7 @@ export default function Home() {
 
               {/* Pointers (absolute positioned) - Hidden on mobile, visible on lg */}
               <div className="absolute -top-6 left-[6%] hidden lg:flex flex-col items-center animate-fade-up z-20">
-                <div className="bg-[#0f172a] text-orange-400 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-orange-500/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                <div className="bg-gray-900 text-orange-400 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-orange-500/60 shadow-lg tracking-wide whitespace-nowrap">
                   Unique QR per vehicle
                 </div>
                 <div className="w-0.5 h-6 bg-orange-400"></div>
@@ -428,7 +428,7 @@ export default function Home() {
               </div>
 
               <div className="absolute -top-6 right-[6%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '100ms' }}>
-                <div className="bg-[#0f172a] text-emerald-400 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-emerald-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                <div className="bg-gray-900 text-emerald-400 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-emerald-400/60 shadow-lg tracking-wide whitespace-nowrap">
                   Scan with any camera
                 </div>
                 <div className="w-0.5 h-6 bg-emerald-400"></div>
@@ -438,7 +438,7 @@ export default function Home() {
               <div className="absolute -bottom-6 left-[8%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '200ms' }}>
                 <div className="w-2.5 h-2.5 bg-orange-400 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)]"></div>
                 <div className="w-0.5 h-6 bg-orange-400 mt-0.5"></div>
-                <div className="bg-[#0f172a] text-orange-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-orange-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                <div className="bg-gray-900 text-orange-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-orange-400/60 shadow-lg tracking-wide whitespace-nowrap">
                   Wrong Parking & SOS Alert
                 </div>
               </div>
@@ -446,7 +446,7 @@ export default function Home() {
               <div className="absolute -bottom-6 right-[8%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '300ms' }}>
                 <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
                 <div className="w-0.5 h-6 bg-emerald-400 mt-0.5"></div>
-                <div className="bg-[#0f172a] text-emerald-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-emerald-400/80 shadow-[0_10px_25px_rgba(0,0,0,0.9)] tracking-wide whitespace-nowrap">
+                <div className="bg-gray-900 text-emerald-300 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mt-1.5 border border-emerald-400/60 shadow-lg tracking-wide whitespace-nowrap">
                   Weather-proof sticker
                 </div>
               </div>
@@ -456,8 +456,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- HOW IT WORKS (LIGHT SECTION) --- */}
-      <section id="how-it-works" className="py-16 md:py-24 px-4 sm:px-6 bg-[#fcfaf7] relative overflow-hidden border-y border-gray-100">
+      {/* --- HOW IT WORKS (PURE WHITE SECTION) --- */}
+      <section id="how-it-works" className="py-16 md:py-24 px-4 sm:px-6 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
             <span className="text-emerald-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Process</span>
@@ -465,8 +465,8 @@ export default function Home() {
             <p className="text-sm sm:text-base text-gray-600 mt-3 max-w-2xl mx-auto font-medium">We give you a premium tag to stick on your vehicle. Whenever there is a casualty, accident, or parking issue, anyone can scan it to contact you.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 sm:gap-8 relative">
-            {/* The Connecting Line with Left-to-Right Fill Animation */}
-            <div className="hidden md:block absolute top-[48px] left-[16%] w-[68%] h-1 bg-gray-200 z-0 overflow-hidden rounded-full">
+            {/* The Connecting Line with Perfectly Centered Alignment */}
+            <div className="hidden md:block absolute top-[40px] sm:top-[44px] lg:top-[48px] left-[17%] w-[66%] h-1 bg-gray-200 z-0 overflow-hidden rounded-full">
               <div className="h-full bg-gradient-to-r from-orange-400 via-amber-400 to-emerald-500 transition-all duration-1000 ease-in-out rounded-full" style={{ width: activeStep === 1 ? '0%' : activeStep === 2 ? '50%' : '100%' }}></div>
             </div>
             
@@ -484,7 +484,7 @@ export default function Home() {
                 <Car className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 1 ? 'text-orange-500' : 'text-gray-700'}`} />
                 <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 1 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>1</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 1 ? 'shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
+              <div className={`bg-gray-50/60 p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 1 ? 'bg-white shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
                 <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Stick the Tag</h4>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium">Place the premium QR sticker on your car or bike's windshield.</p>
               </div>
@@ -504,7 +504,7 @@ export default function Home() {
                 <QrCode className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 2 ? 'text-emerald-600' : 'text-gray-700'}`} />
                 <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 2 ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white'}`}>2</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'shadow-xl shadow-emerald-500/15 border-emerald-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
+              <div className={`bg-gray-50/60 p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 2 ? 'bg-white shadow-xl shadow-emerald-500/15 border-emerald-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
                 <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Someone Scans It</h4>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium">In case of accident or wrong parking, any random person can scan it.</p>
               </div>
@@ -524,7 +524,7 @@ export default function Home() {
                 <Phone className={`w-8 sm:w-10 h-8 sm:h-10 transition-colors duration-500 ${activeStep === 3 ? 'text-orange-500' : 'text-gray-700'}`} />
                 <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 3 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>3</span>
               </div>
-              <div className={`bg-white p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 3 ? 'shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
+              <div className={`bg-gray-50/60 p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 3 ? 'bg-white shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
                 <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Direct Contact</h4>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium">They choose an option (e.g., Wrong Parking) and contact you via WhatsApp or Masked Call.</p>
               </div>
@@ -533,8 +533,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- FOR EVERY VEHICLE & TRAVEL BAG (DARK SECTION) --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#080c14] text-white relative overflow-hidden">
+      {/* ======================================================== */}
+      {/* --- THEMATIC DARK ZONE: CATEGORIES & SMART BENTO FEATURES --- */}
+      {/* ======================================================== */}
+
+      {/* --- PART A: FOR EVERY VEHICLE & TRAVEL BAG (DARK SECTION) --- */}
+      <section className="pt-16 md:pt-24 pb-10 md:pb-14 px-4 sm:px-6 bg-[#080c14] text-white relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
@@ -570,35 +574,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- WHY US (LIGHT SECTION) --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-white relative overflow-hidden border-y border-gray-100">
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-emerald-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Why Us</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950">Your Privacy & Safety First</h2>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {[
-              { icon: <Lock size={24} className="text-emerald-600" />, iconBg: "bg-emerald-50 border-emerald-100 text-emerald-600", hoverBorder: "hover:border-emerald-400/80", title: "100% Privacy", desc: "Your real phone number is always hidden through our secure masked calling engine." },
-              { icon: <AlertTriangle size={24} className="text-orange-600" />, iconBg: "bg-orange-50 border-orange-100 text-orange-600", hoverBorder: "hover:border-orange-400/80", title: "Multiple Options", desc: "Scan options include Wrong Parking, Accident, and generic emergency contacts." },
-              { icon: <Smartphone size={24} className="text-emerald-600" />, iconBg: "bg-emerald-50 border-emerald-100 text-emerald-600", hoverBorder: "hover:border-emerald-400/80", title: "No App Needed", desc: "Scannable directly from any default iOS or Android smartphone camera." },
-              { icon: <Zap size={24} className="text-orange-600" />, iconBg: "bg-orange-50 border-orange-100 text-orange-600", hoverBorder: "hover:border-orange-400/80", title: "Instant Alerts", desc: "Receive immediate SMS and WhatsApp notifications the exact moment someone scans your tag." }
-            ].map((item, i) => (
-              <div key={i} className={`bg-gradient-to-b from-white to-gray-50/80 border border-gray-200/90 rounded-2xl p-5 sm:p-6 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl ${item.hoverBorder} group`}>
-                <div className={`w-12 h-12 ${item.iconBg} border rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner`}>
-                  {item.icon}
-                </div>
-                <h4 className="font-bold text-gray-950 mb-2 text-base sm:text-lg">{item.title}</h4>
-                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed font-medium">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- BENTO GRID: SMART FEATURES (DARK SECTION) --- */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 relative bg-[#080c14] text-white overflow-hidden">
+      {/* --- PART B: BENTO GRID: SMART FEATURES (DARK CONTINUATION) --- */}
+      <section className="pt-6 pb-16 sm:pb-24 px-4 sm:px-6 relative bg-[#080c14] text-white overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
         
@@ -677,8 +654,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- FAQ (LIGHT SECTION) --- */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#fcfaf7] border-t border-gray-100">
+      {/* ======================================================== */}
+      {/* --- THEMATIC LIGHT ZONE: TRUST, PRIVACY & FAQ SUPPORT --- */}
+      {/* ======================================================== */}
+
+      {/* --- PART A: WHY US (CLEAN LIGHT SECTION) --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#f8fafc] relative overflow-hidden border-t border-gray-100">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-12 md:mb-16 animate-fade-up">
+            <span className="text-emerald-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-3 block">Why Us</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950">Your Privacy & Safety First</h2>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {[
+              { icon: <Lock size={24} className="text-emerald-600" />, iconBg: "bg-emerald-50 border-emerald-100 text-emerald-600", hoverBorder: "hover:border-emerald-400/80", title: "100% Privacy", desc: "Your real phone number is always hidden through our secure masked calling engine." },
+              { icon: <AlertTriangle size={24} className="text-orange-600" />, iconBg: "bg-orange-50 border-orange-100 text-orange-600", hoverBorder: "hover:border-orange-400/80", title: "Multiple Options", desc: "Scan options include Wrong Parking, Accident, and generic emergency contacts." },
+              { icon: <Smartphone size={24} className="text-emerald-600" />, iconBg: "bg-emerald-50 border-emerald-100 text-emerald-600", hoverBorder: "hover:border-emerald-400/80", title: "No App Needed", desc: "Scannable directly from any default iOS or Android smartphone camera." },
+              { icon: <Zap size={24} className="text-orange-600" />, iconBg: "bg-orange-50 border-orange-100 text-orange-600", hoverBorder: "hover:border-orange-400/80", title: "Instant Alerts", desc: "Receive immediate SMS and WhatsApp notifications the exact moment someone scans your tag." }
+            ].map((item, i) => (
+              <div key={i} className={`bg-white border border-gray-200/90 rounded-2xl p-5 sm:p-6 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl ${item.hoverBorder} group`}>
+                <div className={`w-12 h-12 ${item.iconBg} border rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner`}>
+                  {item.icon}
+                </div>
+                <h4 className="font-bold text-gray-950 mb-2 text-base sm:text-lg">{item.title}</h4>
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed font-medium">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- PART B: FAQ (PURE WHITE SECTION) --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-white border-t border-gray-100">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           
           <div className="text-center md:text-left mb-6 md:mb-0 animate-fade-up">
