@@ -538,32 +538,33 @@ export default function QRScan() {
                 })}
               </div>
 
-              {/* Custom Text Area when "Others" or isOtherType is selected */}
-              {isOtherSelected && (
-                <div className="pt-2 animate-fade-up">
-                  <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                    Specify Custom Message / Alert:
+              {/* Custom Message / Alert Box & Direct Push Notification Button (Always Accessible) */}
+              <div className="pt-3 border-t border-gray-100 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-gray-800">
+                    ✍️ Type Custom Message / Notice for Owner:
                   </label>
-                  <textarea
-                    rows={2}
-                    placeholder="Type your message for the vehicle owner..."
-                    value={customReasonText}
-                    onChange={(e) => setCustomReasonText(e.target.value)}
-                    className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl p-3 text-xs outline-none resize-none"
-                  />
-
-                  {/* Instant Send Push Notification Button right below typing */}
-                  <button
-                    type="button"
-                    onClick={handleSendPushAlert}
-                    disabled={actionLoading || !customReasonText.trim()}
-                    className="w-full mt-2.5 bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-black py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
-                  >
-                    <BellRing size={16} className={actionLoading ? 'animate-spin' : 'animate-bounce'} />
-                    <span>{actionLoading ? 'Dispatching Push Alert...' : 'Send Push Notification Alert 🔔'}</span>
-                  </button>
+                  <span className="text-[10px] text-gray-400 font-medium">Optional / Custom text</span>
                 </div>
-              )}
+                <textarea
+                  rows={2}
+                  placeholder="Type your message for the vehicle owner here (e.g. Please move your car, parking blocking, window open...)"
+                  value={customReasonText}
+                  onChange={(e) => setCustomReasonText(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl p-3 text-xs outline-none resize-none font-medium transition-all shadow-2xs"
+                />
+
+                {/* Instant Send Push Notification Button */}
+                <button
+                  type="button"
+                  onClick={handleSendPushAlert}
+                  disabled={actionLoading}
+                  className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-black py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50 text-xs sm:text-sm tracking-wide"
+                >
+                  <BellRing size={18} className={actionLoading ? 'animate-spin' : 'animate-bounce'} />
+                  <span>{actionLoading ? 'Dispatching Push Notification...' : '🚀 Send Push Notification to Owner 🔔'}</span>
+                </button>
+              </div>
             </div>
 
             {/* 2. Instant Action Execution Buttons */}
