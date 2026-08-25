@@ -521,7 +521,7 @@ export default function DashboardTags() {
                       </div>
                       <div>
                         <h4 className="font-bold text-sm text-[#212121] flex items-center gap-1.5">
-                          {tag.vehicleName || 'Vehicle Tag'}
+                          {tag.vehicleName || ((tag.vehicleType === 'Luggage' || tag.vehicleType === 'Bag' || tag.qrType === 'DIGITAL') ? 'Smart Item Tag' : 'Vehicle Tag')}
                         </h4>
                         <div className="flex flex-col items-start gap-1 mt-1">
                           <p className="font-mono text-sm font-black text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-300 tracking-wider uppercase inline-block">

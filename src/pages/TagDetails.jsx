@@ -166,7 +166,7 @@ export default function TagDetails() {
         : (qrApiRes?.kitId || (foundOrder?.orderNumber ? `SD001` : `SD001`));
       
       const vBrand = qrApiRes?.vehicle?.vehicleBrand || qrApiRes?.vehicleBrand || reg.vehicleBrand || dashKit?.vehicle?.vehicleBrand || (isRegistered ? 'Vehicle' : 'SafeDrive');
-      const vName = qrApiRes?.vehicle?.vehicleName || qrApiRes?.vehicleName || reg.vehicleName || dashKit?.vehicle?.vehicleName || foundOrder?.title || 'Smart Vehicle Tag';
+      const vName = qrApiRes?.vehicle?.vehicleName || qrApiRes?.vehicleName || reg.vehicleName || dashKit?.vehicle?.vehicleName || foundOrder?.title || ((qrApiRes?.qrFor === 'Luggage' || qrApiRes?.vehicleType === 'Luggage' || dashKit?.vehicleType === 'Luggage') ? 'Smart Item Tag' : 'Smart Vehicle Tag');
       const vPlate = qrApiRes?.vehicle?.vehicleNumber || qrApiRes?.vehicleNumber || reg.vehicleNumber || dashKit?.vehicle?.vehicleNumber || (isRegistered ? 'REGISTERED' : 'Not Linked Yet');
       const vType = qrApiRes?.vehicle?.vehicleType || qrApiRes?.vehicleType || reg.vehicleType || dashKit?.vehicle?.vehicleType || 'Car';
 
@@ -565,16 +565,16 @@ export default function TagDetails() {
               {!tagData.isRegistered ? (
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <p className="font-bold text-amber-900 text-xs">Vehicle Link & Activation Pending</p>
+                    <p className="font-bold text-amber-900 text-xs">{(tagData.vehicleType === 'Luggage' || tagData.vehicleType === 'Bag') ? 'Item' : 'Vehicle'} Link & Activation Pending</p>
                     <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
-                      Link your vehicle registration number and 2 emergency contacts to activate instant scan and call privacy.
+                      Link your {(tagData.vehicleType === 'Luggage' || tagData.vehicleType === 'Bag') ? 'item details' : 'vehicle registration number'} and 2 emergency contacts to activate instant scan and call privacy.
                     </p>
                   </div>
                   <Link
                     to={`/register/${tagData.currentTagId}`}
                     className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-lg text-xs shrink-0 shadow-xs text-center transition-colors"
                   >
-                    + Link Vehicle Now
+                    + Link {(tagData.vehicleType === 'Luggage' || tagData.vehicleType === 'Bag') ? 'Item' : 'Vehicle'} Now
                   </Link>
                 </div>
               ) : (
