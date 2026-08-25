@@ -123,6 +123,7 @@ export default function DashboardTags() {
                 vehicleType: q.qrFor || q.vehicleType || q.vehicle?.vehicleType || 'General',
                 status: (q.status || 'ACTIVE').toLowerCase(),
                 qrType: q.qrType || 'PHYSICAL',
+                securityCode: q.securityCode || q.pin || res.securityCode || res.pin || null,
                 registeredAt: q.createdAt?.split('T')[0] || q.registeredAt || new Date().toISOString().split('T')[0],
                 callBalance: q.callBalance ?? q.wallet?.callBalance ?? 10,
                 messageBalance: q.messageBalance ?? q.wallet?.messageBalance ?? 20,
@@ -201,6 +202,7 @@ export default function DashboardTags() {
                     vehicleType: pubRes.vehicle?.vehicleType || pubRes.qrFor || ord.qrFor || 'Luggage',
                     status: 'active',
                     qrType: ord.productType || 'DIGITAL',
+                    securityCode: pubRes.securityCode || pubRes.pin || ord.securityCode || ord.pin || null,
                     registeredAt: pubRes.registeredAt || ord.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
                     callBalance: pubRes.wallet?.callBalance ?? pubRes.callBalance ?? 10,
                     messageBalance: pubRes.wallet?.messageBalance ?? pubRes.messageBalance ?? 20,
@@ -521,11 +523,18 @@ export default function DashboardTags() {
                         <h4 className="font-bold text-sm text-[#212121] flex items-center gap-1.5">
                           {tag.vehicleName || 'Vehicle Tag'}
                         </h4>
-                        <p className="font-mono text-sm font-black text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-300 tracking-wider uppercase inline-block mt-1">
-                          {tag.vehicleNumber && !tag.vehicleNumber.includes('Unlinked') && !tag.vehicleNumber.includes('Ready') 
-                            ? tag.vehicleNumber 
-                            : 'ACTIVE PROTECTED'}
-                        </p>
+                        <div className="flex flex-col items-start gap-1 mt-1">
+                          <p className="font-mono text-sm font-black text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-300 tracking-wider uppercase inline-block">
+                            {tag.vehicleNumber && !tag.vehicleNumber.includes('Unlinked') && !tag.vehicleNumber.includes('Ready') 
+                              ? tag.vehicleNumber 
+                              : 'ACTIVE PROTECTED'}
+                          </p>
+                          {(tag.vehicleType === 'Luggage' || tag.vehicleType === 'Bag' || tag.qrType === 'DIGITAL') && tag.securityCode && (
+                            <p className="inline-flex items-center gap-1 font-mono text-xs font-black text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 tracking-wider">
+                              <Lock size={12} /> PIN: {tag.securityCode}
+                            </p>
+                          )}
+                        </div>
                         <span className="block text-[11px] text-gray-400 font-medium mt-1">
                           Type: {tag.vehicleType || 'Car'}
                         </span>
