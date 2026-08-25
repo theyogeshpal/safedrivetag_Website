@@ -21,6 +21,7 @@ const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/dashboard/DashboardTags'));
 const DashboardTags = lazy(() => import('./pages/dashboard/DashboardTags'));
 const DashboardOrders = lazy(() => import('./pages/dashboard/DashboardOrders'));
+const DashboardTransactions = lazy(() => import('./pages/dashboard/DashboardTransactions'));
 const DashboardProfile = lazy(() => import('./pages/dashboard/DashboardProfile'));
 const DashboardAddresses = lazy(() => import('./pages/dashboard/DashboardAddresses'));
 const DashboardLogs = lazy(() => import('./pages/dashboard/DashboardLogs'));
@@ -80,6 +81,7 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/dashboard/tags" element={<DashboardTags />} />
                 <Route path="/dashboard/orders" element={<DashboardOrders />} />
+                <Route path="/dashboard/transactions" element={<DashboardTransactions />} />
                 <Route path="/dashboard/profile" element={<DashboardProfile />} />
                 <Route path="/dashboard/addresses" element={<DashboardAddresses />} />
                 <Route path="/dashboard/logs" element={<DashboardLogs />} />

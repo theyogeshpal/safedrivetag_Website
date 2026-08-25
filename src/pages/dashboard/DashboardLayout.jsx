@@ -13,7 +13,9 @@ import {
   Download,
   CheckCircle2,
   Lock,
-  AlertCircle
+  AlertCircle,
+  Receipt,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
@@ -158,6 +160,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
 
   const menuItems = [
     { id: 'orders', label: 'My Orders', path: '/dashboard/orders', icon: <Package size={16} /> },
+    { id: 'transactions', label: 'Transactions', path: '/dashboard/transactions', icon: <Receipt size={16} /> },
     { id: 'tags', label: 'My SafeDrive-Tags', path: '/dashboard/tags', icon: <QrCode size={16} />, requiresTag: true },
     { id: 'logs', label: 'Activity Logs', path: '/dashboard/logs', icon: <Activity size={16} />, requiresTag: true },
     { id: 'profile', label: 'Profile Info', path: '/dashboard/profile', icon: <User size={16} /> },
@@ -289,20 +292,30 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
             {/* Flipkart Navigation Menu Box (Desktop) */}
             <div className="hidden lg:block bg-white rounded-sm shadow-sm border border-gray-200/80 divide-y divide-gray-100 text-[13px]">
               
-              {/* SECTION 1: MY ORDERS */}
+              {/* SECTION 1: MY ORDERS & TRANSACTIONS */}
               <div className="p-3">
-                <Link
-                  to="/dashboard/orders"
-                  className={`w-full flex items-center justify-between font-bold py-1.5 transition-colors ${
-                    currentTab === 'orders' ? 'text-[#2874f0]' : 'text-[#878787] hover:text-[#2874f0]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Package size={17} className="text-[#2874f0]" />
-                    <span className="uppercase text-xs tracking-wider">MY ORDERS</span>
-                  </div>
-                  <ChevronRight size={14} className="text-[#878787]" />
-                </Link>
+                <div className="flex items-center gap-3 font-bold text-xs uppercase tracking-wider text-[#878787] mb-2">
+                  <Package size={17} className="text-[#2874f0]" />
+                  <span>ORDERS & PAYMENTS</span>
+                </div>
+                <div className="space-y-1 pl-7">
+                  <Link
+                    to="/dashboard/orders"
+                    className={`block py-1.5 text-xs font-semibold transition-colors ${
+                      currentTab === 'orders' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
+                    }`}
+                  >
+                    My Orders
+                  </Link>
+                  <Link
+                    to="/dashboard/transactions"
+                    className={`block py-1.5 text-xs font-semibold transition-colors ${
+                      currentTab === 'transactions' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
+                    }`}
+                  >
+                    Transactions & Invoices
+                  </Link>
+                </div>
               </div>
 
               {/* SECTION 2: VEHICLE TAGS & SAFETY */}
