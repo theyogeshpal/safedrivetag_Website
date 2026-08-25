@@ -37,19 +37,23 @@ export default function RegisterTag() {
   const [phone, setPhone] = useState(currentUser?.phone || '');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [useSameWhatsApp, setUseSameWhatsApp] = useState(true);
+  const [securityCode, setSecurityCode] = useState('5781');
   const otpInputRefs = useRef([]);
 
   // Vehicle & Mandatory 2 Emergency Contacts Details
   const [formData, setFormData] = useState({
-    vehicleBrand: 'Hyundai',
-    vehicleName: 'Creta',
+    itemTitle: '',
+    vehicleBrand: 'SafeDrive',
+    vehicleName: '',
     vehicleNumber: '',
-    vehicleType: 'Car',
+    vehicleType: 'Luggage',
+    gender: 'Male',
     whatsappNumber: currentUser?.whatsappNumber || currentUser?.phone || '',
     address: currentUser?.address || '',
-    emergencyContact1Name: 'Family Member 1',
+    emergencyContact1Name: '',
     emergencyContact1Number: '',
-    emergencyContact2Name: 'Family Member 2',
+    emergencyContact2Name: '',
     emergencyContact2Number: '',
   });
 
@@ -57,6 +61,30 @@ export default function RegisterTag() {
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [successData, setSuccessData] = useState(null);
+
+  // Fetch Public QR Metadata & Security PIN on mount
+  React.useEffect(() => {
+    async function fetchTagMeta() {
+      try {
+        const res = await api.getPublicQrInfo(token);
+        if (res && res.success) {
+          const pin = res.securityCode || res.pin || res.qr?.securityCode || res.qr?.pin;
+          if (pin) setSecurityCode(String(pin));
+          const cat = res.qrFor || (res.qrType === 'PHYSICAL' ? 'Car' : 'Luggage');
+          setFormData(prev => ({
+            ...prev,
+            vehicleType: cat,
+            itemTitle: prev.itemTitle || (cat === 'Luggage' ? 'Blue Safari Trolley Bag' : `${cat} Safety Tag`),
+          }));
+        }
+      } catch (err) {
+        console.error('Error loading QR info', err);
+      }
+    }
+    if (token) {
+      fetchTagMeta();
+    }
+  }, [token]);
 
   // --- Step 1: Send OTP ---
   const handleSendOtp = async (e) => {
@@ -153,10 +181,6 @@ export default function RegisterTag() {
     }));
   };
 
-  const setVehicleType = (type) => {
-    setFormData((prev) => ({ ...prev, vehicleType: type }));
-  };
-
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -197,28 +221,32 @@ export default function RegisterTag() {
     try {
       const emergencyContacts = [
         {
-          name: formData.emergencyContact1Name.trim() || 'Primary Family Member',
+          name: formData.emergencyContact1Name.trim() || 'Primary Emergency Contact',
           number: c1,
         },
         {
-          name: formData.emergencyContact2Name.trim() || 'Alternate Emergency Contact',
+          name: formData.emergencyContact2Name.trim() || 'Secondary Emergency Contact',
           number: c2,
         },
       ];
 
-      const contact1Name = formData.emergencyContact1Name.trim() || 'Primary Family Member';
-      const contact2Name = formData.emergencyContact2Name.trim() || 'Alternate Emergency Contact';
+      const contact1Name = formData.emergencyContact1Name.trim() || 'Primary Emergency Contact';
+      const contact2Name = formData.emergencyContact2Name.trim() || 'Secondary Emergency Contact';
+      const resolvedTitle = formData.itemTitle.trim() || `${formData.vehicleType} Safety Tag`;
 
       const payload = {
         name: name.trim() || currentUser?.name || 'Tag Owner',
         phone: cleanPhone || currentUser?.phone || '',
         email: currentUser?.email || '',
-        whatsappNumber: formData.whatsappNumber?.replace(/\D/g, '') || cleanPhone || currentUser?.phone || '',
-        vehicleBrand: 'SafeDrive',
-        vehicleName: 'Protected Tag',
-        vehicleNumber: '',
-        vehicleType: 'General',
-        securityCode: '9921',
+        whatsappNumber: useSameWhatsApp ? cleanPhone : (formData.whatsappNumber?.replace(/\D/g, '') || cleanPhone),
+        gender: formData.gender || 'Male',
+        itemTitle: resolvedTitle,
+        vehicleBrand: formData.vehicleBrand || 'SafeDrive',
+        vehicleName: resolvedTitle,
+        vehicleNumber: formData.vehicleNumber || '',
+        vehicleType: formData.vehicleType || 'Luggage',
+        itemCategory: formData.vehicleType || 'Luggage',
+        securityCode: String(securityCode || '5781'),
         contact1Name,
         contact1Phone: c1,
         contact2Name,
@@ -459,185 +487,212 @@ export default function RegisterTag() {
             )}
 
             {/* ======================================================== */}
-            {/* STEP 3: CONTACT DETAILS & MANDATORY 2 EMERGENCY CONTACTS */}
+            {/* STEP 3: ITEM DETAILS, SECURITY PIN & 2 EMERGENCY CONTACTS */}
             {/* ======================================================== */}
             {step === 3 && (
-              <form onSubmit={handleFinalSubmit} className="space-y-6 animate-fade-up">
+              <form onSubmit={handleFinalSubmit} className="space-y-5 animate-fade-up">
                 
-                {/* Verified Mobile Callout */}
-                <div className="bg-green-50 border border-green-200 rounded-2xl p-3.5 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-bold text-green-800">
-                    <CheckCircle2 size={16} className="text-green-600" />
-                    <span>Registered Phone: +91 {phone}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsPhoneVerified(false);
-                      setStep(1);
-                    }}
-                    className="text-xs text-green-700 underline font-bold cursor-pointer hover:text-green-900"
-                  >
-                    Change Number
-                  </button>
-                </div>
-
-                {/* Section 1: Owner Profile & Contact Details */}
-                <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-4 sm:p-5 space-y-4">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-black/80 flex items-center gap-2">
-                    <User size={14} className="text-orange-500" /> 1. Owner Details
-                  </h3>
-                  
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-bold text-black/60 mb-1">
-                        Your Full Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. Rahul Sharma"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-black/60 mb-1">
-                        WhatsApp Number <span className="text-xs font-normal text-black/40">(Optional)</span>
-                      </label>
-                      <input
-                        type="tel"
-                        maxLength={10}
-                        placeholder={phone || "9876543210"}
-                        name="whatsappNumber"
-                        value={formData.whatsappNumber}
-                        onChange={handleFormChange}
-                        className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500 font-mono"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 2: MANDATORY 2 EMERGENCY CONTACTS */}
-                <div className="bg-red-50/50 border border-red-200/80 rounded-2xl p-4 sm:p-5 space-y-4">
+                {/* 1. 4-DIGIT SECURITY TAG PIN (Readonly / Pre-filled) */}
+                <div className="bg-amber-50/60 border border-amber-200/90 rounded-2xl p-4 sm:p-5 space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-black uppercase tracking-wider text-red-700 flex items-center gap-2">
-                      <HeartPulse size={16} className="text-red-600" />
-                      <span>2. Mandatory Emergency SOS Contacts (2 Required)</span>
-                    </h3>
-                    <span className="text-[10px] font-black bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full uppercase">
-                      Mandatory
+                    <span className="text-xs font-black text-amber-900 flex items-center gap-1.5 uppercase tracking-wide">
+                      🔑 4-DIGIT SECURITY TAG PIN *
+                    </span>
+                    <span className="bg-amber-100 text-amber-900 border border-amber-300 font-mono font-bold text-xs px-2.5 py-0.5 rounded-md">
+                      PIN: {securityCode || '5781'}
                     </span>
                   </div>
-
-                  <p className="text-xs text-red-900/70 leading-relaxed font-medium">
-                    SafeDrive instantly alerts these <strong>2 verified family/emergency contacts</strong> with live location in case of an accident or SOS trigger.
+                  <p className="text-[11px] text-amber-800/80 leading-relaxed">
+                    Enter the 4-digit security PIN printed directly on your physical tag sticker or assigned to your digital pass.
                   </p>
-
-                  <div className="space-y-3.5">
-                    
-                    {/* Emergency Contact 1 */}
-                    <div className="bg-white border border-red-200 rounded-xl p-3.5 shadow-2xs">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-bold text-red-800 flex items-center gap-1.5">
-                          <User size={12} className="text-red-600" /> Contact 1 (Primary Family Member) *
-                        </span>
-                      </div>
-                      <div className="grid sm:grid-cols-2 gap-2.5">
-                        <div>
-                          <label className="block text-[10px] font-bold text-black/50 mb-0.5">Relation / Name *</label>
-                          <input
-                            type="text"
-                            required
-                            placeholder="e.g. Papa / Spouse"
-                            name="emergencyContact1Name"
-                            value={formData.emergencyContact1Name}
-                            onChange={handleFormChange}
-                            className="w-full bg-gray-50 border border-black/10 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:bg-white focus:border-red-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-bold text-black/50 mb-0.5">10-Digit Mobile Number *</label>
-                          <div className="relative flex items-center">
-                            <span className="absolute left-2.5 text-[11px] font-bold text-black/40">+91</span>
-                            <input
-                              type="tel"
-                              maxLength={10}
-                              required
-                              placeholder="9876500001"
-                              name="emergencyContact1Number"
-                              value={formData.emergencyContact1Number}
-                              onChange={handleFormChange}
-                              className="w-full bg-gray-50 border border-black/10 rounded-lg py-2 pl-11 pr-3 text-xs font-bold font-mono outline-none focus:bg-white focus:border-red-500 tracking-wider"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Emergency Contact 2 */}
-                    <div className="bg-white border border-red-200 rounded-xl p-3.5 shadow-2xs">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-bold text-red-800 flex items-center gap-1.5">
-                          <User size={12} className="text-red-600" /> Contact 2 (Alternate Emergency Contact) *
-                        </span>
-                      </div>
-                      <div className="grid sm:grid-cols-2 gap-2.5">
-                        <div>
-                          <label className="block text-[10px] font-bold text-black/50 mb-0.5">Relation / Name *</label>
-                          <input
-                            type="text"
-                            required
-                            placeholder="e.g. Brother / Friend"
-                            name="emergencyContact2Name"
-                            value={formData.emergencyContact2Name}
-                            onChange={handleFormChange}
-                            className="w-full bg-gray-50 border border-black/10 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:bg-white focus:border-red-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-bold text-black/50 mb-0.5">10-Digit Mobile Number *</label>
-                          <div className="relative flex items-center">
-                            <span className="absolute left-2.5 text-[11px] font-bold text-black/40">+91</span>
-                            <input
-                              type="tel"
-                              maxLength={10}
-                              required
-                              placeholder="9876500002"
-                              name="emergencyContact2Number"
-                              value={formData.emergencyContact2Number}
-                              onChange={handleFormChange}
-                              className="w-full bg-gray-50 border border-black/10 rounded-lg py-2 pl-11 pr-3 text-xs font-bold font-mono outline-none focus:bg-white focus:border-red-500 tracking-wider"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
+                  <div className="pt-1">
+                    <input
+                      type="text"
+                      readOnly
+                      value={securityCode || '5781'}
+                      className="w-full text-center text-3xl font-black font-mono tracking-widest bg-white border-2 border-amber-300/80 text-amber-950 py-3 rounded-xl outline-none shadow-xs"
+                    />
                   </div>
                 </div>
 
+                {/* 2. Item / Tag Title */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-black/80">
+                    Item / Tag Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Blue Safari Trolley Bag"
+                    name="itemTitle"
+                    value={formData.itemTitle}
+                    onChange={handleFormChange}
+                    className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-emerald-500 transition-all text-black"
+                  />
+                </div>
+
+                {/* 3. Item Category / Type */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-black/80">
+                    Item Category / Type *
+                  </label>
+                  <select
+                    name="vehicleType"
+                    value={formData.vehicleType}
+                    onChange={handleFormChange}
+                    className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:bg-white focus:border-emerald-500 transition-all text-black cursor-pointer"
+                  >
+                    <option value="Luggage">Luggage</option>
+                    <option value="Car">Car</option>
+                    <option value="Bike">Bike</option>
+                    <option value="Truck">Commercial / Truck</option>
+                    <option value="Personal Bag">Personal Bag / Backpack</option>
+                    <option value="Pet">Pet Tag</option>
+                    <option value="General">General Asset</option>
+                  </select>
+                </div>
+
+                {/* 4. Owner Name */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-black/80">
+                    Owner Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Rahul Sharma"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-emerald-500 transition-all text-black"
+                  />
+                </div>
+
+                {/* 5. Gender */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-black/80">
+                    Gender *
+                  </label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleFormChange}
+                    className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:bg-white focus:border-emerald-500 transition-all text-black cursor-pointer"
+                  >
+                    <option value="Male">👦 Male</option>
+                    <option value="Female">👧 Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                {/* 6. WhatsApp Checkbox */}
+                <label className="bg-emerald-50/80 border border-emerald-200/90 rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer hover:bg-emerald-50 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={useSameWhatsApp}
+                    onChange={(e) => setUseSameWhatsApp(e.target.checked)}
+                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-emerald-300 cursor-pointer shrink-0"
+                  />
+                  <span className="text-xs font-bold text-emerald-950">
+                    Use same mobile number (+91 {phone}) for WhatsApp alerts
+                  </span>
+                </label>
+
+                {!useSameWhatsApp && (
+                  <div className="space-y-1.5 animate-fade-up">
+                    <label className="block text-xs font-bold text-black/80">
+                      Alternate WhatsApp Number
+                    </label>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      placeholder="9876543210"
+                      name="whatsappNumber"
+                      value={formData.whatsappNumber}
+                      onChange={handleFormChange}
+                      className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:bg-white focus:border-emerald-500 font-mono"
+                    />
+                  </div>
+                )}
+
+                {/* 7. Emergency Contact 1 (Primary) */}
+                <div className="bg-gray-50/60 border border-black/10 rounded-2xl p-4 space-y-2.5">
+                  <label className="block text-xs font-bold text-emerald-700">
+                    Emergency Contact 1 (Primary) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Name (e.g. Brother / Spouse / Friend)"
+                    name="emergencyContact1Name"
+                    value={formData.emergencyContact1Name}
+                    onChange={handleFormChange}
+                    className="w-full bg-white border border-black/10 rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500"
+                  />
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 text-xs font-bold text-black/40">+91</span>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      required
+                      placeholder="9876543210"
+                      name="emergencyContact1Number"
+                      value={formData.emergencyContact1Number}
+                      onChange={handleFormChange}
+                      className="w-full bg-white border border-black/10 rounded-xl py-2.5 pl-12 pr-4 text-xs font-bold font-mono outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                {/* 8. Emergency Contact 2 (Secondary) */}
+                <div className="bg-gray-50/60 border border-black/10 rounded-2xl p-4 space-y-2.5">
+                  <label className="block text-xs font-bold text-orange-600">
+                    Emergency Contact 2 (Secondary) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Name (e.g. Father / Mother / Colleague)"
+                    name="emergencyContact2Name"
+                    value={formData.emergencyContact2Name}
+                    onChange={handleFormChange}
+                    className="w-full bg-white border border-black/10 rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-orange-500"
+                  />
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 text-xs font-bold text-black/40">+91</span>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      required
+                      placeholder="9876543210"
+                      name="emergencyContact2Number"
+                      value={formData.emergencyContact2Number}
+                      onChange={handleFormChange}
+                      className="w-full bg-white border border-black/10 rounded-xl py-2.5 pl-12 pr-4 text-xs font-bold font-mono outline-none focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
+                {/* 9. Submit Button */}
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition-all cursor-pointer hover:scale-[1.01]"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 transition-all cursor-pointer hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin" /> Activating Tag Kit...
+                      <RefreshCw className="w-4 h-4 animate-spin" /> Activating Tag...
                     </>
                   ) : (
                     <>
-                      <span>Complete & Activate SafeDrive-Tag</span>
-                      <ArrowRight size={18} />
+                      <ShieldCheck size={18} />
+                      <span>Activate & Shield {formData.vehicleType || 'Luggage'} Now &rarr;</span>
                     </>
                   )}
                 </button>
 
                 <div className="text-center">
                   <p className="text-[11px] text-black/50 flex items-center justify-center gap-1">
-                    <Lock size={12} className="text-green-600" />
+                    <Lock size={12} className="text-emerald-600" />
                     All contacts are encrypted & only notified during actual SOS emergencies.
                   </p>
                 </div>
