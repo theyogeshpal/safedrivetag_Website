@@ -49,8 +49,8 @@ export const generateDigitalPdfHtml = (item = {}) => {
                 <img src="/logos/icon.png" style="width: 18px; height: 18px; object-fit: contain;" />
               </div>
             </div>
-            <div style="font-family: monospace; font-weight: 900; font-size: 10.5px; color: #0f172a; margin-top: 3px; letter-spacing: 0.5px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
-              ${code}
+            <div style="font-family: monospace; font-weight: 900; font-size: 11px; color: #0f172a; margin-top: 3px; letter-spacing: 1px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
+              PIN: ${c.securityCode || c.pin || item.securityCode || item.pin || code.replace('SD-TAG-', '') || '9921'}
             </div>
           </div>
         </div>

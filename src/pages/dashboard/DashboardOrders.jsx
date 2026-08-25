@@ -318,15 +318,15 @@ export default function DashboardOrders() {
             <div className="p-5 overflow-y-auto space-y-4">
               {/* Copy Selector Tabs */}
               {Array.isArray(digitalPassModalOrder.allocatedQRIds) && digitalPassModalOrder.allocatedQRIds.length > 1 && (
-                <div className="flex items-center justify-center gap-2 bg-gray-100 p-1 rounded-xl">
-                  {digitalPassModalOrder.allocatedQRIds.map((c, cIdx) => (
+                <div className="flex items-center justify-center gap-2 bg-gray-100 p-1 rounded-lg">
+                  {Array.from(new Map(digitalPassModalOrder.allocatedQRIds?.map(item => [item.copyCode || item.publicToken, item])).values()).map((c, cIdx) => (
                     <button
                       key={cIdx}
                       onClick={() => setActivePassCopyIdx(cIdx)}
-                      className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                        activePassCopyIdx === cIdx
-                          ? 'bg-purple-600 text-white shadow-xs'
-                          : 'text-gray-600 hover:text-gray-900'
+                      className={`flex-1 py-2 text-xs font-black rounded-lg transition-all ${
+                        activePassCopyIdx === cIdx 
+                          ? 'bg-[#a855f7] text-white shadow-md' 
+                          : 'bg-white text-gray-500 hover:bg-purple-50'
                       }`}
                     >
                       {c.copyCode || `Copy ${cIdx + 1}`}
@@ -337,11 +337,12 @@ export default function DashboardOrders() {
 
               {/* Scannable Vector QR Card */}
               {(() => {
-                const currentCopy = digitalPassModalOrder.allocatedQRIds?.[activePassCopyIdx] || {};
+                const uniqueCopies = Array.from(new Map(digitalPassModalOrder.allocatedQRIds?.map(item => [item.copyCode || item.publicToken, item])).values());
+                const currentCopy = uniqueCopies[activePassCopyIdx] || {};
                 const token = currentCopy.publicToken || currentCopy.copyCode || digitalPassModalOrder._id;
                 const copyCode = currentCopy.copyCode || 'COPY-1';
                 const isCopyActive = currentCopy.status === 'ACTIVE' || digitalPassModalOrder.isClaimed === true;
-                const securityCode = currentCopy.securityCode || '9921';
+                const securityCode = currentCopy.securityCode || currentCopy.pin || digitalPassModalOrder.securityCode || digitalPassModalOrder.pin || '9921';
                 const scanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
 
                 return (
@@ -365,19 +366,27 @@ export default function DashboardOrders() {
                       </span>
                     </div>
 
-                    <div className="bg-white p-3.5 rounded-xl border border-purple-100 inline-block shadow-md">
-                      <QRCodeSVG
-                        value={scanUrl}
-                        size={175}
-                        level="H"
-                        includeMargin={false}
-                        imageSettings={{
-                          src: "/logos/icon.png",
-                          height: 38,
-                          width: 38,
-                          excavate: true,
-                        }}
-                      />
+                    <div className="relative inline-block mx-auto max-w-[340px] w-full rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+                      <img src="/images/sticker_template.jpg" alt="Digital Pass Card" className="w-full h-auto block" />
+                      <div className="absolute top-[41%] left-[74.5%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
+                        <QRCodeSVG
+                          value={scanUrl}
+                          size={95}
+                          level="H"
+                          includeMargin={false}
+                          imageSettings={{
+                            src: "/logos/icon.png",
+                            height: 24,
+                            width: 24,
+                            excavate: true,
+                          }}
+                        />
+                        {securityCode && (
+                          <div className="mt-1 font-mono font-black text-[9px] text-gray-900 bg-gray-50 border border-gray-200 rounded px-1.5 py-0.5 tracking-wider">
+                            PIN: {securityCode}
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div>

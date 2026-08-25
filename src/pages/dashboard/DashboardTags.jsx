@@ -909,22 +909,27 @@ export default function DashboardTags() {
             </div>
 
             <div className="p-6">
-              <div className="p-4 bg-white border border-gray-200 inline-block mx-auto mb-4 rounded-lg shadow-sm qr-canvas-download">
-                <QRCodeSVG 
-                  value={`https://safedrivetag-website.vercel.app/q/${qrModalTag.publicToken || qrModalTag.id}`}
-                  size={180}
-                  level="H"
-                  includeMargin={false}
-                  imageSettings={{
-                    src: "/logos/icon.png",
-                    height: 42,
-                    width: 42,
-                    excavate: true,
-                  }}
-                />
-                <p className="text-xs font-mono font-bold text-[#2874f0] mt-3">
-                  {qrModalTag.id} • {qrModalTag.vehicleNumber}
-                </p>
+              <div className="relative inline-block mx-auto max-w-[340px] w-full rounded-2xl overflow-hidden shadow-xl border border-gray-100 mb-4 qr-canvas-download">
+                <img src="/images/sticker_template.jpg" alt="Digital Pass Card" className="w-full h-auto block" />
+                <div className="absolute top-[41%] left-[74.5%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
+                  <QRCodeSVG
+                    value={`https://safedrivetag-website.vercel.app/q/${qrModalTag.publicToken || qrModalTag.id}`}
+                    size={95}
+                    level="H"
+                    includeMargin={false}
+                    imageSettings={{
+                      src: "/logos/icon.png",
+                      height: 24,
+                      width: 24,
+                      excavate: true,
+                    }}
+                  />
+                  {qrModalTag.securityCode && (
+                    <div className="mt-1 font-mono font-black text-[9px] text-gray-900 bg-gray-50 border border-gray-200 rounded px-1.5 py-0.5 tracking-wider">
+                      PIN: {qrModalTag.securityCode}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2.5">
