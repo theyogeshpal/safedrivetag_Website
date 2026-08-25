@@ -777,22 +777,12 @@ export default function DashboardTags() {
                         <Eye size={13} /> View Kit Details
                       </Link>
 
-                      <div className="flex items-center gap-2 col-span-2 sm:col-span-1 justify-between sm:justify-start">
-                        <button
-                          onClick={() => setEditingTag(tag)}
-                          className="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                        >
-                          <Edit3 size={13} /> Edit
-                        </button>
-
-                        <button
-                          onClick={() => handleDeleteTag(tag.id)}
-                          className="text-red-500 hover:bg-red-50 p-2 sm:p-1.5 rounded-md text-xs transition-colors cursor-pointer border border-red-200 sm:border-0"
-                          title="Unlink Tag"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => setEditingTag(tag)}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <Edit3 size={13} /> Edit Details
+                      </button>
                     </div>
 
                     <Link
