@@ -33,6 +33,13 @@ export const generateDigitalPdfHtml = (item = {}) => {
     const scanUrl = `https://safedrivetag-website.vercel.app/q/${copyToken}`;
     const qrImg = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(scanUrl)}&format=png&margin=1`;
     const label = copiesList.length > 1 ? `✂ CUT HERE • COPY ${index + 1}` : `✂ CUT HERE • OFFICIAL TAG`;
+    
+    // Extract Security PIN from API response / item / copy objects
+    const pin = c.securityCode || c.pin || c.securityPin || c.secCode || c.security_pin ||
+                item.securityCode || item.pin || item.securityPin || item.secCode || item.security_pin ||
+                (typeof c.security === 'object' ? (c.security?.pin || c.security?.code) : null) ||
+                (typeof item.security === 'object' ? (item.security?.pin || item.security?.code) : null) ||
+                '';
 
     return `
       <div class="printable-card" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 14px; background: #fafafa; position: relative; max-width: 540px; width: 100%;">
@@ -49,9 +56,13 @@ export const generateDigitalPdfHtml = (item = {}) => {
                 <img src="/logos/icon.png" style="width: 18px; height: 18px; object-fit: contain;" />
               </div>
             </div>
-            <div style="font-family: monospace; font-weight: 900; font-size: 11px; color: #0f172a; margin-top: 3px; letter-spacing: 1px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
-              PIN: ${c.securityCode || c.pin || item.securityCode || item.pin || code.replace('SD-TAG-', '') || '9921'}
-            </div>
+            ${pin ? `
+            <div style="font-family: 'Courier New', Courier, monospace; font-weight: 900; font-size: 11.5px; color: #0f172a; margin-top: 4px; letter-spacing: 1px; background: #f8fafc; padding: 2.5px 6px; border-radius: 4px; border: 1.5px solid #cbd5e1; display: block; white-space: nowrap;">
+              🔒 PIN: ${pin}
+            </div>` : `
+            <div style="font-family: 'Courier New', Courier, monospace; font-weight: 900; font-size: 10px; color: #475569; margin-top: 4px; letter-spacing: 0.5px; background: #f8fafc; padding: 2px 4px; border-radius: 4px; border: 1px solid #e2e8f0; display: block; white-space: nowrap;">
+              TAG ID: ${code}
+            </div>`}
           </div>
         </div>
       </div>
@@ -376,9 +387,10 @@ export const downloadQrPng = (item = {}) => {
       ctx.lineWidth = 1.5;
       ctx.strokeRect(110, 595, 380, 65);
 
+      const pin = item.securityCode || item.pin || item.securityPin || '';
       ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 19px monospace';
-      ctx.fillText(`${copyCode}`, 300, 624);
+      ctx.font = 'bold 18px monospace';
+      ctx.fillText(`${copyCode}${pin ? `  •  PIN: ${pin}` : ''}`, 300, 624);
 
       ctx.fillStyle = '#ea580c';
       ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, sans-serif';

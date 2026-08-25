@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Plus, 
-  QrCode, 
   Eye, 
   Trash2, 
   Edit3, 
@@ -18,7 +17,8 @@ import {
   Car, 
   Bike, 
   Briefcase, 
-  Truck 
+  Truck,
+  QrCode 
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
@@ -543,41 +543,85 @@ export default function DashboardTags() {
 
                     {/* Contact Config */}
                     <div className="space-y-1.5 text-xs">
+                      {/* Owner Contact */}
                       <div className="flex items-center gap-2">
-                        <Phone size={12} className="text-gray-400" />
+                        <Phone size={12} className="text-gray-400 shrink-0" />
                         <span className="text-gray-500 font-medium">Owner:</span>
-                        <span className="font-bold text-gray-800">
-                          {tag.phone ? `+91 ${String(tag.phone).replace(/\D/g, '').slice(-10)}` : 'Not Set'}
-                        </span>
+                        {(() => {
+                          const rawPhone = tag.phone || tag.ownerPhone || tag.user?.phone || currentUser?.phone;
+                          const cleanPhone = rawPhone ? String(rawPhone).replace(/\D/g, '').slice(-10) : '';
+                          return cleanPhone ? (
+                            <span className="font-bold text-gray-800">+91 {cleanPhone}</span>
+                          ) : (
+                            <span className="text-gray-400 font-normal italic">Not Set</span>
+                          );
+                        })()}
                       </div>
+
+                      {/* Emergency SOS Contacts */}
                       <div className="flex items-start gap-2">
                         <Phone size={12} className="text-green-600 shrink-0 mt-0.5" />
                         <div className="min-w-0">
                           <span className="text-gray-500 font-medium">Emergency SOS: </span>
-                          {tag.emergencyContacts && tag.emergencyContacts.length > 0 ? (
-                            <span className="font-bold text-gray-800">
-                              {tag.emergencyContacts.map((c, i) => (
-                                <span key={i} className="inline-block mr-1.5">
-                                  {typeof c === 'object' ? `${c.name || `SOS ${i + 1}`}: +91 ${String(c.number || c.phone || '').replace(/\D/g, '').slice(-10)}` : `+91 ${String(c).replace(/\D/g, '').slice(-10)}`}
-                                  {i < tag.emergencyContacts.length - 1 ? ',' : ''}
+                          {(() => {
+                            let eList = [];
+                            if (Array.isArray(tag.emergencyContacts) && tag.emergencyContacts.length > 0) {
+                              eList = tag.emergencyContacts;
+                            } else if (Array.isArray(tag.vehicle?.emergencyContacts) && tag.vehicle.emergencyContacts.length > 0) {
+                              eList = tag.vehicle.emergencyContacts;
+                            } else if (tag.emergencyContact1Number || tag.emergencyContact2Number) {
+                              if (tag.emergencyContact1Number) eList.push({ name: tag.emergencyContact1Name || 'SOS 1', number: tag.emergencyContact1Number });
+                              if (tag.emergencyContact2Number) eList.push({ name: tag.emergencyContact2Name || 'SOS 2', number: tag.emergencyContact2Number });
+                            } else if (tag.emergencyContact) {
+                              eList = [{ name: 'SOS', number: tag.emergencyContact }];
+                            }
+
+                            const validContacts = eList.filter(c => {
+                              const num = typeof c === 'object' ? (c.number || c.phone) : c;
+                              return Boolean(num && String(num).replace(/\D/g, '').length >= 10);
+                            });
+
+                            if (validContacts.length > 0) {
+                              return (
+                                <span className="font-bold text-gray-800">
+                                  {validContacts.map((c, i) => {
+                                    const num = String(typeof c === 'object' ? (c.number || c.phone || '') : c).replace(/\D/g, '').slice(-10);
+                                    const name = typeof c === 'object' && c.name && !c.name.includes('SOS') ? `${c.name}: ` : (validContacts.length > 1 ? `SOS ${i + 1}: ` : '');
+                                    return (
+                                      <span key={i} className="inline-block mr-1.5">
+                                        <span className="text-gray-500 font-normal">{name}</span>
+                                        +91 {num}
+                                        {i < validContacts.length - 1 ? ',' : ''}
+                                      </span>
+                                    );
+                                  })}
                                 </span>
-                              ))}
-                            </span>
-                          ) : tag.emergencyContact ? (
-                            <span className="font-bold text-gray-800">
-                              +91 {String(tag.emergencyContact).replace(/\D/g, '').slice(-10)}
-                            </span>
-                          ) : (
-                            <span className="font-bold text-emerald-700">2 Verified Contacts</span>
-                          )}
+                              );
+                            }
+
+                            return (
+                              <span className="text-gray-400 font-normal italic">Not Configured</span>
+                            );
+                          })()}
                         </div>
                       </div>
+
+                      {/* WhatsApp Alerts */}
                       <div className="flex items-center gap-2">
                         <MessageCircle size={12} className="text-emerald-600 shrink-0" />
                         <span className="text-gray-500 font-medium">WhatsApp Alerts:</span>
-                        <span className="font-bold text-gray-800">
-                          +91 {String(tag.whatsapp || tag.phone || currentUser?.phone || '').replace(/\D/g, '').slice(-10)}
-                        </span>
+                        {(() => {
+                          if (tag.whatsappAlertsEnabled === false) {
+                            return <span className="text-gray-400 font-normal italic">Disabled</span>;
+                          }
+                          const rawWa = tag.whatsapp || tag.whatsappNumber || tag.phone || currentUser?.phone;
+                          const cleanWa = rawWa ? String(rawWa).replace(/\D/g, '').slice(-10) : '';
+                          return cleanWa ? (
+                            <span className="font-bold text-gray-800">+91 {cleanWa}</span>
+                          ) : (
+                            <span className="text-gray-400 font-normal italic">Not Configured</span>
+                          );
+                        })()}
                       </div>
                     </div>
 
@@ -645,16 +689,16 @@ export default function DashboardTags() {
                   {/* Bottom Row: Actions Bar (Responsive Grid on Mobile, Flex on Desktop) */}
                   <div className="pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
                     <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
-                      <button
-                        onClick={() => setQrModalTag(tag)}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
-                      >
-                        <QrCode size={13} /> View QR Badge
-                      </button>
 
                       {tag.qrType === 'DIGITAL' && (
                         <button
-                          onClick={() => printDigitalPdfInColor({ title: tag.vehicleName, publicToken: tag.primaryToken || tag.publicToken || tag.id, vehicleNumber: tag.vehicleNumber })}
+                          onClick={() => printDigitalPdfInColor({ 
+                            ...tag,
+                            title: tag.vehicleName || tag.title, 
+                            publicToken: tag.primaryToken || tag.publicToken || tag.id, 
+                            vehicleNumber: tag.vehicleNumber,
+                            securityCode: tag.securityCode || tag.pin || tag.securityPin
+                          })}
                           className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                         >
                           <Printer size={13} /> Print Badge

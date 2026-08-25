@@ -358,13 +358,25 @@ export default function Admin() {
 
                       <div className="pt-2 flex items-center gap-2">
                         <button
-                          onClick={() => openDigitalPdf({ title: `${kit.vehicle?.vehicleBrand} ${kit.vehicle?.vehicleName}`, publicToken: kit.copies?.[0]?.publicToken || kit.productId, vehicleNumber: kit.vehicle?.vehicleNumber })}
+                          onClick={() => openDigitalPdf({ 
+                            ...kit,
+                            title: `${kit.vehicle?.vehicleBrand} ${kit.vehicle?.vehicleName}`, 
+                            publicToken: kit.copies?.[0]?.publicToken || kit.productId, 
+                            vehicleNumber: kit.vehicle?.vehicleNumber,
+                            securityCode: kit.securityCode || kit.pin || kit.copies?.[0]?.securityCode || kit.copies?.[0]?.pin
+                          })}
                           className="flex-1 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1 cursor-pointer transition-colors"
                         >
                           <Eye size={12} /> View Badge PDF
                         </button>
                         <button
-                          onClick={() => printDigitalPdfInColor({ title: `${kit.vehicle?.vehicleBrand} ${kit.vehicle?.vehicleName}`, publicToken: kit.copies?.[0]?.publicToken || kit.productId, vehicleNumber: kit.vehicle?.vehicleNumber })}
+                          onClick={() => printDigitalPdfInColor({ 
+                            ...kit,
+                            title: `${kit.vehicle?.vehicleBrand} ${kit.vehicle?.vehicleName}`, 
+                            publicToken: kit.copies?.[0]?.publicToken || kit.productId, 
+                            vehicleNumber: kit.vehicle?.vehicleNumber,
+                            securityCode: kit.securityCode || kit.pin || kit.copies?.[0]?.securityCode || kit.copies?.[0]?.pin
+                          })}
                           className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1 cursor-pointer transition-colors shadow-xs"
                         >
                           <Printer size={12} /> Print Color

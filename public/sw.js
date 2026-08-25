@@ -46,6 +46,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Only cache http/https requests (fixes chrome-extension unsupported scheme error)
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {

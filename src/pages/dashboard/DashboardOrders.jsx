@@ -418,8 +418,10 @@ export default function DashboardOrders() {
                     <div className="grid grid-cols-2 gap-2 pt-2">
                       <button
                         onClick={() => printDigitalPdfInColor({
+                          ...digitalPassModalOrder,
                           title: digitalPassModalOrder.productName,
                           publicToken: token,
+                          securityCode: (activeCopy && (activeCopy.securityCode || activeCopy.pin)) || digitalPassModalOrder.securityCode || digitalPassModalOrder.pin,
                           vehicleNumber: isCopyActive ? 'ACTIVE PROTECTED' : 'READY TO ACTIVATE',
                         })}
                         className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"

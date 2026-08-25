@@ -61,6 +61,9 @@ export default function RegisterTag() {
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [successData, setSuccessData] = useState(null);
+  
+  // Track if the QR is fundamentally a vehicle or item tag
+  const [qrCategory, setQrCategory] = useState(null); // 'vehicle' | 'item' | null
 
   // Fetch Public QR Metadata & Security PIN on mount
   React.useEffect(() => {
@@ -70,7 +73,11 @@ export default function RegisterTag() {
         if (res && res.success) {
           const pin = res.securityCode || res.pin || res.qr?.securityCode || res.qr?.pin;
           if (pin) setSecurityCode(String(pin));
+          
           const cat = res.qrFor || (res.qrType === 'PHYSICAL' ? 'Car' : 'Luggage');
+          const isVehicleCat = ['Car', 'Bike', 'Truck', 'Commercial / Truck'].includes(cat);
+          setQrCategory(isVehicleCat ? 'vehicle' : 'item');
+          
           setFormData(prev => ({
             ...prev,
             vehicleType: cat,
@@ -193,6 +200,29 @@ export default function RegisterTag() {
       return;
     }
 
+    const isVehicle = ['Car', 'Bike', 'Truck', 'Commercial / Truck', 'General'].includes(formData.vehicleType);
+
+    // Vehicle Specific Validations
+    if (isVehicle && formData.vehicleType !== 'General') {
+      if (!formData.vehicleNumber?.trim()) {
+        setError('Please enter your Vehicle Registration Number (e.g. DL 01 AB 1234).');
+        return;
+      }
+      if (!formData.vehicleBrand?.trim()) {
+        setError('Please enter your Vehicle Brand / Make (e.g. Hyundai, Tata, Maruti, Honda).');
+        return;
+      }
+      if (!formData.vehicleName?.trim() && !formData.itemTitle?.trim()) {
+        setError('Please enter your Vehicle Model / Name (e.g. Creta, Swift, Nexon, Activa).');
+        return;
+      }
+    } else {
+      if (!formData.itemTitle?.trim() && !formData.vehicleName?.trim()) {
+        setError('Please enter an Item / Tag Title.');
+        return;
+      }
+    }
+
     // Strictly Validate 2 Mandatory Emergency Contacts
     const c1 = formData.emergencyContact1Number.replace(/\D/g, '');
     const c2 = formData.emergencyContact2Number.replace(/\D/g, '');
@@ -232,7 +262,10 @@ export default function RegisterTag() {
 
       const contact1Name = formData.emergencyContact1Name.trim() || 'Primary Emergency Contact';
       const contact2Name = formData.emergencyContact2Name.trim() || 'Secondary Emergency Contact';
-      const resolvedTitle = formData.itemTitle.trim() || `${formData.vehicleType} Safety Tag`;
+      
+      const vBrand = formData.vehicleBrand?.trim() || 'SafeDrive';
+      const vModel = formData.vehicleName?.trim() || formData.itemTitle?.trim() || `${formData.vehicleType} Safety Tag`;
+      const vPlate = (formData.vehicleNumber?.trim() || (isVehicle ? formData.itemTitle?.trim() : token) || 'DL01XX0000').toUpperCase();
 
       const payload = {
         name: name.trim() || currentUser?.name || 'Tag Owner',
@@ -240,13 +273,15 @@ export default function RegisterTag() {
         email: currentUser?.email || '',
         whatsappNumber: useSameWhatsApp ? cleanPhone : (formData.whatsappNumber?.replace(/\D/g, '') || cleanPhone),
         gender: formData.gender || 'Male',
-        itemTitle: resolvedTitle,
-        vehicleBrand: formData.vehicleBrand || 'SafeDrive',
-        vehicleName: resolvedTitle,
-        vehicleNumber: formData.vehicleNumber || '',
-        vehicleType: formData.vehicleType || 'Luggage',
-        itemCategory: formData.vehicleType || 'Luggage',
+        itemTitle: vModel,
+        vehicleBrand: vBrand,
+        vehicleName: vModel,
+        vehicleNumber: vPlate,
+        plateNumber: vPlate,
+        vehicleType: formData.vehicleType || 'Car',
+        itemCategory: formData.vehicleType || 'Car',
         securityCode: String(securityCode || '5781'),
+        pin: String(securityCode || '5781'),
         contact1Name,
         contact1Phone: c1,
         contact2Name,
@@ -263,7 +298,7 @@ export default function RegisterTag() {
           setAuthenticatedSession(res.token, res.user);
         }
       } else {
-        setError(res.message || 'Tag registration failed. Please ensure both emergency contacts are valid.');
+        setError(res.message || 'Tag registration failed. Please ensure all required fields are filled.');
       }
     } catch (err) {
       setError('Failed to activate tag. Network error.');
@@ -515,42 +550,161 @@ export default function RegisterTag() {
                   </div>
                 </div>
 
-                {/* 2. Item / Tag Title */}
+                {/* 2. Item Category / Type */}
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-black/80">
-                    Item / Tag Title *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Blue Safari Trolley Bag"
-                    name="itemTitle"
-                    value={formData.itemTitle}
-                    onChange={handleFormChange}
-                    className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-emerald-500 transition-all text-black"
-                  />
-                </div>
-
-                {/* 3. Item Category / Type */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-black/80">
-                    Item Category / Type *
+                    Category / Tag Type *
                   </label>
                   <select
                     name="vehicleType"
                     value={formData.vehicleType}
-                    onChange={handleFormChange}
+                    onChange={(e) => {
+                      const newType = e.target.value;
+                      setFormData(prev => ({
+                        ...prev,
+                        vehicleType: newType,
+                        vehicleBrand: prev.vehicleBrand || (newType === 'Luggage' ? 'Safari' : 'SafeDrive'),
+                        itemTitle: prev.itemTitle || (newType === 'Luggage' ? 'Blue Safari Trolley Bag' : `${newType} Safety Tag`),
+                      }));
+                    }}
                     className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:bg-white focus:border-emerald-500 transition-all text-black cursor-pointer"
                   >
-                    <option value="Luggage">Luggage</option>
-                    <option value="Car">Car</option>
-                    <option value="Bike">Bike</option>
-                    <option value="Truck">Commercial / Truck</option>
-                    <option value="Personal Bag">Personal Bag / Backpack</option>
-                    <option value="Pet">Pet Tag</option>
-                    <option value="General">General Asset</option>
+                    {(!qrCategory || qrCategory === 'vehicle') && (
+                      <>
+                        <option value="Car">🚗 Car / SUV / Sedan</option>
+                        <option value="Bike">🏍️ Bike / Scooter / 2-Wheeler</option>
+                        <option value="Truck">🚚 Commercial / Truck / Taxi</option>
+                      </>
+                    )}
+                    {(!qrCategory || qrCategory === 'item') && (
+                      <>
+                        <option value="Luggage">🧳 Luggage / Suitcase</option>
+                        <option value="Personal Bag">🎒 Personal Bag / Backpack</option>
+                        <option value="Pet">🐾 Pet Tag</option>
+                        <option value="General">🏷️ General Asset</option>
+                      </>
+                    )}
                   </select>
                 </div>
+
+                {/* 3. Dynamic Vehicle Details or Item Details */}
+                {['Car', 'Bike', 'Truck', 'Commercial / Truck'].includes(formData.vehicleType) ? (
+                  <div className="space-y-3 bg-blue-50/40 border border-blue-100 rounded-2xl p-4">
+                    <span className="text-xs font-black text-blue-900 uppercase tracking-wide flex items-center gap-1.5">
+                      🚘 Vehicle Registration Details
+                    </span>
+
+                    {/* Vehicle Plate Number */}
+                    <div className="space-y-1">
+                      <label className="block text-[11px] font-bold text-gray-700">
+                        Vehicle Number / Plate Number *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. DL 01 AB 1234 or HR 26 DK 8392"
+                        name="vehicleNumber"
+                        value={formData.vehicleNumber}
+                        onChange={(e) => setFormData(p => ({ ...p, vehicleNumber: e.target.value.toUpperCase() }))}
+                        className="w-full bg-white border border-blue-200 rounded-xl px-4 py-2.5 text-xs font-black uppercase tracking-wider outline-none focus:border-blue-500 text-blue-950 font-mono shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Vehicle Brand */}
+                      <div className="space-y-1">
+                        <label className="block text-[11px] font-bold text-gray-700">
+                          Vehicle Brand / Make *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Hyundai, Tata, Maruti, Honda"
+                          name="vehicleBrand"
+                          value={formData.vehicleBrand}
+                          onChange={handleFormChange}
+                          className="w-full bg-white border border-blue-200 rounded-xl px-4 py-2.5 text-xs font-semibold outline-none focus:border-blue-500 text-gray-900 shadow-2xs"
+                        />
+                      </div>
+
+                      {/* Vehicle Model */}
+                      <div className="space-y-1">
+                        <label className="block text-[11px] font-bold text-gray-700">
+                          Vehicle Model / Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Creta, Swift, Nexon, Activa"
+                          name="vehicleName"
+                          value={formData.vehicleName}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setFormData(p => ({ ...p, vehicleName: val, itemTitle: val }));
+                          }}
+                          className="w-full bg-white border border-blue-200 rounded-xl px-4 py-2.5 text-xs font-semibold outline-none focus:border-blue-500 text-gray-900 shadow-2xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3 bg-purple-50/40 border border-purple-100 rounded-2xl p-4">
+                    <span className="text-xs font-black text-purple-900 uppercase tracking-wide flex items-center gap-1.5">
+                      🧳 Item / Asset Details
+                    </span>
+
+                    {/* Item Title */}
+                    <div className="space-y-1">
+                      <label className="block text-[11px] font-bold text-gray-700">
+                        Item / Tag Title *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Blue Safari Trolley Bag"
+                        name="itemTitle"
+                        value={formData.itemTitle}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setFormData(p => ({ ...p, itemTitle: val, vehicleName: val }));
+                        }}
+                        className="w-full bg-white border border-purple-200 rounded-xl px-4 py-2.5 text-xs font-semibold outline-none focus:border-purple-500 text-gray-900 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Brand / Make */}
+                      <div className="space-y-1">
+                        <label className="block text-[11px] font-bold text-gray-700">
+                          Brand / Make (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Safari, American Tourister, Wildcraft"
+                          name="vehicleBrand"
+                          value={formData.vehicleBrand}
+                          onChange={handleFormChange}
+                          className="w-full bg-white border border-purple-200 rounded-xl px-4 py-2.5 text-xs font-semibold outline-none focus:border-purple-500 text-gray-900 shadow-2xs"
+                        />
+                      </div>
+
+                      {/* Serial / Identifier */}
+                      <div className="space-y-1">
+                        <label className="block text-[11px] font-bold text-gray-700">
+                          Tag / Serial Code
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. SD-LUGGAGE-01"
+                          name="vehicleNumber"
+                          value={formData.vehicleNumber || token}
+                          onChange={handleFormChange}
+                          className="w-full bg-white border border-purple-200 rounded-xl px-4 py-2.5 text-xs font-mono font-bold outline-none focus:border-purple-500 text-gray-900 shadow-2xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* 4. Owner Name */}
                 <div className="space-y-1.5">
