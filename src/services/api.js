@@ -51,80 +51,44 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 export const api = {
-  // --- 1. Product Catalog & Store APIs ---
-  getProducts: () => apiRequest('/purchase/products'),
-  getProductById: (id) => apiRequest(`/purchase/products/${id}`),
-
-  // --- 2. User Authentication & Profile APIs ---
-  sendOtp: async (data) => {
-    const body = typeof data === 'object' && data !== null ? data : { phone: data };
-    // Try /auth/send-login-otp first
-    const res1 = await apiRequest('/auth/send-login-otp', {
-      method: 'POST',
-      body,
-    });
-    if (res1.success || (!res1.message?.toLowerCase().includes('route not found') && !res1.message?.toLowerCase().includes('not found') && res1.status !== 404)) {
-      return res1;
-    }
-    // Fallback to /purchase/send-otp
-    return apiRequest('/purchase/send-otp', {
+  // =========================================================================
+  // MODULE 1: AUTHENTICATION & USER LOGIN
+  // =========================================================================
+  sendLoginOtp: (phoneOrData) => {
+    const body = typeof phoneOrData === 'object' && phoneOrData !== null 
+      ? phoneOrData 
+      : { phone: String(phoneOrData).replace(/\D/g, '') };
+    return apiRequest('/auth/send-login-otp', {
       method: 'POST',
       body,
     });
   },
 
-  sendLoginOtp: async (data) => {
-    const body = typeof data === 'object' && data !== null ? data : { phone: data };
-    // Try /auth/send-login-otp first
-    const res1 = await apiRequest('/auth/send-login-otp', {
-      method: 'POST',
-      body,
-    });
-    if (res1.success || (!res1.message?.toLowerCase().includes('route not found') && !res1.message?.toLowerCase().includes('not found') && res1.status !== 404)) {
-      return res1;
-    }
-    // Fallback to /purchase/send-otp
-    return apiRequest('/purchase/send-otp', {
+  sendOtp: (phoneOrData) => {
+    const body = typeof phoneOrData === 'object' && phoneOrData !== null 
+      ? phoneOrData 
+      : { phone: String(phoneOrData).replace(/\D/g, '') };
+    return apiRequest('/auth/send-login-otp', {
       method: 'POST',
       body,
     });
   },
 
-  verifyOtp: async (phoneOrData, otp) => {
+  verifyLoginOtp: (phoneOrData, otp) => {
     const body = typeof phoneOrData === 'object' && phoneOrData !== null 
       ? { ...phoneOrData, ...(otp ? { otp } : {}) }
-      : { phone: phoneOrData, otp };
-    
-    // Try /auth/verify-login-otp first
-    const res1 = await apiRequest('/auth/verify-login-otp', {
-      method: 'POST',
-      body,
-    });
-    if (res1.success || (!res1.message?.toLowerCase().includes('route not found') && !res1.message?.toLowerCase().includes('not found') && res1.status !== 404)) {
-      return res1;
-    }
-    // Fallback to /purchase/verify-otp
-    return apiRequest('/purchase/verify-otp', {
+      : { phone: String(phoneOrData).replace(/\D/g, ''), otp: String(otp).trim() };
+    return apiRequest('/auth/verify-login-otp', {
       method: 'POST',
       body,
     });
   },
 
-  verifyLoginOtp: async (phoneOrData, otp) => {
+  verifyOtp: (phoneOrData, otp) => {
     const body = typeof phoneOrData === 'object' && phoneOrData !== null 
       ? { ...phoneOrData, ...(otp ? { otp } : {}) }
-      : { phone: phoneOrData, otp };
-    
-    // Try /auth/verify-login-otp first
-    const res1 = await apiRequest('/auth/verify-login-otp', {
-      method: 'POST',
-      body,
-    });
-    if (res1.success || (!res1.message?.toLowerCase().includes('route not found') && !res1.message?.toLowerCase().includes('not found') && res1.status !== 404)) {
-      return res1;
-    }
-    // Fallback to /purchase/verify-otp
-    return apiRequest('/purchase/verify-otp', {
+      : { phone: String(phoneOrData).replace(/\D/g, ''), otp: String(otp).trim() };
+    return apiRequest('/auth/verify-login-otp', {
       method: 'POST',
       body,
     });
@@ -132,15 +96,41 @@ export const api = {
 
   getCurrentUser: () => apiRequest('/auth/me'),
 
-  updateProfile: (profileData) =>
-    apiRequest('/user/profile', {
-      method: 'PUT',
-      body: profileData,
+  // =========================================================================
+  // MODULE 2: LANDING PAGE & PUBLIC FORMS
+  // =========================================================================
+  getLandingData: () => apiRequest('/public/landing-data'),
+  
+  submitContact: async (contactData) => {
+    const res = await apiRequest('/public/contact', {
+      method: 'POST',
+      body: contactData,
+    });
+    if (res.success || !res.message?.toLowerCase().includes('not found')) {
+      return res;
+    }
+    return apiRequest('/public/contact-inquiry', {
+      method: 'POST',
+      body: contactData,
+    });
+  },
+
+  subscribeNewsletter: (email) =>
+    apiRequest('/public/subscribe-newsletter', {
+      method: 'POST',
+      body: { email },
     }),
 
-  // --- 3. Checkout & Payment APIs ---
-  sendPurchaseOtp: (data) => {
-    const body = typeof data === 'object' && data !== null ? data : { phone: data };
+  // =========================================================================
+  // MODULE 3: STORE & E-COMMERCE ORDER FLOW
+  // =========================================================================
+  getProducts: () => apiRequest('/purchase/products'),
+  getProductById: (id) => apiRequest(`/purchase/products/${id}`),
+
+  sendPurchaseOtp: (phoneOrData) => {
+    const body = typeof phoneOrData === 'object' && phoneOrData !== null 
+      ? phoneOrData 
+      : { phone: String(phoneOrData).replace(/\D/g, '') };
     return apiRequest('/purchase/send-otp', {
       method: 'POST',
       body,
@@ -150,7 +140,7 @@ export const api = {
   verifyPurchaseOtp: (phoneOrData, otp) => {
     const body = typeof phoneOrData === 'object' && phoneOrData !== null 
       ? { ...phoneOrData, ...(otp ? { otp } : {}) }
-      : { phone: phoneOrData, otp };
+      : { phone: String(phoneOrData).replace(/\D/g, ''), otp: String(otp).trim() };
     return apiRequest('/purchase/verify-otp', {
       method: 'POST',
       body,
@@ -169,55 +159,28 @@ export const api = {
       body: paymentData,
     }),
 
-  // --- 4. Public QR Scan & Safety Features ---
-  getPublicQrInfo: (token) => apiRequest(`/public/qr/${token}`),
-  getScanReasons: () => apiRequest('/public/scan-reasons'),
-
-  verifyPlate: (token, last4Digits) =>
-    apiRequest(`/public/qr/${token}/verify-plate`, {
-      method: 'POST',
-      body: { last4Digits },
-    }),
-
-  initiateCall: (token, last4Digits, reason) =>
-    apiRequest(`/public/qr/${token}/call`, {
-      method: 'POST',
-      body: { last4Digits, reason },
-    }),
-
-  sendMessage: (token, messageText) =>
-    apiRequest(`/public/qr/${token}/message`, {
-      method: 'POST',
-      body: typeof messageText === 'string' ? { messageText } : messageText,
-    }),
-
-  triggerEmergency: (token, data) =>
-    apiRequest(`/public/qr/${token}/emergency`, {
-      method: 'POST',
-      body: data || {},
-    }),
-
-  // Admin Scan Reasons APIs
-  getAdminScanReasons: () => apiRequest('/admin/scan-reasons?showDeleted=true'),
-  createScanReason: (data) => apiRequest('/admin/scan-reasons', { method: 'POST', body: data }),
-  updateScanReason: (id, data) => apiRequest(`/admin/scan-reasons/${id}`, { method: 'PUT', body: data }),
-  deleteScanReason: (id) => apiRequest(`/admin/scan-reasons/${id}`, { method: 'DELETE' }),
-  restoreScanReason: (id) => apiRequest(`/admin/scan-reasons/${id}/restore`, { method: 'PUT' }),
-
-  // --- 5. First-Time QR Registration API ---
-  registerQrKit: (token, registrationData) =>
-    apiRequest(`/public/qr/${token}/register`, {
-      method: 'POST',
-      body: registrationData,
-    }),
-
-  // --- 6. Customer Dashboard & Vehicle Management ---
+  // =========================================================================
+  // MODULE 4: USER PORTAL & DASHBOARD
+  // =========================================================================
   getDashboard: () => apiRequest('/user/dashboard'),
-  getPackages: () => apiRequest('/user/packages'),
+
+  updateProfile: (profileData) =>
+    apiRequest('/user/profile', {
+      method: 'PUT',
+      body: profileData,
+    }),
+
+  registerFcmToken: (fcmToken) =>
+    apiRequest('/user/fcm-token', {
+      method: 'POST',
+      body: { fcmToken },
+    }),
+
   getUserOrders: () => apiRequest('/user/orders'),
-  
+
+  getUserNotifications: () => apiRequest('/user/notifications'),
+
   getUserTransactions: async () => {
-    // 1. Try real endpoint /user/transactions or /user/payments
     const res = await apiRequest('/user/transactions');
     if (res.success && (res.transactions || res.data)) {
       return {
@@ -225,7 +188,6 @@ export const api = {
         transactions: res.transactions || res.data || [],
       };
     }
-    // 2. Fallback: Automatically synthesize transaction ledger from User Orders
     try {
       const ordersRes = await apiRequest('/user/orders');
       if (ordersRes.success && Array.isArray(ordersRes.orders)) {
@@ -251,14 +213,39 @@ export const api = {
     return res;
   },
 
+  // =========================================================================
+  // MODULE 5: QR TAG DETAILS, TOP-UP & RENEWAL
+  // =========================================================================
+  getUserQrDetails: (id) => apiRequest(`/user/qr/${id}`),
+
+  updateUserQrDetails: (id, detailsData) =>
+    apiRequest(`/user/qr/${id}/details`, {
+      method: 'PUT',
+      body: detailsData,
+    }),
+
+  getPackages: () => apiRequest('/user/packages'),
+
+  buyQrQuota: (id, quotaData) =>
+    apiRequest(`/user/qr/${id}/buy-quota`, {
+      method: 'POST',
+      body: quotaData,
+    }),
+
+  renewQrValidity: (id, renewData) =>
+    apiRequest(`/user/qr/${id}/renew`, {
+      method: 'POST',
+      body: renewData || {},
+    }),
+
   buyQuota: (data) =>
-    apiRequest('/user/quota/buy', {
+    apiRequest(data?.id ? `/user/qr/${data.id}/buy-quota` : '/user/quota/buy', {
       method: 'POST',
       body: data,
     }),
 
   renewSubscription: (data) =>
-    apiRequest('/user/subscription/renew', {
+    apiRequest(data?.id ? `/user/qr/${data.id}/renew` : '/user/subscription/renew', {
       method: 'POST',
       body: data,
     }),
@@ -270,6 +257,92 @@ export const api = {
     }),
 
   getLedger: () => apiRequest('/user/ledger'),
+
+  // =========================================================================
+  // MODULE 6: PUBLIC QR SCAN, ACTIVATION & MASKED CALL
+  // =========================================================================
+  getPublicQrInfo: (token) => apiRequest(`/public/qr/${token}`),
+
+  sendActivationOtp: (phoneOrData) => {
+    const body = typeof phoneOrData === 'object' && phoneOrData !== null 
+      ? phoneOrData 
+      : { phone: String(phoneOrData).replace(/\D/g, '') };
+    return apiRequest('/public/send-activation-otp', {
+      method: 'POST',
+      body,
+    });
+  },
+
+  verifyActivationOtp: (phoneOrData, otp) => {
+    const body = typeof phoneOrData === 'object' && phoneOrData !== null 
+      ? { ...phoneOrData, ...(otp ? { otp } : {}) }
+      : { phone: String(phoneOrData).replace(/\D/g, ''), otp: String(otp).trim() };
+    return apiRequest('/public/verify-activation-otp', {
+      method: 'POST',
+      body,
+    });
+  },
+
+  registerQrKit: (token, registrationData) =>
+    apiRequest(`/public/qr/${token}/register`, {
+      method: 'POST',
+      body: registrationData,
+    }),
+
+  getScanReasons: (token) => 
+    apiRequest(token ? `/public/scan-reasons?token=${token}` : '/public/scan-reasons'),
+
+  verifyPlate: (token, last4Digits) =>
+    apiRequest(`/public/qr/${token}/verify-plate`, {
+      method: 'POST',
+      body: { 
+        last4: String(last4Digits).trim(),
+        last4Digits: String(last4Digits).trim()
+      },
+    }),
+
+  initiateCall: (token, callerPhone, reason, last4Digits) => {
+    const cleanPhone = String(callerPhone || '').replace(/\D/g, '');
+    return apiRequest(`/public/qr/${token}/call`, {
+      method: 'POST',
+      body: { 
+        callerPhone: cleanPhone,
+        scannerPhone: cleanPhone,
+        reason: reason || 'General Inquiry',
+        last4Digits: last4Digits || '',
+        last4: last4Digits || ''
+      },
+    });
+  },
+
+  sendMessage: (token, messageOrPayload) => {
+    const body = typeof messageOrPayload === 'string'
+      ? { message: messageOrPayload, messageText: messageOrPayload, reason: messageOrPayload }
+      : messageOrPayload;
+    return apiRequest(`/public/qr/${token}/message`, {
+      method: 'POST',
+      body,
+    });
+  },
+
+  sendPushNotification: (token, reason) =>
+    apiRequest(`/public/qr/${token}/push-notification`, {
+      method: 'POST',
+      body: { reason: typeof reason === 'string' ? reason : reason?.reason || 'Alert' },
+    }),
+
+  triggerEmergency: (token, data) =>
+    apiRequest(`/public/qr/${token}/emergency`, {
+      method: 'POST',
+      body: data || {},
+    }),
+
+  // Admin Scan Reasons APIs
+  getAdminScanReasons: () => apiRequest('/admin/scan-reasons?showDeleted=true'),
+  createScanReason: (data) => apiRequest('/admin/scan-reasons', { method: 'POST', body: data }),
+  updateScanReason: (id, data) => apiRequest(`/admin/scan-reasons/${id}`, { method: 'PUT', body: data }),
+  deleteScanReason: (id) => apiRequest(`/admin/scan-reasons/${id}`, { method: 'DELETE' }),
+  restoreScanReason: (id) => apiRequest(`/admin/scan-reasons/${id}/restore`, { method: 'PUT' }),
 };
 
 export default api;

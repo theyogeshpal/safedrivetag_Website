@@ -300,8 +300,16 @@ export default function Checkout() {
       // Call POST /purchase/create-order
       const createRes = await api.createOrder({
         productId: resolvedProductId,
+        phone: cleanPhone,
+        customerName: customerFullName,
+        customerEmail: formData.email.trim(),
+        deliveryAddress: formData.address.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim() || 'Uttar Pradesh',
+        pincode: formData.pincode.trim(),
         quantity: quantity || 1,
         name: customerFullName,
+        address: formData.address.trim(),
       });
 
       if (!createRes.success) {
@@ -317,6 +325,18 @@ export default function Checkout() {
         const completeRes = await api.completePurchase({
           productId: resolvedProductId,
           quantity: quantity || 1,
+          customerName: customerFullName,
+          customerPhone: cleanPhone,
+          customerEmail: formData.email.trim(),
+          shippingAddress: {
+            address: formData.address.trim(),
+            city: formData.city.trim(),
+            state: formData.state.trim() || 'Uttar Pradesh',
+            pincode: formData.pincode.trim(),
+          },
+          razorpayOrderId: createRes.razorpayOrderId || createRes.orderId || `order_${Date.now()}`,
+          razorpayPaymentId: `pay_direct_${Date.now()}`,
+          razorpaySignature: 'signature_valid',
           name: customerFullName,
           phone: cleanPhone,
           email: formData.email.trim(),
@@ -325,7 +345,7 @@ export default function Checkout() {
           state: formData.state.trim() || 'Uttar Pradesh',
           pincode: formData.pincode.trim(),
           razorpay_payment_id: `pay_direct_${Date.now()}`,
-          razorpay_order_id: createRes.orderId || `order_${Date.now()}`,
+          razorpay_order_id: createRes.razorpayOrderId || createRes.orderId || `order_${Date.now()}`,
           razorpay_signature: 'signature_valid',
         });
 
@@ -334,7 +354,7 @@ export default function Checkout() {
           if (completeRes.user && setCurrentUser) setCurrentUser(completeRes.user);
 
           setOrderSuccess({
-            orderNumber: completeRes.orderNumber || `ORD-${Date.now().toString().slice(-6)}`,
+            orderNumber: completeRes.orderNumber || completeRes.orderId || `ORD-${Date.now().toString().slice(-6)}`,
             customerName: customerFullName,
             totalAmount,
             shippingAddress: `${formData.address.trim()}, ${formData.city.trim()} - ${formData.pincode.trim()}`,
@@ -354,7 +374,7 @@ export default function Checkout() {
         name: 'SafeDrive-Tag',
         description: selectedProduct.title || 'Car Safety Kit Protection',
         image: '/logos/primary.jpeg',
-        order_id: createRes.orderId,
+        order_id: createRes.razorpayOrderId || createRes.orderId,
         handler: async function (paymentResponse) {
           try {
             setIsSubmitting(true);
@@ -363,6 +383,18 @@ export default function Checkout() {
             const completePayload = {
               productId: resolvedProductId,
               quantity: quantity || 1,
+              customerName: customerFullName,
+              customerPhone: cleanPhone,
+              customerEmail: formData.email.trim(),
+              shippingAddress: {
+                address: formData.address.trim(),
+                city: formData.city.trim(),
+                state: formData.state.trim() || 'Uttar Pradesh',
+                pincode: formData.pincode.trim(),
+              },
+              razorpayOrderId: paymentResponse.razorpay_order_id || createRes.razorpayOrderId || createRes.orderId,
+              razorpayPaymentId: paymentResponse.razorpay_payment_id,
+              razorpaySignature: paymentResponse.razorpay_signature,
               name: customerFullName,
               phone: cleanPhone,
               email: formData.email.trim(),
@@ -371,7 +403,7 @@ export default function Checkout() {
               state: formData.state.trim() || 'Uttar Pradesh',
               pincode: formData.pincode.trim(),
               razorpay_payment_id: paymentResponse.razorpay_payment_id,
-              razorpay_order_id: paymentResponse.razorpay_order_id || createRes.orderId,
+              razorpay_order_id: paymentResponse.razorpay_order_id || createRes.razorpayOrderId || createRes.orderId,
               razorpay_signature: paymentResponse.razorpay_signature,
             };
 

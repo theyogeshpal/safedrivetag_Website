@@ -13,6 +13,51 @@ export default function Contact() {
     { q: 'How do I transfer a tag to a new owner?', a: 'You can transfer ownership from your account dashboard by selecting the tag and choosing "Transfer Ownership".' }
   ];
 
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.name.trim()) {
+      showToast.error('Please enter your name.');
+      return;
+    }
+    const cleanPhone = formData.phone.replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length !== 10) {
+      showToast.error('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    if (!formData.message.trim()) {
+      showToast.error('Please enter your message.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await api.submitContact({
+        name: formData.name.trim(),
+        phone: cleanPhone,
+        email: formData.email.trim() || undefined,
+        message: formData.message.trim(),
+      });
+      if (res.success) {
+        showToast.success(res.message || 'Your inquiry has been submitted successfully!');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      } else {
+        showToast.error(res.message || 'Failed to submit inquiry.');
+      }
+    } catch (err) {
+      showToast.error('Error submitting form. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900 pb-20">
 
@@ -67,50 +112,67 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="bg-white border border-black/10 rounded-[2rem] p-8 md:p-10 shadow-sm">
             <h2 className="text-2xl font-black text-black mb-8">Send us a message</h2>
-            <form className="space-y-6">
+            <form onSubmit={handleContactSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-black/80">Name</label>
-                  <input type="text" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="Your name" />
+                  <label className="text-sm font-bold text-black/80">Name *</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" 
+                    placeholder="Your name" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-black/80">
                     Email <span className="text-xs font-normal text-black/40">(Optional)</span>
                   </label>
-                  <input type="email" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="you@email.com (Optional)" />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-[1fr_2fr] gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-black/80">Code</label>
-                  <select className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black appearance-none">
-                    <option>🇮🇳 +91</option>
-                    <option>🇺🇸 +1</option>
-                    <option>🇬🇧 +44</option>
-                    <option>🇦🇪 +971</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-black/80">Phone</label>
-                  <input type="tel" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="Phone number" />
+                  <input 
+                    type="email" 
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" 
+                    placeholder="you@email.com (Optional)" 
+                  />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-black/80">Message</label>
-                <textarea rows="4" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40 resize-none" placeholder="How can we help?" />
+                <label className="text-sm font-bold text-black/80">Phone *</label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-sm font-bold text-black/50">IN +91</span>
+                  <input 
+                    type="tel" 
+                    maxLength={10}
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, '') })}
+                    className="w-full bg-white border border-black/10 rounded-xl py-3 pl-20 pr-4 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" 
+                    placeholder="9876543210" 
+                  />
+                </div>
               </div>
 
-              <div className="flex items-start gap-3 pt-2">
-                <input type="checkbox" id="terms" className="mt-1 w-4 h-4 rounded border-black/20 text-emerald-600 focus:ring-emerald-500" />
-                <label htmlFor="terms" className="text-sm text-black/50 font-medium">
-                  I agree to the <Link to="/terms" className="text-emerald-700 font-bold hover:underline">Terms & Conditions</Link>. We won't spam you.
-                </label>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-black/80">Message *</label>
+                <textarea 
+                  rows="4" 
+                  required
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40 resize-none" 
+                  placeholder="How can we help?" 
+                />
               </div>
 
-              <button type="button" className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white font-black text-lg py-4 rounded-xl transition-all shadow-md hover:shadow-lg shadow-orange-500/20 cursor-pointer">
-                Send Message
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white font-black text-lg py-4 rounded-xl transition-all shadow-md hover:shadow-lg shadow-orange-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? 'Sending Message...' : 'Send Message'}
               </button>
             </form>
           </div>

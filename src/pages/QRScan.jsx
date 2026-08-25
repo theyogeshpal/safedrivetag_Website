@@ -206,14 +206,17 @@ export default function QRScan() {
         timestamp: new Date().toISOString(),
       };
 
-      // 1. Send API message
-      await api.sendMessage(token, payload);
+      // 1. Send Push notification API (POST /public/qr/:token/push-notification)
+      const res = await api.sendPushNotification(token, reasonText);
+      if (!res.success) {
+        await api.sendMessage(token, payload);
+      }
       
       // 2. Play audible bell chime sound
       playNotificationBellSound();
 
       // 3. Show Toast & Status
-      setActionSuccessMsg(`🔔 Push notification sent to vehicle owner regarding: "${reasonText}"`);
+      setActionSuccessMsg(res.message || `🔔 Push notification sent to vehicle owner regarding: "${reasonText}"`);
       showToast.success('🔔 Push Alert delivered to vehicle owner!');
 
       setCustomReasonText('');

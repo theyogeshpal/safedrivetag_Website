@@ -206,14 +206,23 @@ export default function RegisterTag() {
         },
       ];
 
+      const contact1Name = formData.emergencyContact1Name.trim() || 'Primary Family Member';
+      const contact2Name = formData.emergencyContact2Name.trim() || 'Alternate Emergency Contact';
+
       const payload = {
         name: name.trim() || currentUser?.name || 'Tag Owner',
         phone: cleanPhone || currentUser?.phone || '',
+        email: currentUser?.email || '',
         whatsappNumber: formData.whatsappNumber?.replace(/\D/g, '') || cleanPhone || currentUser?.phone || '',
         vehicleBrand: 'SafeDrive',
         vehicleName: 'Protected Tag',
         vehicleNumber: '',
         vehicleType: 'General',
+        securityCode: '9921',
+        contact1Name,
+        contact1Phone: c1,
+        contact2Name,
+        contact2Phone: c2,
         address: formData.address?.trim() || currentUser?.address || '',
         emergencyContacts,
       };
