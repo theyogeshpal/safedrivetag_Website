@@ -71,9 +71,9 @@ export default function RegisterTag() {
 
     setIsLoading(true);
     try {
-      const res = await api.sendOtp({
+      const res = await api.sendActivationOtp({
         phone: cleanPhone,
-        name: 'Tag Owner',
+        name: name.trim() || 'Tag Owner',
       });
 
       if (res.success || res.status === 200) {
@@ -123,7 +123,7 @@ export default function RegisterTag() {
 
     setIsLoading(true);
     try {
-      const res = await api.verifyOtp({
+      const res = await api.verifyActivationOtp({
         phone: cleanPhone,
         otp: enteredOtp,
       });

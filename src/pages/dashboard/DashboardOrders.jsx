@@ -13,7 +13,11 @@ import {
   ChevronRight, 
   MapPin, 
   ExternalLink,
-  QrCode
+  QrCode,
+  Zap,
+  ShieldCheck,
+  Lock,
+  KeyRound
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
@@ -33,6 +37,7 @@ export default function DashboardOrders() {
   // Modals
   const [trackingModalOrder, setTrackingModalOrder] = useState(null);
   const [digitalPassModalOrder, setDigitalPassModalOrder] = useState(null);
+  const [activePassCopyIdx, setActivePassCopyIdx] = useState(0);
   const [productsMap, setProductsMap] = useState({});
 
   const DEFAULT_PRODUCT_IMG = 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
@@ -187,6 +192,9 @@ export default function DashboardOrders() {
             {filteredOrders.map((ord) => {
               const isDigital = ord.productType === 'DIGITAL' || ord.qrType === 'DIGITAL' || ord.productName?.toLowerCase().includes('digital');
               const isDelivered = ord.deliveryStatus === 'DELIVERED' || ord.status === 'DELIVERED';
+              const firstAllocated = Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0 ? ord.allocatedQRIds[0] : null;
+              const primaryToken = firstAllocated?.publicToken || firstAllocated?.copyCode || ord._id;
+              const isTagActive = firstAllocated?.status === 'ACTIVE' || ord.isClaimed === true;
 
               return (
                 <div
@@ -241,6 +249,15 @@ export default function DashboardOrders() {
 
                     {/* Actions on this Order */}
                     <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                      {isDigital && !isTagActive && (
+                        <Link
+                          to={`/register/${primaryToken}`}
+                          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold px-3.5 py-1.5 rounded text-xs flex items-center gap-1.5 shadow-sm transition-all animate-pulse"
+                        >
+                          <Zap size={13} /> Activate Pass
+                        </Link>
+                      )}
+
                       {isDigital && (
                         <button
                           onClick={() => {
@@ -323,10 +340,31 @@ export default function DashboardOrders() {
                 const currentCopy = digitalPassModalOrder.allocatedQRIds?.[activePassCopyIdx] || {};
                 const token = currentCopy.publicToken || currentCopy.copyCode || digitalPassModalOrder._id;
                 const copyCode = currentCopy.copyCode || 'COPY-1';
+                const isCopyActive = currentCopy.status === 'ACTIVE' || digitalPassModalOrder.isClaimed === true;
+                const securityCode = currentCopy.securityCode || '9921';
                 const scanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
 
                 return (
-                  <div className="bg-[#fcfaff] border-2 border-purple-200 rounded-2xl p-5 text-center space-y-3 shadow-inner">
+                  <div className="bg-[#fcfaff] border-2 border-purple-200 rounded-2xl p-5 text-center space-y-3.5 shadow-inner">
+                    {/* Status Badge */}
+                    <div className="flex items-center justify-center gap-2">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 ${
+                        isCopyActive 
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                          : 'bg-amber-100 text-amber-900 border border-amber-300'
+                      }`}>
+                        {isCopyActive ? (
+                          <>
+                            <ShieldCheck size={14} className="text-emerald-600" /> Active Protection
+                          </>
+                        ) : (
+                          <>
+                            <Zap size={14} className="text-amber-600" /> Ready to Activate
+                          </>
+                        )}
+                      </span>
+                    </div>
+
                     <div className="bg-white p-3.5 rounded-xl border border-purple-100 inline-block shadow-md">
                       <QRCodeSVG
                         value={scanUrl}
@@ -349,14 +387,31 @@ export default function DashboardOrders() {
                       <p className="text-xs text-gray-500 font-medium mt-0.5">
                         {digitalPassModalOrder.productName || 'SafeDrive Digital QR Protection'}
                       </p>
+                      {securityCode && (
+                        <div className="inline-flex items-center gap-1.5 mt-2 bg-purple-100/70 border border-purple-200 text-purple-900 text-xs px-2.5 py-1 rounded-md font-mono">
+                          <KeyRound size={12} /> Security Code: <strong>{securityCode}</strong>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Activation CTA if unactivated */}
+                    {!isCopyActive && (
+                      <div className="pt-2">
+                        <Link
+                          to={`/register/${token}`}
+                          className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                        >
+                          <Zap size={15} /> ⚡ Activate This Digital Pass Now
+                        </Link>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-2 pt-2">
                       <button
                         onClick={() => printDigitalPdfInColor({
                           title: digitalPassModalOrder.productName,
                           publicToken: token,
-                          vehicleNumber: 'ACTIVE PROTECTED',
+                          vehicleNumber: isCopyActive ? 'ACTIVE PROTECTED' : 'READY TO ACTIVATE',
                         })}
                         className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
                       >
