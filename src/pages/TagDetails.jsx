@@ -375,6 +375,30 @@ export default function TagDetails() {
         emergencyContacts: updatedEmergencyContacts,
       };
 
+      // Call backend API PUT /user/qr/:id/details
+      try {
+        await api.updateUserQrDetails(id, {
+          vehicleNumber: editFormData.vehicleNumber.toUpperCase(),
+          vehicleBrand: editFormData.vehicleBrand,
+          vehicleName: editFormData.vehicleName,
+          emergencyContact1: {
+            name: editFormData.emergencyContact1Name.trim() || 'Primary Contact',
+            phone: editFormData.emergencyContact1Number.replace(/\D/g, ''),
+          },
+          emergencyContact2: {
+            name: editFormData.emergencyContact2Name.trim() || 'Secondary Contact',
+            phone: editFormData.emergencyContact2Number.replace(/\D/g, ''),
+          },
+          emergencyContacts: updatedEmergencyContacts,
+          name: editFormData.name,
+          phone: editFormData.phone.replace(/\D/g, ''),
+          whatsappNumber: editFormData.whatsappNumber.replace(/\D/g, ''),
+          address: editFormData.address,
+        });
+      } catch (apiErr) {
+        console.warn('Backend details update warning:', apiErr);
+      }
+
       // Update local storage cache
       try {
         const existing = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
