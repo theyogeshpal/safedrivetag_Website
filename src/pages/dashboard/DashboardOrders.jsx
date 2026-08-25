@@ -33,14 +33,30 @@ export default function DashboardOrders() {
   // Modals
   const [trackingModalOrder, setTrackingModalOrder] = useState(null);
   const [digitalPassModalOrder, setDigitalPassModalOrder] = useState(null);
-  const [activePassCopyIdx, setActivePassCopyIdx] = useState(0);
+  const [productsMap, setProductsMap] = useState({});
+
+  const DEFAULT_PRODUCT_IMG = 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
 
   const loadOrders = useCallback(async () => {
     setIsLoadingOrders(true);
     try {
-      const res = await api.getUserOrders();
-      if (res.success && res.orders) {
-        setOrders(res.orders);
+      const [ordersRes, productsRes] = await Promise.allSettled([
+        api.getUserOrders(),
+        api.getProducts(),
+      ]);
+
+      const pMap = {};
+      if (productsRes.status === 'fulfilled' && productsRes.value?.success && Array.isArray(productsRes.value.products)) {
+        productsRes.value.products.forEach((p) => {
+          if (p._id) pMap[p._id] = p;
+          if (p.title) pMap[p.title.toLowerCase().trim()] = p;
+          if (p.name) pMap[p.name.toLowerCase().trim()] = p;
+        });
+        setProductsMap(pMap);
+      }
+
+      if (ordersRes.status === 'fulfilled' && ordersRes.value?.success && ordersRes.value.orders) {
+        setOrders(ordersRes.value.orders);
       }
     } catch (e) {
       console.error('Error fetching orders', e);
@@ -48,6 +64,26 @@ export default function DashboardOrders() {
       setIsLoadingOrders(false);
     }
   }, []);
+
+  const getProductImage = (ord) => {
+    if (ord.imageUrl && !ord.imageUrl.includes('primary.jpeg') && !ord.imageUrl.includes('logo')) {
+      return ord.imageUrl;
+    }
+    if (ord.productImageUrl) return ord.productImageUrl;
+    if (ord.productId && productsMap[ord.productId]?.imageUrl) {
+      return productsMap[ord.productId].imageUrl;
+    }
+    const nameKey = (ord.productName || ord.title || '').toLowerCase().trim();
+    if (nameKey && productsMap[nameKey]?.imageUrl) {
+      return productsMap[nameKey].imageUrl;
+    }
+    for (const key in productsMap) {
+      if (nameKey.includes(key) || key.includes(nameKey)) {
+        if (productsMap[key]?.imageUrl) return productsMap[key].imageUrl;
+      }
+    }
+    return DEFAULT_PRODUCT_IMG;
+  };
 
   useEffect(() => {
     loadOrders();
@@ -183,11 +219,14 @@ export default function DashboardOrders() {
                   {/* Order Body Details */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-12 h-12 rounded-md bg-gray-100 p-1 flex items-center justify-center shrink-0 border border-gray-200">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-white p-1 flex items-center justify-center shrink-0 border border-gray-200 shadow-2xs overflow-hidden">
                         <img 
-                          src={ord.imageUrl || "/logos/primary.jpeg"} 
-                          alt="Product" 
-                          className="w-full h-full object-contain"
+                          src={getProductImage(ord)} 
+                          alt={ord.productName || ord.title || "Product"} 
+                          onError={(e) => {
+                            e.currentTarget.src = DEFAULT_PRODUCT_IMG;
+                          }}
+                          className="w-full h-full object-contain rounded-lg"
                         />
                       </div>
                       <div>
