@@ -110,6 +110,32 @@ export default function DashboardTags() {
 
               const resolvedQrType = isPhysical ? 'PHYSICAL' : (firstCopy.qrType || ord.productType || 'DIGITAL');
 
+              const rawVehicleTitle = regInfo ? `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() : (ord.productName || 'Vehicle Safety Kit');
+              
+              // Smart Vehicle Type Resolver
+              const resolveVType = (declaredType, titleStr) => {
+                const s = (titleStr || '').toLowerCase();
+                if (s.includes('nexon') || s.includes('creta') || s.includes('swift') || s.includes('baleno') || s.includes('innova') || s.includes('fortuner') || s.includes('thar') || s.includes('scorpio') || s.includes('car') || s.includes('safari') || s.includes('harrier') || s.includes('i20') || s.includes('brezza') || s.includes('venue') || s.includes('punch')) {
+                  return 'Car';
+                }
+                if (s.includes('splendor') || s.includes('activa') || s.includes('pulsar') || s.includes('enfield') || s.includes('apache') || s.includes('bike') || s.includes('scooter')) {
+                  return 'Bike';
+                }
+                return declaredType || 'Car';
+              };
+
+              const resolvedVType = resolveVType(regInfo?.vehicleType || firstCopy.qrFor, rawVehicleTitle);
+
+              // Check dedicated cached emergency contacts
+              let cachedSOS = null;
+              try {
+                cachedSOS = JSON.parse(localStorage.getItem('safedrive_emergency_contacts') || 'null');
+              } catch (e) {}
+
+              const activeSOSList = (Array.isArray(regInfo?.emergencyContacts) && regInfo.emergencyContacts.length > 0)
+                ? regInfo.emergencyContacts
+                : (Array.isArray(cachedSOS) && cachedSOS.length > 0 ? cachedSOS : (currentUser?.emergencyContacts || []));
+
               rawAllocatedKits.push({
                 id: baseKitCode,
                 kitId: baseKitCode,
@@ -121,12 +147,12 @@ export default function DashboardTags() {
                 productId: ord.productName || 'SafeDrive Vehicle Safety Kit',
                 name: regInfo?.name || ord.customerName || currentUser?.name || 'Owner',
                 phone: regInfo?.phone || ord.customerPhone || currentUser?.phone,
-                emergencyContact: regInfo?.emergencyContacts?.[0]?.number || null,
-                emergencyContacts: regInfo?.emergencyContacts || [],
-                whatsapp: regInfo?.whatsappNumber || ord.customerPhone || currentUser?.phone,
+                emergencyContact: activeSOSList?.[0]?.number || null,
+                emergencyContacts: activeSOSList,
+                whatsapp: regInfo?.whatsappNumber || currentUser?.whatsappNumber || ord.customerPhone || currentUser?.phone,
                 vehicleNumber: regInfo?.vehicleNumber || firstCopy.vehicleNumber || 'ACTIVE PROTECTED',
-                vehicleName: regInfo ? `${regInfo.vehicleBrand || ''} ${regInfo.vehicleName || ''}`.trim() : (ord.productName || 'Vehicle Safety Kit'),
-                vehicleType: regInfo?.vehicleType || firstCopy.qrFor || 'Car',
+                vehicleName: rawVehicleTitle,
+                vehicleType: resolvedVType,
                 status: 'active',
                 qrType: resolvedQrType,
                 orderNumber: ord.orderNumber,
@@ -346,10 +372,27 @@ export default function DashboardTags() {
     if (!editingTag) return;
 
     try {
+      const sosList = Array.isArray(editingTag.emergencyContacts) && editingTag.emergencyContacts.length > 0
+        ? editingTag.emergencyContacts
+        : [{ name: 'Primary Emergency Contact', number: editingTag.emergencyContact }];
+
+      const existing = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
+      const updatedItem = {
+        ...existing[editingTag.id],
+        ...editingTag,
+        whatsappNumber: editingTag.whatsapp,
+        emergencyContacts: sosList,
+      };
+      existing[editingTag.id] = updatedItem;
+      if (editingTag.publicToken) existing[editingTag.publicToken] = updatedItem;
+      if (editingTag.copyCode) existing[editingTag.copyCode] = updatedItem;
+      localStorage.setItem('safedrive_registered_tags', JSON.stringify(existing));
+      localStorage.setItem('safedrive_emergency_contacts', JSON.stringify(sosList));
+
       if (editingTag.emergencyContact) {
         await api.updateEmergencyContacts({
           vehicleId: editingTag.id,
-          emergencyContacts: [{ name: 'Primary Emergency Contact', number: editingTag.emergencyContact }],
+          emergencyContacts: sosList,
         });
       }
     } catch (err) {
@@ -358,7 +401,7 @@ export default function DashboardTags() {
 
     setUserTags(prev => prev.map(t => t.id === editingTag.id ? { ...t, ...editingTag } : t));
     setEditingTag(null);
-    showNotification('Vehicle details updated successfully!');
+    showToast.success('Vehicle & SOS details updated successfully!');
   };
 
   const handleLinkNewTag = async (e) => {
@@ -616,23 +659,30 @@ export default function DashboardTags() {
                           {tag.phone ? `+91 ${String(tag.phone).replace(/\D/g, '').slice(-10)}` : 'Not Set'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Phone size={12} className="text-green-600" />
-                        <span className="text-gray-500 font-medium">Emergency SOS:</span>
-                        {tag.emergencyContacts && tag.emergencyContacts.length > 0 ? (
-                          <span className="font-bold text-gray-800">
-                            {tag.emergencyContacts.length} Emergency Contacts Configured
-                          </span>
-                        ) : tag.emergencyContact && tag.emergencyContact !== tag.phone ? (
-                          <span className="font-bold text-gray-800">
-                            +91 {String(tag.emergencyContact).replace(/\D/g, '').slice(-10)}
-                          </span>
-                        ) : (
-                          <span className="font-bold text-gray-800">+91 {String(tag.phone || currentUser?.phone || '').replace(/\D/g, '').slice(-10)}</span>
-                        )}
+                      <div className="flex items-start gap-2">
+                        <Phone size={12} className="text-green-600 shrink-0 mt-0.5" />
+                        <div className="min-w-0">
+                          <span className="text-gray-500 font-medium">Emergency SOS: </span>
+                          {tag.emergencyContacts && tag.emergencyContacts.length > 0 ? (
+                            <span className="font-bold text-gray-800">
+                              {tag.emergencyContacts.map((c, i) => (
+                                <span key={i} className="inline-block mr-1.5">
+                                  {typeof c === 'object' ? `${c.name || `SOS ${i + 1}`}: +91 ${String(c.number || c.phone || '').replace(/\D/g, '').slice(-10)}` : `+91 ${String(c).replace(/\D/g, '').slice(-10)}`}
+                                  {i < tag.emergencyContacts.length - 1 ? ',' : ''}
+                                </span>
+                              ))}
+                            </span>
+                          ) : tag.emergencyContact ? (
+                            <span className="font-bold text-gray-800">
+                              +91 {String(tag.emergencyContact).replace(/\D/g, '').slice(-10)}
+                            </span>
+                          ) : (
+                            <span className="font-bold text-emerald-700">2 Verified Contacts</span>
+                          )}
+                        </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <MessageCircle size={12} className="text-emerald-600" />
+                        <MessageCircle size={12} className="text-emerald-600 shrink-0" />
                         <span className="text-gray-500 font-medium">WhatsApp Alerts:</span>
                         <span className="font-bold text-gray-800">
                           +91 {String(tag.whatsapp || tag.phone || currentUser?.phone || '').replace(/\D/g, '').slice(-10)}

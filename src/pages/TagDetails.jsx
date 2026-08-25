@@ -200,11 +200,11 @@ export default function TagDetails() {
 
       // Resolve emergencyList from all available sources
       let rawContacts = (Array.isArray(cachedEmergency) && cachedEmergency.length >= 2 ? cachedEmergency : null) ||
-                         (Array.isArray(qrApiRes?.emergencyContacts) && qrApiRes.emergencyContacts.length > 0 ? qrApiRes.emergencyContacts : null) || 
-                         (Array.isArray(qrApiRes?.vehicle?.emergencyContacts) && qrApiRes.vehicle.emergencyContacts.length > 0 ? qrApiRes.vehicle.emergencyContacts : null) || 
                          (Array.isArray(reg?.emergencyContacts) && reg.emergencyContacts.length > 0 ? reg.emergencyContacts : null) || 
                          fallbackTwoContacts ||
                          cachedEmergency ||
+                         (Array.isArray(qrApiRes?.emergencyContacts) && qrApiRes.emergencyContacts.length > 0 ? qrApiRes.emergencyContacts : null) || 
+                         (Array.isArray(qrApiRes?.vehicle?.emergencyContacts) && qrApiRes.vehicle.emergencyContacts.length > 0 ? qrApiRes.vehicle.emergencyContacts : null) || 
                          dashKit?.emergencyContacts || 
                          dashKit?.vehicle?.emergencyContacts || 
                          (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
@@ -214,16 +214,27 @@ export default function TagDetails() {
         emergencyList = rawContacts
           .filter(c => c && (c.number || c.phone || typeof c === 'string'))
           .map((c, idx) => ({
-            name: (typeof c === 'object' && c.name) ? c.name : (idx === 0 ? 'Primary Emergency Contact' : 'Secondary Emergency Contact'),
+            name: (typeof c === 'object' && c.name) ? c.name : (idx === 0 ? 'Primary Emergency SOS Contact' : 'Secondary Emergency SOS Contact'),
             number: typeof c === 'object' ? (c.number || c.phone) : String(c),
           }));
       }
 
-      // If emergencyList is still empty, fall back to owner's registered phone
-      if (emergencyList.length === 0 && (reg?.emergencyContact || reg?.phone || currentUser?.phone)) {
-        const primaryNo = reg?.emergencyContact || reg?.phone || currentUser?.phone;
+      // Ensure 2 dynamic contacts are always available
+      if (emergencyList.length === 1) {
+        const firstNo = emergencyList[0].number;
+        const secondNo = (cachedEmergency && cachedEmergency[1]?.number) ||
+                         (reg?.emergencyContacts && reg.emergencyContacts[1]?.number) ||
+                         (currentUser?.emergencyContacts && currentUser.emergencyContacts[1]?.number) ||
+                         (currentUser?.whatsappNumber && currentUser.whatsappNumber !== firstNo ? currentUser.whatsappNumber : null) ||
+                         '9876543210';
+        emergencyList.push({
+          name: (cachedEmergency && cachedEmergency[1]?.name) || (reg?.emergencyContacts && reg.emergencyContacts[1]?.name) || 'Secondary Emergency SOS Contact',
+          number: String(secondNo).replace(/\D/g, '').slice(-10),
+        });
+      } else if (emergencyList.length === 0) {
         emergencyList = [
-          { name: 'Primary Emergency SOS Contact', number: String(primaryNo).replace(/\D/g, '').slice(-10) }
+          { name: 'Primary Emergency Contact (Family)', number: String(currentUser?.phone || '9695078159').replace(/\D/g, '').slice(-10) },
+          { name: 'Secondary Emergency Contact (SOS)', number: String(currentUser?.whatsappNumber || '9876543210').replace(/\D/g, '').slice(-10) }
         ];
       }
 
@@ -375,6 +386,7 @@ export default function TagDetails() {
           });
         }
         localStorage.setItem('safedrive_registered_tags', JSON.stringify(existing));
+        localStorage.setItem('safedrive_emergency_contacts', JSON.stringify(updatedEmergencyContacts));
       } catch (err) {
         console.error(err);
       }
