@@ -59,24 +59,8 @@ export default function DashboardNotifications() {
       };
       setNotifications(prev => [newAlert, ...prev]);
 
-      // 3. Show Toast & SweetAlert Confirmation
-      showToast.success('🔔 Test Push Notification sent successfully!');
-      
-      customSwal.fire({
-        title: 'Notification Pipeline Active!',
-        html: `
-          <div class="text-left space-y-2 text-xs text-gray-600">
-            <p class="font-bold text-gray-900">✓ Test Alert Delivered Successfully!</p>
-            <p>Your browser and device are connected to the SafeDrive notification relay.</p>
-            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-emerald-950 font-medium">
-              Whenever someone scans your QR sticker, you will receive real-time alerts instantly on this device.
-            </div>
-          </div>
-        `,
-        icon: 'success',
-        iconColor: '#10b981',
-        confirmButtonText: 'Awesome!',
-      });
+      // 3. Show Crisp Toast Notification Only
+      showToast.success('🔔 Bell ringing! Test push notification delivered.');
     } catch (err) {
       console.error(err);
       showToast.error('Could not trigger test notification.');
