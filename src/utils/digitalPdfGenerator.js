@@ -290,59 +290,49 @@ export const generateDigitalPdfHtml = (item = {}) => {
             <span class="scan-url-text">${liveScanUrl}</span>
           </div>
 
-          <!-- DUAL REAL SCANNABLE PRINTABLE BADGES (Front & Rear) -->
-          <div class="badges-grid">
+          <!-- REAL PRINTABLE PRODUCT CARD BADGES WITH DYNAMIC EMBEDDED QR -->
+          <div class="badges-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin-bottom: 24px;">
             
-            <!-- BADGE 1: Front Windshield Primary Sticker -->
-            <div class="printable-card">
-              <div class="cut-guide-label">✂ CUT HERE</div>
-              <div class="sticker-inner-orange">
-                <div class="sticker-top-bar">
-                  <div class="sticker-brand">🛡️ SafeDrive-Tag</div>
-                  <div class="sticker-pill">Front Windshield</div>
-                </div>
-
-                <div class="qr-container" style="position: relative; display: inline-block;">
-                  <img src="${qrCodeImg}" alt="SafeDrive Scannable QR" class="live-qr-img" />
-                  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2.5px solid #ea580c;">
-                    <img src="/logos/icon.png" style="width: 22px; height: 22px; object-fit: contain;" />
+            <!-- BADGE 1: Official Card Frame Copy 1 -->
+            <div class="printable-card" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 14px; background: #fafafa; position: relative; max-width: 360px; width: 100%;">
+              <div class="cut-guide-label" style="position: absolute; top: -10px; right: 14px; background: #e2e8f0; color: #475569; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; z-index: 10;">✂ CUT HERE • COPY 1</div>
+              
+              <div style="position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.1); background: #ffffff;">
+                <img src="${cardImage}" alt="SafeDrive Card" style="width: 100%; height: auto; display: block;" />
+                
+                <!-- Live Scannable Dynamic QR Code overlayed directly in the card's QR space -->
+                <div style="position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 6px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
+                  <div style="position: relative; display: inline-block;">
+                    <img src="${qrCodeImg}" alt="QR" style="width: 135px; height: 135px; display: block;" />
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid #ea580c;">
+                      <img src="/logos/icon.png" style="width: 18px; height: 18px; object-fit: contain;" />
+                    </div>
                   </div>
-                </div>
-
-                <div class="sticker-headline">SCAN TO CONTACT OWNER</div>
-                <div class="sticker-sub">Parking Obstruction • Emergency • Lights ON</div>
-                <div class="token-badge">CODE: ${copyCode}</div>
-
-                <div class="sticker-footer-info">
-                  <span>🔒 100% Number Privacy</span>
-                  <span>⚡ Instant Masked Call</span>
+                  <div style="font-family: monospace; font-weight: 900; font-size: 10.5px; color: #0f172a; margin-top: 3px; letter-spacing: 0.5px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                    ${copyCode}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- BADGE 2: Rear Glass / Visor / Luggage Sticker -->
-            <div class="printable-card">
-              <div class="cut-guide-label">✂ CUT HERE</div>
-              <div class="sticker-inner-blue">
-                <div class="sticker-top-bar">
-                  <div class="sticker-brand">🛡️ SafeDrive-Tag</div>
-                  <div class="sticker-pill">Rear Glass / Visor</div>
-                </div>
-
-                <div class="qr-container" style="position: relative; display: inline-block;">
-                  <img src="${qrCodeImg}" alt="SafeDrive Scannable QR" class="live-qr-img" />
-                  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2.5px solid #0f172a;">
-                    <img src="/logos/icon.png" style="width: 22px; height: 22px; object-fit: contain;" />
+            <!-- BADGE 2: Official Card Frame Copy 2 -->
+            <div class="printable-card" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 14px; background: #fafafa; position: relative; max-width: 360px; width: 100%;">
+              <div class="cut-guide-label" style="position: absolute; top: -10px; right: 14px; background: #e2e8f0; color: #475569; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; z-index: 10;">✂ CUT HERE • COPY 2</div>
+              
+              <div style="position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.1); background: #ffffff;">
+                <img src="${cardImage}" alt="SafeDrive Card" style="width: 100%; height: auto; display: block;" />
+                
+                <!-- Live Scannable Dynamic QR Code overlayed directly in the card's QR space -->
+                <div style="position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 6px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
+                  <div style="position: relative; display: inline-block;">
+                    <img src="${qrCodeImg}" alt="QR" style="width: 135px; height: 135px; display: block;" />
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid #ea580c;">
+                      <img src="/logos/icon.png" style="width: 18px; height: 18px; object-fit: contain;" />
+                    </div>
                   </div>
-                </div>
-
-                <div class="sticker-headline">SCAN IN EMERGENCY / ISSUE</div>
-                <div class="sticker-sub">Direct WhatsApp Alert & Family SOS Broadcast</div>
-                <div class="token-badge">CODE: ${copyCode}</div>
-
-                <div class="sticker-footer-info">
-                  <span>🚨 24/7 SOS Alert</span>
-                  <span>💬 WhatsApp Connect</span>
+                  <div style="font-family: monospace; font-weight: 900; font-size: 10.5px; color: #0f172a; margin-top: 3px; letter-spacing: 0.5px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                    ${copyCode.includes('1') ? copyCode.replace(/1$/, '2') : `${copyCode}-2`}
+                  </div>
                 </div>
               </div>
             </div>
