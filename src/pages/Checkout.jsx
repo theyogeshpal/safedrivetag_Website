@@ -514,32 +514,7 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Instant Actions for Order: Invoice & Digital Color Badge Print */}
-            <div className="flex flex-wrap gap-2.5 justify-center mb-6">
-              <button
-                type="button"
-                onClick={() => downloadInvoicePdf({ id: orderSuccess.orderNumber, price: orderSuccess.totalAmount, title: selectedProduct.title }, currentUser)}
-                className="bg-blue-50 hover:bg-blue-100 text-[#2874f0] border border-blue-200 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <Download size={14} /> Download Tax Invoice
-              </button>
 
-              <button
-                type="button"
-                onClick={() => openDigitalPdf({ title: selectedProduct.title, publicToken: orderSuccess.orderNumber })}
-                className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <Eye size={14} /> Open Digital PDF
-              </button>
-
-              <button
-                type="button"
-                onClick={() => printDigitalPdfInColor({ title: selectedProduct.title, publicToken: orderSuccess.orderNumber })}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-orange-500/20 cursor-pointer"
-              >
-                <Printer size={14} /> Print Color Badge
-              </button>
-            </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link 
