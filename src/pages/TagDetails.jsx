@@ -192,9 +192,24 @@ export default function TagDetails() {
           break;
         }
       }
+      // Extract from reg if flat fields exist
+      const flatRegContacts = [];
+      if (reg?.emergencyContact1Number || reg?.emergencyContact1Name) {
+        flatRegContacts.push({
+          name: reg.emergencyContact1Name || 'Primary Emergency Contact',
+          number: reg.emergencyContact1Number || String(currentUser?.phone || '').replace(/\D/g, '').slice(-10)
+        });
+      }
+      if (reg?.emergencyContact2Number || reg?.emergencyContact2Name) {
+        flatRegContacts.push({
+          name: reg.emergencyContact2Name || 'Secondary Emergency Contact',
+          number: reg.emergencyContact2Number || String(currentUser?.whatsappNumber || '').replace(/\D/g, '').slice(-10)
+        });
+      }
 
       // Resolve emergencyList from all available sources
       let rawContacts = (Array.isArray(cachedEmergency) && cachedEmergency.length >= 2 ? cachedEmergency : null) ||
+                         (flatRegContacts.length > 0 ? flatRegContacts : null) ||
                          (Array.isArray(reg?.emergencyContacts) && reg.emergencyContacts.length > 0 ? reg.emergencyContacts : null) || 
                          fallbackTwoContacts ||
                          cachedEmergency ||
@@ -209,7 +224,7 @@ export default function TagDetails() {
         emergencyList = rawContacts
           .filter(c => c && (c.number || c.phone || typeof c === 'string'))
           .map((c, idx) => ({
-            name: (typeof c === 'object' && c.name) ? c.name : (idx === 0 ? 'Primary Emergency SOS Contact' : 'Secondary Emergency SOS Contact'),
+            name: (typeof c === 'object' && c.name && !c.name.includes('Emergency Contact (Family)')) ? c.name : (idx === 0 ? 'Primary Emergency Contact' : 'Secondary Emergency Contact'),
             number: typeof c === 'object' ? (c.number || c.phone) : String(c),
           }));
       }
@@ -223,13 +238,13 @@ export default function TagDetails() {
                          (currentUser?.whatsappNumber && currentUser.whatsappNumber !== firstNo ? currentUser.whatsappNumber : null) ||
                          '9876543210';
         emergencyList.push({
-          name: (cachedEmergency && cachedEmergency[1]?.name) || (reg?.emergencyContacts && reg.emergencyContacts[1]?.name) || 'Secondary Emergency SOS Contact',
+          name: (cachedEmergency && cachedEmergency[1]?.name) || (reg?.emergencyContacts && reg.emergencyContacts[1]?.name) || 'Secondary Emergency Contact',
           number: String(secondNo).replace(/\D/g, '').slice(-10),
         });
       } else if (emergencyList.length === 0) {
         emergencyList = [
-          { name: 'Primary Emergency Contact (Family)', number: String(currentUser?.phone || '9695078159').replace(/\D/g, '').slice(-10) },
-          { name: 'Secondary Emergency Contact (SOS)', number: String(currentUser?.whatsappNumber || '9876543210').replace(/\D/g, '').slice(-10) }
+          { name: 'Primary Emergency Contact', number: String(currentUser?.phone || '9695078159').replace(/\D/g, '').slice(-10) },
+          { name: 'Secondary Emergency Contact', number: String(currentUser?.whatsappNumber || '9876543210').replace(/\D/g, '').slice(-10) }
         ];
       }
 
