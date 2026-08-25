@@ -92,20 +92,20 @@ export default function Navbar() {
       {/* ======================================================== */}
       {/* 0. TOP SUB-HEADER ANNOUNCEMENT & HELPLINE BAR */}
       {/* ======================================================== */}
-      <div className="bg-gradient-to-r from-gray-950 via-slate-900 to-gray-950 text-white border-b border-gray-800 text-[11px] font-medium">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-gray-950 via-slate-900 to-gray-950 text-white border-b border-gray-800 text-[10px] sm:text-[11px] font-medium">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1 sm:py-1.5 flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Left: Special Launch Offer Pill */}
-          <div className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 shadow-xs">
-              🔥 Special Offer
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[9px] sm:text-[10px] uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full shrink-0 shadow-xs">
+              🔥 Offer
             </span>
             <span className="text-gray-300 hidden sm:inline">
               Smart Vehicle QR Safety Tag at just <strong className="text-white font-bold">₹299</strong>
             </span>
-            <span className="text-emerald-400 font-bold flex items-center gap-1">
+            <span className="text-emerald-400 font-bold flex items-center gap-1 text-[10px] sm:text-[11px]">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
-               Pan-India Delivery
+              Pan-India Delivery
             </span>
           </div>
 
@@ -121,37 +121,33 @@ export default function Navbar() {
           </div>
 
           {/* Right: Helpline & Quick Links */}
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0 text-xs">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0 text-[10px] sm:text-xs">
             <a 
               href="tel:+919695078159" 
-              className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"
+              className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors"
             >
-              <PhoneCall size={11} className="text-orange-400" />
-              <span className="hidden xs:inline">24x7 Helpline:</span>
+              <PhoneCall size={10} className="text-orange-400 sm:w-3 sm:h-3" />
+              <span className="hidden xs:inline text-gray-400">Helpline:</span>
               <span className="font-bold text-white tracking-wide">+91 96950 78159</span>
             </a>
-
-            <span className="text-gray-700 hidden sm:inline">|</span>
-
-           
           </div>
 
         </div>
       </div>
 
       {/* Main Navbar Row */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between relative z-50 py-2 sm:py-2.5">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between relative z-50 py-1.5 sm:py-2.5">
         
         {/* ======================================================== */}
         {/* 1. BRAND LOGO */}
         {/* ======================================================== */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/" className="flex items-center shrink-0 relative z-50 cursor-pointer group py-0.5">
             <img 
               src="/logos/primary.jpeg" 
               alt="SafeDrive-Tag" 
-              className="h-16 sm:h-20 md:h-20 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
-              style={{ maxHeight: '78px', width: 'auto' }}
+              className="h-10 sm:h-16 md:h-18 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              style={{ maxHeight: 'calc(clamp(42px, 8vw, 76px))', width: 'auto' }}
             />
           </Link>
         </div>
@@ -186,7 +182,7 @@ export default function Navbar() {
         {/* ======================================================== */}
         {/* 3. RIGHT ACTIONS & USER MENU */}
         {/* ======================================================== */}
-        <div className="flex items-center gap-4 sm:gap-6 relative z-50">
+        <div className="flex items-center gap-2.5 sm:gap-6 relative z-50">
           
           {/* User Logged In Profile Pill */}
           {currentUser ? (
@@ -258,13 +254,22 @@ export default function Navbar() {
             <span>Buy Safety Tag</span>
           </Link>
 
+          {/* Mobile Quick Buy Tag Button */}
+          <Link
+            to="/shop"
+            className="sm:hidden inline-flex items-center gap-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-black text-xs px-3 py-1.5 rounded-lg shadow-xs transition-all cursor-pointer"
+          >
+            <ShoppingBag size={13} className="text-white" />
+            <span>Buy Tag</span>
+          </Link>
+
           {/* Mobile Hamburger Toggle Button */}
           <button
-            className="md:hidden text-gray-700 p-2 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+            className="md:hidden text-gray-700 p-1.5 sm:p-2 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
 
         </div>
