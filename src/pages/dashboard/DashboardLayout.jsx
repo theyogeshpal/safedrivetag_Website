@@ -44,10 +44,10 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
           count = Object.keys(locallyRegistered).length;
         } catch (e) {}
 
-        const ordersRes = await api.getUserOrders();
-        if (ordersRes.success && ordersRes.orders) {
-          const allocated = ordersRes.orders.filter(ord => Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0);
-          count = Math.max(count, allocated.length);
+        const res = await api.getDashboard();
+        if (res.success && Array.isArray(res.kits)) {
+          const activeKits = res.kits.filter(k => k.isRegistered || k.status === 'ACTIVE' || (Array.isArray(k.emergencyContacts) && k.emergencyContacts.length > 0));
+          count = Math.max(count, activeKits.length);
         }
         setActiveTagsCount(count);
       } catch (err) {

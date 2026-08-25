@@ -84,7 +84,7 @@ export default function DashboardTags() {
 
           // Group allocated QR copies by Kit (1 Card per Vehicle Kit)
           const rawAllocatedKits = [];
-          ordersRes.orders.forEach((ord) => {
+          for (const ord of ordersRes.orders) {
             if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
               const firstCopy = ord.allocatedQRIds[0];
               const primaryToken = firstCopy.publicToken || firstCopy.copyCode || firstCopy._id || ord._id;
@@ -99,6 +99,11 @@ export default function DashboardTags() {
                   regInfo = locallyRegistered[t] || locallyRegistered[cc] || locallyRegistered[baseKitCode];
                   break;
                 }
+              }
+
+              // STRICT ACTIVATION CHECK: Skip if this order tag has not been registered/activated yet
+              if (!regInfo) {
+                continue;
               }
 
               const isPhysical = ord.productName?.toLowerCase().includes('physical') || 
@@ -164,7 +169,7 @@ export default function DashboardTags() {
                 whatsappAlertsEnabled: true,
               });
             }
-          });
+          }
 
           // Fetch Live Public QR API Data in Parallel for each kit
           const liveQrResults = await Promise.allSettled(
@@ -236,7 +241,9 @@ export default function DashboardTags() {
           if (res.success && res.kits && res.kits.length > 0) {
             res.kits.forEach((kit, idx) => {
               const kitPhone = kit.user?.phone ? String(kit.user.phone).replace(/\D/g, '').slice(-10) : '';
-              if (!cleanUserPhone || kitPhone === cleanUserPhone) {
+              const isKitRegistered = kit.isRegistered || kit.status === 'ACTIVE' || (Array.isArray(kit.vehicle?.emergencyContacts) && kit.vehicle.emergencyContacts.length > 0) || (Array.isArray(kit.emergencyContacts) && kit.emergencyContacts.length > 0);
+              
+              if ((!cleanUserPhone || kitPhone === cleanUserPhone) && isKitRegistered) {
                 const vehicleNo = kit.vehicle?.vehicleNumber || kit.vehicleNumber || kit.plateNumber || 'ACTIVE PROTECTED';
                 const vBrand = kit.vehicle?.vehicleBrand || kit.vehicleBrand || '';
                 const vName = kit.vehicle?.vehicleName || kit.vehicleName || kit.productName || 'My Vehicle';

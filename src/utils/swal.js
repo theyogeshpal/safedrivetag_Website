@@ -31,7 +31,7 @@ export const showNoActiveTagAlert = (navigate) => {
     iconColor: '#f97316',
     showCancelButton: true,
     showDenyButton: true,
-    confirmButtonText: '🛒 Buy Tag (@ ₹299)',
+    confirmButtonText: '🛒 Buy Safety Tag',
     denyButtonText: '⚡ Link / Activate',
     cancelButtonText: 'Close',
   }).then((result) => {
