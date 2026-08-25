@@ -16,10 +16,15 @@ import {
   Ban,
   Unlock,
   MessageSquare,
-  MapPin
+  MapPin,
+  Bell,
+  Send,
+  Zap,
+  BellRing
 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../services/api';
+import { showToast, playNotificationBellSound } from '../utils/swal';
 
 export default function QRScan() {
   const navigate = useNavigate();
@@ -181,6 +186,42 @@ export default function QRScan() {
       return customReasonText.trim() || 'Custom alert message';
     }
     return selectedObj?.title || 'Vehicle Notice';
+  };
+
+  // STEP 5 - OPTION 0: SEND INSTANT PUSH NOTIFICATION ALERT
+  const handleSendPushAlert = async () => {
+    setActionLoading(true);
+    setActionSuccessMsg('');
+    try {
+      const reasonText = getSelectedReasonText();
+      const vPlate = verifiedVehicleInfo?.vehicleNumber || qrData?.vehicle?.vehicleNumber || qrData?.vehicleNumber || 'Vehicle';
+      
+      const payload = {
+        title: `🚨 SafeDrive Alert (${vPlate})`,
+        messageText: reasonText,
+        reason: reasonText,
+        last4Digits: plateInput || '0000',
+        timestamp: new Date().toISOString(),
+      };
+
+      // 1. Send API message
+      await api.sendMessage(token, payload);
+      
+      // 2. Play audible bell chime sound
+      playNotificationBellSound();
+
+      // 3. Show Toast & Status
+      setActionSuccessMsg(`🔔 Push notification sent to vehicle owner regarding: "${reasonText}"`);
+      showToast.success('🔔 Push Alert delivered to vehicle owner!');
+
+      setCustomReasonText('');
+      setTimeout(() => setActionSuccessMsg(''), 5000);
+    } catch (err) {
+      console.error(err);
+      showToast.error('Failed to send push notification.');
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // STEP 5 - OPTION A: SEND WHATSAPP MESSAGE
@@ -510,6 +551,17 @@ export default function QRScan() {
                     onChange={(e) => setCustomReasonText(e.target.value)}
                     className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl p-3 text-xs outline-none resize-none"
                   />
+
+                  {/* Instant Send Push Notification Button right below typing */}
+                  <button
+                    type="button"
+                    onClick={handleSendPushAlert}
+                    disabled={actionLoading || !customReasonText.trim()}
+                    className="w-full mt-2.5 bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-black py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
+                  >
+                    <BellRing size={16} className={actionLoading ? 'animate-spin' : 'animate-bounce'} />
+                    <span>{actionLoading ? 'Dispatching Push Alert...' : 'Send Push Notification Alert 🔔'}</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -519,6 +571,26 @@ export default function QRScan() {
               <h3 className="font-bold text-xs uppercase tracking-wider text-gray-500">
                 2. Choose Action to Contact Owner
               </h3>
+
+              {/* Option 0: Send Push Notification Directly */}
+              <button
+                onClick={handleSendPushAlert}
+                disabled={actionLoading}
+                className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                    <BellRing size={20} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm leading-tight">Send Instant Push Notification</p>
+                    <p className="text-[11px] text-white/80 font-normal">Direct mobile screen & bell alert to vehicle owner</p>
+                  </div>
+                </div>
+                <span className="text-xs bg-white text-orange-600 font-black px-2.5 py-1 rounded-md shrink-0">
+                  {actionLoading ? 'Sending...' : 'Send Alert 🔔'}
+                </span>
+              </button>
 
               {/* Option A: Send WhatsApp Message */}
               <button
