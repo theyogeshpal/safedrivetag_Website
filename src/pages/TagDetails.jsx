@@ -72,15 +72,7 @@ export default function TagDetails() {
   const loadTagData = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Check local registry first
-      let locallyRegistered = {};
-      try {
-        locallyRegistered = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
-      } catch (e) {
-        console.error(e);
-      }
-
-      // 2. Fetch User Orders to find the order containing this tag
+      // 1. Fetch User Orders to find the order containing this tag
       let foundOrder = null;
       let matchedAllocated = [];
       try {
@@ -397,22 +389,6 @@ export default function TagDetails() {
         });
       } catch (apiErr) {
         console.warn('Backend details update warning:', apiErr);
-      }
-
-      // Update local storage cache
-      try {
-        const existing = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
-        existing[id] = { ...payload, status: 'active' };
-        if (tagData?.copies) {
-          tagData.copies.forEach((c) => {
-            existing[c.copyCode] = existing[id];
-            existing[c.publicToken] = existing[id];
-          });
-        }
-        localStorage.setItem('safedrive_registered_tags', JSON.stringify(existing));
-        localStorage.setItem('safedrive_emergency_contacts', JSON.stringify(updatedEmergencyContacts));
-      } catch (err) {
-        console.error(err);
       }
 
       setUpdateMsg('Details updated successfully!');

@@ -7,41 +7,36 @@ import DashboardLayout from './DashboardLayout';
 export default function DashboardLogs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [hasActiveTags, setHasActiveTags] = useState(() => {
-    try {
-      const locallyRegistered = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
-      return Object.keys(locallyRegistered).length > 0;
-    } catch {
-      return false;
-    }
-  });
+  const [hasActiveTags, setHasActiveTags] = useState(false);
 
   useEffect(() => {
     const fetchLogs = async () => {
       setLoading(true);
       try {
-        let activeCount = 0;
-        try {
-          const locallyRegistered = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
-          activeCount = Object.keys(locallyRegistered).length;
-        } catch (e) {}
-
         const res = await api.getDashboard();
-        if (res.success && res.kits) {
-          const activeKits = res.kits.filter(k => k.isRegistered || k.status === 'ACTIVE' || (Array.isArray(k.emergencyContacts) && k.emergencyContacts.length > 0));
-          if (activeKits.length > 0) activeCount = Math.max(activeCount, activeKits.length);
-
+        if (res.success) {
+          const rawList = Array.isArray(res.qrCodes) 
+            ? res.qrCodes 
+            : (Array.isArray(res.kits) ? res.kits : []);
+          const activeList = rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
+          const count = res.stats?.activeQRs ?? activeList.length;
+          
           const allScans = [];
-          activeKits.forEach(k => {
+          activeList.forEach(k => {
             if (Array.isArray(k.scans)) {
-              k.scans.forEach(s => allScans.push({ ...s, tagId: k.kitId || k.productId }));
+              k.scans.forEach(s => allScans.push({ ...s, tagId: k.kitId || k.productId || k.copyCode || k._id }));
             }
           });
           setLogs(allScans);
+          setHasActiveTags(count > 0);
+        } else {
+          setHasActiveTags(false);
+          setLogs([]);
         }
-        setHasActiveTags(activeCount > 0);
       } catch (err) {
         console.error(err);
+        setHasActiveTags(false);
+        setLogs([]);
       } finally {
         setLoading(false);
       }

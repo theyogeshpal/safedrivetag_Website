@@ -26,32 +26,24 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
   const { currentUser, logout, isInitializingAuth, isLoadingAuth } = useAuth();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isPwaInstalled, setIsPwaInstalled] = useState(false);
-  const [activeTagsCount, setActiveTagsCount] = useState(() => {
-    try {
-      const locallyRegistered = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
-      return Object.keys(locallyRegistered).length;
-    } catch {
-      return 0;
-    }
-  });
+  const [activeTagsCount, setActiveTagsCount] = useState(0);
 
   useEffect(() => {
     async function checkActiveTags() {
       try {
-        let count = 0;
-        try {
-          const locallyRegistered = JSON.parse(localStorage.getItem('safedrive_registered_tags') || '{}');
-          count = Object.keys(locallyRegistered).length;
-        } catch (e) {}
-
         const res = await api.getDashboard();
-        if (res.success && Array.isArray(res.kits)) {
-          const activeKits = res.kits.filter(k => k.isRegistered || k.status === 'ACTIVE' || (Array.isArray(k.emergencyContacts) && k.emergencyContacts.length > 0));
-          count = Math.max(count, activeKits.length);
+        if (res.success) {
+          const rawList = Array.isArray(res.qrCodes) 
+            ? res.qrCodes 
+            : (Array.isArray(res.kits) ? res.kits : []);
+          const activeCount = res.stats?.activeQRs ?? rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active').length;
+          setActiveTagsCount(activeCount);
+        } else {
+          setActiveTagsCount(0);
         }
-        setActiveTagsCount(count);
       } catch (err) {
         console.error('Error verifying active tags count', err);
+        setActiveTagsCount(0);
       }
     }
     if (currentUser) {
