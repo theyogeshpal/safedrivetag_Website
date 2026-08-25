@@ -320,7 +320,7 @@ export default function QRScan() {
   // First-Time Registration Detection
   if (qrData?.status === 'UNREGISTERED') {
     return (
-      <div className="bg-[#f4f7fb] min-h-screen pt-24 pb-12 px-4 font-sans text-black flex items-center justify-center">
+      <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-12 px-4 font-sans text-black flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-black/5 text-center">
           <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Sparkles className="w-8 h-8" />
@@ -347,7 +347,7 @@ export default function QRScan() {
   }
 
   return (
-    <div className="bg-[#f4f7fb] min-h-screen pt-20 pb-16 px-4 font-sans text-gray-900 relative">
+    <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 font-sans text-gray-900 relative">
       
       {/* Toast Alert Notification */}
       {actionSuccessMsg && (

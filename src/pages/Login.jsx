@@ -144,7 +144,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-orange-50/40 flex items-center justify-center pt-24 pb-16 px-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-orange-50/40 flex items-center justify-center pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 relative overflow-hidden font-sans">
       <div className="max-w-md w-full relative z-10">
         
         <div className="bg-white rounded-3xl p-7 sm:p-9 shadow-xl shadow-orange-500/5 border border-black/5 animate-fade-up">

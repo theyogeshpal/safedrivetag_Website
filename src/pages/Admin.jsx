@@ -74,7 +74,7 @@ export default function Admin() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pt-24 pb-20 font-sans selection:bg-orange-500/30">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pt-36 sm:pt-40 lg:pt-44 pb-20 font-sans selection:bg-orange-500/30">
       
       {/* Admin Top Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">

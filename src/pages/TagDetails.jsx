@@ -398,7 +398,7 @@ export default function TagDetails() {
 
   if (!tagData) {
     return (
-      <div className="min-h-screen bg-[#f4f7fb] pt-28 pb-16 px-4 text-center">
+      <div className="min-h-screen bg-[#f4f7fb] pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 text-center">
         <h2 className="text-xl font-bold text-gray-800">Tag Details Not Found</h2>
         <Link to="/dashboard" className="mt-4 inline-block bg-[#2874f0] text-white px-5 py-2 rounded text-xs font-bold">
           &larr; Return to Dashboard
@@ -408,7 +408,7 @@ export default function TagDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f7fb] pt-24 pb-20 px-4 sm:px-6 lg:px-8 font-sans antialiased text-[#1e293b]">
+    <div className="min-h-screen bg-[#f4f7fb] pt-36 sm:pt-40 lg:pt-44 pb-20 px-4 sm:px-6 lg:px-8 font-sans antialiased text-[#1e293b]">
       
       <div className="max-w-6xl mx-auto space-y-5">
         

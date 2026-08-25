@@ -262,7 +262,7 @@ export default function RegisterTag() {
   ];
 
   return (
-    <div className="min-h-screen bg-orange-50/30 flex items-center justify-center pt-24 pb-16 px-4 sm:px-6 relative z-10 overflow-hidden font-sans">
+    <div className="min-h-screen bg-orange-50/30 flex items-center justify-center pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 sm:px-6 relative z-10 overflow-hidden font-sans">
       
       <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl shadow-black/5 p-6 sm:p-9 relative z-10 border border-black/5">
         
