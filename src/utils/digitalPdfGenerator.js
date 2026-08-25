@@ -4,16 +4,22 @@
  */
 
 export const generateDigitalPdfHtml = (item = {}) => {
-  const firstAlloc = Array.isArray(item.allocatedQRIds) && item.allocatedQRIds.length > 0 ? item.allocatedQRIds[0] : null;
+  const copiesList = (Array.isArray(item.allocatedQRIds) && item.allocatedQRIds.length > 0)
+    ? item.allocatedQRIds
+    : ((Array.isArray(item.copies) && item.copies.length > 0)
+        ? item.copies
+        : [{
+            publicToken: item.publicToken || item.token || item.id || 'pk_live_digital',
+            copyCode: item.copyCode || 'SD-TAG-1',
+            status: item.status || 'ACTIVE'
+          }]);
+
+  const firstAlloc = copiesList[0] || {};
   const token = item.publicToken || firstAlloc?.publicToken || item.token || item.copyCode || item.id || 'pk_live_digital';
-  const title = item.title || item.name || item.vehicleName || 'SafeDrive Smart QR Vehicle Tag';
+  const title = item.title || item.name || item.vehicleName || item.productName || 'SafeDrive Smart Safety Pass';
   const copyCode = item.copyCode || firstAlloc?.copyCode || 'SD-TAG-1';
-  const vehicleNo = item.vehicleNumber || 'LIVE PROTECTED VEHICLE';
   
-  // Real Live Scannable Redirect URL
   const liveScanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
-  // High-Resolution Scannable QR Code
-  const qrCodeImg = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(liveScanUrl)}&format=png&margin=1`;
   
   const cardImage = 
     item.image || 
@@ -21,12 +27,43 @@ export const generateDigitalPdfHtml = (item = {}) => {
     (Array.isArray(item.images) && item.images[0]) || 
     'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
 
+  const cardsHtml = copiesList.map((c, index) => {
+    const copyToken = c.publicToken || c.token || c.copyCode || token;
+    const code = c.copyCode || (copiesList.length > 1 ? `SD-TAG-${index + 1}` : copyCode);
+    const scanUrl = `https://safedrivetag-website.vercel.app/q/${copyToken}`;
+    const qrImg = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(scanUrl)}&format=png&margin=1`;
+    const label = copiesList.length > 1 ? `✂ CUT HERE • COPY ${index + 1}` : `✂ CUT HERE • OFFICIAL TAG`;
+
+    return `
+      <div class="printable-card" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 14px; background: #fafafa; position: relative; max-width: 360px; width: 100%;">
+        <div class="cut-guide-label" style="position: absolute; top: -10px; right: 14px; background: #e2e8f0; color: #475569; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; z-index: 10;">${label}</div>
+        
+        <div style="position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.1); background: #ffffff;">
+          <img src="${cardImage}" alt="SafeDrive Card" style="width: 100%; height: auto; display: block;" />
+          
+          <!-- Live Scannable Dynamic QR Code overlayed directly in the card's QR space -->
+          <div style="position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 6px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
+            <div style="position: relative; display: inline-block;">
+              <img src="${qrImg}" alt="QR" style="width: 135px; height: 135px; display: block;" />
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid #ea580c;">
+                <img src="/logos/icon.png" style="width: 18px; height: 18px; object-fit: contain;" />
+              </div>
+            </div>
+            <div style="font-family: monospace; font-weight: 900; font-size: 10.5px; color: #0f172a; margin-top: 3px; letter-spacing: 0.5px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
+              ${code}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
   return `
     <!DOCTYPE html>
     <html>
       <head>
         <meta charset="utf-8">
-        <title>SafeDrive_Digital_Tag_${token}</title>
+        <title>SafeDrive_Tag_${token}</title>
         <style>
           @page {
             size: A4 portrait;
@@ -104,121 +141,6 @@ export const generateDigitalPdfHtml = (item = {}) => {
             line-height: 1.5;
           }
 
-          /* Real Printable Sticker Badges Grid */
-          .badges-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            margin-bottom: 20px;
-          }
-
-          .printable-card {
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 14px;
-            background: #fafafa;
-            position: relative;
-            text-align: center;
-          }
-          .cut-guide-label {
-            position: absolute;
-            top: -10px;
-            right: 14px;
-            background: #e2e8f0;
-            color: #475569;
-            font-size: 9px;
-            font-weight: 900;
-            padding: 2px 8px;
-            border-radius: 4px;
-            border: 1px solid #cbd5e1;
-          }
-
-          /* Front Windshield Sticker Theme (Orange Gradient) */
-          .sticker-inner-orange {
-            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-            border-radius: 14px;
-            padding: 18px 14px;
-            color: #ffffff;
-            box-shadow: 0 4px 14px rgba(234, 88, 12, 0.25);
-          }
-
-          /* Rear Glass Sticker Theme (Dark Navy Gradient) */
-          .sticker-inner-blue {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            border-radius: 14px;
-            padding: 18px 14px;
-            color: #ffffff;
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
-          }
-
-          .sticker-top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-          }
-          .sticker-brand {
-            font-size: 13px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-          }
-          .sticker-pill {
-            background: rgba(255, 255, 255, 0.2);
-            font-size: 9px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 999px;
-            text-transform: uppercase;
-          }
-
-          /* The Live Scannable QR Box */
-          .qr-container {
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-          }
-          .live-qr-img {
-            width: 145px;
-            height: 145px;
-            display: block;
-          }
-
-          .sticker-headline {
-            font-size: 13px;
-            font-weight: 900;
-            margin-bottom: 3px;
-            letter-spacing: 0.2px;
-          }
-          .sticker-sub {
-            font-size: 10px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-          }
-          .token-badge {
-            background: #ffffff;
-            color: #0f172a;
-            font-size: 10px;
-            font-weight: 900;
-            font-family: monospace;
-            padding: 3px 10px;
-            border-radius: 6px;
-            display: inline-block;
-          }
-
-          .sticker-footer-info {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-            font-size: 8.5px;
-            font-weight: 700;
-            opacity: 0.95;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 8px;
-          }
-
           /* Scan Test URL box */
           .scan-url-box {
             background: #f1f5f9;
@@ -271,7 +193,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
           <div class="sheet-header">
             <div>
               <div class="sheet-title">SafeDrive Official Printable Tag</div>
-              <div class="sheet-subtitle">${title} • Copy: ${copyCode}</div>
+              <div class="sheet-subtitle">${title} • Qty: ${copiesList.length} ${copiesList.length > 1 ? 'Copies' : 'Tag'}</div>
             </div>
             <div class="badge-verified">✓ Live Scannable Tag</div>
           </div>
@@ -280,7 +202,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
           <div class="instructions-box">
             <strong>🖨️ DIY Color Printing & Placement Guide:</strong><br />
             1. Print in <strong>Full Color</strong> on A4 sticker sheet, glossy photo paper, or standard A4 paper.<br />
-            2. Cut along the outer guidelines ✂. Place inside your vehicle's front windshield or rear window.<br />
+            2. Cut along the outer guidelines ✂. Place on your vehicle or luggage safely.<br />
             3. <strong>100% Scannable & Private:</strong> Scanning this live QR code automatically connects callers via SafeDrive's masked call bridge.
           </div>
 
@@ -290,53 +212,9 @@ export const generateDigitalPdfHtml = (item = {}) => {
             <span class="scan-url-text">${liveScanUrl}</span>
           </div>
 
-          <!-- REAL PRINTABLE PRODUCT CARD BADGES WITH DYNAMIC EMBEDDED QR -->
+          <!-- DYNAMIC PRINTABLE PRODUCT CARDS (1 or 2 depending on product) -->
           <div class="badges-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin-bottom: 24px;">
-            
-            <!-- BADGE 1: Official Card Frame Copy 1 -->
-            <div class="printable-card" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 14px; background: #fafafa; position: relative; max-width: 360px; width: 100%;">
-              <div class="cut-guide-label" style="position: absolute; top: -10px; right: 14px; background: #e2e8f0; color: #475569; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; z-index: 10;">✂ CUT HERE • COPY 1</div>
-              
-              <div style="position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.1); background: #ffffff;">
-                <img src="${cardImage}" alt="SafeDrive Card" style="width: 100%; height: auto; display: block;" />
-                
-                <!-- Live Scannable Dynamic QR Code overlayed directly in the card's QR space -->
-                <div style="position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 6px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
-                  <div style="position: relative; display: inline-block;">
-                    <img src="${qrCodeImg}" alt="QR" style="width: 135px; height: 135px; display: block;" />
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid #ea580c;">
-                      <img src="/logos/icon.png" style="width: 18px; height: 18px; object-fit: contain;" />
-                    </div>
-                  </div>
-                  <div style="font-family: monospace; font-weight: 900; font-size: 10.5px; color: #0f172a; margin-top: 3px; letter-spacing: 0.5px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
-                    ${copyCode}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- BADGE 2: Official Card Frame Copy 2 -->
-            <div class="printable-card" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 14px; background: #fafafa; position: relative; max-width: 360px; width: 100%;">
-              <div class="cut-guide-label" style="position: absolute; top: -10px; right: 14px; background: #e2e8f0; color: #475569; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; z-index: 10;">✂ CUT HERE • COPY 2</div>
-              
-              <div style="position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.1); background: #ffffff;">
-                <img src="${cardImage}" alt="SafeDrive Card" style="width: 100%; height: auto; display: block;" />
-                
-                <!-- Live Scannable Dynamic QR Code overlayed directly in the card's QR space -->
-                <div style="position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 6px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
-                  <div style="position: relative; display: inline-block;">
-                    <img src="${qrCodeImg}" alt="QR" style="width: 135px; height: 135px; display: block;" />
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid #ea580c;">
-                      <img src="/logos/icon.png" style="width: 18px; height: 18px; object-fit: contain;" />
-                    </div>
-                  </div>
-                  <div style="font-family: monospace; font-weight: 900; font-size: 10.5px; color: #0f172a; margin-top: 3px; letter-spacing: 0.5px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
-                    ${copyCode.includes('1') ? copyCode.replace(/1$/, '2') : `${copyCode}-2`}
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            ${cardsHtml}
           </div>
 
           <!-- Sheet Footer -->
