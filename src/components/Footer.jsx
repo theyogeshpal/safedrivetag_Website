@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Mail, MapPin, ChevronRight } from 'lucide-react';
+import { Mail, ChevronRight } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaLinkedinIn, FaYoutube, FaXTwitter } from 'react-icons/fa6';
 
 export default function Footer() {
@@ -96,12 +96,6 @@ export default function Footer() {
             <li className="flex items-center gap-2.5">
               <Mail className="w-4 h-4 text-orange-400 shrink-0" />
               <a href="mailto:safedrivetag@gmail.com" className="text-gray-400 hover:text-orange-400 transition-colors break-all">safedrivetag@gmail.com</a>
-            </li>
-            <li className="flex items-start gap-2.5">
-              <MapPin className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
-              <span className="leading-relaxed text-gray-400 text-xs sm:text-sm">
-                SafeDrive Tech Innovations, Gomti Nagar, Lucknow, UP, India 226010
-              </span>
             </li>
           </ul>
         </div>

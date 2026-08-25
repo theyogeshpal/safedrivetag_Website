@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, MapPin, ChevronRight, ChevronDown, Clock, ShieldCheck, Headphones } from 'lucide-react';
+import { Mail, ChevronRight, ChevronDown, Clock, ShieldCheck, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 
@@ -40,21 +40,11 @@ export default function Contact() {
                 icon: <Mail className="w-7 h-7 text-orange-500" />,
                 bg: 'bg-orange-50',
                 border: 'border-orange-200',
-                title: 'Email',
+                title: 'Email Support',
                 sub: 'For orders, billing & support',
                 action: 'safedrivetag@gmail.com',
                 actionColor: 'text-orange-600 group-hover:text-orange-700',
                 href: 'mailto:safedrivetag@gmail.com',
-              },
-              {
-                icon: <MapPin className="w-7 h-7 text-emerald-600" />,
-                bg: 'bg-emerald-50',
-                border: 'border-emerald-200',
-                title: 'Office Location',
-                sub: 'SafeDrive Tech Innovations',
-                action: 'Gomti Nagar, Lucknow, UP 226010',
-                actionColor: 'text-emerald-600 group-hover:text-emerald-700',
-                href: '#',
               },
             ].map(({ icon, bg, border, title, sub, action, actionColor, href }) => (
               <a
