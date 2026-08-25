@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 import { AuthProvider } from './context/AuthContext';
+import { initFirebaseMessaging } from './services/firebase';
 import Home from './pages/Home';
 
 // Lazy-loaded routes for ultra-fast initial bundle & snappy UX
@@ -54,6 +55,10 @@ function ScrollToTop() {
 }
 
 function App() {
+  useEffect(() => {
+    initFirebaseMessaging();
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>

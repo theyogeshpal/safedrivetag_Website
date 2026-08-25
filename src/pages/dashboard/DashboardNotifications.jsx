@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Bell, ShieldCheck, Smartphone, CheckCircle2, Send, Zap, Volume2, BellRing } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 import { showToast, customSwal, playNotificationBellSound } from '../../utils/swal';
+import { requestFcmToken } from '../../services/firebase';
 
 export default function DashboardNotifications() {
   const [notifications, setNotifications] = useState([
@@ -29,7 +30,14 @@ export default function DashboardNotifications() {
     try {
       // 0. Play Audible High-Quality Notification Bell Sound Chime
       playNotificationBellSound();
-      // 1. Browser Native Push Notification Check & Request
+
+      // 1. Request FCM Push Token & Native Browser Push Notification
+      try {
+        await requestFcmToken();
+      } catch (fcmErr) {
+        console.log('FCM token request info:', fcmErr);
+      }
+
       if ('Notification' in window) {
         let perm = Notification.permission;
         if (perm === 'default') {
@@ -39,7 +47,7 @@ export default function DashboardNotifications() {
         if (perm === 'granted') {
           try {
             new Notification('🚨 SafeDrive Vehicle Alert (TEST)', {
-              body: 'Test Successful! Your SafeDrive QR tag alert pipeline is 100% active & working.',
+              body: 'Firebase Cloud Messaging & Push Pipeline is active on this device!',
               icon: '/logos/primary.jpeg',
               badge: '/logos/primary.jpeg',
             });
