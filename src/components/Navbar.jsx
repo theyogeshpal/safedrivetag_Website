@@ -105,7 +105,7 @@ export default function Navbar() {
             </span>
             <span className="text-emerald-400 font-bold flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
-              Free Pan-India Delivery
+               Pan-India Delivery
             </span>
           </div>
 
@@ -133,13 +133,7 @@ export default function Navbar() {
 
             <span className="text-gray-700 hidden sm:inline">|</span>
 
-            <Link 
-              to="/dashboard/orders" 
-              className="hidden sm:flex items-center gap-1 text-gray-300 hover:text-orange-400 transition-colors font-semibold text-[11px]"
-            >
-              <Package size={12} />
-              <span>Track Order</span>
-            </Link>
+           
           </div>
 
         </div>

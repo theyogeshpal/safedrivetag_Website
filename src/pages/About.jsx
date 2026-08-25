@@ -34,8 +34,8 @@ export default function About() {
               { icon: <Handshake size={28} className="text-orange-500" />, iconBg: 'bg-orange-50 border-orange-200/80', title: 'Useful, not flashy', desc: 'A tag that just works, exactly the moment someone needs to reach you — no complicated apps required.' },
               { icon: <MapPin size={28} className="text-emerald-600" />, iconBg: 'bg-emerald-50 border-emerald-200/80', title: 'Made in India', desc: 'Designed, built and supported locally by a passionate team working right here in India.' },
             ].map(({ icon, iconBg, title, desc }) => (
-              <div key={title} className="value-card hover-lift">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 border ${iconBg} shadow-inner`}>
+              <div key={title} className="value-card hover-lift flex flex-col items-center text-center">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 border ${iconBg} shadow-inner mx-auto`}>
                   {icon}
                 </div>
                 <h3 className="value-title">{title}</h3>
