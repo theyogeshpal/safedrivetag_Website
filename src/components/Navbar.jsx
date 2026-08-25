@@ -12,6 +12,7 @@ import {
   Sparkles,
   ShoppingBag,
   PhoneCall,
+  Mail,
   Package,
   ArrowRight,
   Shield
@@ -120,15 +121,15 @@ export default function Navbar() {
             </span>
           </div>
 
-          {/* Right: Helpline & Quick Links */}
+          {/* Right: Support & Quick Links */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0 text-[10px] sm:text-xs">
             <a 
-              href="tel:+919695078159" 
-              className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors"
+              href="mailto:safedrivetag@gmail.com" 
+              className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"
             >
-              <PhoneCall size={10} className="text-orange-400 sm:w-3 sm:h-3" />
-              <span className="hidden xs:inline text-gray-400">Helpline:</span>
-              <span className="font-bold text-white tracking-wide">+91 96950 78159</span>
+              <Mail size={11} className="text-orange-400" />
+              <span className="hidden xs:inline text-gray-400">Support:</span>
+              <span className="font-semibold text-white tracking-wide">safedrivetag@gmail.com</span>
             </a>
           </div>
 

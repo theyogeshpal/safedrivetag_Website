@@ -9,7 +9,6 @@ import {
   CheckCircle2, 
   Lock, 
   Mail, 
-  Phone, 
   MapPin, 
   HelpCircle,
   Clock,
@@ -85,7 +84,7 @@ export default function Legal() {
       },
       {
         heading: "5. Compliance & Grievance Redressal",
-        body: "In accordance with the Information Technology Act, 2000 and the Digital Personal Data Protection (DPDP) Act, our appointed Grievance Officer can be contacted at: safedrivetag@gmail.com | Phone: +91 98765 43210 | SafeDrive-Tag Legal Compliance Cell, India."
+        body: "In accordance with the Information Technology Act, 2000 and the Digital Personal Data Protection (DPDP) Act, our appointed Grievance Officer can be contacted at: safedrivetag@gmail.com | SafeDrive-Tag Legal Compliance Cell, India."
       }
     ];
   } else if (path === '/terms') {
@@ -327,10 +326,6 @@ export default function Legal() {
             <div className="flex items-center gap-2">
               <Mail size={14} className="text-orange-500" />
               <span>Email: <a href="mailto:safedrivetag@gmail.com" className="text-orange-600 font-bold hover:underline">safedrivetag@gmail.com</a></span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Phone size={14} className="text-orange-500" />
-              <span>Helpline: <a href="tel:+919876543210" className="text-gray-800 font-bold hover:text-orange-600">+91 98765 43210</a></span>
             </div>
             <div>
               &copy; {currentYear} SafeDrive-Tag. All rights reserved.

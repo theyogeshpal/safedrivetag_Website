@@ -525,7 +525,7 @@ export default function Home() {
                 <span className={`absolute -top-1.5 -right-1.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white transition-colors duration-500 shadow-sm ${activeStep === 3 ? 'bg-orange-500 text-white' : 'bg-gray-900 text-white'}`}>3</span>
               </div>
               <div className={`bg-gray-50/60 p-5 sm:p-6 rounded-2xl border transition-all duration-500 w-full ${activeStep === 3 ? 'bg-white shadow-xl shadow-orange-500/15 border-orange-300 -translate-y-1.5' : 'border-gray-200/80 shadow-sm'}`}>
-                <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Direct Contact</h4>
+                <h4 className="font-black text-gray-950 mb-2 text-base sm:text-lg">Contact Privately</h4>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium">They choose an option (e.g., Wrong Parking) and contact you via WhatsApp or Masked Call.</p>
               </div>
             </div>
@@ -543,7 +543,7 @@ export default function Home() {
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 md:mb-16 animate-fade-up">
-            <span className="text-emerald-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">For Vehicles & Travel Belongings</span>
+            <span className="text-emerald-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">One QR for all your needs</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">Cars. Bikes. Luggage. Backpacks.</h2>
             <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto font-medium">
               SafeDrive-Tag protects your daily commute vehicles and your travel luggage — with instant emergency and lost bag recovery QR alerts.

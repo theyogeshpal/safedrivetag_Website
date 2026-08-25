@@ -121,7 +121,8 @@ export default function QRScan() {
           });
         }
       } else {
-        setError(qrRes.value?.message || 'QR code not found or tag is inactive.');
+        setQrData(null);
+        setError(qrRes.value?.message || 'Invalid or unknown QR code scanned.');
       }
 
       // 2. Process Scan Reasons
@@ -137,6 +138,7 @@ export default function QRScan() {
       }
 
     } catch (err) {
+      setQrData(null);
       setError('Unable to load QR scan details. Please check connection.');
       setScanReasons(defaultFallbackReasons);
       setSelectedReasonId(defaultFallbackReasons[0]._id);
@@ -387,6 +389,43 @@ export default function QRScan() {
     );
   }
 
+  // Error / Invalid QR Code Screen
+  if (error || !qrData || qrData.status !== 'ACTIVE') {
+    return (
+      <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 font-sans text-gray-900 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-black/5 text-center space-y-4">
+          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-2">
+            <AlertTriangle className="w-8 h-8 text-red-500" />
+          </div>
+          <span className="inline-block bg-red-100 text-red-700 text-xs font-black uppercase px-3 py-1 rounded-full">
+            Invalid QR Code
+          </span>
+          <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
+            Invalid or Unknown QR Code
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
+            {error || 'This QR code is invalid, deactivated, or not recognized by SafeDrive-Tag.'}
+          </p>
+
+          <div className="pt-2 flex flex-col gap-2.5">
+            <button
+              onClick={() => navigate('/')}
+              className="w-full bg-gray-900 hover:bg-black text-white font-bold text-xs py-3.5 px-6 rounded-xl transition-all shadow-md cursor-pointer"
+            >
+              Go to Homepage
+            </button>
+            <button
+              onClick={() => fetchQrAndReasons()}
+              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <RefreshCw size={14} /> Retry Scan
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 font-sans text-gray-900 relative">
       
@@ -407,12 +446,6 @@ export default function QRScan() {
         >
           <ArrowLeft size={16} className="mr-1" /> Back
         </button>
-
-        {error && (
-          <div className="bg-red-50 text-red-600 border border-red-200 rounded-xl p-3.5 text-xs font-bold text-center">
-            {error}
-          </div>
-        )}
 
         {/* Top Header Card */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 flex items-center justify-between gap-4">
@@ -553,17 +586,6 @@ export default function QRScan() {
                   onChange={(e) => setCustomReasonText(e.target.value)}
                   className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl p-3 text-xs outline-none resize-none font-medium transition-all shadow-2xs"
                 />
-
-                {/* Instant Send Push Notification Button */}
-                <button
-                  type="button"
-                  onClick={handleSendPushAlert}
-                  disabled={actionLoading}
-                  className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-black py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50 text-xs sm:text-sm tracking-wide"
-                >
-                  <BellRing size={18} className={actionLoading ? 'animate-spin' : 'animate-bounce'} />
-                  <span>{actionLoading ? 'Dispatching Push Notification...' : '🚀 Send Push Notification to Owner 🔔'}</span>
-                </button>
               </div>
             </div>
 
@@ -617,7 +639,7 @@ export default function QRScan() {
               <button
                 onClick={handleCallOwner}
                 disabled={actionLoading}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+                className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
               >
                 <div className="flex items-center gap-3 text-left">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
@@ -625,10 +647,10 @@ export default function QRScan() {
                   </div>
                   <div>
                     <p className="font-bold text-sm leading-tight">Call Vehicle Owner</p>
-                    <p className="text-[11px] text-orange-100 font-normal">100% Number Masked automated bridge</p>
+                    <p className="text-[11px] text-blue-100 font-normal">100% Number Masked automated bridge</p>
                   </div>
                 </div>
-                <span className="text-xs bg-white text-orange-600 font-black px-2.5 py-1 rounded-md shrink-0">
+                <span className="text-xs bg-white text-[#2874f0] font-black px-2.5 py-1 rounded-md shrink-0">
                   {actionLoading ? 'Connecting...' : 'Call Now'}
                 </span>
               </button>

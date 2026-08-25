@@ -117,7 +117,7 @@ export default function About() {
           <h2 className="text-3xl sm:text-5xl font-black text-white mb-3">Be part of the 9.5 lakh.</h2>
           <p className="text-orange-100 text-base sm:text-lg mb-8 max-w-lg mx-auto font-medium">Get your SafeDrive-Tag today and drive with ultimate privacy & peace of mind.</p>
           <Link to="/shop" className="inline-flex items-center gap-2.5 bg-white text-gray-950 px-8 py-4 rounded-full font-black text-base hover:scale-105 transition-transform shadow-2xl">
-            <span className="text-orange-600 font-black">Buy the Safe Tag @ ₹299</span> <ArrowRight size={20} className="text-emerald-600" />
+            <span className="text-orange-600 font-black">Buy the Safe Tag</span> <ArrowRight size={20} className="text-emerald-600" />
           </Link>
         </div>
       </section>

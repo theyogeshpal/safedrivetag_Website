@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Mail, MapPin, ChevronRight, Phone, ChevronDown, Clock, ShieldCheck, Headphones } from 'lucide-react';
+import { Mail, MapPin, ChevronRight, ChevronDown, Clock, ShieldCheck, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 
@@ -25,7 +25,7 @@ export default function Contact() {
         badges={[
           { icon: <Headphones size={14} className="text-orange-500" />, label: 'Fast Response' },
           { icon: <Clock size={14} className="text-blue-500" />, label: 'Mon-Sat 9AM - 8PM' },
-          { icon: <ShieldCheck size={14} className="text-green-600" />, label: 'Direct WhatsApp Support' }
+          { icon: <ShieldCheck size={14} className="text-green-600" />, label: '100% Privacy Protected' }
         ]}
       />
 
@@ -37,16 +37,6 @@ export default function Contact() {
           <div className="space-y-6">
             {[
               {
-                icon: <MessageCircle className="w-7 h-7 text-emerald-600" />,
-                bg: 'bg-emerald-50',
-                border: 'border-emerald-200',
-                title: 'WhatsApp',
-                sub: 'Fastest way to reach us (Instant)',
-                action: 'Chat on WhatsApp',
-                actionColor: 'text-emerald-600 group-hover:text-emerald-700',
-                href: 'https://wa.me/919876543210?text=Hello%20SafeDrive-Tag%20Team',
-              },
-              {
                 icon: <Mail className="w-7 h-7 text-orange-500" />,
                 bg: 'bg-orange-50',
                 border: 'border-orange-200',
@@ -57,21 +47,19 @@ export default function Contact() {
                 href: 'mailto:safedrivetag@gmail.com',
               },
               {
-                icon: <Phone className="w-7 h-7 text-emerald-600" />,
+                icon: <MapPin className="w-7 h-7 text-emerald-600" />,
                 bg: 'bg-emerald-50',
                 border: 'border-emerald-200',
-                title: 'Helpline Call',
-                sub: 'Mon-Sat, 9am - 8pm',
-                action: '+91 98765 43210',
+                title: 'Office Location',
+                sub: 'SafeDrive Tech Innovations',
+                action: 'Gomti Nagar, Lucknow, UP 226010',
                 actionColor: 'text-emerald-600 group-hover:text-emerald-700',
-                href: 'tel:+919876543210',
+                href: '#',
               },
             ].map(({ icon, bg, border, title, sub, action, actionColor, href }) => (
               <a
                 key={title}
                 href={href}
-                target={title === 'WhatsApp' ? "_blank" : undefined}
-                rel={title === 'WhatsApp' ? "noopener noreferrer" : undefined}
                 className="flex items-center gap-5 p-6 bg-white border border-black/10 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group cursor-pointer"
               >
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border ${bg} ${border}`}>
@@ -96,8 +84,10 @@ export default function Contact() {
                   <input type="text" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="Your name" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-black/80">Email</label>
-                  <input type="email" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="you@email.com" />
+                  <label className="text-sm font-bold text-black/80">
+                    Email <span className="text-xs font-normal text-black/40">(Optional)</span>
+                  </label>
+                  <input type="email" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="you@email.com (Optional)" />
                 </div>
               </div>
 
@@ -115,16 +105,6 @@ export default function Contact() {
                   <label className="text-sm font-bold text-black/80">Phone</label>
                   <input type="tel" className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black placeholder:text-black/40" placeholder="Phone number" />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-black/80">Topic</label>
-                <select className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-black">
-                  <option>General Question</option>
-                  <option>Order Support</option>
-                  <option>Feedback</option>
-                  <option>Partnership / Reseller</option>
-                </select>
               </div>
 
               <div className="space-y-2">

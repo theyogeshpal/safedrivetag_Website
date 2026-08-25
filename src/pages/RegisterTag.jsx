@@ -73,7 +73,7 @@ export default function RegisterTag() {
     try {
       const res = await api.sendOtp({
         phone: cleanPhone,
-        name: name.trim() || 'Vehicle Owner',
+        name: 'Tag Owner',
       });
 
       if (res.success || res.status === 200) {
@@ -163,9 +163,9 @@ export default function RegisterTag() {
 
     const cleanPhone = phone.replace(/\D/g, '');
     
-    // Validate Vehicle Registration
-    if (!formData.vehicleNumber.trim()) {
-      setError('Please enter your vehicle registration plate number.');
+    // Validate Owner Name
+    if (!name.trim()) {
+      setError('Please enter your full name.');
       return;
     }
 
@@ -197,23 +197,23 @@ export default function RegisterTag() {
     try {
       const emergencyContacts = [
         {
-          name: formData.emergencyContact1Name.trim() || 'Primary Emergency Contact',
+          name: formData.emergencyContact1Name.trim() || 'Primary Family Member',
           number: c1,
         },
         {
-          name: formData.emergencyContact2Name.trim() || 'Secondary Emergency Contact',
+          name: formData.emergencyContact2Name.trim() || 'Alternate Emergency Contact',
           number: c2,
         },
       ];
 
       const payload = {
-        name: name.trim() || currentUser?.name || 'Vehicle Owner',
+        name: name.trim() || currentUser?.name || 'Tag Owner',
         phone: cleanPhone || currentUser?.phone || '',
         whatsappNumber: formData.whatsappNumber?.replace(/\D/g, '') || cleanPhone || currentUser?.phone || '',
-        vehicleBrand: formData.vehicleBrand?.trim() || 'Hyundai',
-        vehicleName: formData.vehicleName?.trim() || 'Creta',
-        vehicleNumber: formData.vehicleNumber?.trim().toUpperCase(),
-        vehicleType: formData.vehicleType || 'Car',
+        vehicleBrand: 'SafeDrive',
+        vehicleName: 'Protected Tag',
+        vehicleNumber: '',
+        vehicleType: 'General',
         address: formData.address?.trim() || currentUser?.address || '',
         emergencyContacts,
       };
@@ -274,7 +274,7 @@ export default function RegisterTag() {
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-black mb-2">Tag Kit Activated Successfully!</h2>
             <p className="text-sm text-black/60 font-medium mb-6">
-              Tag ID <span className="font-mono font-bold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">{token}</span> is now linked with <strong className="text-black">{formData.vehicleBrand} {formData.vehicleName} ({formData.vehicleNumber})</strong>.
+              Tag ID <span className="font-mono font-bold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">{token}</span> is now active and linked to <strong className="text-black">{name || 'your account'}</strong>.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link 
@@ -318,7 +318,6 @@ export default function RegisterTag() {
             </div>
 
             {/* 3-Step Wizard Progress Bar */}
-            {/* 3-Step Wizard Progress Bar (2-Row on Phone, 3-Cols on Desktop) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6 text-center text-xs font-bold">
               <div className={`py-2 px-2.5 rounded-xl border transition-all ${
                 step === 1 
@@ -343,7 +342,7 @@ export default function RegisterTag() {
                   ? 'bg-orange-500 text-white border-orange-500 shadow-xs font-black' 
                   : 'bg-gray-100 text-gray-500 border-gray-200'
               }`}>
-                3. Vehicle & Contacts
+                3. Contact Details
               </div>
             </div>
 
@@ -365,19 +364,8 @@ export default function RegisterTag() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-black/60 mb-1">Your Full Name</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Rahul Sharma"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-orange-500"
-                    />
-                  </div>
-
-                  <div>
                     <label className="block text-[11px] font-bold text-black/60 mb-1">
-                      10-Digit Mobile Number (For Receiving Calls)
+                      10-Digit Mobile Number (For Receiving Calls & SMS)
                     </label>
                     <div className="relative flex items-center">
                       <span className="absolute left-3.5 text-xs font-bold text-black/50">IN +91</span>
@@ -385,6 +373,7 @@ export default function RegisterTag() {
                         type="tel"
                         maxLength={10}
                         required
+                        autoFocus
                         placeholder="9876543210"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
@@ -471,7 +460,7 @@ export default function RegisterTag() {
                     </>
                   ) : (
                     <>
-                      <span>Verify OTP & Fill Vehicle Details</span>
+                      <span>Verify OTP & Enter Contact Details</span>
                       <ArrowRight size={18} />
                     </>
                   )}
@@ -480,7 +469,7 @@ export default function RegisterTag() {
             )}
 
             {/* ======================================================== */}
-            {/* STEP 3: VEHICLE & MANDATORY 2 EMERGENCY CONTACTS */}
+            {/* STEP 3: CONTACT DETAILS & MANDATORY 2 EMERGENCY CONTACTS */}
             {/* ======================================================== */}
             {step === 3 && (
               <form onSubmit={handleFinalSubmit} className="space-y-6 animate-fade-up">
@@ -489,7 +478,7 @@ export default function RegisterTag() {
                 <div className="bg-green-50 border border-green-200 rounded-2xl p-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs font-bold text-green-800">
                     <CheckCircle2 size={16} className="text-green-600" />
-                    <span>Owner Registered Mobile: +91 {phone}</span>
+                    <span>Registered Phone: +91 {phone}</span>
                   </div>
                   <button
                     type="button"
@@ -503,89 +492,49 @@ export default function RegisterTag() {
                   </button>
                 </div>
 
-                {/* Section 1: Vehicle Type Selection */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-black/70 mb-2">
-                    1. Tag Attached To:
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {vehicleTypes.map(({ id: typeId, label, icon }) => (
-                      <button
-                        key={typeId}
-                        type="button"
-                        onClick={() => setVehicleType(typeId)}
-                        className={`flex items-center justify-center gap-2 p-3 rounded-2xl border text-xs font-bold transition-all cursor-pointer ${
-                          formData.vehicleType === typeId
-                            ? 'border-orange-500 bg-orange-50/80 text-orange-600 shadow-sm'
-                            : 'border-black/5 bg-black/[0.02] text-black/60 hover:bg-black/5'
-                        }`}
-                      >
-                        {icon}
-                        <span>{label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Section 2: Vehicle Identification */}
+                {/* Section 1: Owner Profile & Contact Details */}
                 <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-4 sm:p-5 space-y-4">
                   <h3 className="text-xs font-black uppercase tracking-wider text-black/80 flex items-center gap-2">
-                    <Car size={14} className="text-orange-500" /> 2. Vehicle Identification
+                    <User size={14} className="text-orange-500" /> 1. Owner Details
                   </h3>
                   
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-[11px] font-bold text-black/60 mb-1">
-                        Vehicle Brand / Make <span className="text-red-500">*</span>
+                        Your Full Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Hyundai, Honda, Maruti"
-                        name="vehicleBrand"
-                        value={formData.vehicleBrand}
-                        onChange={handleFormChange}
+                        placeholder="e.g. Rahul Sharma"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
                       />
                     </div>
                     <div>
                       <label className="block text-[11px] font-bold text-black/60 mb-1">
-                        Model Name <span className="text-red-500">*</span>
+                        WhatsApp Number <span className="text-xs font-normal text-black/40">(Optional)</span>
                       </label>
                       <input
-                        type="text"
-                        required
-                        placeholder="e.g. Creta, City, Swift"
-                        name="vehicleName"
-                        value={formData.vehicleName}
+                        type="tel"
+                        maxLength={10}
+                        placeholder={phone || "9876543210"}
+                        name="whatsappNumber"
+                        value={formData.whatsappNumber}
                         onChange={handleFormChange}
-                        className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500"
+                        className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none focus:border-orange-500 font-mono"
                       />
                     </div>
                   </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold text-black/60 mb-1">
-                      Registration Plate Number (e.g. RJ-14-AB-2024) <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Enter full vehicle plate number"
-                      name="vehicleNumber"
-                      value={formData.vehicleNumber}
-                      onChange={handleFormChange}
-                      className="w-full bg-white border border-black/10 rounded-xl px-3.5 py-2.5 text-sm font-black tracking-wider outline-none focus:border-orange-500 uppercase"
-                    />
-                  </div>
                 </div>
 
-                {/* Section 3: MANDATORY 2 EMERGENCY CONTACTS */}
+                {/* Section 2: MANDATORY 2 EMERGENCY CONTACTS */}
                 <div className="bg-red-50/50 border border-red-200/80 rounded-2xl p-4 sm:p-5 space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-black uppercase tracking-wider text-red-700 flex items-center gap-2">
                       <HeartPulse size={16} className="text-red-600" />
-                      <span>3. Mandatory Emergency SOS Contacts (2 Required)</span>
+                      <span>2. Mandatory Emergency SOS Contacts (2 Required)</span>
                     </h3>
                     <span className="text-[10px] font-black bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full uppercase">
                       Mandatory
