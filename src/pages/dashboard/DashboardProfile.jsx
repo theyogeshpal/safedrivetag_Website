@@ -3,16 +3,16 @@ import { User, Mail, Phone, Edit2, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import DashboardLayout from './DashboardLayout';
+import { showToast, showConfirmDialog } from '../../utils/swal';
 
 export default function DashboardProfile() {
-  const { currentUser, setCurrentUser } = useAuth();
+  const { currentUser, updateUserProfile } = useAuth();
 
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [firstName, setFirstName] = useState(currentUser?.name?.split(' ')[0] || '');
   const [lastName, setLastName] = useState(currentUser?.name?.split(' ').slice(1).join(' ') || '');
   const [gender, setGender] = useState(currentUser?.gender || 'Male');
   const [email, setEmail] = useState(currentUser?.email || '');
-  const [phone, setPhone] = useState(currentUser?.phone || '');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
@@ -28,37 +28,43 @@ export default function DashboardProfile() {
       });
 
       if (res.success) {
-        if (setCurrentUser) {
-          setCurrentUser({
-            ...currentUser,
+        if (updateUserProfile) {
+          updateUserProfile({
             name: fullName,
             email: email.trim(),
             gender,
           });
         }
         setIsEditingPersonal(false);
-        setSaveSuccessMsg('Personal Information updated successfully!');
-        setTimeout(() => setSaveSuccessMsg(''), 4000);
+        showToast.success('Personal Information updated successfully!');
       } else {
-        alert(res.message || 'Failed to update profile.');
+        showToast.error(res.message || 'Failed to update profile.');
       }
     } catch (err) {
       console.error(err);
-      alert('Error updating profile.');
+      showToast.error('Error updating profile.');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDeactivate = async () => {
-    if (window.confirm('Are you sure you want to deactivate your SafeDrive account? This will pause all QR protections.')) {
+    const confirmed = await showConfirmDialog({
+      title: 'Deactivate Account?',
+      text: 'Are you sure you want to deactivate your SafeDrive account? This will pause all QR protections.',
+      confirmText: 'Yes, Deactivate',
+      cancelText: 'Cancel',
+      icon: 'warning',
+    });
+
+    if (confirmed) {
       try {
         await api.deactivateAccount();
-        alert('Account deactivated.');
+        showToast.success('Account deactivated.');
         window.location.href = '/';
       } catch (err) {
         console.error(err);
-        alert('Could not deactivate account.');
+        showToast.error('Could not deactivate account.');
       }
     }
   };

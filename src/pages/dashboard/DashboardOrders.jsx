@@ -21,6 +21,7 @@ import api from '../../services/api';
 import DashboardLayout from './DashboardLayout';
 import { downloadInvoicePdf } from '../../utils/invoiceGenerator';
 import { printDigitalPdfInColor } from '../../utils/digitalPdfGenerator';
+import { showToast } from '../../utils/swal';
 
 export default function DashboardOrders() {
   const { currentUser } = useAuth();
@@ -55,9 +56,10 @@ export default function DashboardOrders() {
   const handleDownloadInvoice = (order) => {
     try {
       downloadInvoicePdf(order, currentUser);
+      showToast.success('Tax invoice generated!');
     } catch (err) {
       console.error('Invoice download error', err);
-      alert('Could not download invoice at this moment.');
+      showToast.error('Could not download invoice at this moment.');
     }
   };
 

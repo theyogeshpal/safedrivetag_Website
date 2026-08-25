@@ -197,16 +197,18 @@ export default function QRScan() {
       if (res.success && res.whatsappUrl) {
         window.open(res.whatsappUrl, '_blank');
         setActionSuccessMsg('Opening WhatsApp with pre-filled alert...');
+        showToast.success('Opening WhatsApp...');
       } else {
         // Fallback WhatsApp link
         const targetPhone = qrData?.phone || qrData?.user?.phone || '917817095043';
         const fallbackUrl = `https://api.whatsapp.com/send?phone=${String(targetPhone).replace(/\D/g, '')}&text=${encodeURIComponent(messageBody)}`;
         window.open(fallbackUrl, '_blank');
         setActionSuccessMsg('Opening WhatsApp...');
+        showToast.success('Opening WhatsApp...');
       }
       setTimeout(() => setActionSuccessMsg(''), 4000);
     } catch (err) {
-      alert('Error generating WhatsApp alert.');
+      showToast.error('Error generating WhatsApp alert.');
     } finally {
       setActionLoading(false);
     }
@@ -225,12 +227,13 @@ export default function QRScan() {
           window.location.href = `tel:${dialNumber}`;
         }
         setActionSuccessMsg(res.message || 'Connecting masked phone call to vehicle owner...');
+        showToast.success('Connecting masked call...');
         setTimeout(() => setActionSuccessMsg(''), 4000);
       } else {
-        alert(res.message || 'Could not initiate call at this moment.');
+        showToast.error(res.message || 'Could not initiate call at this moment.');
       }
     } catch (err) {
-      alert('Error initiating voice bridge call.');
+      showToast.error('Error initiating voice bridge call.');
     } finally {
       setActionLoading(false);
     }
@@ -254,12 +257,14 @@ export default function QRScan() {
         const res = await api.triggerEmergency(token, payload);
         if (res.success) {
           setActionSuccessMsg(res.message || '🚨 Emergency SOS sent to 2 contacts via SMS and WhatsApp!');
+          showToast.success('🚨 Emergency SOS broadcasted!');
         } else {
           setActionSuccessMsg('🚨 Emergency SOS alert broadcasted to registered family contacts.');
+          showToast.success('🚨 Emergency SOS alert sent!');
         }
         setTimeout(() => setActionSuccessMsg(''), 5000);
       } catch (err) {
-        alert('Error broadcasting emergency SOS.');
+        showToast.error('Error broadcasting emergency SOS.');
       } finally {
         setActionLoading(false);
       }

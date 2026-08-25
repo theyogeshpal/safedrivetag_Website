@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import { customSwal, showNoActiveTagAlert, showConfirmDialog, showToast } from '../../utils/swal';
 
 export default function DashboardLayout({ children, currentTab, pageTitle, saveSuccessMsg }) {
   const navigate = useNavigate();
@@ -74,16 +75,39 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         setIsPwaInstalled(true);
+        showToast.success('SafeDrive App installed successfully!');
       }
       setDeferredPrompt(null);
     } else {
-      alert('To install SafeDrive App:\n1. Tap Menu (⋮) on Chrome/Safari\n2. Select "Install App" or "Add to Home Screen"');
+      customSwal.fire({
+        title: 'Install SafeDrive Mobile App',
+        html: `
+          <div class="text-left space-y-2 text-xs text-gray-600">
+            <p>To install SafeDrive App directly on your phone:</p>
+            <ol class="list-decimal list-inside space-y-1 font-semibold text-gray-800">
+              <li>Tap browser menu (<strong>⋮</strong> or Share icon)</li>
+              <li>Select <strong>"Install App"</strong> or <strong>"Add to Home Screen"</strong></li>
+            </ol>
+          </div>
+        `,
+        icon: 'info',
+        iconColor: '#f97316',
+        confirmButtonText: 'Got It!',
+      });
     }
   };
 
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to log out of your SafeDrive Account?')) {
+  const handleLogout = async () => {
+    const confirmed = await showConfirmDialog({
+      title: 'Logout of SafeDrive?',
+      text: 'Are you sure you want to log out of your SafeDrive Account?',
+      confirmText: 'Yes, Log Out',
+      cancelText: 'Stay Logged In',
+      icon: 'question',
+    });
+    if (confirmed) {
       logout();
+      showToast.success('Logged out successfully');
       navigate('/login');
     }
   };
@@ -228,9 +252,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                     <button
                       key={m.id}
                       type="button"
-                      onClick={() => {
-                        alert("No Active SafeDrive-Tag Found!\n\nThis page is disabled because no QR tag is currently linked/activated on your account.\n\nPlease purchase or activate a tag to unlock.");
-                      }}
+                      onClick={() => showNoActiveTagAlert(navigate)}
                       className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-bold whitespace-nowrap bg-gray-100/60 text-gray-400 opacity-60 cursor-not-allowed border border-dashed border-gray-300"
                       title="Activation Required"
                     >
@@ -293,9 +315,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                   {activeTagsCount === 0 ? (
                     <button
                       type="button"
-                      onClick={() => {
-                        alert("No Active SafeDrive-Tag Found!\n\nThis page is disabled because no QR tag is currently linked/activated on your account.\n\nPlease purchase or activate a tag to unlock.");
-                      }}
+                      onClick={() => showNoActiveTagAlert(navigate)}
                       className="w-full flex items-center justify-between py-1.5 text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed group text-left"
                       title="No Active QR Tag - Activation Required"
                     >
@@ -321,9 +341,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                   {activeTagsCount === 0 ? (
                     <button
                       type="button"
-                      onClick={() => {
-                        alert("No Active SafeDrive-Tag Found!\n\nActivity Logs are disabled until you have an active QR tag linked to your account.");
-                      }}
+                      onClick={() => showNoActiveTagAlert(navigate)}
                       className="w-full flex items-center justify-between py-1.5 text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed group text-left"
                       title="No Active QR Tag - Activation Required"
                     >

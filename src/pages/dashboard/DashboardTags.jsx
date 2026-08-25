@@ -25,6 +25,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import DashboardLayout from './DashboardLayout';
 import { printDigitalPdfInColor } from '../../utils/digitalPdfGenerator';
+import { showToast, showConfirmDialog, customSwal } from '../../utils/swal';
 
 export default function DashboardTags() {
   const { currentUser } = useAuth();
@@ -54,13 +55,13 @@ export default function DashboardTags() {
   const [newVehicleType, setNewVehicleType] = useState('Car');
 
   const showNotification = (msg) => {
-    setSaveSuccessMsg(msg);
-    setTimeout(() => setSaveSuccessMsg(''), 4000);
+    showToast.success(msg);
   };
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
     setCopiedId(text);
+    showToast.success(`Copied: ${text}`);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -326,10 +327,17 @@ export default function DashboardTags() {
     showNotification(`Tag ${tagId} is now ${newStatus.toUpperCase()}`);
   };
 
-  const handleDeleteTag = (tagId) => {
-    if (window.confirm(`Are you sure you want to unlink Tag ${tagId}?`)) {
+  const handleDeleteTag = async (tagId) => {
+    const confirmed = await showConfirmDialog({
+      title: 'Unlink Safety Tag?',
+      text: `Are you sure you want to unlink Tag ${tagId}? This will remove vehicle masking from this tag.`,
+      confirmText: 'Yes, Unlink',
+      cancelText: 'Keep Tag',
+      icon: 'warning',
+    });
+    if (confirmed) {
       setUserTags(prev => prev.filter(t => t.id !== tagId));
-      showNotification(`Tag ${tagId} unlinked.`);
+      showToast.success(`Tag ${tagId} unlinked.`);
     }
   };
 
@@ -405,7 +413,7 @@ export default function DashboardTags() {
     showNotification(`Physical Tag ${formattedId} linked & activated successfully!`);
   };
 
-  const downloadQrPng = (tag) => {
+  const handleDownloadQrPng = (tag) => {
     const canvas = document.createElement('canvas');
     canvas.width = 600;
     canvas.height = 600;
@@ -415,7 +423,7 @@ export default function DashboardTags() {
 
     const svgElement = document.querySelector('.qr-canvas-download svg');
     if (!svgElement) {
-      alert('QR badge downloaded successfully!');
+      showToast.success('QR badge downloaded successfully!');
       return;
     }
     const svgData = new XMLSerializer().serializeToString(svgElement);
@@ -427,6 +435,7 @@ export default function DashboardTags() {
       dlLink.download = `SafeDrive_Tag_${tag.id || 'Badge'}.png`;
       dlLink.href = pngFile;
       dlLink.click();
+      showToast.success('QR sticker badge downloaded!');
     };
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
   };

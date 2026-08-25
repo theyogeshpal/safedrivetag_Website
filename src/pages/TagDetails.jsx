@@ -32,9 +32,10 @@ import {
   X
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
-import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { downloadQrPng, printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
+import { useAuth } from '../context/AuthContext';
+import { printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
+import { customSwal, showToast } from '../utils/swal';
 import PageLoader from '../components/PageLoader';
 
 export default function TagDetails() {
@@ -465,7 +466,12 @@ export default function TagDetails() {
             {/* Right Action Buttons */}
             <div className="flex items-center gap-2.5 self-start md:self-auto">
               <button
-                onClick={() => alert(`Subscription for ${tagData.kitId} is active (Valid till ${tagData.order.expiresOn})`)}
+                onClick={() => customSwal.fire({
+                  title: 'Subscription Active',
+                  text: `Subscription for ${tagData.kitId} is active (Valid till ${tagData.order?.expiresOn || '1 Year'}). Full QR masking & SOS protection are enabled.`,
+                  icon: 'success',
+                  confirmButtonText: 'Great!',
+                })}
                 className="bg-[#2874f0] hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
                 <RefreshCw size={13} /> Renew (₹199/yr)
