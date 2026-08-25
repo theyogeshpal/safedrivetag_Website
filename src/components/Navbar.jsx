@@ -17,6 +17,7 @@ import {
   Shield
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { showConfirmDialog, showToast } from '../utils/swal';
 
 export default function Navbar() {
   const location = useLocation();
@@ -69,10 +70,20 @@ export default function Navbar() {
 
   const isHome = path === '/';
 
-  const handleLogout = () => {
-    logout();
-    setUserDropdownOpen(false);
-    navigate('/');
+  const handleLogout = async () => {
+    const confirmed = await showConfirmDialog({
+      title: 'Logout of SafeDrive?',
+      text: 'Are you sure you want to log out of your SafeDrive Account?',
+      confirmText: 'Yes, Log Out',
+      cancelText: 'Stay Logged In',
+      icon: 'question',
+    });
+    if (confirmed) {
+      logout();
+      setUserDropdownOpen(false);
+      showToast.success('Logged out successfully');
+      navigate('/');
+    }
   };
 
   return (
@@ -215,39 +226,19 @@ export default function Navbar() {
 
                   <div className="py-1">
                     <Link
-                      to="/dashboard/tags"
+                      to="/dashboard"
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-[#2874f0] transition-colors"
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-800 hover:bg-blue-50 hover:text-[#2874f0] transition-colors cursor-pointer"
                     >
-                      <LayoutDashboard size={15} className="text-[#2874f0]" />
-                      <span>My Vehicle Tags</span>
+                      <LayoutDashboard size={16} className="text-[#2874f0]" />
+                      <span>Dashboard</span>
                     </Link>
 
-                    <Link
-                      to="/dashboard/orders"
-                      onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-[#2874f0] transition-colors"
-                    >
-                      <Package size={15} className="text-amber-500" />
-                      <span>My Orders & Passes</span>
-                    </Link>
-
-                    <Link
-                      to="/dashboard/profile"
-                      onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-[#2874f0] transition-colors"
-                    >
-                      <User size={15} className="text-indigo-500" />
-                      <span>Profile & Settings</span>
-                    </Link>
-                  </div>
-
-                  <div className="border-t border-gray-100 mt-1 pt-1">
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors text-left cursor-pointer"
+                      className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors text-left cursor-pointer border-t border-gray-100 mt-1"
                     >
-                      <LogOut size={15} />
+                      <LogOut size={16} />
                       <span>Log Out</span>
                     </button>
                   </div>
@@ -375,22 +366,22 @@ export default function Navbar() {
           </div>
 
           {currentUser && (
-            <div className="pt-2 border-t border-gray-100 mt-2">
+            <div className="pt-2 border-t border-gray-100 mt-2 space-y-1">
               <Link
-                to="/dashboard/orders"
+                to="/dashboard"
                 onClick={() => setMenuOpen(false)}
-                className="text-xs font-bold text-gray-700 py-2 px-3.5 rounded-xl hover:bg-gray-50 flex items-center gap-2.5"
+                className="text-xs font-bold text-gray-800 py-2.5 px-3.5 rounded-xl hover:bg-blue-50 hover:text-[#2874f0] flex items-center gap-2.5"
               >
-                <Package size={15} className="text-amber-500" /> My Orders & Passes
+                <LayoutDashboard size={15} className="text-[#2874f0]" /> Dashboard
               </Link>
               <button
                 onClick={() => {
                   setMenuOpen(false);
                   handleLogout();
                 }}
-                className="w-full text-left text-xs font-bold text-red-600 py-2 px-3.5 rounded-xl hover:bg-red-50 flex items-center gap-2.5 mt-1 cursor-pointer"
+                className="w-full text-left text-xs font-bold text-red-600 py-2.5 px-3.5 rounded-xl hover:bg-red-50 flex items-center gap-2.5 cursor-pointer"
               >
-                <LogOut size={15} /> Logout Account
+                <LogOut size={15} /> Log Out
               </button>
             </div>
           )}
