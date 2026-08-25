@@ -72,48 +72,43 @@ export default function TagDetails() {
   const loadTagData = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Fetch User Orders to find the order containing this tag
+      // Fetch Orders, QR Info, and Dashboard in parallel
+      const [ordersResSettled, qrResSettled, dashResSettled] = await Promise.allSettled([
+        api.getUserOrders(),
+        api.getPublicQrInfo(id),
+        api.getDashboard()
+      ]);
+
+      // 1. Process User Orders
       let foundOrder = null;
       let matchedAllocated = [];
-      try {
-        const ordersRes = await api.getUserOrders();
-        if (ordersRes.success && ordersRes.orders) {
-          for (const ord of ordersRes.orders) {
-            if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
-              const hasMatch = ord.allocatedQRIds.some(
-                (q) => q.copyCode === id || q.publicToken === id || q._id === id || ord.orderNumber === id
-              );
-              if (hasMatch) {
-                foundOrder = ord;
-                matchedAllocated = ord.allocatedQRIds;
-                break;
-              }
+      if (ordersResSettled.status === 'fulfilled' && ordersResSettled.value?.success && ordersResSettled.value.orders) {
+        for (const ord of ordersResSettled.value.orders) {
+          if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
+            const hasMatch = ord.allocatedQRIds.some(
+              (q) => q.copyCode === id || q.publicToken === id || q._id === id || ord.orderNumber === id
+            );
+            if (hasMatch) {
+              foundOrder = ord;
+              matchedAllocated = ord.allocatedQRIds;
+              break;
             }
           }
         }
-      } catch (e) {
-        console.error('Error fetching user orders', e);
       }
 
-      // 3. Query Public QR Info from API for live status
+      // 2. Process Public QR Info
       let qrApiRes = null;
-      try {
-        qrApiRes = await api.getPublicQrInfo(id);
-      } catch (e) {
-        console.error('Error fetching public QR info', e);
+      if (qrResSettled.status === 'fulfilled') {
+        qrApiRes = qrResSettled.value;
       }
 
-      // 4. Query Dashboard info
+      // 3. Process Dashboard info
       let dashKit = null;
-      try {
-        const dashRes = await api.getDashboard();
-        if (dashRes.success && dashRes.kits) {
-          dashKit = dashRes.kits.find(
-            (k) => k.copies?.some((c) => c.copyCode === id || c.publicToken === id) || k.productId === id
-          );
-        }
-      } catch (e) {
-        console.error('Error fetching dashboard kit', e);
+      if (dashResSettled.status === 'fulfilled' && dashResSettled.value?.success && dashResSettled.value.kits) {
+        dashKit = dashResSettled.value.kits.find(
+          (k) => k.copies?.some((c) => c.copyCode === id || c.publicToken === id) || k.productId === id
+        );
       }
 
       // Build unified Tag Details Model
