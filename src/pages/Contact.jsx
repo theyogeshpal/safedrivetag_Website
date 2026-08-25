@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, ChevronRight, ChevronDown, Clock, ShieldCheck, Headphones } from 'lucide-react';
+import { Mail, ChevronRight, ChevronDown, Clock, ShieldCheck, Headphones, Send, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
+import api from '../services/api';
+import { showToast } from '../utils/swal';
 
 export default function Contact() {
   const [openFaq, setOpenFaq] = useState(null);
@@ -17,6 +19,7 @@ export default function Contact() {
     name: '',
     email: '',
     phone: '',
+    subject: 'General Inquiry',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,11 +46,12 @@ export default function Contact() {
         name: formData.name.trim(),
         phone: cleanPhone,
         email: formData.email.trim() || undefined,
+        subject: formData.subject || 'General Inquiry',
         message: formData.message.trim(),
       });
-      if (res.success) {
-        showToast.success(res.message || 'Your inquiry has been submitted successfully!');
-        setFormData({ name: '', email: '', phone: '', message: '' });
+      if (res.success || res.status === 200) {
+        showToast.success(res.message || 'Your inquiry has been submitted successfully! Our team will contact you soon.');
+        setFormData({ name: '', email: '', phone: '', subject: 'General Inquiry', message: '' });
       } else {
         showToast.error(res.message || 'Failed to submit inquiry.');
       }
