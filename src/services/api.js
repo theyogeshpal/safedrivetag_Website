@@ -181,11 +181,11 @@ export const api = {
   getUserNotifications: () => apiRequest('/user/notifications'),
 
   getUserTransactions: async () => {
-    const res = await apiRequest('/user/transactions');
-    if (res.success && (res.transactions || res.data)) {
+    const res = await apiRequest('/user/ledger');
+    if (res.success && (res.transactions || res.data || res.ledger)) {
       return {
         success: true,
-        transactions: res.transactions || res.data || [],
+        transactions: res.transactions || res.ledger || res.data || [],
       };
     }
     try {
