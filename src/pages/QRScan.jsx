@@ -192,7 +192,7 @@ export default function QRScan() {
 
   // STEP 5 - OPTION 0: SEND INSTANT PUSH NOTIFICATION ALERT
   const handleSendPushAlert = async () => {
-    setActionLoading(true);
+    setActionLoading('push');
     setActionSuccessMsg('');
     try {
       const reasonText = getSelectedReasonText();
@@ -231,7 +231,7 @@ export default function QRScan() {
 
   // STEP 5 - OPTION A: SEND WHATSAPP MESSAGE
   const handleSendWhatsAppMessage = async () => {
-    setActionLoading(true);
+    setActionLoading('whatsapp');
     setActionSuccessMsg('');
     try {
       const reasonText = getSelectedReasonText();
@@ -262,7 +262,7 @@ export default function QRScan() {
 
   // STEP 5 - OPTION B: CALL VEHICLE OWNER (Masked Voice Bridge)
   const handleCallOwner = async () => {
-    setActionLoading(true);
+    setActionLoading('call');
     setActionSuccessMsg('');
     try {
       const reasonText = getSelectedReasonText();
@@ -287,7 +287,7 @@ export default function QRScan() {
 
   // STEP 5 - OPTION C: EMERGENCY ALERT (LIVE GPS LOCATION)
   const handleEmergencySOS = async () => {
-    setActionLoading(true);
+    setActionLoading('sos');
     setActionSuccessMsg('');
 
     const sendSosPayload = async (coords) => {
@@ -610,8 +610,8 @@ export default function QRScan() {
               {/* Option 0: Send Push Notification Directly */}
               <button
                 onClick={handleSendPushAlert}
-                disabled={actionLoading}
-                className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+                disabled={actionLoading !== false}
+                className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3 text-left">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
@@ -623,15 +623,15 @@ export default function QRScan() {
                   </div>
                 </div>
                 <span className="text-xs bg-white text-orange-600 font-black px-2.5 py-1 rounded-md shrink-0">
-                  {actionLoading ? 'Sending...' : 'Send Alert 🔔'}
+                  {actionLoading === 'push' ? 'Sending...' : 'Send Alert 🔔'}
                 </span>
               </button>
 
               {/* Option A: Send WhatsApp Message */}
               <button
                 onClick={handleSendWhatsAppMessage}
-                disabled={actionLoading}
-                className="w-full bg-[#25D366] hover:bg-green-600 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+                disabled={actionLoading !== false}
+                className="w-full bg-[#25D366] hover:bg-green-600 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3 text-left">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
@@ -643,15 +643,15 @@ export default function QRScan() {
                   </div>
                 </div>
                 <span className="text-xs bg-white text-green-700 font-black px-2.5 py-1 rounded-md shrink-0">
-                  WhatsApp
+                  {actionLoading === 'whatsapp' ? 'Opening...' : 'WhatsApp'}
                 </span>
               </button>
 
               {/* Option B: Call Vehicle Owner (Masked Voice Call) */}
               <button
                 onClick={handleCallOwner}
-                disabled={actionLoading}
-                className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+                disabled={actionLoading !== false}
+                className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3 text-left">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
@@ -663,15 +663,15 @@ export default function QRScan() {
                   </div>
                 </div>
                 <span className="text-xs bg-white text-[#2874f0] font-black px-2.5 py-1 rounded-md shrink-0">
-                  {actionLoading ? 'Connecting...' : 'Call Now'}
+                  {actionLoading === 'call' ? 'Connecting...' : 'Call Now'}
                 </span>
               </button>
 
               {/* Option C: Emergency SOS Broadcast */}
               <button
                 onClick={handleEmergencySOS}
-                disabled={actionLoading}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98]"
+                disabled={actionLoading !== false}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3 text-left">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
@@ -683,7 +683,7 @@ export default function QRScan() {
                   </div>
                 </div>
                 <span className="text-xs bg-white text-red-600 font-black px-2.5 py-1 rounded-md shrink-0">
-                  Send SOS
+                  {actionLoading === 'sos' ? 'Sending...' : 'Send SOS'}
                 </span>
               </button>
 
