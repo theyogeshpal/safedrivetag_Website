@@ -256,11 +256,21 @@ export default function TagDetails() {
       } else if (dashKit?.copies && dashKit.copies.length > 0) {
         copies = dashKit.copies;
       } else {
+        // Only generate exactly ONE copy as fallback, do not hallucinate a second copy
         copies = [
-          { copyCode: `${baseKitCode}-C1`, publicToken: id, qrType: foundOrder?.qrType || 'DIGITAL' },
-          { copyCode: `${baseKitCode}-C2`, publicToken: `${id}_c2`, qrType: foundOrder?.qrType || 'DIGITAL' },
+          { copyCode: `${baseKitCode}-C1`, publicToken: id, qrType: foundOrder?.qrType || 'DIGITAL' }
         ];
       }
+
+      // Deduplicate to prevent "double doubles" from backend
+      const uniqueCopiesMap = new Map();
+      copies.forEach((c) => {
+        const key = c.copyCode || c.publicToken;
+        if (key && !uniqueCopiesMap.has(key)) {
+          uniqueCopiesMap.set(key, c);
+        }
+      });
+      copies = Array.from(uniqueCopiesMap.values());
 
       const isDigital = foundOrder?.qrType === 'DIGITAL' || foundOrder?.productType === 'DIGITAL' || qrApiRes?.qrType === 'DIGITAL';
 
