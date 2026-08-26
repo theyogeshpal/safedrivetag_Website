@@ -249,12 +249,17 @@ export default function DashboardOrders() {
 
                     {/* Actions on this Order */}
                     <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                      {isDigital && !isTagActive && (
+                      {isDigital && (
                         <Link
-                          to={`/register/${primaryToken}`}
-                          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold px-3.5 py-1.5 rounded text-xs flex items-center gap-1.5 shadow-sm transition-all animate-pulse"
+                          to={isTagActive ? '/dashboard' : `/register/${primaryToken}`}
+                          className={`font-bold px-3.5 py-1.5 rounded text-xs flex items-center gap-1.5 shadow-sm transition-all ${
+                            isTagActive 
+                              ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' 
+                              : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white animate-pulse'
+                          }`}
                         >
-                          <Zap size={13} /> Activate Pass
+                          {isTagActive ? <CheckCircle2 size={13} /> : <Zap size={13} />} 
+                          {isTagActive ? 'Activated' : 'Activate Pass'}
                         </Link>
                       )}
 
