@@ -602,89 +602,52 @@ export default function QRScan() {
             </div>
 
             {/* 2. Instant Action Execution Buttons */}
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-3">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-500">
-                2. Choose Action to Contact Owner
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-4">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-500 text-center mb-1">
+                Choose Action to Contact Owner
               </h3>
 
-              {/* Option 0: Send Push Notification Directly */}
+              {/* Option 0: Send Push Notification */}
               <button
                 onClick={handleSendPushAlert}
                 disabled={actionLoading !== false}
-                className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-[#d65a18] hover:bg-[#c25215] text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                    <BellRing size={20} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm leading-tight">Send Instant Push Notification</p>
-                    <p className="text-[11px] text-white/80 font-normal">Direct mobile screen & bell alert to vehicle owner</p>
-                  </div>
-                </div>
-                <span className="text-xs bg-white text-orange-600 font-black px-2.5 py-1 rounded-md shrink-0">
-                  {actionLoading === 'push' ? 'Sending...' : 'Send Alert 🔔'}
-                </span>
+                <BellRing size={18} />
+                <span>{actionLoading === 'push' ? 'Sending...' : '🔔 Send Instant Push Alert'}</span>
               </button>
 
-              {/* Option A: Send WhatsApp Message */}
-              <button
-                onClick={handleSendWhatsAppMessage}
-                disabled={actionLoading !== false}
-                className="w-full bg-[#25D366] hover:bg-green-600 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                    <FaWhatsapp size={22} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm leading-tight">Send WhatsApp Message</p>
-                    <p className="text-[11px] text-green-100 font-normal">Pre-filled alert with selected reason</p>
-                  </div>
-                </div>
-                <span className="text-xs bg-white text-green-700 font-black px-2.5 py-1 rounded-md shrink-0">
-                  {actionLoading === 'whatsapp' ? 'Opening...' : 'WhatsApp'}
-                </span>
-              </button>
+              {/* Row: Call and WhatsApp */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Option B: Call Owner */}
+                <button
+                  onClick={handleCallOwner}
+                  disabled={actionLoading !== false}
+                  className="w-full bg-[#1e8b39] hover:bg-[#18752f] text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  <Phone size={18} />
+                  <span>{actionLoading === 'call' ? 'Connecting...' : 'Call Owner'}</span>
+                </button>
 
-              {/* Option B: Call Vehicle Owner (Masked Voice Call) */}
-              <button
-                onClick={handleCallOwner}
-                disabled={actionLoading !== false}
-                className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                    <Phone size={20} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm leading-tight">Call Vehicle Owner</p>
-                    <p className="text-[11px] text-blue-100 font-normal">100% Number Masked automated bridge</p>
-                  </div>
-                </div>
-                <span className="text-xs bg-white text-[#2874f0] font-black px-2.5 py-1 rounded-md shrink-0">
-                  {actionLoading === 'call' ? 'Connecting...' : 'Call Now'}
-                </span>
-              </button>
+                {/* Option A: WhatsApp */}
+                <button
+                  onClick={handleSendWhatsAppMessage}
+                  disabled={actionLoading !== false}
+                  className="w-full bg-[#1e8b39] hover:bg-[#18752f] text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  <MessageSquare size={18} />
+                  <span>{actionLoading === 'whatsapp' ? 'Opening...' : 'WhatsApp'}</span>
+                </button>
+              </div>
 
-              {/* Option C: Emergency SOS Broadcast */}
+              {/* Option C: Emergency SOS */}
               <button
                 onClick={handleEmergencySOS}
                 disabled={actionLoading !== false}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold p-3.5 rounded-xl shadow-md flex items-center justify-between gap-3 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-[#fff0f0] border border-[#ffcdcd] text-[#c90000] hover:bg-[#ffe5e5] font-bold py-3.5 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                    <AlertTriangle size={20} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm leading-tight">Emergency SOS Broadcast</p>
-                    <p className="text-[11px] text-red-100 font-normal">Live GPS location to 2 family SOS contacts</p>
-                  </div>
-                </div>
-                <span className="text-xs bg-white text-red-600 font-black px-2.5 py-1 rounded-md shrink-0">
-                  {actionLoading === 'sos' ? 'Sending...' : 'Send SOS'}
-                </span>
+                <AlertTriangle size={18} />
+                <span>{actionLoading === 'sos' ? 'Sending...' : '🚨 Critical Accident Emergency SOS'}</span>
               </button>
 
             </div>
