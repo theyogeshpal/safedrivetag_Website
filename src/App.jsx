@@ -44,6 +44,33 @@ const RouteFallback = () => (
   </div>
 );
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    if (error.message && (error.message.includes('Failed to fetch dynamically imported module') || error.message.includes('Importing a module script failed'))) {
+      window.location.reload();
+    }
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-[50vh] flex flex-col items-center justify-center p-6 text-center">
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Deploying Updates...</h2>
+          <p className="text-sm text-gray-600 mb-4">We are updating the app to the latest version.</p>
+          <button onClick={() => window.location.reload()} className="bg-[#2874f0] text-white px-6 py-2 rounded-lg font-bold">Refresh Now</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -68,39 +95,41 @@ function App() {
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <Navbar />
           <div style={{ flexGrow: 1 }}>
-            <Suspense fallback={<RouteFallback />}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/shop/product/:id" element={<ProductDetail />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/privacy" element={<Legal />} />
-                <Route path="/terms" element={<Legal />} />
-                <Route path="/refund" element={<Legal />} />
-                <Route path="/shipping" element={<Legal />} />
-                <Route path="/login" element={<Login />} />
-                
-                {/* Modular User Dashboard Panel Routes */}
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/dashboard/tags" element={<DashboardTags />} />
-                <Route path="/dashboard/orders" element={<DashboardOrders />} />
-                <Route path="/dashboard/transactions" element={<DashboardTransactions />} />
-                <Route path="/dashboard/profile" element={<DashboardProfile />} />
-                <Route path="/dashboard/addresses" element={<DashboardAddresses />} />
-                <Route path="/dashboard/logs" element={<DashboardLogs />} />
-                <Route path="/dashboard/notifications" element={<DashboardNotifications />} />
-                <Route path="/dashboard/tag/:id" element={<TagDetails />} />
-                <Route path="/tag/:id" element={<TagDetails />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/q/:id" element={<QRScan />} />
-                <Route path="/qr/:id" element={<QRScan />} />
-                <Route path="/scan/:id" element={<QRScan />} />
-                <Route path="/register/:id" element={<RegisterTag />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<RouteFallback />}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/shop/product/:id" element={<ProductDetail />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/privacy" element={<Legal />} />
+                  <Route path="/terms" element={<Legal />} />
+                  <Route path="/refund" element={<Legal />} />
+                  <Route path="/shipping" element={<Legal />} />
+                  <Route path="/login" element={<Login />} />
+                  
+                  {/* Modular User Dashboard Panel Routes */}
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/dashboard/tags" element={<DashboardTags />} />
+                  <Route path="/dashboard/orders" element={<DashboardOrders />} />
+                  <Route path="/dashboard/transactions" element={<DashboardTransactions />} />
+                  <Route path="/dashboard/profile" element={<DashboardProfile />} />
+                  <Route path="/dashboard/addresses" element={<DashboardAddresses />} />
+                  <Route path="/dashboard/logs" element={<DashboardLogs />} />
+                  <Route path="/dashboard/notifications" element={<DashboardNotifications />} />
+                  <Route path="/dashboard/tag/:id" element={<TagDetails />} />
+                  <Route path="/tag/:id" element={<TagDetails />} />
+                  <Route path="/admin" element={<Admin />} />
+                  <Route path="/q/:id" element={<QRScan />} />
+                  <Route path="/qr/:id" element={<QRScan />} />
+                  <Route path="/scan/:id" element={<QRScan />} />
+                  <Route path="/register/:id" element={<RegisterTag />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </div>
           <Footer />
         </div>
