@@ -737,7 +737,7 @@ export default function Checkout() {
                   {isSubmitting ? (
                     <>
                       <RefreshCw className="w-5 h-5 animate-spin" />
-                      <span>Sending OTP...</span>
+                      <span>Placing Order...</span>
                     </>
                   ) : (
                     <>
