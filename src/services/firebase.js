@@ -54,6 +54,11 @@ export const initFirebaseMessaging = async () => {
       showToast.success(`🔔 ${title}: ${body}`);
     });
 
+    // Auto-fetch token if permission is already granted so backend knows where to push
+    if ('Notification' in window && Notification.permission === 'granted') {
+      requestFcmToken().catch(err => console.log('Silent FCM fetch failed', err));
+    }
+
     return messaging;
   } catch (error) {
     console.error('Error initializing Firebase Messaging:', error);
