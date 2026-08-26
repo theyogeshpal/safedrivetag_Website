@@ -234,7 +234,7 @@ export default function TagDetails() {
         emergencyList.push({ name: 'Secondary Contact (Not Set)', number: 'N/A' });
       }
 
-      setEmergencyContacts(emergencyList.slice(0, 2));
+      // We slice(0, 2) later when assigning to unified
 
       // Form copies (from order or API or single token)
       let copies = [];
