@@ -88,6 +88,10 @@ export const requestFcmToken = async () => {
       console.log('FCM Token generated:', currentToken);
       try {
         localStorage.setItem('safedrive_fcm_token', currentToken);
+        // Send token to backend so it knows where to send push notifications
+        import('./api').then(({ default: api }) => {
+          api.registerFcmToken(currentToken).catch(err => console.log('Failed to save FCM token to backend', err));
+        });
       } catch (e) {}
       return currentToken;
     }
