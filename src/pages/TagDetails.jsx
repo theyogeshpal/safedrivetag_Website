@@ -202,24 +202,24 @@ export default function TagDetails() {
         });
       }
 
-      // Resolve emergencyList from all available sources
-      let rawContacts = (Array.isArray(cachedEmergency) && cachedEmergency.length >= 2 ? cachedEmergency : null) ||
-                         (flatRegContacts.length > 0 ? flatRegContacts : null) ||
-                         (Array.isArray(reg?.emergencyContacts) && reg.emergencyContacts.length > 0 ? reg.emergencyContacts : null) || 
-                         fallbackTwoContacts ||
-                         cachedEmergency ||
-                         (Array.isArray(qrApiRes?.emergencyContacts) && qrApiRes.emergencyContacts.length > 0 ? qrApiRes.emergencyContacts : null) || 
-                         (Array.isArray(qrApiRes?.vehicle?.emergencyContacts) && qrApiRes.vehicle.emergencyContacts.length > 0 ? qrApiRes.vehicle.emergencyContacts : null) || 
-                         dashKit?.emergencyContacts || 
-                         dashKit?.vehicle?.emergencyContacts || 
-                         (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
+      // Resolve emergencyList from all available sources (Backend first!)
+      let rawContacts = (Array.isArray(qrApiRes?.emergencyContacts) && qrApiRes.emergencyContacts.length > 0 ? qrApiRes.emergencyContacts : null) || 
+                        (Array.isArray(qrApiRes?.vehicle?.emergencyContacts) && qrApiRes.vehicle.emergencyContacts.length > 0 ? qrApiRes.vehicle.emergencyContacts : null) || 
+                        (Array.isArray(dashKit?.emergencyContacts) && dashKit.emergencyContacts.length > 0 ? dashKit.emergencyContacts : null) || 
+                        (Array.isArray(dashKit?.vehicle?.emergencyContacts) && dashKit.vehicle.emergencyContacts.length > 0 ? dashKit.vehicle.emergencyContacts : null) || 
+                        (Array.isArray(cachedEmergency) && cachedEmergency.length >= 2 ? cachedEmergency : null) ||
+                        (flatRegContacts.length > 0 ? flatRegContacts : null) ||
+                        (Array.isArray(reg?.emergencyContacts) && reg.emergencyContacts.length > 0 ? reg.emergencyContacts : null) || 
+                        fallbackTwoContacts ||
+                        cachedEmergency ||
+                        (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
 
       let emergencyList = [];
       if (Array.isArray(rawContacts) && rawContacts.length > 0) {
         emergencyList = rawContacts
           .filter(c => c && (c.number || c.phone || typeof c === 'string'))
           .map((c, idx) => ({
-            name: (typeof c === 'object' && c.name && !c.name.includes('Emergency Contact (Family)')) ? c.name : (idx === 0 ? 'Primary Emergency Contact' : 'Secondary Emergency Contact'),
+            name: (typeof c === 'object' && c.name && c.name.trim() !== '') ? c.name : (idx === 0 ? 'Primary Emergency Contact' : 'Secondary Emergency Contact'),
             number: typeof c === 'object' ? (c.number || c.phone) : String(c),
           }));
       }
