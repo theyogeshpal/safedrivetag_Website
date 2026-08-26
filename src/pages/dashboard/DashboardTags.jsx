@@ -506,7 +506,7 @@ export default function DashboardTags() {
                   </div>
 
                   {/* Middle Row: Vehicle & Contact Specs */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
+                  <div className="flex flex-col py-3">
                     
                     {/* Vehicle Detail */}
                     <div className="flex items-start gap-3">
@@ -541,116 +541,7 @@ export default function DashboardTags() {
                       </div>
                     </div>
 
-                    {/* Contact Config */}
-                    <div className="space-y-1.5 text-xs">
-                      {/* Owner Contact */}
-                      <div className="flex items-center gap-2">
-                        <Phone size={12} className="text-gray-400 shrink-0" />
-                        <span className="text-gray-500 font-medium">Owner:</span>
-                        {(() => {
-                          const rawPhone = tag.phone || tag.ownerPhone || tag.user?.phone || currentUser?.phone;
-                          const cleanPhone = rawPhone ? String(rawPhone).replace(/\D/g, '').slice(-10) : '';
-                          return cleanPhone ? (
-                            <span className="font-bold text-gray-800">+91 {cleanPhone}</span>
-                          ) : (
-                            <span className="text-gray-400 font-normal italic">Not Set</span>
-                          );
-                        })()}
-                      </div>
 
-                      {/* Emergency SOS Contacts */}
-                      <div className="flex items-start gap-2">
-                        <Phone size={12} className="text-green-600 shrink-0 mt-0.5" />
-                        <div className="min-w-0">
-                          <span className="text-gray-500 font-medium">Emergency SOS: </span>
-                          {(() => {
-                            let eList = [];
-                            if (Array.isArray(tag.emergencyContacts) && tag.emergencyContacts.length > 0) {
-                              eList = tag.emergencyContacts;
-                            } else if (Array.isArray(tag.vehicle?.emergencyContacts) && tag.vehicle.emergencyContacts.length > 0) {
-                              eList = tag.vehicle.emergencyContacts;
-                            } else if (tag.emergencyContact1Number || tag.emergencyContact2Number) {
-                              if (tag.emergencyContact1Number) eList.push({ name: tag.emergencyContact1Name || 'SOS 1', number: tag.emergencyContact1Number });
-                              if (tag.emergencyContact2Number) eList.push({ name: tag.emergencyContact2Name || 'SOS 2', number: tag.emergencyContact2Number });
-                            } else if (tag.emergencyContact) {
-                              eList = [{ name: 'SOS', number: tag.emergencyContact }];
-                            }
-
-                            const validContacts = eList.filter(c => {
-                              const num = typeof c === 'object' ? (c.number || c.phone) : c;
-                              return Boolean(num && String(num).replace(/\D/g, '').length >= 10);
-                            });
-
-                            if (validContacts.length > 0) {
-                              return (
-                                <span className="font-bold text-gray-800">
-                                  {validContacts.map((c, i) => {
-                                    const num = String(typeof c === 'object' ? (c.number || c.phone || '') : c).replace(/\D/g, '').slice(-10);
-                                    const name = typeof c === 'object' && c.name && !c.name.includes('SOS') ? `${c.name}: ` : (validContacts.length > 1 ? `SOS ${i + 1}: ` : '');
-                                    return (
-                                      <span key={i} className="inline-block mr-1.5">
-                                        <span className="text-gray-500 font-normal">{name}</span>
-                                        +91 {num}
-                                        {i < validContacts.length - 1 ? ',' : ''}
-                                      </span>
-                                    );
-                                  })}
-                                </span>
-                              );
-                            }
-
-                            return (
-                              <span className="text-gray-400 font-normal italic">Not Configured</span>
-                            );
-                          })()}
-                        </div>
-                      </div>
-
-                      {/* WhatsApp Alerts */}
-                      <div className="flex items-center gap-2">
-                        <MessageCircle size={12} className="text-emerald-600 shrink-0" />
-                        <span className="text-gray-500 font-medium">WhatsApp Alerts:</span>
-                        {(() => {
-                          if (tag.whatsappAlertsEnabled === false) {
-                            return <span className="text-gray-400 font-normal italic">Disabled</span>;
-                          }
-                          const rawWa = tag.whatsapp || tag.whatsappNumber || tag.phone || currentUser?.phone;
-                          const cleanWa = rawWa ? String(rawWa).replace(/\D/g, '').slice(-10) : '';
-                          return cleanWa ? (
-                            <span className="font-bold text-gray-800">+91 {cleanWa}</span>
-                          ) : (
-                            <span className="text-gray-400 font-normal italic">Not Configured</span>
-                          );
-                        })()}
-                      </div>
-                    </div>
-
-                    {/* Privacy & Masking Feature */}
-                    <div className="bg-[#fcfcfc] p-3 rounded border border-gray-100 flex flex-col justify-between text-xs">
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-gray-700 flex items-center gap-1">
-                            <Shield size={12} className="text-[#2874f0]" /> Call Masking Bridge
-                          </span>
-                          <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${
-                            tag.callMaskingEnabled ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
-                          }`}>
-                            {tag.callMaskingEnabled ? 'ON' : 'OFF'}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-gray-500 mt-1">
-                          {tag.callMaskingEnabled 
-                            ? 'Scanners speak via automated bridge without seeing your real number.'
-                            : 'Scanners see direct phone button.'}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => handleToggleMasking(tag.id, tag.callMaskingEnabled)}
-                        className="text-[11px] font-bold text-[#2874f0] hover:underline text-left mt-2 cursor-pointer"
-                      >
-                        {tag.callMaskingEnabled ? 'Disable Masking' : 'Enable Call Masking'}
-                      </button>
-                    </div>
 
                   </div>
 
