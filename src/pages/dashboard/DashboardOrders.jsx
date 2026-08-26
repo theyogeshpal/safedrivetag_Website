@@ -373,7 +373,7 @@ export default function DashboardOrders() {
 
                     <div className="relative inline-block mx-auto max-w-[340px] w-full rounded-2xl overflow-hidden shadow-xl border border-gray-100">
                       <img src="/images/sticker_template.jpg" alt="Digital Pass Card" className="w-full h-auto block" />
-                      <div className="absolute top-[41%] left-[74.5%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
+                      <div className="absolute top-[44%] left-[73.5%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
                         <QRCodeSVG
                           value={scanUrl}
                           size={95}
