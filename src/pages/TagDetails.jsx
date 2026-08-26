@@ -334,12 +334,16 @@ export default function TagDetails() {
       setEditFormData({
         name: unified.owner.name,
         phone: unified.owner.phone,
+        email: unified.owner.email || '',
         whatsappNumber: unified.owner.whatsapp,
         vehicleBrand: unified.vehicle.brand === 'SafeDrive' ? '' : unified.vehicle.brand,
         vehicleName: unified.vehicle.name === 'Smart Vehicle Tag' ? '' : unified.vehicle.name,
         vehicleNumber: unified.vehicle.plate === 'Not Linked Yet' ? '' : unified.vehicle.plate,
         vehicleType: unified.vehicle.type,
-        address: unified.owner.address,
+        address: unified.owner.address || '',
+        city: unified.owner.city || '',
+        state: unified.owner.state || '',
+        pincode: unified.owner.pincode || '',
         emergencyContact1Name: unified.emergencyContacts[0]?.name || '',
         emergencyContact1Number: unified.emergencyContacts[0]?.number || '',
         emergencyContact2Name: unified.emergencyContacts[1]?.name || '',
@@ -382,35 +386,18 @@ export default function TagDetails() {
 
       const payload = {
         name: editFormData.name || '',
-        phone: (editFormData.phone || '').replace(/\D/g, ''),
+        email: editFormData.email || '',
         whatsappNumber: (editFormData.whatsappNumber || '').replace(/\D/g, ''),
         address: editFormData.address || '',
-        vehicleBrand: editFormData.vehicleBrand || '',
-        vehicleName: editFormData.vehicleName,
-        vehicleNumber: editFormData.vehicleNumber.toUpperCase(),
-        emergencyContacts: updatedEmergencyContacts,
+        city: editFormData.city || '',
+        state: editFormData.state || '',
+        pincode: editFormData.pincode || '',
+        emergencyContacts: updatedEmergencyContacts
       };
 
       // Call backend API PUT /user/qr/:id/details
       try {
-        await api.updateUserQrDetails(id, {
-          vehicleNumber: editFormData.vehicleNumber.toUpperCase(),
-          vehicleBrand: editFormData.vehicleBrand,
-          vehicleName: editFormData.vehicleName,
-          emergencyContact1: {
-            name: editFormData.emergencyContact1Name.trim() || 'Primary Contact',
-            phone: editFormData.emergencyContact1Number.replace(/\D/g, ''),
-          },
-          emergencyContact2: {
-            name: editFormData.emergencyContact2Name.trim() || 'Secondary Contact',
-            phone: editFormData.emergencyContact2Number.replace(/\D/g, ''),
-          },
-          emergencyContacts: updatedEmergencyContacts,
-          name: editFormData.name || '',
-          phone: (editFormData.phone || '').replace(/\D/g, ''),
-          whatsappNumber: (editFormData.whatsappNumber || '').replace(/\D/g, ''),
-          address: editFormData.address || '',
-        });
+        await api.updateUserQrDetails(id, payload);
       } catch (apiErr) {
         console.warn('Backend details update warning:', apiErr);
       }
@@ -1062,17 +1049,15 @@ export default function TagDetails() {
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-600 font-bold mb-1">Phone Number</label>
+                    <label className="block text-gray-600 font-bold mb-1">Email Address</label>
                     <input
-                      type="tel"
-                      maxLength={10}
-                      required
-                      value={editFormData.phone || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                      type="email"
+                      value={editFormData.email || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
                       className="w-full border border-gray-300 rounded-lg p-2 font-mono"
                     />
                   </div>
-                  <div>
+                  <div className="col-span-2">
                     <label className="block text-gray-600 font-bold mb-1">WhatsApp Alerts</label>
                     <input
                       type="tel"
@@ -1084,12 +1069,40 @@ export default function TagDetails() {
                     />
                   </div>
                   <div className="col-span-2">
-                    <label className="block text-gray-600 font-bold mb-1">Delivery / Registered Address</label>
+                    <label className="block text-gray-600 font-bold mb-1">Address / Street</label>
                     <textarea
                       rows="2"
                       value={editFormData.address || ''}
                       onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
                       className="w-full border border-gray-300 rounded-lg p-2 text-xs font-medium resize-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-600 font-bold mb-1">City</label>
+                    <input
+                      type="text"
+                      value={editFormData.city || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg p-2 font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-600 font-bold mb-1">State</label>
+                    <input
+                      type="text"
+                      value={editFormData.state || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, state: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg p-2 font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-600 font-bold mb-1">Pincode</label>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={editFormData.pincode || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, pincode: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg p-2 font-mono"
                     />
                   </div>
                 </div>
