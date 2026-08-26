@@ -46,14 +46,25 @@ export default function DashboardNotifications() {
 
         if (perm === 'granted') {
           try {
-            new Notification('🚨 SafeDrive Vehicle Alert (TEST)', {
-              body: 'Firebase Cloud Messaging & Push Pipeline is active on this device!',
-              icon: '/logos/primary.jpeg',
-              badge: '/logos/primary.jpeg',
-            });
+            if ('serviceWorker' in navigator) {
+              const reg = await navigator.serviceWorker.ready;
+              await reg.showNotification('🚨 SafeDrive Vehicle Alert (TEST)', {
+                body: 'Firebase Cloud Messaging is active! You will receive alerts here.',
+                icon: '/logos/primary.jpeg',
+                badge: '/logos/primary.jpeg',
+                vibrate: [200, 100, 200]
+              });
+            } else {
+              new Notification('🚨 SafeDrive Vehicle Alert (TEST)', {
+                body: 'Firebase Cloud Messaging is active on this device!'
+              });
+            }
           } catch (e) {
             console.log('Native notification error', e);
+            alert('Notification permission granted, but failed to show. Error: ' + e.message);
           }
+        } else {
+          alert('Notification permission is ' + perm + '. Please allow notifications in your browser site settings to receive alerts.');
         }
       }
 
