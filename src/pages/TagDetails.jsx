@@ -381,11 +381,11 @@ export default function TagDetails() {
       ];
 
       const payload = {
-        name: editFormData.name,
-        phone: editFormData.phone.replace(/\D/g, ''),
-        whatsappNumber: editFormData.whatsappNumber.replace(/\D/g, ''),
-        address: editFormData.address,
-        vehicleBrand: editFormData.vehicleBrand,
+        name: editFormData.name || '',
+        phone: (editFormData.phone || '').replace(/\D/g, ''),
+        whatsappNumber: (editFormData.whatsappNumber || '').replace(/\D/g, ''),
+        address: editFormData.address || '',
+        vehicleBrand: editFormData.vehicleBrand || '',
         vehicleName: editFormData.vehicleName,
         vehicleNumber: editFormData.vehicleNumber.toUpperCase(),
         emergencyContacts: updatedEmergencyContacts,
@@ -406,10 +406,10 @@ export default function TagDetails() {
             phone: editFormData.emergencyContact2Number.replace(/\D/g, ''),
           },
           emergencyContacts: updatedEmergencyContacts,
-          name: editFormData.name,
-          phone: editFormData.phone.replace(/\D/g, ''),
-          whatsappNumber: editFormData.whatsappNumber.replace(/\D/g, ''),
-          address: editFormData.address,
+          name: editFormData.name || '',
+          phone: (editFormData.phone || '').replace(/\D/g, ''),
+          whatsappNumber: (editFormData.whatsappNumber || '').replace(/\D/g, ''),
+          address: editFormData.address || '',
         });
       } catch (apiErr) {
         console.warn('Backend details update warning:', apiErr);
@@ -1042,6 +1042,54 @@ export default function TagDetails() {
                       value={editFormData.emergencyContact2Number}
                       onChange={(e) => setEditFormData({ ...editFormData, emergencyContact2Number: e.target.value })}
                       className="w-full border border-gray-300 rounded-lg p-2 font-mono"
+                    />
+                  </div>
+                </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-1">3. Owner Profile & Address</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-gray-600 font-bold mb-1">Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.name || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg p-2 font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-600 font-bold mb-1">Phone Number</label>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      required
+                      value={editFormData.phone || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg p-2 font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-600 font-bold mb-1">WhatsApp Alerts</label>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      required
+                      value={editFormData.whatsappNumber || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, whatsappNumber: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg p-2 font-mono"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-gray-600 font-bold mb-1">Delivery / Registered Address</label>
+                    <textarea
+                      rows="2"
+                      value={editFormData.address || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg p-2 text-xs font-medium resize-none"
                     />
                   </div>
                 </div>
