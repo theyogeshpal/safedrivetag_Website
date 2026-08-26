@@ -187,61 +187,54 @@ export default function TagDetails() {
           break;
         }
       }
-      // Extract from reg if flat fields exist
-      const flatRegContacts = [];
-      if (reg?.emergencyContact1Number || reg?.emergencyContact1Name) {
-        flatRegContacts.push({
-          name: reg.emergencyContact1Name || 'Primary Emergency Contact',
-          number: reg.emergencyContact1Number || String(currentUser?.phone || '').replace(/\D/g, '').slice(-10)
-        });
-      }
-      if (reg?.emergencyContact2Number || reg?.emergencyContact2Name) {
-        flatRegContacts.push({
-          name: reg.emergencyContact2Name || 'Secondary Emergency Contact',
-          number: reg.emergencyContact2Number || String(currentUser?.whatsappNumber || '').replace(/\D/g, '').slice(-10)
-        });
-      }
 
-      // Resolve emergencyList from all available sources (Backend first!)
-      let rawContacts = (Array.isArray(qrApiRes?.emergencyContacts) && qrApiRes.emergencyContacts.length > 0 ? qrApiRes.emergencyContacts : null) || 
-                        (Array.isArray(qrApiRes?.vehicle?.emergencyContacts) && qrApiRes.vehicle.emergencyContacts.length > 0 ? qrApiRes.vehicle.emergencyContacts : null) || 
-                        (Array.isArray(dashKit?.emergencyContacts) && dashKit.emergencyContacts.length > 0 ? dashKit.emergencyContacts : null) || 
-                        (Array.isArray(dashKit?.vehicle?.emergencyContacts) && dashKit.vehicle.emergencyContacts.length > 0 ? dashKit.vehicle.emergencyContacts : null) || 
-                        (Array.isArray(cachedEmergency) && cachedEmergency.length >= 2 ? cachedEmergency : null) ||
-                        (flatRegContacts.length > 0 ? flatRegContacts : null) ||
-                        (Array.isArray(reg?.emergencyContacts) && reg.emergencyContacts.length > 0 ? reg.emergencyContacts : null) || 
-                        fallbackTwoContacts ||
-                        cachedEmergency ||
-                        (Array.isArray(currentUser?.emergencyContacts) ? currentUser.emergencyContacts : []);
+      // Strictly extract emergency contacts for THIS specific QR from backend data
+      let qrSpecificContacts = [];
 
-      let emergencyList = [];
-      if (Array.isArray(rawContacts) && rawContacts.length > 0) {
-        emergencyList = rawContacts
-          .filter(c => c && (c.number || c.phone || typeof c === 'string'))
-          .map((c, idx) => ({
-            name: (typeof c === 'object' && c.name && c.name.trim() !== '') ? c.name : (idx === 0 ? 'Primary Emergency Contact' : 'Secondary Emergency Contact'),
-            number: typeof c === 'object' ? (c.number || c.phone) : String(c),
-          }));
+      // Source 1: Root emergencyContacts array
+      const apiContactsArray = qrApiRes?.emergencyContacts || dashKit?.emergencyContacts || qrApiRes?.vehicle?.emergencyContacts || dashKit?.vehicle?.emergencyContacts;
+      
+      // Source 2: Flat fields in registration data
+      const regData = dashKit?.registrationData || qrApiRes?.registrationData || qrApiRes || dashKit || {};
+      
+      if (Array.isArray(apiContactsArray) && apiContactsArray.length > 0) {
+        qrSpecificContacts = apiContactsArray;
+      } else if (regData.emergencyContacts && Array.isArray(regData.emergencyContacts) && regData.emergencyContacts.length > 0) {
+        qrSpecificContacts = regData.emergencyContacts;
+      } else if (regData.emergencyContact1Number || regData.emergencyContact2Number) {
+        if (regData.emergencyContact1Number) {
+          qrSpecificContacts.push({
+            name: regData.emergencyContact1Name || 'Primary Contact',
+            number: regData.emergencyContact1Number
+          });
+        }
+        if (regData.emergencyContact2Number) {
+          qrSpecificContacts.push({
+            name: regData.emergencyContact2Name || 'Secondary Contact',
+            number: regData.emergencyContact2Number
+          });
+        }
       }
 
-      // Ensure 2 dynamic contacts are always available
-      if (emergencyList.length === 1) {
-        const firstNo = emergencyList[0].number;
-        const secondNo = (cachedEmergency && cachedEmergency[1]?.number) ||
-                         (reg?.emergencyContacts && reg.emergencyContacts[1]?.number) ||
-                         (currentUser?.emergencyContacts && currentUser.emergencyContacts[1]?.number) ||
-                         (currentUser?.whatsappNumber && currentUser.whatsappNumber !== firstNo ? currentUser.whatsappNumber : null) ||
-                         '9876543210';
-        emergencyList.push({
-          name: (cachedEmergency && cachedEmergency[1]?.name) || (reg?.emergencyContacts && reg.emergencyContacts[1]?.name) || 'Secondary Emergency Contact',
-          number: String(secondNo).replace(/\D/g, '').slice(-10),
-        });
-      } else if (emergencyList.length === 0) {
-        emergencyList = [
-          { name: 'Primary Emergency Contact', number: String(currentUser?.phone || '9695078159').replace(/\D/g, '').slice(-10) },
-          { name: 'Secondary Emergency Contact', number: String(currentUser?.whatsappNumber || '9876543210').replace(/\D/g, '').slice(-10) }
+      // Format strictly what we found, do not hallucinate currentUser phone
+      let emergencyList = qrSpecificContacts
+        .filter(c => c && (c.number || c.phone || typeof c === 'string'))
+        .map((c, idx) => ({
+          name: (typeof c === 'object' && c.name && c.name.trim() !== '') ? c.name : (idx === 0 ? 'Primary Contact' : 'Secondary Contact'),
+          number: typeof c === 'object' ? (c.number || c.phone) : String(c),
+        }));
+
+      // Fallbacks ONLY if completely empty (which should rarely happen if registered properly)
+      if (emergencyList.length === 0) {
+        emergencyList = fallbackTwoContacts || cachedEmergency || [
+          { name: 'Primary Contact (Not Set)', number: 'N/A' },
+          { name: 'Secondary Contact (Not Set)', number: 'N/A' }
         ];
+      } else if (emergencyList.length === 1) {
+        emergencyList.push({ name: 'Secondary Contact (Not Set)', number: 'N/A' });
       }
+
+      setEmergencyContacts(emergencyList.slice(0, 2));
 
       // Form copies (from order or API or single token)
       let copies = [];
