@@ -489,11 +489,11 @@ export default function QRScan() {
 
             {isVehicle ? (
               <p className="text-xs text-gray-600 leading-relaxed">
-                To protect the owner from spam, enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>) OR the <strong>4-digit PIN</strong> on the tag:
+                To protect the owner from spam, enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>):
               </p>
             ) : (
               <p className="text-xs text-gray-600 leading-relaxed">
-                To protect the owner from spam, enter the <strong>4-digit Security PIN</strong> printed on the tag (or the last 4 digits of the item code):
+                To protect the owner from spam, enter the <strong>4-digit Security PIN</strong> printed on the tag:
               </p>
             )}
 
@@ -502,7 +502,7 @@ export default function QRScan() {
                 type="text"
                 maxLength={4}
                 autoFocus
-                placeholder={isVehicle ? "Last 4 digits or PIN (e.g. 1234)" : "4-digit PIN (e.g. 5781)"}
+                placeholder={isVehicle ? "Last 4 digits (e.g. 1234)" : "4-digit PIN (e.g. 5781)"}
                 value={plateInput}
                 onChange={(e) => setPlateInput(e.target.value.replace(/\D/g, ''))}
                 className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl py-3 px-4 text-center font-mono font-black text-xl tracking-widest outline-none transition-all"
