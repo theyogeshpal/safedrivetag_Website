@@ -327,7 +327,7 @@ export default function RegisterTag() {
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-black mb-2">Tag Kit Activated Successfully!</h2>
             <p className="text-sm text-black/60 font-medium mb-6">
-              Tag ID <span className="font-mono font-bold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">{token}</span> is now active and linked to <strong className="text-black">{name || 'your account'}</strong>.
+              Your tag is now active and linked to <strong className="text-black">{name || 'your account'}</strong>.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link 
