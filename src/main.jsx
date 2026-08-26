@@ -16,6 +16,16 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+// Fix for Vercel SPA Chunk Load Errors on new deployments
+window.addEventListener('vite:preloadError', (event) => {
+  window.location.reload(); 
+});
+window.addEventListener('error', (e) => {
+  if (e.message && (e.message.includes('Failed to fetch dynamically imported module') || e.message.includes('Importing a module script failed'))) {
+    window.location.reload();
+  }
+});
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
