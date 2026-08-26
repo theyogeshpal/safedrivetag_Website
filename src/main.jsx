@@ -25,6 +25,11 @@ window.addEventListener('error', (e) => {
     window.location.reload();
   }
 });
+window.addEventListener('unhandledrejection', (e) => {
+  if (e.reason && e.reason.message && (e.reason.message.includes('Failed to fetch dynamically imported module') || e.reason.message.includes('Importing a module script failed'))) {
+    window.location.reload();
+  }
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
