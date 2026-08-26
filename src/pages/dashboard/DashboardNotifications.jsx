@@ -46,17 +46,26 @@ export default function DashboardNotifications() {
 
         if (perm === 'granted') {
           try {
+            let shown = false;
             if ('serviceWorker' in navigator) {
-              const reg = await navigator.serviceWorker.ready;
-              await reg.showNotification('🚨 SafeDrive Vehicle Alert (TEST)', {
-                body: 'Firebase Cloud Messaging is active! You will receive alerts here.',
-                icon: '/logos/primary.jpeg',
-                badge: '/logos/primary.jpeg',
-                vibrate: [200, 100, 200]
-              });
-            } else {
+              try {
+                const reg = await navigator.serviceWorker.ready;
+                await reg.showNotification('🚨 SafeDrive Vehicle Alert (TEST)', {
+                  body: 'Firebase Cloud Messaging is active! You will receive alerts here.',
+                  icon: '/logos/primary.jpeg',
+                  badge: '/logos/primary.jpeg',
+                  vibrate: [200, 100, 200]
+                });
+                shown = true;
+              } catch (swErr) {
+                console.log('SW Notification failed, falling back', swErr);
+              }
+            }
+            if (!shown) {
               new Notification('🚨 SafeDrive Vehicle Alert (TEST)', {
-                body: 'Firebase Cloud Messaging is active on this device!'
+                body: 'Firebase Cloud Messaging is active on this device!',
+                icon: '/logos/primary.jpeg',
+                badge: '/logos/primary.jpeg'
               });
             }
           } catch (e) {
