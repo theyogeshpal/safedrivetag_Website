@@ -5,22 +5,36 @@ import { showToast, customSwal, playNotificationBellSound } from '../../utils/sw
 import { requestFcmToken } from '../../services/firebase';
 
 export default function DashboardNotifications() {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: 'Welcome to SafeDrive-Tag Protection',
-      message: 'Your account is live. You will receive private vehicle alerts whenever someone scans your QR pass.',
-      time: 'Just now',
-      read: true,
-    },
-    {
-      id: 2,
-      title: 'Voice Call Masking Active',
-      message: 'Call Masking Bridge is active on all your vehicle tags to keep your personal phone number private.',
-      time: '2 hours ago',
-      read: true,
-    }
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const { default: api } = await import('../../services/api');
+        const res = await api.getUserNotifications();
+        if (res.success && res.notifications) {
+          setNotifications(res.notifications);
+        } else {
+          // Fallback if no real notifications found yet
+          setNotifications([
+            {
+              id: 1,
+              title: 'Welcome to SafeDrive-Tag Protection',
+              message: 'Your account is live. You will receive private vehicle alerts whenever someone scans your QR pass.',
+              time: 'Just now',
+              read: true,
+            }
+          ]);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotifications();
+  }, []);
 
   const [isTesting, setIsTesting] = useState(false);
 
@@ -142,23 +156,31 @@ export default function DashboardNotifications() {
 
         {/* Notifications List */}
         <div className="space-y-3">
-          {notifications.map((n) => (
-            <div
-              key={n.id}
-              className="border border-gray-200 p-4 rounded-sm bg-white space-y-1 text-xs hover:border-gray-300 transition-all"
-            >
-              <div className="flex items-center justify-between">
-                <h4 className="font-bold text-gray-900 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-600" />
-                  {n.title}
-                </h4>
-                <span className="text-gray-400 text-[11px]">{n.time}</span>
+          {loading ? (
+            <p className="text-xs text-gray-500 text-center py-4">Loading alerts...</p>
+          ) : notifications.length === 0 ? (
+            <p className="text-xs text-gray-500 text-center py-4">No notifications found.</p>
+          ) : (
+            notifications.map((n) => (
+              <div
+                key={n.id || n._id}
+                className="border border-gray-200 p-4 rounded-sm bg-white space-y-1 text-xs hover:border-gray-300 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-gray-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-600" />
+                    {n.title || n.type || 'Alert'}
+                  </h4>
+                  <span className="text-gray-400 text-[11px]">
+                    {n.time || (n.createdAt ? new Date(n.createdAt).toLocaleString() : 'Just now')}
+                  </span>
+                </div>
+                <p className="text-gray-600 pl-4 leading-relaxed font-medium">
+                  {n.message || n.body}
+                </p>
               </div>
-              <p className="text-gray-600 pl-4 leading-relaxed font-medium">
-                {n.message}
-              </p>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
       </div>
