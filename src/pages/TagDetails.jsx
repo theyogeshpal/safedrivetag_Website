@@ -72,10 +72,11 @@ export default function TagDetails() {
   const loadTagData = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch Orders, QR Info, and Dashboard in parallel
-      const [ordersResSettled, qrResSettled, dashResSettled] = await Promise.allSettled([
+      // Fetch Orders, QR Info, Private QR details, and Dashboard in parallel
+      const [ordersResSettled, qrResSettled, privateQrSettled, dashResSettled] = await Promise.allSettled([
         api.getUserOrders(),
         api.getPublicQrInfo(id),
+        api.getUserQrDetails(id),
         api.getDashboard()
       ]);
 
@@ -97,10 +98,16 @@ export default function TagDetails() {
         }
       }
 
-      // 2. Process Public QR Info
+      // 2. Process QR Info (Merge private and public)
       let qrApiRes = null;
-      if (qrResSettled.status === 'fulfilled') {
+      if (privateQrSettled.status === 'fulfilled' && privateQrSettled.value?.success) {
+        qrApiRes = privateQrSettled.value.data || privateQrSettled.value;
+      }
+      if (!qrApiRes && qrResSettled.status === 'fulfilled') {
         qrApiRes = qrResSettled.value;
+      } else if (qrApiRes && qrResSettled.status === 'fulfilled') {
+        // Merge them so we get public + private fields
+        qrApiRes = { ...qrResSettled.value, ...qrApiRes };
       }
 
       // 3. Process Dashboard info
