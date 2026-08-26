@@ -325,11 +325,13 @@ export const api = {
     });
   },
 
-  sendPushNotification: (token, reason) =>
-    apiRequest(`/public/qr/${token}/push-notification`, {
+  sendPushNotification: (token, reasonText) => {
+    const text = typeof reasonText === 'string' ? reasonText : reasonText?.reason || 'Alert';
+    return apiRequest(`/public/qr/${token}/push-notification`, {
       method: 'POST',
-      body: { reason: typeof reason === 'string' ? reason : reason?.reason || 'Alert' },
-    }),
+      body: { messageText: text, reason: text },
+    });
+  },
 
   triggerEmergency: (token, data) =>
     apiRequest(`/public/qr/${token}/emergency`, {
