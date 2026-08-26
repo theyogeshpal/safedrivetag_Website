@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../services/api';
-import { showToast, playNotificationBellSound } from '../utils/swal';
+import { showToast, playNotificationBellSound, customSwal } from '../utils/swal';
 
 export default function QRScan() {
   const navigate = useNavigate();
@@ -260,26 +260,55 @@ export default function QRScan() {
     }
   };
 
-  // STEP 5 - OPTION B: CALL VEHICLE OWNER (Masked Voice Bridge)
+  // STEP 5 - OPTION B: CALL VEHICLE OWNER (MASKED)
   const handleCallOwner = async () => {
+    const reasonText = getSelectedReasonText();
+
+    // Ask for caller's phone number
+    const { value: callerPhone, isConfirmed } = await customSwal.fire({
+      title: 'Enter Your Mobile Number',
+      text: 'We need your number to connect you securely with the owner.',
+      input: 'tel',
+      inputPlaceholder: 'Enter 10-digit mobile number',
+      inputAttributes: {
+        maxlength: 10,
+        pattern: '[0-9]*'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Initiate Call',
+      confirmButtonColor: '#1e8b39',
+      cancelButtonText: 'Cancel',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Please enter your mobile number!';
+        }
+        if (value.length < 10) {
+          return 'Please enter a valid 10-digit number!';
+        }
+      }
+    });
+
+    if (!isConfirmed || !callerPhone) return;
+
     setActionLoading('call');
     setActionSuccessMsg('');
     try {
-      const reasonText = getSelectedReasonText();
-      const res = await api.initiateCall(token, plateInput || '0000', reasonText);
+      const res = await api.initiateCall(token, callerPhone, reasonText, plateInput);
+      
+      // Just show the raw response in a popup for now as requested by user
+      customSwal.fire({
+        title: res.success ? 'API Response (Success)' : 'API Response (Failed)',
+        html: `<pre style="text-align: left; font-size: 12px; background: #f4f4f4; padding: 10px; border-radius: 5px;">${JSON.stringify(res, null, 2)}</pre>`,
+        icon: res.success ? 'success' : 'error',
+        confirmButtonColor: '#1e8b39'
+      });
+
       if (res.success) {
-        const dialNumber = res.dialNumber || res.targetPhone || qrData?.phone;
-        if (dialNumber) {
-          window.location.href = `tel:${dialNumber}`;
-        }
-        setActionSuccessMsg(res.message || 'Connecting masked phone call to vehicle owner...');
-        showToast.success('Connecting masked call...');
-        setTimeout(() => setActionSuccessMsg(''), 4000);
-      } else {
-        showToast.error(res.message || 'Could not initiate call at this moment.');
+        setActionSuccessMsg('Connecting to owner... Please wait.');
       }
     } catch (err) {
-      showToast.error('Error initiating voice bridge call.');
+      console.error(err);
+      showToast.error('Failed to initiate call.');
     } finally {
       setActionLoading(false);
     }
