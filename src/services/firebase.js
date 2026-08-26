@@ -24,15 +24,14 @@ export const initFirebaseMessaging = async () => {
 
     const messaging = getMessaging(app);
 
-    // Register Service Worker
+    // Wait for the main Service Worker to be ready
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/firebase-messaging-sw.js')
+      navigator.serviceWorker.ready
         .then((reg) => {
-          console.log('Firebase Service Worker registered:', reg.scope);
+          console.log('Firebase using active Service Worker:', reg.scope);
         })
         .catch((err) => {
-          console.warn('Firebase Service Worker registration notice:', err);
+          console.warn('Firebase Service Worker wait notice:', err);
         });
 
       // Listen for background service worker ringtone trigger
