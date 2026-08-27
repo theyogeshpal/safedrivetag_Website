@@ -410,7 +410,7 @@ export default function DashboardTags() {
               </span>
             </div>
             <p className="text-xs text-[#878787] mt-0.5">
-              Manage call masking, SOS contacts, and instant scan alerts for your registered vehicles
+              Manage call masking, SOS contacts, and instant scan alerts for your registered items
             </p>
           </div>
 
@@ -428,7 +428,7 @@ export default function DashboardTags() {
         {/* Metric Banner (Live Backend Stats) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 bg-[#fbfbfb] p-3.5 rounded-sm border border-gray-200/70">
           <div className="p-2.5">
-            <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Total Vehicle Kits</p>
+            <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Total Kits</p>
             <p className="text-xl font-bold text-[#212121] mt-0.5">{dashboardStats.totalKits || userTags.length}</p>
             <span className="text-[10px] text-green-600 font-medium">All Protected</span>
           </div>
@@ -700,7 +700,7 @@ export default function DashboardTags() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-gray-700 font-bold uppercase mb-1">Vehicle Model</label>
+                  <label className="block text-[11px] text-gray-500 font-bold uppercase mb-1">Asset / Item Model</label>
                   <input
                     type="text"
                     required
