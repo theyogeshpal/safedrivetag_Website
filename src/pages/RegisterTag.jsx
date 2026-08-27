@@ -109,6 +109,7 @@ export default function RegisterTag() {
       const res = await api.sendActivationOtp({
         phone: cleanPhone,
         name: name.trim() || 'Tag Owner',
+        token: token,
       });
 
       if (res.success === true || (res.success !== false && res.status === 200)) {
@@ -161,6 +162,7 @@ export default function RegisterTag() {
       const res = await api.verifyActivationOtp({
         phone: cleanPhone,
         otp: enteredOtp,
+        token: token,
       });
 
       if (res.success === true || (res.success !== false && res.status === 200)) {
