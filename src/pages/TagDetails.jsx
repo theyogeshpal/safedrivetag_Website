@@ -158,8 +158,11 @@ export default function TagDetails() {
                            !!(qrApiRes?.vehicle?.vehicleNumber) || 
                            !!(dashKit?.vehicle?.vehicleNumber);
 
+      // Ensure we only process the exact kit requested by URL ID
+      const targetBaseKit = id.replace(/[-_]?C[0-9]+$/i, '').replace(/[-_]?COPY[0-9]+$/i, '');
+
       // Clean Kit Number Resolution (e.g. SD001C1 -> SD001)
-      const rawCode = matchedAllocated?.[0]?.copyCode || 
+      const rawCode = targetBaseKit ||
                       qrApiRes?.kitId || 
                       qrApiRes?.copyCode || 
                       dashKit?.copies?.[0]?.copyCode || 
@@ -168,9 +171,17 @@ export default function TagDetails() {
                       reg?.id || 
                       '';
 
-      const baseKitCode = rawCode 
+      const baseKitCode = targetBaseKit || (rawCode 
         ? rawCode.replace(/[-_]?C[0-9]+$/i, '').replace(/[-_]?COPY[0-9]+$/i, '') 
-        : (qrApiRes?.kitId || (foundOrder?.orderNumber ? `SD001` : `SD001`));
+        : (qrApiRes?.kitId || (foundOrder?.orderNumber ? `SD001` : `SD001`)));
+      
+      // Filter matchedAllocated so it ONLY contains stickers belonging to THIS Kit, not the whole order
+      if (matchedAllocated && matchedAllocated.length > 0) {
+        matchedAllocated = matchedAllocated.filter(q => {
+          const qKit = (q.kitId || q.copyCode || q.publicToken || '').replace(/[-_]?C[0-9]+$/i, '').replace(/[-_]?COPY[0-9]+$/i, '');
+          return qKit === baseKitCode || q.copyCode === id || q.publicToken === id;
+        });
+      }
       
       const vBrand = qrApiRes?.vehicle?.vehicleBrand || qrApiRes?.vehicleBrand || reg.vehicleBrand || dashKit?.vehicle?.vehicleBrand || (isRegistered ? 'Vehicle' : 'SafeDrive');
       const vName = qrApiRes?.vehicle?.vehicleName || qrApiRes?.vehicleName || reg.vehicleName || dashKit?.vehicle?.vehicleName || foundOrder?.title || ((qrApiRes?.qrFor === 'Luggage' || qrApiRes?.vehicleType === 'Luggage' || dashKit?.vehicleType === 'Luggage') ? 'Smart Item Tag' : 'Smart Vehicle Tag');
