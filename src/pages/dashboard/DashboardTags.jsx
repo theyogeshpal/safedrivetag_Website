@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { 
   Plus, 
   Eye, 
@@ -29,6 +29,7 @@ import { showToast, showConfirmDialog, customSwal } from '../../utils/swal';
 
 export default function DashboardTags() {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   // State
   const [userTags, setUserTags] = useState([]);
@@ -225,6 +226,12 @@ export default function DashboardTags() {
         totalMessagesLeft: finalTagsList.reduce((sum, t) => sum + (t.messageBalance || 0), 0),
         activeProtectionCount: finalTagsList.length,
       });
+
+      // Redirect to orders page if no active tags are found
+      if (finalTagsList.length === 0) {
+        navigate('/dashboard/orders');
+      }
+
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
       setUserTags([]);
@@ -234,10 +241,12 @@ export default function DashboardTags() {
         totalMessagesLeft: 0,
         activeProtectionCount: 0,
       });
+      // Redirect on error if we assume 0 tags
+      navigate('/dashboard/orders');
     } finally {
       setIsLoadingDashboard(false);
     }
-  }, [currentUser]);
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     loadDashboardData();
