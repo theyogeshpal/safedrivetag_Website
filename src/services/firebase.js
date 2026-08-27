@@ -69,11 +69,15 @@ export const initFirebaseMessaging = async () => {
 export const requestFcmToken = async () => {
   try {
     const supported = await isSupported();
-    if (!supported) return null;
+    if (!supported) {
+      alert('FCM is not supported on this browser/device.');
+      return null;
+    }
 
     if ('Notification' in window) {
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
+        alert('Notification permission denied by user.');
         return null;
       }
     }
@@ -94,13 +98,19 @@ export const requestFcmToken = async () => {
         localStorage.setItem('safedrive_fcm_token', currentToken);
         // Send token to backend so it knows where to send push notifications
         import('./api').then(({ default: api }) => {
-          api.registerFcmToken(currentToken).catch(err => console.log('Failed to save FCM token to backend', err));
+          api.registerFcmToken(currentToken).catch(err => {
+            alert('Failed to save FCM token to backend: ' + err.message);
+            console.log('Failed to save FCM token to backend', err);
+          });
         });
       } catch (e) {}
       return currentToken;
+    } else {
+      alert('Failed to generate FCM Token. Check VAPID keys or Firebase config.');
     }
     return null;
   } catch (err) {
+    alert('Error retrieving FCM token: ' + err.message);
     console.error('Error retrieving FCM token:', err);
     return null;
   }

@@ -174,10 +174,10 @@ export default function Shop() {
                       className="relative bg-orange-50/40 rounded-2xl p-3 sm:p-4 border border-orange-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5 bg-white"
                     >
                       <img 
-                        src={prod.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg'} 
+                        src={prod.imageUrl || '/images/safedrive-tag-final.png'} 
                         alt={prod.title}
                         onError={(e) => {
-                          e.currentTarget.src = 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
+                          e.currentTarget.src = '/images/safedrive-tag-final.png';
                         }}
                         className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500" 
                       />

@@ -72,6 +72,7 @@ export default function DashboardNotifications() {
                 });
                 shown = true;
               } catch (swErr) {
+                alert('Service Worker Error: ' + swErr.message);
                 console.log('SW Notification failed, falling back', swErr);
               }
             }
@@ -83,11 +84,11 @@ export default function DashboardNotifications() {
               });
             }
           } catch (e) {
+            alert('Native notification error: ' + e.message);
             console.log('Native notification error', e);
-            alert('Notification permission granted, but failed to show. Error: ' + e.message);
           }
         } else {
-          alert('Notification permission is ' + perm + '. Please allow notifications in your browser site settings to receive alerts.');
+          alert('Notification permission is ' + perm + '. Please allow notifications in your browser settings.');
         }
       }
 

@@ -184,10 +184,10 @@ export default function ProductDetail() {
           <div className="md:w-1/2 flex flex-col gap-4">
             <div className="w-full aspect-square rounded-2xl overflow-hidden bg-orange-50/20 border border-black/5 relative group flex items-center justify-center p-4 bg-white">
               <img 
-                src={(product.images && product.images.length > 0 && product.images[activeImage || 0]) || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg'} 
+                src={(product.images && product.images.length > 0 && product.images[activeImage || 0]) || '/images/safedrive-tag-final.png'} 
                 alt={product.name} 
                 onError={(e) => {
-                  e.currentTarget.src = 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
+                  e.currentTarget.src = '/images/safedrive-tag-final.png';
                 }}
                 className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
               />

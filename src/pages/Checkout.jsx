@@ -54,7 +54,7 @@ export default function Checkout() {
       originalPrice: 499,
       quantity: location.state?.quantity || 1,
       qrType: 'PHYSICAL',
-      imageUrl: 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg',
+      imageUrl: '/images/safedrive-tag-final.png',
     }
   );
 
@@ -686,7 +686,7 @@ export default function Checkout() {
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-20 h-20 rounded-2xl bg-black/5 overflow-hidden border border-black/10 shrink-0">
                     <img 
-                      src={selectedProduct.imageUrl || 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg'} 
+                      src={selectedProduct.imageUrl || '/images/safedrive-tag-final.png'} 
                       alt={selectedProduct.title || 'Product'} 
                       className="w-full h-full object-cover" 
                     />

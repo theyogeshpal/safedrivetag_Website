@@ -389,7 +389,7 @@ export default function Home() {
               <div className="relative w-full rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-gray-200 bg-white group transition-transform duration-300 hover:scale-[1.02]">
                 {/* Sticker Template Image */}
                 <img 
-                  src="/safedrivetag-sticker.jpg" 
+                  src="/images/safedrive-tag-final.png" 
                   alt="SafeDrive-Tag Vehicle QR Sticker" 
                   loading="lazy"
                   decoding="async"

@@ -37,10 +37,11 @@ export default function DashboardOrders() {
   // Modals
   const [trackingModalOrder, setTrackingModalOrder] = useState(null);
   const [digitalPassModalOrder, setDigitalPassModalOrder] = useState(null);
+  const [expandedOrder, setExpandedOrder] = useState(null);
   const [activePassCopyIdx, setActivePassCopyIdx] = useState(0);
   const [productsMap, setProductsMap] = useState({});
 
-  const DEFAULT_PRODUCT_IMG = 'https://res.cloudinary.com/dofqiruh7/image/upload/v1787403231/safedrive/products/wf5u8xfkhdfa1v2ndajx.jpg';
+  const DEFAULT_PRODUCT_IMG = '/images/safedrive-tag-final.png';
 
   const loadOrders = useCallback(async () => {
     setIsLoadingOrders(true);
@@ -267,11 +268,11 @@ export default function DashboardOrders() {
                         <button
                           onClick={() => {
                             setActivePassCopyIdx(0);
-                            setDigitalPassModalOrder(ord);
+                            setExpandedOrder(expandedOrder === ord._id ? null : ord._id);
                           }}
                           className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold px-3.5 py-1.5 rounded text-xs flex items-center gap-1.5 shadow-2xs cursor-pointer"
                         >
-                          <Eye size={13} /> View Digital Pass
+                          <Eye size={13} /> {expandedOrder === ord._id ? 'Hide Digital Pass' : 'View Digital Pass'}
                         </button>
                       )}
 
@@ -291,33 +292,16 @@ export default function DashboardOrders() {
                         <FileText size={13} /> Invoice
                       </button>
                     </div>
-                  </div>
-
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-      </div>
-
-      {/* ======================================================== */}
-      {/* IN-APP DIGITAL PASS MODAL */}
-      {/* ======================================================== */}
-      {digitalPassModalOrder && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm animate-fade-up">
+                                      </div>
+{expandedOrder === ord._id && (() => { const digitalPassModalOrder = ord; return (
+        <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-up">
           <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 overflow-hidden text-center flex flex-col max-h-[90vh]">
             <div className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-5 py-3.5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <QrCode size={18} />
                 <h3 className="text-sm font-bold">SafeDrive Digital Safety Pass Kit</h3>
               </div>
-              <button
-                onClick={() => setDigitalPassModalOrder(null)}
-                className="text-white/80 hover:text-white cursor-pointer"
-              >
-                <X size={18} />
-              </button>
+              
             </div>
 
             <div className="p-5 overflow-y-auto space-y-4">
@@ -372,11 +356,11 @@ export default function DashboardOrders() {
                     </div>
 
                     <div className="relative inline-block mx-auto max-w-[340px] w-full rounded-2xl overflow-hidden shadow-xl border border-gray-100">
-                      <img src="/images/sticker_template.jpg" alt="Digital Pass Card" className="w-full h-auto block" />
-                      <div className="absolute top-[44%] left-[73.5%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
+                      <img src="/images/safedrive-tag-final.png" alt="Digital Pass Card" className="w-full h-auto block" />
+                      <div className="absolute top-[50%] left-[75%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
                         <QRCodeSVG
                           value={scanUrl}
-                          size={95}
+                          size={120}
                           level="H"
                           includeMargin={false}
                           imageSettings={{
@@ -452,6 +436,20 @@ export default function DashboardOrders() {
 
       {/* ======================================================== */}
       {/* PHYSICAL TRACKING MODAL */}
+      {/* ======================================================== */}
+      
+</div>
+
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      </div>
+
+      {/* ======================================================== */}
+      {/* IN-APP DIGITAL PASS MODAL */}
       {/* ======================================================== */}
       {trackingModalOrder && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">

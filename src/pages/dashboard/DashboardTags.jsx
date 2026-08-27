@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { 
   Plus, 
   Eye, 
@@ -44,7 +44,6 @@ export default function DashboardTags() {
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
   // Modals
-  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [editingTag, setEditingTag] = useState(null);
   const [qrModalTag, setQrModalTag] = useState(null);
 
@@ -297,49 +296,7 @@ export default function DashboardTags() {
     loadDashboardData();
   };
 
-  const handleLinkNewTag = async (e) => {
-    e.preventDefault();
-    if (!newTagId.trim()) return;
-
-    const formattedId = newTagId.trim().toUpperCase();
-    const cleanPhone = currentUser?.phone?.replace(/\D/g, '') || '';
-    const vPlate = newVehicleNumber ? newVehicleNumber.trim().toUpperCase() : '';
-    const vTitle = newVehicleName?.trim() || 'My Vehicle';
-
-    const payload = {
-      phone: cleanPhone,
-      name: currentUser?.name || 'Owner',
-      whatsappNumber: cleanPhone,
-      vehicleBrand: 'SafeDrive',
-      vehicleName: vTitle,
-      vehicleNumber: vPlate,
-      vehicleType: newVehicleType || 'Car',
-      securityCode: '9921',
-      emergencyContacts: currentUser?.emergencyContacts || [
-        { name: 'Emergency SOS Contact', number: cleanPhone }
-      ],
-    };
-
-    try {
-      const res = await api.registerQrKit(formattedId, payload);
-      if (res.success) {
-        showToast.success('Tag linked and activated successfully!');
-      } else {
-        showToast.error(res.message || 'Failed to link tag.');
-      }
-    } catch (apiErr) {
-      console.error(apiErr);
-      showToast.error('Network error linking tag.');
-    }
-
-    setNewTagId('');
-    setNewVehicleName('');
-    setNewVehicleNumber('');
-    setNewVehicleType('Car');
-    setIsLinkModalOpen(false);
-    loadDashboardData();
-  };
-
+ 
   const handleDownloadQrPng = (tag) => {
     const canvas = document.createElement('canvas');
     canvas.width = 600;
@@ -388,12 +345,7 @@ export default function DashboardTags() {
           </div>
 
           <div className="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
-            <button
-              onClick={() => setIsLinkModalOpen(true)}
-              className="bg-[#2874f0] hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-md text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer"
-            >
-              <Plus size={15} /> + LINK TAG
-            </button>
+          
             <Link
               to="/shop"
               className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-md text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all text-center"
@@ -438,34 +390,7 @@ export default function DashboardTags() {
             <h3 className="text-base font-bold text-gray-800">Loading Your SafeDrive-Tags...</h3>
           </div>
         ) : userTags.length === 0 ? (
-          <div className="py-12 px-4 text-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50/80 max-w-2xl mx-auto my-4 shadow-sm">
-            <div className="w-16 h-16 bg-amber-50 text-amber-600 border border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
-              <Lock size={32} />
-            </div>
-            <span className="inline-block bg-amber-100 text-amber-800 text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full mb-3 border border-amber-200">
-              🔒 Tag Management Disabled — Activation Required
-            </span>
-            <h3 className="text-xl font-black text-[#212121] tracking-tight">No Active SafeDrive-Tag Found</h3>
-            <p className="text-xs sm:text-sm text-[#878787] max-w-md mx-auto mt-2 mb-6 leading-relaxed font-medium">
-              This section is disabled because no active QR tag is linked to your account yet. Once you activate your QR sticker or purchase a safety kit, full tag controls, two-way masking, and emergency alerts will unlock here.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => setIsLinkModalOpen(true)}
-                className="w-full sm:w-auto bg-[#2874f0] hover:bg-blue-700 text-white text-xs font-black px-6 py-3 rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
-              >
-                <Plus size={16} />
-                <span>+ LINK / ACTIVATE EXISTING TAG</span>
-              </button>
-              <Link
-                to="/shop"
-                className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-black px-6 py-3 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2"
-              >
-                <span>BUY A SAFETY TAG (@ ₹299)</span>
-              </Link>
-            </div>
-          </div>
+          <Navigate to="/shop" replace />
         ) : (
           <div className="space-y-4">
             {userTags.map((tag) => {
@@ -631,111 +556,7 @@ export default function DashboardTags() {
       {/* ======================================================== */}
       {/* MODAL 1: LINK NEW TAG MODAL */}
       {/* ======================================================== */}
-      {isLinkModalOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">
-          <div className="bg-white rounded-sm max-w-md w-full shadow-2xl border border-gray-200 overflow-hidden">
-            <div className="bg-[#2874f0] text-white px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <QrCode size={20} />
-                <h3 className="text-base font-bold">Link New SafeDrive-Tag</h3>
-              </div>
-              <button
-                onClick={() => setIsLinkModalOpen(false)}
-                className="text-white/80 hover:text-white cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleLinkNewTag} className="p-6 space-y-4 text-xs">
-              <div>
-                <label className="block text-gray-700 font-bold uppercase mb-1">
-                  Tag ID printed on sticker <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. SD-99210"
-                  value={newTagId}
-                  onChange={(e) => setNewTagId(e.target.value.toUpperCase())}
-                  className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2.5 text-sm font-mono font-bold outline-none uppercase"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold uppercase mb-1.5">Vehicle Type</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[
-                    { id: 'Car', label: 'Car', icon: <Car size={16} /> },
-                    { id: 'Bike', label: 'Bike', icon: <Bike size={16} /> },
-                    { id: 'Luggage', label: 'Luggage', icon: <Briefcase size={16} /> },
-                    { id: 'Truck', label: 'Truck', icon: <Truck size={16} /> },
-                  ].map((vt) => (
-                    <button
-                      key={vt.id}
-                      type="button"
-                      onClick={() => setNewVehicleType(vt.id)}
-                      className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-sm text-xs font-bold transition-all border cursor-pointer ${
-                        newVehicleType === vt.id
-                          ? 'bg-[#2874f0] text-white border-[#2874f0]'
-                          : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
-                      }`}
-                    >
-                      {vt.icon}
-                      <span>{vt.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold uppercase mb-1">
-                  Vehicle Model Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Hyundai Creta / Honda City"
-                  value={newVehicleName}
-                  onChange={(e) => setNewVehicleName(e.target.value)}
-                  className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2.5 text-sm font-medium outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold uppercase mb-1">
-                  Vehicle Registration Number <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. DL 01 AB 1234"
-                  value={newVehicleNumber}
-                  onChange={(e) => setNewVehicleNumber(e.target.value.toUpperCase())}
-                  className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2.5 text-sm font-mono font-bold outline-none uppercase"
-                />
-              </div>
-
-              <div className="pt-3 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsLinkModalOpen(false)}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2.5 rounded-sm text-xs cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2.5 rounded-sm text-xs shadow-sm cursor-pointer uppercase"
-                >
-                  LINK TO ACCOUNT
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
+   
       {/* ======================================================== */}
       {/* MODAL 2: EDIT TAG MODAL (LOCKED VEHICLE NUMBER) */}
       {/* ======================================================== */}
@@ -854,11 +675,11 @@ export default function DashboardTags() {
 
             <div className="p-6">
               <div className="relative inline-block mx-auto max-w-[340px] w-full rounded-2xl overflow-hidden shadow-xl border border-gray-100 mb-4 qr-canvas-download">
-                <img src="/images/sticker_template.jpg" alt="Digital Pass Card" className="w-full h-auto block" />
-                <div className="absolute top-[41%] left-[74.5%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
+                <img src="/images/safedrive-tag-final.png" alt="Digital Pass Card" className="w-full h-auto block" />
+                <div className="absolute top-[50%] left-[75%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
                   <QRCodeSVG
                     value={`https://safedrivetag-website.vercel.app/q/${qrModalTag.publicToken || qrModalTag.id}`}
-                    size={95}
+                    size={120}
                     level="H"
                     includeMargin={false}
                     imageSettings={{

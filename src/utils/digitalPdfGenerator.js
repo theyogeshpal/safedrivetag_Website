@@ -25,7 +25,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
     item.image || 
     item.imageUrl || 
     (Array.isArray(item.images) && item.images[0]) || 
-    '/images/sticker_template.jpg';
+    '/images/safedrive-tag-final.png';
 
   const cardsHtml = copiesList.map((c, index) => {
     const copyToken = c.publicToken || c.token || c.copyCode || token;
