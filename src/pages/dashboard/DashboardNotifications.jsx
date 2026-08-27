@@ -9,14 +9,25 @@ export default function DashboardNotifications() {
   const [loading, setLoading] = useState(true);
 
   React.useEffect(() => {
-    const fetchNotifications = async () => {
+    let lastTopNotificationId = null;
+
+    const fetchNotifications = async (isBackgroundPoll = false) => {
       try {
         const { default: api } = await import('../../services/api');
         const res = await api.getUserNotifications();
-        if (res.success && res.notifications) {
+        
+        if (res.success && res.notifications && res.notifications.length > 0) {
+          const newTopId = res.notifications[0].id || res.notifications[0]._id;
+          
+          // If this is a background poll and we detect a brand new notification, ring the bell!
+          if (isBackgroundPoll && lastTopNotificationId && lastTopNotificationId !== newTopId) {
+            playNotificationBellSound();
+            showToast.success(`🔔 New Alert: ${res.notifications[0].title}`);
+          }
+          
+          lastTopNotificationId = newTopId;
           setNotifications(res.notifications);
-        } else {
-          // Fallback if no real notifications found yet
+        } else if (!isBackgroundPoll) {
           setNotifications([
             {
               id: 1,
@@ -30,10 +41,19 @@ export default function DashboardNotifications() {
       } catch (e) {
         console.error(e);
       } finally {
-        setLoading(false);
+        if (!isBackgroundPoll) setLoading(false);
       }
     };
-    fetchNotifications();
+
+    // Initial fetch
+    fetchNotifications(false);
+
+    // Live polling every 10 seconds for real-time ring
+    const pollInterval = setInterval(() => {
+      fetchNotifications(true);
+    }, 10000);
+
+    return () => clearInterval(pollInterval);
   }, []);
 
   const [isTesting, setIsTesting] = useState(false);
