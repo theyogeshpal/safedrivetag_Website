@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, ShieldCheck, Smartphone, CheckCircle2, Send, Zap, Volume2, BellRing } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
-import { showToast, customSwal, playNotificationBellSound } from '../../utils/swal';
+import { showToast, customSwal, playNotificationBellSound, showEmergencyPushAlert } from '../../utils/swal';
 import { requestFcmToken } from '../../services/firebase';
 
 export default function DashboardNotifications() {
@@ -19,10 +19,9 @@ export default function DashboardNotifications() {
         if (res.success && res.notifications && res.notifications.length > 0) {
           const newTopId = res.notifications[0].id || res.notifications[0]._id;
           
-          // If this is a background poll and we detect a brand new notification, ring the bell!
+          // If this is a background poll and we detect a brand new notification, ring the bell continuously!
           if (isBackgroundPoll && lastTopNotificationId && lastTopNotificationId !== newTopId) {
-            playNotificationBellSound();
-            showToast.success(`🔔 New Alert: ${res.notifications[0].title}`);
+            showEmergencyPushAlert(res.notifications[0].title, res.notifications[0].message);
           }
           
           lastTopNotificationId = newTopId;
@@ -63,7 +62,7 @@ export default function DashboardNotifications() {
 
     try {
       // 0. Play Audible High-Quality Notification Bell Sound Chime
-      playNotificationBellSound();
+      showEmergencyPushAlert('Test Push Alert', 'This is how emergency alerts will appear on your screen when your QR is scanned.');
 
       // 1. Request FCM Push Token & Native Browser Push Notification
       try {
@@ -122,8 +121,7 @@ export default function DashboardNotifications() {
       };
       setNotifications(prev => [newAlert, ...prev]);
 
-      // 3. Show Crisp Toast Notification Only
-      showToast.success('🔔 Bell ringing! Test push notification delivered.');
+      // Toast removed in favor of SweetAlert
     } catch (err) {
       console.error(err);
       showToast.error('Could not trigger test notification.');

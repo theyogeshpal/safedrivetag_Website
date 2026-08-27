@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
-import { playNotificationBellSound, showToast } from '../utils/swal';
+import { playNotificationBellSound, showToast, showEmergencyPushAlert } from '../utils/swal';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDESqu4IKryXORUhd4CbHe35WffjdFQrDE",
@@ -37,10 +37,9 @@ export const initFirebaseMessaging = async () => {
       // Listen for background service worker ringtone trigger
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data && event.data.type === 'PLAY_RINGTONE') {
-          playNotificationBellSound();
           const title = event.data.payload?.notification?.title || event.data.payload?.data?.title || '🚨 Vehicle QR Alert';
           const body = event.data.payload?.notification?.body || event.data.payload?.data?.message || 'New vehicle scan event detected!';
-          showToast.success(`🔔 ${title}: ${body}`);
+          showEmergencyPushAlert(title, body);
         }
       });
     }
@@ -48,10 +47,9 @@ export const initFirebaseMessaging = async () => {
     // Handle Foreground FCM Messages
     onMessage(messaging, (payload) => {
       console.log('[Foreground FCM Message Received]:', payload);
-      playNotificationBellSound();
       const title = payload.notification?.title || payload.data?.title || '🚨 Vehicle QR Alert';
       const body = payload.notification?.body || payload.data?.message || 'New scan received on your SafeDrive pass!';
-      showToast.success(`🔔 ${title}: ${body}`);
+      showEmergencyPushAlert(title, body);
     });
 
     // Auto-fetch token if permission is already granted so backend knows where to push

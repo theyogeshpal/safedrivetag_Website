@@ -164,4 +164,38 @@ export const playNotificationBellSound = () => {
   }
 };
 
+export const showEmergencyPushAlert = (title, message) => {
+  // Start the continuous bell loop every 1.2 seconds
+  playNotificationBellSound(); // Play immediately
+  const ringInterval = setInterval(() => {
+    playNotificationBellSound();
+  }, 1200);
+
+  // Show persistent SweetAlert
+  return customSwal.fire({
+    title: `<span style="color: #d65a18; font-size: 24px;">🚨 ALERT RECEIVED</span>`,
+    html: `
+      <div style="font-size: 16px; color: #111827; font-weight: bold; margin-bottom: 8px;">
+        ${title}
+      </div>
+      <div style="font-size: 14px; color: #4b5563; background: #fff7ed; padding: 16px; border: 1px solid #fed7aa; border-radius: 12px;">
+        ${message}
+      </div>
+      <div style="margin-top: 16px; font-size: 12px; color: #ef4444; font-weight: bold; animation: pulse 2s infinite;">
+        🔔 Bell is ringing... Please take action!
+      </div>
+    `,
+    icon: 'warning',
+    iconColor: '#ef4444',
+    showCancelButton: false,
+    confirmButtonText: 'ACKNOWLEDGE & CLOSE',
+    confirmButtonColor: '#ef4444',
+    allowOutsideClick: false, // Force them to click the button
+    allowEscapeKey: false,
+  }).then((result) => {
+    // Stop the continuous bell loop when closed
+    clearInterval(ringInterval);
+  });
+};
+
 export default customSwal;
