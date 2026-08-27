@@ -644,9 +644,9 @@ export default function DashboardTags() {
 
                       <button
                         onClick={() => setEditingTag(tag)}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                        className="col-span-2 sm:col-span-1 sm:ml-auto bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2.5 sm:py-1.5 rounded-md text-sm sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-gray-200 shadow-sm"
                       >
-                        <Edit3 size={13} /> Edit Details
+                        <Edit3 size={14} /> Update Details
                       </button>
                     </div>
 

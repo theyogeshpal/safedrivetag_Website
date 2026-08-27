@@ -641,9 +641,9 @@ export default function TagDetails() {
                 </div>
                 <button
                   onClick={() => setIsEditModalOpen(true)}
-                  className="text-xs text-[#2874f0] font-bold hover:underline cursor-pointer flex items-center gap-1"
+                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-[#2874f0] px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ml-auto shadow-xs"
                 >
-                  <Edit3 size={12} /> Edit Contacts
+                  <Edit3 size={14} /> Update
                 </button>
               </div>
 
@@ -699,9 +699,9 @@ export default function TagDetails() {
                 </div>
                 <button
                   onClick={() => setIsEditModalOpen(true)}
-                  className="text-xs text-[#2874f0] font-bold hover:underline cursor-pointer flex items-center gap-1"
+                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-[#2874f0] px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ml-auto shadow-xs"
                 >
-                  <Edit3 size={12} /> Edit Profile
+                  <Edit3 size={14} /> Update
                 </button>
               </div>
 

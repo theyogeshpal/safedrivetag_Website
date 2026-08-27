@@ -79,9 +79,9 @@ export default function DashboardProfile() {
             <h3 className="text-base font-bold text-[#212121]">Personal Information</h3>
             <button
               onClick={() => setIsEditingPersonal(!isEditingPersonal)}
-              className="text-xs font-bold text-[#2874f0] hover:underline cursor-pointer flex items-center gap-1"
+              className="ml-auto bg-blue-50 hover:bg-blue-100 border border-blue-200 text-[#2874f0] px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
             >
-              <Edit2 size={12} /> {isEditingPersonal ? 'Cancel' : 'Edit'}
+              <Edit2 size={14} /> {isEditingPersonal ? 'Cancel' : 'Update Profile'}
             </button>
           </div>
 
