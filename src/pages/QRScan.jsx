@@ -460,7 +460,7 @@ export default function QRScan() {
   const itemCategory = qrData?.qrFor || qrData?.vehicleType || (isVehicle ? 'Vehicle' : 'Item');
 
   return (
-    <div className="bg-[#f4f7fb] min-h-screen pt-28 sm:pt-28 lg:pt-32 pb-16 px-4 font-sans text-gray-900 relative">
+    <div className="bg-[#f4f7fb] min-h-screen pt-32 sm:pt-32 lg:pt-36 pb-16 px-4 font-sans text-gray-900 relative">
       
       {/* Toast Alert Notification */}
       {actionSuccessMsg && (
