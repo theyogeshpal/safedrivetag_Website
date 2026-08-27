@@ -199,11 +199,12 @@ export const api = {
         activeList.forEach(k => {
           if (Array.isArray(k.scans)) {
             k.scans.forEach((s, idx) => {
+              const timeStr = s.timestamp || s.createdAt || new Date().toISOString();
               allNotifications.push({
-                id: s._id || `scan-${k.kitId || k._id}-${idx}`,
+                id: s._id || `scan-${k.kitId || k._id}-${new Date(timeStr).getTime()}-${idx}`,
                 title: s.type === 'CALL' ? '📞 Incoming Voice Bridge Call' : (s.type === 'WHATSAPP' ? '💬 WhatsApp Alert' : '🚨 Push Notification Alert'),
                 message: s.action || s.reason || `Someone scanned your tag: ${k.vehicleName || k.vehicleNumber || k.kitId}`,
-                time: s.timestamp || s.createdAt || new Date().toISOString(),
+                time: timeStr,
                 read: false,
                 type: s.type
               });
