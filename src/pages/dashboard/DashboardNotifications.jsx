@@ -173,7 +173,12 @@ export default function DashboardNotifications() {
                     {n.title || n.type || 'Alert'}
                   </h4>
                   <span className="text-gray-400 text-[11px]">
-                    {n.time || (n.createdAt ? new Date(n.createdAt).toLocaleString() : 'Just now')}
+                    {(() => {
+                      const t = n.time || n.createdAt;
+                      if (!t || t === 'Just now') return 'Just now';
+                      const d = new Date(t);
+                      return d.toString() !== 'Invalid Date' ? d.toLocaleString('en-IN', { hour12: true, day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' }) : t;
+                    })()}
                   </span>
                 </div>
                 <p className="text-gray-600 pl-4 leading-relaxed font-medium">

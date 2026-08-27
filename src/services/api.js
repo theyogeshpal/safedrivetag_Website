@@ -178,7 +178,53 @@ export const api = {
 
   getUserOrders: () => apiRequest('/user/orders'),
 
-  getUserNotifications: () => apiRequest('/user/notifications'),
+  getUserNotifications: async () => {
+    try {
+      const [notifRes, dashRes] = await Promise.allSettled([
+        apiRequest('/user/notifications'),
+        apiRequest('/user/dashboard')
+      ]);
+
+      let allNotifications = [];
+
+      if (notifRes.status === 'fulfilled' && notifRes.value?.success && Array.isArray(notifRes.value.notifications)) {
+        allNotifications.push(...notifRes.value.notifications);
+      }
+
+      if (dashRes.status === 'fulfilled' && dashRes.value?.success) {
+        const res = dashRes.value;
+        const rawList = Array.isArray(res.qrCodes) ? res.qrCodes : (Array.isArray(res.kits) ? res.kits : []);
+        const activeList = rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
+        
+        activeList.forEach(k => {
+          if (Array.isArray(k.scans)) {
+            k.scans.forEach((s, idx) => {
+              allNotifications.push({
+                id: s._id || `scan-${k.kitId || k._id}-${idx}`,
+                title: s.type === 'CALL' ? '📞 Incoming Voice Bridge Call' : (s.type === 'WHATSAPP' ? '💬 WhatsApp Alert' : '🚨 Push Notification Alert'),
+                message: s.action || s.reason || `Someone scanned your tag: ${k.vehicleName || k.vehicleNumber || k.kitId}`,
+                time: s.timestamp || s.createdAt || new Date().toISOString(),
+                read: false,
+                type: s.type
+              });
+            });
+          }
+        });
+      }
+
+      // Sort by time descending
+      allNotifications.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+      if (allNotifications.length > 0) {
+        return { success: true, notifications: allNotifications };
+      }
+
+      return { success: true, notifications: [] };
+    } catch (e) {
+      console.error('Synthesize notifications error', e);
+      return { success: false };
+    }
+  },
 
   getUserTransactions: async () => {
     try {
