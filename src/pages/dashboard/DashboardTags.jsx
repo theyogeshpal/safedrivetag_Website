@@ -342,55 +342,57 @@ export default function DashboardTags() {
   // Full page loader while checking QR activation status
   if (isLoadingDashboard) {
     return (
-      <div className="min-h-screen bg-[#f4f7fb] flex flex-col items-center justify-center gap-5">
-        <div className="relative w-16 h-16">
-          <svg
-            className="animate-spin w-16 h-16"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ animationDuration: '1.2s' }}
-          >
-            {/* Top arc */}
-            <path
-              d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10"
-              stroke="#fb641b"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            {/* Bottom arc (faded) */}
-            <path
-              d="M12 22C17.523 22 22 17.523 22 12S17.523 2 12 2"
-              stroke="#fb641b"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeOpacity="0.3"
-            />
-            {/* Arrow head - top */}
-            <polyline
-              points="9.5,4.5 12,2 14.5,4.5"
-              stroke="#fb641b"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+      <DashboardLayout currentTab="tags" pageTitle="My SafeDrive-Tags">
+        <div className="flex flex-col items-center justify-center py-32 gap-5">
+          <div className="relative w-16 h-16">
+            <svg
+              className="animate-spin w-16 h-16"
+              viewBox="0 0 24 24"
               fill="none"
-            />
-            {/* Arrow head - bottom (faded) */}
-            <polyline
-              points="9.5,19.5 12,22 14.5,19.5"
-              stroke="#fb641b"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-              strokeOpacity="0.3"
-            />
-          </svg>
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ animationDuration: '1.2s' }}
+            >
+              {/* Top arc */}
+              <path
+                d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10"
+                stroke="#fb641b"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              {/* Bottom arc (faded) */}
+              <path
+                d="M12 22C17.523 22 22 17.523 22 12S17.523 2 12 2"
+                stroke="#fb641b"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeOpacity="0.3"
+              />
+              {/* Arrow head - top */}
+              <polyline
+                points="9.5,4.5 12,2 14.5,4.5"
+                stroke="#fb641b"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+              {/* Arrow head - bottom (faded) */}
+              <polyline
+                points="9.5,19.5 12,22 14.5,19.5"
+                stroke="#fb641b"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+                strokeOpacity="0.3"
+              />
+            </svg>
+          </div>
+          <p className="text-sm font-bold text-[#1a2a4a] tracking-wide text-center">
+            Loading owner dashboard &amp; active tags...
+          </p>
         </div>
-        <p className="text-sm font-bold text-[#1a2a4a] tracking-wide">
-          Loading owner dashboard &amp; active tags...
-        </p>
-      </div>
+      </DashboardLayout>
     );
   }
 
