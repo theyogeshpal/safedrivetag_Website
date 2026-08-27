@@ -460,7 +460,7 @@ export default function QRScan() {
   const itemCategory = qrData?.qrFor || qrData?.vehicleType || (isVehicle ? 'Vehicle' : 'Item');
 
   return (
-    <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 font-sans text-gray-900 relative">
+    <div className="bg-[#f4f7fb] min-h-screen pt-28 sm:pt-28 lg:pt-32 pb-16 px-4 font-sans text-gray-900 relative">
       
       {/* Toast Alert Notification */}
       {actionSuccessMsg && (
@@ -501,7 +501,7 @@ export default function QRScan() {
           </div>
         </div>
 
-        {/* STEP 3: ANTI-HARASSMENT 4-DIGIT PLATE VERIFICATION */}
+        {/* STEP 3: SECURITY VERIFICATION */}
         {!isVerified && qrData?.requiresVerification && (
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200/80 space-y-3.5 animate-fade-up">
             <div className="flex items-center gap-2.5">
@@ -509,18 +509,18 @@ export default function QRScan() {
                 <Lock size={16} />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-gray-900">Anti-Harassment Security Verification</h3>
-                <p className="text-[11px] text-gray-400">Owner protection spam shield</p>
+                <h3 className="font-bold text-sm text-gray-900">Security Verification Required</h3>
+                <p className="text-[11px] text-gray-400">For privacy and security purposes</p>
               </div>
             </div>
 
             {isVehicle ? (
               <p className="text-xs text-gray-600 leading-relaxed">
-                To protect the owner from spam, enter the <strong>last 4 digits</strong> of the vehicle registration plate (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>):
+                Please enter the <strong>last 4 digits</strong> of the vehicle registration plate to verify your scan (e.g. for DL 01 AB <strong>1234</strong> enter <strong>1234</strong>):
               </p>
             ) : (
               <p className="text-xs text-gray-600 leading-relaxed">
-                To protect the owner from spam, enter the <strong>4-digit Security PIN</strong> printed on the tag:
+                Please enter the <strong>4-digit Security PIN</strong> printed on the tag to verify your scan:
               </p>
             )}
 
@@ -550,10 +550,10 @@ export default function QRScan() {
               >
                 {verifying ? (
                   <>
-                    <RefreshCw className="w-4 h-4 animate-spin" /> Verifying Plate...
+                    <RefreshCw className="w-4 h-4 animate-spin" /> Verifying...
                   </>
                 ) : (
-                  <span>Verify & Unlock Reasons</span>
+                  <span>Verify & Continue</span>
                 )}
               </button>
             </form>
