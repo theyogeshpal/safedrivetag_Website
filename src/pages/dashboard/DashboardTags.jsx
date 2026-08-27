@@ -620,6 +620,7 @@ export default function DashboardTags() {
                         <button
                           onClick={() => printDigitalPdfInColor({ 
                             ...tag,
+                            allocatedQRIds: undefined, // Force generator to strictly use tag.copies
                             title: tag.vehicleName || tag.title, 
                             publicToken: tag.primaryToken || tag.publicToken || tag.id, 
                             vehicleNumber: tag.vehicleNumber,
@@ -816,7 +817,7 @@ export default function DashboardTags() {
                 </button>
                 {qrModalTag.qrType === 'DIGITAL' && (
                   <button
-                    onClick={() => printDigitalPdfInColor(qrModalTag)}
+                    onClick={() => printDigitalPdfInColor({ ...qrModalTag, allocatedQRIds: undefined })}
                     className="w-full bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2.5 rounded-sm text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
                   >
                     <Printer size={15} /> Print Color Stickers (PDF)

@@ -384,6 +384,8 @@ export default function DashboardOrders() {
                                           title: ord.productName,
                                           publicToken: copyToken,
                                           securityCode: pin,
+                                          allocatedQRIds: undefined, // Fix: do not pass all QRs from the order
+                                          copies: [qr] // Fix: explicitly pass only this single QR
                                         })}
                                         className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                                       >
