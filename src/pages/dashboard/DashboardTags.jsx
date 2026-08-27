@@ -333,6 +333,61 @@ export default function DashboardTags() {
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
   };
 
+  // Full page loader while checking QR activation status
+  if (isLoadingDashboard) {
+    return (
+      <div className="min-h-screen bg-[#f4f7fb] flex flex-col items-center justify-center gap-5">
+        <div className="relative w-16 h-16">
+          <svg
+            className="animate-spin w-16 h-16"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ animationDuration: '1.2s' }}
+          >
+            {/* Top arc */}
+            <path
+              d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10"
+              stroke="#fb641b"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            {/* Bottom arc (faded) */}
+            <path
+              d="M12 22C17.523 22 22 17.523 22 12S17.523 2 12 2"
+              stroke="#fb641b"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeOpacity="0.3"
+            />
+            {/* Arrow head - top */}
+            <polyline
+              points="9.5,4.5 12,2 14.5,4.5"
+              stroke="#fb641b"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+            {/* Arrow head - bottom (faded) */}
+            <polyline
+              points="9.5,19.5 12,22 14.5,19.5"
+              stroke="#fb641b"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+              strokeOpacity="0.3"
+            />
+          </svg>
+        </div>
+        <p className="text-sm font-bold text-[#1a2a4a] tracking-wide">
+          Loading owner dashboard &amp; active tags...
+        </p>
+      </div>
+    );
+  }
+
   return (
     <DashboardLayout currentTab="tags" pageTitle="My SafeDrive-Tags" saveSuccessMsg={saveSuccessMsg}>
       <div className="bg-white rounded-sm shadow-sm border border-gray-200/80 p-4 sm:p-6 space-y-6">
@@ -394,9 +449,49 @@ export default function DashboardTags() {
 
         {/* Tags List */}
         {isLoadingDashboard ? (
-          <div className="py-10 space-y-4 animate-fade-in text-center">
-            <div className="w-12 h-12 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-            <h3 className="text-base font-bold text-gray-800">Loading Your SafeDrive-Tags...</h3>
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            {/* Orange rotating arrows icon */}
+            <div className="relative w-14 h-14">
+              <svg
+                className="animate-spin w-14 h-14"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ animationDuration: '1.2s' }}
+              >
+                <path
+                  d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10"
+                  stroke="#fb641b"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M12 22C17.523 22 22 17.523 22 12S17.523 2 12 2"
+                  stroke="#fb641b"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeOpacity="0.35"
+                />
+                {/* Arrow head top */}
+                <path
+                  d="M12 2 L9.5 5 M12 2 L14.5 5"
+                  stroke="#fb641b"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                {/* Arrow head bottom */}
+                <path
+                  d="M12 22 L9.5 19 M12 22 L14.5 19"
+                  stroke="#fb641b"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeOpacity="0.35"
+                />
+              </svg>
+            </div>
+            <p className="text-sm font-bold text-[#1a2a4a]">Loading owner dashboard &amp; active tags...</p>
           </div>
         ) : userTags.length === 0 ? (
           <Navigate to="/shop" replace />
