@@ -142,66 +142,56 @@ export default function DashboardTags() {
           if (ordersRes.success && Array.isArray(ordersRes.orders)) {
             for (const ord of ordersRes.orders) {
               if (Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0) {
-                // Find active copy within this single order
-                let activeCopy = null;
-                let activePubInfo = null;
-
+                // Find all active copies within this single order
                 for (const qr of ord.allocatedQRIds) {
                   const token = qr.publicToken || qr.copyCode || ord._id;
                   try {
                     const pubRes = await api.getPublicQrInfo(token);
                     if (pubRes && pubRes.success && (pubRes.status === 'ACTIVE' || pubRes.isRegistered || qr.status === 'ACTIVE')) {
-                      activeCopy = qr;
-                      activePubInfo = pubRes;
-                      break;
+                      
+                      const copyCode = qr.copyCode || token;
+                      const vBrand = pubRes.vehicle?.vehicleBrand || pubRes.vehicleBrand || '';
+                      const vModel = pubRes.vehicle?.vehicleName || pubRes.vehicleName || ord.productName || '';
+                      const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : (pubRes.qrFor ? `${pubRes.qrFor} Safety Tag` : (ord.productName || 'SafeDrive Tag'));
+                      const vPlate = pubRes.vehicle?.vehicleNumber || pubRes.vehicleNumber || '';
+                      
+                      const eContacts = Array.isArray(pubRes.emergencyContacts) && pubRes.emergencyContacts.length > 0
+                        ? pubRes.emergencyContacts
+                        : (Array.isArray(pubRes.vehicle?.emergencyContacts) && pubRes.vehicle.emergencyContacts.length > 0
+                            ? pubRes.vehicle.emergencyContacts
+                            : [
+                                ...(pubRes.emergencyContact1 ? [{ name: pubRes.emergencyContact1.name || 'Primary Contact', number: pubRes.emergencyContact1.phone || pubRes.emergencyContact1.number }] : []),
+                                ...(pubRes.emergencyContact2 ? [{ name: pubRes.emergencyContact2.name || 'Secondary Contact', number: pubRes.emergencyContact2.phone || pubRes.emergencyContact2.number }] : [])
+                              ]);
+
+                      finalTagsList.push({
+                        id: copyCode,
+                        kitId: copyCode,
+                        publicToken: token,
+                        primaryToken: token,
+                        copyCode: copyCode,
+                        copies: [qr], // Just this copy
+                        productId: ord.productName || 'SafeDrive Smart Safety Kit',
+                        name: pubRes.owner?.name || pubRes.name || currentUser?.name || 'Owner',
+                        phone: pubRes.owner?.phone || pubRes.phone || currentUser?.phone || '',
+                        emergencyContact: eContacts[0]?.number || eContacts[0]?.phone || null,
+                        emergencyContacts: eContacts,
+                        whatsapp: pubRes.whatsappNumber || currentUser?.phone,
+                        vehicleNumber: vPlate,
+                        vehicleName: vTitle,
+                        vehicleType: pubRes.vehicle?.vehicleType || pubRes.qrFor || ord.qrFor || 'Luggage',
+                        status: 'active',
+                        qrType: ord.productType || 'DIGITAL',
+                        securityCode: pubRes.securityCode || pubRes.pin || ord.securityCode || ord.pin || null,
+                        registeredAt: pubRes.registeredAt || ord.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+                        callBalance: pubRes.wallet?.callBalance ?? pubRes.callBalance ?? 10,
+                        messageBalance: pubRes.wallet?.messageBalance ?? pubRes.messageBalance ?? 20,
+                        scansCount: pubRes.scansCount ?? 0,
+                        callMaskingEnabled: true,
+                        whatsappAlertsEnabled: true,
+                      });
                     }
                   } catch (e) {}
-                }
-
-                if (activeCopy && activePubInfo) {
-                  const token = activeCopy.publicToken || activeCopy.copyCode || ord._id;
-                  const copyCode = activeCopy.copyCode || token;
-                  const pubRes = activePubInfo;
-                  const vBrand = pubRes.vehicle?.vehicleBrand || pubRes.vehicleBrand || '';
-                  const vModel = pubRes.vehicle?.vehicleName || pubRes.vehicleName || ord.productName || '';
-                  const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : (pubRes.qrFor ? `${pubRes.qrFor} Safety Tag` : (ord.productName || 'SafeDrive Tag'));
-                  const vPlate = pubRes.vehicle?.vehicleNumber || pubRes.vehicleNumber || '';
-                  
-                  const eContacts = Array.isArray(pubRes.emergencyContacts) && pubRes.emergencyContacts.length > 0
-                    ? pubRes.emergencyContacts
-                    : (Array.isArray(pubRes.vehicle?.emergencyContacts) && pubRes.vehicle.emergencyContacts.length > 0
-                        ? pubRes.vehicle.emergencyContacts
-                        : [
-                            ...(pubRes.emergencyContact1 ? [{ name: pubRes.emergencyContact1.name || 'Primary Contact', number: pubRes.emergencyContact1.phone || pubRes.emergencyContact1.number }] : []),
-                            ...(pubRes.emergencyContact2 ? [{ name: pubRes.emergencyContact2.name || 'Secondary Contact', number: pubRes.emergencyContact2.phone || pubRes.emergencyContact2.number }] : [])
-                          ]);
-
-                  finalTagsList.push({
-                    id: copyCode,
-                    kitId: copyCode,
-                    publicToken: token,
-                    primaryToken: token,
-                    copyCode: copyCode,
-                    copies: ord.allocatedQRIds,
-                    productId: ord.productName || 'SafeDrive Smart Safety Kit',
-                    name: pubRes.owner?.name || pubRes.name || currentUser?.name || 'Owner',
-                    phone: pubRes.owner?.phone || pubRes.phone || currentUser?.phone || '',
-                    emergencyContact: eContacts[0]?.number || eContacts[0]?.phone || null,
-                    emergencyContacts: eContacts,
-                    whatsapp: pubRes.whatsappNumber || currentUser?.phone,
-                    vehicleNumber: vPlate,
-                    vehicleName: vTitle,
-                    vehicleType: pubRes.vehicle?.vehicleType || pubRes.qrFor || ord.qrFor || 'Luggage',
-                    status: 'active',
-                    qrType: ord.productType || 'DIGITAL',
-                    securityCode: pubRes.securityCode || pubRes.pin || ord.securityCode || ord.pin || null,
-                    registeredAt: pubRes.registeredAt || ord.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-                    callBalance: pubRes.wallet?.callBalance ?? pubRes.callBalance ?? 10,
-                    messageBalance: pubRes.wallet?.messageBalance ?? pubRes.messageBalance ?? 20,
-                    scansCount: pubRes.scansCount ?? 0,
-                    callMaskingEnabled: true,
-                    whatsappAlertsEnabled: true,
-                  });
                 }
               }
             }
