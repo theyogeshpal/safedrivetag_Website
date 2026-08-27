@@ -344,49 +344,8 @@ export default function DashboardTags() {
     return (
       <DashboardLayout currentTab="tags" pageTitle="My SafeDrive-Tags">
         <div className="flex flex-col items-center justify-center py-32 gap-5">
-          <div className="relative w-16 h-16">
-            <svg
-              className="animate-spin w-16 h-16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              style={{ animationDuration: '1.2s' }}
-            >
-              {/* Top arc */}
-              <path
-                d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10"
-                stroke="#fb641b"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              {/* Bottom arc (faded) */}
-              <path
-                d="M12 22C17.523 22 22 17.523 22 12S17.523 2 12 2"
-                stroke="#fb641b"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeOpacity="0.3"
-              />
-              {/* Arrow head - top */}
-              <polyline
-                points="9.5,4.5 12,2 14.5,4.5"
-                stroke="#fb641b"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-              {/* Arrow head - bottom (faded) */}
-              <polyline
-                points="9.5,19.5 12,22 14.5,19.5"
-                stroke="#fb641b"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-                strokeOpacity="0.3"
-              />
-            </svg>
+          <div className="relative w-12 h-12 mb-2">
+            <div className="w-12 h-12 border-4 border-[#fb641b]/20 border-t-[#fb641b] rounded-full animate-spin"></div>
           </div>
           <p className="text-sm font-bold text-[#1a2a4a] tracking-wide text-center">
             Loading owner dashboard &amp; active tags...
@@ -458,46 +417,8 @@ export default function DashboardTags() {
         {/* Tags List */}
         {isLoadingDashboard ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            {/* Orange rotating arrows icon */}
-            <div className="relative w-14 h-14">
-              <svg
-                className="animate-spin w-14 h-14"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ animationDuration: '1.2s' }}
-              >
-                <path
-                  d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10"
-                  stroke="#fb641b"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M12 22C17.523 22 22 17.523 22 12S17.523 2 12 2"
-                  stroke="#fb641b"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeOpacity="0.35"
-                />
-                {/* Arrow head top */}
-                <path
-                  d="M12 2 L9.5 5 M12 2 L14.5 5"
-                  stroke="#fb641b"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                {/* Arrow head bottom */}
-                <path
-                  d="M12 22 L9.5 19 M12 22 L14.5 19"
-                  stroke="#fb641b"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeOpacity="0.35"
-                />
-              </svg>
+            <div className="relative w-12 h-12 mb-2">
+              <div className="w-12 h-12 border-4 border-[#fb641b]/20 border-t-[#fb641b] rounded-full animate-spin"></div>
             </div>
             <p className="text-sm font-bold text-[#1a2a4a]">Loading owner dashboard &amp; active tags...</p>
           </div>
