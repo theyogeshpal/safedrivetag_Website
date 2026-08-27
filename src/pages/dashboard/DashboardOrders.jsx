@@ -245,6 +245,17 @@ export default function DashboardOrders() {
                         <p className="text-xs text-gray-500 mt-0.5">
                           Format: <strong className="text-purple-700 uppercase">{isDigital ? 'Digital E-Kit Pass' : 'Physical Sticker Kit'}</strong> • Qty: {ord.quantity || 1}
                         </p>
+                        {isDigital && Array.isArray(ord.allocatedQRIds) && ord.allocatedQRIds.length > 0 && (() => {
+                          const allCopies = ord.allocatedQRIds;
+                          const activeCopiesCount = allCopies.filter(c => c.status === 'ACTIVE').length;
+                          const pendingCopiesCount = allCopies.length - activeCopiesCount;
+                          return (
+                            <p className="text-xs mt-0.5">
+                              <span className="text-emerald-700 font-bold">{activeCopiesCount} Activated</span>
+                              {pendingCopiesCount > 0 && <span className="text-amber-600 font-bold ml-2">• {pendingCopiesCount} Pending Activation</span>}
+                            </p>
+                          );
+                        })()}
                       </div>
                     </div>
 
@@ -292,153 +303,144 @@ export default function DashboardOrders() {
                         <FileText size={13} /> Invoice
                       </button>
                     </div>
-                                      </div>
-{expandedOrder === ord._id && (() => { const digitalPassModalOrder = ord; return (
-        <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-up">
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 overflow-hidden text-center flex flex-col max-h-[90vh]">
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-5 py-3.5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <QrCode size={18} />
-                <h3 className="text-sm font-bold">SafeDrive Digital Safety Pass Kit</h3>
-              </div>
-              
-            </div>
-
-            <div className="p-5 overflow-y-auto space-y-4">
-              {/* Copy Selector Tabs */}
-              {Array.isArray(digitalPassModalOrder.allocatedQRIds) && digitalPassModalOrder.allocatedQRIds.length > 1 && (
-                <div className="flex items-center justify-center gap-2 bg-gray-100 p-1 rounded-lg">
-                  {Array.from(new Map(digitalPassModalOrder.allocatedQRIds?.map(item => [item.copyCode || item.publicToken, item])).values()).map((c, cIdx) => (
-                    <button
-                      key={cIdx}
-                      onClick={() => setActivePassCopyIdx(cIdx)}
-                      className={`flex-1 py-2 text-xs font-black rounded-lg transition-all ${
-                        activePassCopyIdx === cIdx 
-                          ? 'bg-[#a855f7] text-white shadow-md' 
-                          : 'bg-white text-gray-500 hover:bg-purple-50'
-                      }`}
-                    >
-                      {c.copyCode || `Copy ${cIdx + 1}`}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Scannable Vector QR Card */}
-              {(() => {
-                const uniqueCopies = Array.from(new Map(digitalPassModalOrder.allocatedQRIds?.map(item => [item.copyCode || item.publicToken, item])).values());
-                const currentCopy = uniqueCopies[activePassCopyIdx] || {};
-                const token = currentCopy.publicToken || currentCopy.copyCode || digitalPassModalOrder._id;
-                const copyCode = currentCopy.copyCode || 'COPY-1';
-                const isCopyActive = currentCopy.status === 'ACTIVE' || digitalPassModalOrder.isClaimed === true;
-                const securityCode = currentCopy.securityCode || currentCopy.pin || digitalPassModalOrder.securityCode || digitalPassModalOrder.pin || '9921';
-                const scanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
-
-                return (
-                  <div className="bg-[#fcfaff] border-2 border-purple-200 rounded-2xl p-5 text-center space-y-3.5 shadow-inner">
-                    {/* Status Badge */}
-                    <div className="flex items-center justify-center gap-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 ${
-                        isCopyActive 
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
-                          : 'bg-amber-100 text-amber-900 border border-amber-300'
-                      }`}>
-                        {isCopyActive ? (
-                          <>
-                            <ShieldCheck size={14} className="text-emerald-600" /> Active Protection
-                          </>
-                        ) : (
-                          <>
-                            <Zap size={14} className="text-amber-600" /> Ready to Activate
-                          </>
-                        )}
-                      </span>
-                    </div>
-
-                    <div className="relative inline-block mx-auto max-w-[340px] w-full rounded-2xl overflow-hidden shadow-xl border border-gray-100">
-                      <img src="/images/safedrive-tag-final.png" alt="Digital Pass Card" className="w-full h-auto block" />
-                      <div className="absolute top-[50%] left-[75%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
-                        <QRCodeSVG
-                          value={scanUrl}
-                          size={120}
-                          level="H"
-                          includeMargin={false}
-                          imageSettings={{
-                            src: "/logos/icon.png",
-                            height: 24,
-                            width: 24,
-                            excavate: true,
-                          }}
-                        />
-                        {securityCode && (
-                          <div className="mt-1 font-mono font-black text-[9px] text-gray-900 bg-gray-50 border border-gray-200 rounded px-1.5 py-0.5 tracking-wider">
-                            PIN: {securityCode}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="font-mono font-black text-sm text-purple-950 uppercase tracking-wider">
-                        {copyCode}
-                      </p>
-                      <p className="text-xs text-gray-500 font-medium mt-0.5">
-                        {digitalPassModalOrder.productName || 'SafeDrive Digital QR Protection'}
-                      </p>
-                      {securityCode && (
-                        <div className="inline-flex items-center gap-1.5 mt-2 bg-purple-100/70 border border-purple-200 text-purple-900 text-xs px-2.5 py-1 rounded-md font-mono">
-                          <KeyRound size={12} /> Security Code: <strong>{securityCode}</strong>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Activation CTA if unactivated */}
-                    {!isCopyActive && (
-                      <div className="pt-2">
-                        <Link
-                          to={`/register/${token}`}
-                          className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
-                        >
-                          <Zap size={15} /> ⚡ Activate This Digital Pass Now
-                        </Link>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2 pt-2">
-                      <button
-                        onClick={() => printDigitalPdfInColor({
-                          ...digitalPassModalOrder,
-                          title: digitalPassModalOrder.productName,
-                          publicToken: token,
-                          securityCode: (activeCopy && (activeCopy.securityCode || activeCopy.pin)) || digitalPassModalOrder.securityCode || digitalPassModalOrder.pin,
-                          vehicleNumber: isCopyActive ? 'ACTIVE PROTECTED' : 'READY TO ACTIVATE',
-                        })}
-                        className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
-                      >
-                        <Printer size={14} /> Print in Color
-                      </button>
-
-                      <Link
-                        to={`/q/${token}`}
-                        target="_blank"
-                        className="bg-white hover:bg-purple-50 text-purple-700 border border-purple-300 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all"
-                      >
-                        <ExternalLink size={14} /> Test Live Scan
-                      </Link>
-                    </div>
                   </div>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* ======================================================== */}
-      {/* PHYSICAL TRACKING MODAL */}
-      {/* ======================================================== */}
-      
-</div>
+                  {/* Inline Digital Pass (expanded) */}
+                  {expandedOrder === ord._id && (() => { const digitalPassModalOrder = ord; return (
+                    <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-up">
+                      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 overflow-hidden text-center flex flex-col max-h-[90vh]">
+                        <div className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-5 py-3.5 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <QrCode size={18} />
+                            <h3 className="text-sm font-bold">SafeDrive Digital Safety Pass Kit</h3>
+                          </div>
+                        </div>
+
+                        <div className="p-5 overflow-y-auto space-y-4">
+                          {/* Copy Selector Tabs */}
+                          {Array.isArray(digitalPassModalOrder.allocatedQRIds) && digitalPassModalOrder.allocatedQRIds.length > 1 && (
+                            <div className="flex items-center justify-center gap-2 bg-gray-100 p-1 rounded-lg">
+                              {Array.from(new Map(digitalPassModalOrder.allocatedQRIds?.map(item => [item.copyCode || item.publicToken, item])).values()).map((c, cIdx) => (
+                                <button
+                                  key={cIdx}
+                                  onClick={() => setActivePassCopyIdx(cIdx)}
+                                  className={`flex-1 py-2 text-xs font-black rounded-lg transition-all ${
+                                    activePassCopyIdx === cIdx 
+                                      ? 'bg-[#a855f7] text-white shadow-md' 
+                                      : 'bg-white text-gray-500 hover:bg-purple-50'
+                                  }`}
+                                >
+                                  {c.copyCode || `Copy ${cIdx + 1}`}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Scannable Vector QR Card */}
+                          {(() => {
+                            const uniqueCopies = Array.from(new Map(digitalPassModalOrder.allocatedQRIds?.map(item => [item.copyCode || item.publicToken, item])).values());
+                            const currentCopy = uniqueCopies[activePassCopyIdx] || {};
+                            const token = currentCopy.publicToken || currentCopy.copyCode || digitalPassModalOrder._id;
+                            const copyCode = currentCopy.copyCode || 'COPY-1';
+                            const isCopyActive = currentCopy.status === 'ACTIVE' || digitalPassModalOrder.isClaimed === true;
+                            const securityCode = currentCopy.securityCode || currentCopy.pin || digitalPassModalOrder.securityCode || digitalPassModalOrder.pin || '';
+                            const scanUrl = `https://safedrivetag-website.vercel.app/q/${token}`;
+
+                            return (
+                              <div className="bg-[#fcfaff] border-2 border-purple-200 rounded-2xl p-5 text-center space-y-3.5 shadow-inner">
+                                {/* Status Badge */}
+                                <div className="flex items-center justify-center gap-2">
+                                  <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 ${
+                                    isCopyActive 
+                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                                      : 'bg-amber-100 text-amber-900 border border-amber-300'
+                                  }`}>
+                                    {isCopyActive ? (
+                                      <><ShieldCheck size={14} className="text-emerald-600" /> Active Protection</>
+                                    ) : (
+                                      <><Zap size={14} className="text-amber-600" /> Ready to Activate</>
+                                    )}
+                                  </span>
+                                </div>
+
+                                <div className="relative inline-block mx-auto max-w-[340px] w-full rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+                                  <img src="/images/safedrive-tag-final.png" alt="Digital Pass Card" className="w-full h-auto block" />
+                                  <div className="absolute top-[50%] left-[75%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
+                                    <QRCodeSVG
+                                      value={scanUrl}
+                                      size={120}
+                                      level="H"
+                                      includeMargin={false}
+                                      imageSettings={{
+                                        src: "/logos/icon.png",
+                                        height: 24,
+                                        width: 24,
+                                        excavate: true,
+                                      }}
+                                    />
+                                    {securityCode && (
+                                      <div className="mt-1 font-mono font-black text-[9px] text-gray-900 bg-gray-50 border border-gray-200 rounded px-1.5 py-0.5 tracking-wider">
+                                        PIN: {securityCode}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <p className="font-mono font-black text-sm text-purple-950 uppercase tracking-wider">
+                                    {copyCode}
+                                  </p>
+                                  <p className="text-xs text-gray-500 font-medium mt-0.5">
+                                    {digitalPassModalOrder.productName || 'SafeDrive Digital QR Protection'}
+                                  </p>
+                                  {securityCode && (
+                                    <div className="inline-flex items-center gap-1.5 mt-2 bg-purple-100/70 border border-purple-200 text-purple-900 text-xs px-2.5 py-1 rounded-md font-mono">
+                                      <KeyRound size={12} /> Security Code: <strong>{securityCode}</strong>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Activation CTA if unactivated */}
+                                {!isCopyActive && (
+                                  <div className="pt-2">
+                                    <Link
+                                      to={`/register/${token}`}
+                                      className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                                    >
+                                      <Zap size={15} /> ⚡ Activate This Digital Pass Now
+                                    </Link>
+                                  </div>
+                                )}
+
+                                <div className="grid grid-cols-2 gap-2 pt-2">
+                                  <button
+                                    onClick={() => printDigitalPdfInColor({
+                                      ...digitalPassModalOrder,
+                                      title: digitalPassModalOrder.productName,
+                                      publicToken: token,
+                                      securityCode: (currentCopy && (currentCopy.securityCode || currentCopy.pin)) || digitalPassModalOrder.securityCode || digitalPassModalOrder.pin,
+                                      vehicleNumber: isCopyActive ? 'ACTIVE PROTECTED' : 'READY TO ACTIVATE',
+                                    })}
+                                    className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                                  >
+                                    <Printer size={14} /> Print in Color
+                                  </button>
+
+                                  <Link
+                                    to={`/q/${token}`}
+                                    target="_blank"
+                                    className="bg-white hover:bg-purple-50 text-purple-700 border border-purple-300 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all"
+                                  >
+                                    <ExternalLink size={14} /> Test Live Scan
+                                  </Link>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      </div>
+                    </div>
+                  ); })()}
 
                 </div>
               );

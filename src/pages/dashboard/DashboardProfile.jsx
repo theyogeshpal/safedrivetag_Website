@@ -48,26 +48,26 @@ export default function DashboardProfile() {
     }
   };
 
-  const handleDeactivate = async () => {
-    const confirmed = await showConfirmDialog({
-      title: 'Deactivate Account?',
-      text: 'Are you sure you want to deactivate your SafeDrive account? This will pause all QR protections.',
-      confirmText: 'Yes, Deactivate',
-      cancelText: 'Cancel',
-      icon: 'warning',
-    });
+  // const handleDeactivate = async () => {
+  //   const confirmed = await showConfirmDialog({
+  //     title: 'Deactivate Account?',
+  //     text: 'Are you sure you want to deactivate your SafeDrive account? This will pause all QR protections.',
+  //     confirmText: 'Yes, Deactivate',
+  //     cancelText: 'Cancel',
+  //     icon: 'warning',
+  //   });
 
-    if (confirmed) {
-      try {
-        await api.deactivateAccount();
-        showToast.success('Account deactivated.');
-        window.location.href = '/';
-      } catch (err) {
-        console.error(err);
-        showToast.error('Could not deactivate account.');
-      }
-    }
-  };
+  //   if (confirmed) {
+  //     try {
+  //       await api.deactivateAccount();
+  //       showToast.success('Account deactivated.');
+  //       window.location.href = '/';
+  //     } catch (err) {
+  //       console.error(err);
+  //       showToast.error('Could not deactivate account.');
+  //     }
+  //   }
+  // };
 
   return (
     <DashboardLayout currentTab="profile" pageTitle="Profile Information" saveSuccessMsg={saveSuccessMsg}>
@@ -191,7 +191,7 @@ export default function DashboardProfile() {
           </div>
         </div>
 
-        {/* Deactivate Account */}
+        {/* Deactivate Account
         <div className="pt-4 border-t border-gray-100">
           <button
             onClick={handleDeactivate}
@@ -199,7 +199,7 @@ export default function DashboardProfile() {
           >
             <ShieldAlert size={14} /> Deactivate Account
           </button>
-        </div>
+        </div> */}
 
       </div>
     </DashboardLayout>

@@ -44,7 +44,7 @@ export default function RegisterTag() {
   // Vehicle & Mandatory 2 Emergency Contacts Details
   const [formData, setFormData] = useState({
     itemTitle: '',
-    vehicleBrand: 'SafeDrive',
+    vehicleBrand: '',
     vehicleName: '',
     vehicleNumber: '',
     vehicleType: 'Luggage',
@@ -81,7 +81,7 @@ export default function RegisterTag() {
           setFormData(prev => ({
             ...prev,
             vehicleType: cat,
-            itemTitle: prev.itemTitle || (cat === 'Luggage' ? 'Blue Safari Trolley Bag' : `${cat} Safety Tag`),
+            
           }));
         }
       } catch (err) {
@@ -111,7 +111,7 @@ export default function RegisterTag() {
         name: name.trim() || 'Tag Owner',
       });
 
-      if (res.success || res.status === 200) {
+      if (res.success === true || (res.success !== false && res.status === 200)) {
         setStep(2);
         setTimeout(() => {
           otpInputRefs.current[0]?.focus();
@@ -163,7 +163,7 @@ export default function RegisterTag() {
         otp: enteredOtp,
       });
 
-      if (res.success || res.status === 200) {
+      if (res.success === true || (res.success !== false && res.status === 200)) {
         setIsPhoneVerified(true);
         if (res.token) {
           setAuthenticatedSession(res.token, res.user || { phone: cleanPhone, name });
@@ -291,7 +291,7 @@ export default function RegisterTag() {
       };
 
       const res = await api.registerQrKit(token, payload);
-      if (res.success || res.status === 200 || res.message?.toLowerCase().includes('success') || res.kit) {
+      if (res.success === true || (res.success !== false && (res.status === 200 || res.message?.toLowerCase().includes('success') || res.kit))) {
         setIsSuccess(true);
         setSuccessData(res);
         if (res.token) {
@@ -563,8 +563,8 @@ export default function RegisterTag() {
                       setFormData(prev => ({
                         ...prev,
                         vehicleType: newType,
-                        vehicleBrand: prev.vehicleBrand || (newType === 'Luggage' ? 'Safari' : 'SafeDrive'),
-                        itemTitle: prev.itemTitle || (newType === 'Luggage' ? 'Blue Safari Trolley Bag' : `${newType} Safety Tag`),
+                        
+                        
                       }));
                     }}
                     className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:bg-white focus:border-emerald-500 transition-all text-black cursor-pointer"
@@ -688,20 +688,7 @@ export default function RegisterTag() {
                         />
                       </div>
 
-                      {/* Serial / Identifier */}
-                      <div className="space-y-1">
-                        <label className="block text-[11px] font-bold text-gray-700">
-                          Tag / Serial Code
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. SD-LUGGAGE-01"
-                          name="vehicleNumber"
-                          value={formData.vehicleNumber || token}
-                          onChange={handleFormChange}
-                          className="w-full bg-white border border-purple-200 rounded-xl px-4 py-2.5 text-xs font-mono font-bold outline-none focus:border-purple-500 text-gray-900 shadow-2xs"
-                        />
-                      </div>
+                      {/* Hidden Serial Code */}
                     </div>
                   </div>
                 )}

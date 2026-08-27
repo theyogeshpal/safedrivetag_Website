@@ -53,12 +53,18 @@ export const downloadInvoicePdf = (order, currentUser) => {
   const quantity = Math.max(1, Number(order.quantity) || 1);
   const totalAmount = Number(order.totalAmount || order.amount || order.price) || 299;
   
-  // Dynamic GST Calculation (18% Inclusive: Base = Total / 1.18)
-  const baseAmount = Math.round((totalAmount / 1.18) * 100) / 100;
-  const unitBasePrice = Math.round((baseAmount / quantity) * 100) / 100;
-  const totalGst = Math.round((totalAmount - baseAmount) * 100) / 100;
+  // Dynamic GST Calculation (Use backend GST if available, else 0)
+  let totalGst = 0;
+  if (order.gstAmount !== undefined || order.gst !== undefined) {
+    totalGst = Number(order.gstAmount || order.gst || 0);
+  }
+  
   const cgst = Math.round((totalGst / 2) * 100) / 100;
   const sgst = Math.round((totalGst / 2) * 100) / 100;
+
+  // Base amount is total minus GST
+  const baseAmount = Math.round((totalAmount - totalGst) * 100) / 100;
+  const unitBasePrice = Math.round((baseAmount / quantity) * 100) / 100;
 
   // 4. Dynamic Payment Gateway Info
   const paymentId = order.paymentId || 
@@ -337,7 +343,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
               <tr>
                 <td style="font-weight: bold; color: #9ca3af;">1</td>
                 <td>
-                  <strong style="color: #111827; font-size: 12.5px;">${itemTitle}</strong><br />
+                  <strong style="color: #111827; font-size: 12.5px;">${itemTitle} (₹${Math.round(totalAmount / quantity).toLocaleString('en-IN')} / per kit)</strong><br />
                   <span style="font-size: 10px; color: #6b7280;">${itemSubtitle}</span>
                 </td>
                 <td class="text-center" style="font-family: monospace; color: #4b5563;">8523</td>

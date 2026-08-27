@@ -55,8 +55,8 @@ export default function QRScan() {
   const defaultFallbackReasons = [
     {
       _id: 'reason_1',
-      title: 'Wrong Parking',
-      description: 'Your vehicle is blocking the way or parked in a restricted zone.',
+      title: 'Attention Required / Wrong Location',
+      description: 'This item/asset is blocking the way or placed in a restricted zone.',
       iconKey: 'ban',
       color: 'rose',
       isOtherType: false,
@@ -64,8 +64,8 @@ export default function QRScan() {
     },
     {
       _id: 'reason_2',
-      title: 'Headlight / Light On',
-      description: 'Your vehicle lights or headlights are left ON.',
+      title: 'Power / Lights On',
+      description: 'Lights, screen, or power are left ON.',
       iconKey: 'alert',
       color: 'amber',
       isOtherType: false,
@@ -73,8 +73,8 @@ export default function QRScan() {
     },
     {
       _id: 'reason_3',
-      title: 'Window / Door Open',
-      description: 'Window glass is rolled down or door is not properly shut.',
+      title: 'Unsecured / Open',
+      description: 'Window, door, or zipper is open or not properly secured.',
       iconKey: 'unlock',
       color: 'purple',
       isOtherType: false,
@@ -83,7 +83,7 @@ export default function QRScan() {
     {
       _id: 'reason_4',
       title: 'Others',
-      description: 'Specify a custom message or alert for the vehicle owner.',
+      description: 'Specify a custom message or alert for the owner.',
       iconKey: 'other',
       color: 'indigo',
       isOtherType: true,
@@ -211,9 +211,7 @@ export default function QRScan() {
       if (!res.success) {
         await api.sendMessage(token, payload);
       }
-      
-      // 2. Play audible bell chime sound
-      playNotificationBellSound();
+
 
       // 3. Show Toast & Status
       setActionSuccessMsg(res.message || `🔔 Push notification sent to vehicle owner regarding: "${reasonText}"`);
@@ -612,22 +610,24 @@ export default function QRScan() {
                 })}
               </div>
 
-              {/* Custom Message / Alert Box & Direct Push Notification Button (Always Accessible) */}
-              <div className="pt-3 border-t border-gray-100 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-gray-800">
-                    ✍️ Type Custom Message / Notice for Owner:
-                  </label>
-                  <span className="text-[10px] text-gray-400 font-medium">Optional / Custom text</span>
+              {/* Custom Message - only show when Others is selected */}
+              {isOtherSelected && (
+                <div className="pt-3 border-t border-gray-100 space-y-2.5 animate-fade-up">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-gray-800">
+                      ✍️ Type Custom Message / Notice for Owner:
+                    </label>
+                    <span className="text-[10px] text-gray-400 font-medium">Required for Others</span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    placeholder="Type your custom message here (e.g. Your bag was found at Gate 3, please collect it...)"
+                    value={customReasonText}
+                    onChange={(e) => setCustomReasonText(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl p-3 text-xs outline-none resize-none font-medium transition-all shadow-2xs"
+                  />
                 </div>
-                <textarea
-                  rows={2}
-                  placeholder="Type your message for the vehicle owner here (e.g. Please move your car, parking blocking, window open...)"
-                  value={customReasonText}
-                  onChange={(e) => setCustomReasonText(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl p-3 text-xs outline-none resize-none font-medium transition-all shadow-2xs"
-                />
-              </div>
+              )}
             </div>
 
             {/* 2. Instant Action Execution Buttons */}
@@ -695,7 +695,7 @@ export default function QRScan() {
           <div className="flex items-center gap-1.5 font-bold text-gray-800">
             <Info size={14} className="text-[#2874f0]" /> Important Note
           </div>
-          <p>Please use this system only to notify vehicle owners regarding parking, vehicle status, or emergency situations.</p>
+          <p>Please use this system only to notify the tag owner for genuine reasons like parking alerts, found items, safety emergencies, or other legitimate situations.</p>
         </div>
 
       </div>

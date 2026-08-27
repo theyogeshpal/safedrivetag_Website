@@ -71,10 +71,11 @@ export default function Home() {
   useEffect(() => {
     const isStandalonePWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     const hasToken = localStorage.getItem('safedrive_auth_token') || localStorage.getItem('safedrive_current_user');
-    if (currentUser || (isStandalonePWA && hasToken)) {
+    // Only auto-redirect in PWA standalone mode, not in browser
+    if (isStandalonePWA && hasToken) {
       navigate('/dashboard', { replace: true });
     }
-  }, [currentUser, navigate]);
+  }, [navigate]);
 
   return (
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
@@ -157,7 +158,7 @@ export default function Home() {
               {/* Buy Safety Tag Primary CTA */}
               <Link 
                 to="/shop" 
-                className="group flex-1 bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl shadow-[0_10px_25px_rgba(249,115,22,0.3)] transition-all duration-200 flex items-center justify-between gap-3 overflow-hidden active:scale-[0.98]"
+                className="group flex-1 bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl shadow-[0_10px_25px_rgba(16,185,129,0.35)] transition-all duration-200 flex items-center justify-between gap-3 overflow-hidden active:scale-[0.98]"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">

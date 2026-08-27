@@ -181,14 +181,65 @@ export const api = {
   getUserNotifications: () => apiRequest('/user/notifications'),
 
   getUserTransactions: async () => {
-    const res = await apiRequest('/user/ledger');
-    if (res.success && (res.transactions || res.data || res.ledger)) {
-      return {
-        success: true,
-        transactions: res.transactions || res.ledger || res.data || [],
-      };
-    }
     try {
+      const res = await apiRequest('/user/ledger');
+      
+      // If backend returns the specific new format with subscriptions and wallets
+      if (res.success && (res.subscriptions || res.wallets)) {
+        let synthTransactions = [];
+        let index = 0;
+        
+        if (Array.isArray(res.subscriptions)) {
+          res.subscriptions.forEach(sub => {
+            synthTransactions.push({
+              id: sub.paymentId || `SUB-${sub._id || Date.now()}`,
+              orderNumber: sub._id || `SUB-ORD-${index++}`,
+              amount: Number(sub.amount || 299),
+              currency: 'INR',
+              paymentMethod: 'Subscription / Gateway',
+              status: sub.status || 'SUCCESS',
+              date: sub.startDate || sub.createdAt || new Date().toISOString(),
+              productName: sub.planName || 'SafeDrive Subscription',
+            });
+          });
+        }
+        
+        if (Array.isArray(res.wallets)) {
+          res.wallets.forEach(wall => {
+            if (wall.totalCallsPurchased > 0 || wall.totalMessagesPurchased > 0) {
+              synthTransactions.push({
+                id: `WALL-${wall._id || Date.now()}`,
+                orderNumber: wall._id || `WALL-ORD-${index++}`,
+                amount: Number(wall.amount || 0), // Default to 0 if we don't know the wallet purchase price
+                currency: 'INR',
+                paymentMethod: 'Wallet Topup',
+                status: 'SUCCESS',
+                date: wall.updatedAt || wall.createdAt || new Date().toISOString(),
+                productName: 'Quota Topup (Calls/Messages)',
+              });
+            }
+          });
+        }
+        
+        // If we still found no synthesized transactions from the wallet/sub, but res has generic transactions
+        if (synthTransactions.length === 0 && Array.isArray(res.transactions || res.ledger || res.data)) {
+           synthTransactions = res.transactions || res.ledger || res.data || [];
+        }
+        
+        if (synthTransactions.length > 0) {
+          return { success: true, transactions: synthTransactions };
+        }
+      }
+
+      // If res had a standard array of transactions
+      if (res.success && Array.isArray(res.transactions || res.data || res.ledger)) {
+        return {
+          success: true,
+          transactions: res.transactions || res.ledger || res.data || [],
+        };
+      }
+      
+      // Fallback: build from orders
       const ordersRes = await apiRequest('/user/orders');
       if (ordersRes.success && Array.isArray(ordersRes.orders)) {
         const transactions = ordersRes.orders.map((ord, idx) => ({
@@ -207,10 +258,12 @@ export const api = {
         }));
         return { success: true, transactions };
       }
+      
+      return res;
     } catch (e) {
       console.log('Synthesize transactions error', e);
+      return { success: false };
     }
-    return res;
   },
 
   // =========================================================================

@@ -345,7 +345,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
               <div className="p-3">
                 <div className="flex items-center gap-3 font-bold text-xs uppercase tracking-wider text-[#878787] mb-2">
                   <QrCode size={17} className="text-[#2874f0]" />
-                  <span>VEHICLE TAGS & SAFETY</span>
+                  <span>SMART TAGS & SAFETY</span>
                 </div>
                 <div className="space-y-1 pl-7">
                   {activeTagsCount === 0 ? (

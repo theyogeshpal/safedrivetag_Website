@@ -537,76 +537,83 @@ export default function TagDetails() {
           {/* ---------------------------------------------------- */}
           <div className="lg:col-span-2 space-y-5">
             
-            {/* 1. PROTECTED VEHICLE / ITEM DETAILS */}
+            {/* 1. PROTECTED ASSET / ITEM DETAILS */}
             <div className="bg-white border border-gray-200/90 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#2874f0] flex items-center justify-center">
-                    <Car size={18} />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-black text-gray-900">Protected Vehicle / Item Details</h2>
-                    <p className="text-[11px] text-gray-500">Asset linked to this safety sticker</p>
-                  </div>
-                </div>
-                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 border ${
-                  tagData.isRegistered
-                    ? 'bg-green-50 text-green-700 border-green-200'
-                    : 'bg-amber-50 text-amber-700 border-amber-200'
-                }`}>
-                  <Lock size={11} className={tagData.isRegistered ? 'text-green-600' : 'text-amber-600'} />
-                  {tagData.isRegistered ? 'Locked & Protected' : 'Setup Pending'}
-                </span>
-              </div>
-
-              {!tagData.isRegistered ? (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <p className="font-bold text-amber-900 text-xs">{(tagData.vehicleType === 'Luggage' || tagData.vehicleType === 'Bag') ? 'Item' : 'Vehicle'} Link & Activation Pending</p>
-                    <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
-                      Link your {(tagData.vehicleType === 'Luggage' || tagData.vehicleType === 'Bag') ? 'item details' : 'vehicle registration number'} and 2 emergency contacts to activate instant scan and call privacy.
-                    </p>
-                  </div>
-                  <Link
-                    to={`/register/${tagData.currentTagId}`}
-                    className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-lg text-xs shrink-0 shadow-xs text-center transition-colors"
-                  >
-                    + Link {(tagData.vehicleType === 'Luggage' || tagData.vehicleType === 'Bag') ? 'Item' : 'Vehicle'} Now
-                  </Link>
-                </div>
-              ) : (
-                <div className={`grid grid-cols-2 gap-3 ${tagData.securityCode ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
-                  <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl col-span-1">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">BRAND / MAKE</p>
-                    <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.brand}</p>
-                  </div>
-                  <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl col-span-1">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">MODEL / NAME</p>
-                    <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.name}</p>
-                  </div>
-                  <div className="bg-purple-50/70 border border-purple-200 p-3.5 rounded-xl col-span-2 sm:col-span-1">
-                    <p className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">PLATE / ID</p>
-                    <p className="text-base font-black text-purple-950 font-mono tracking-wider mt-0.5 uppercase">
-                      {tagData.vehicle.plate}
-                    </p>
-                  </div>
-                  {tagData.securityCode && (
-                    <div className="bg-orange-50 border border-orange-200 p-3.5 rounded-xl col-span-2 sm:col-span-1">
-                      <p className="text-[10px] font-bold text-orange-700 uppercase tracking-wider flex items-center gap-1">
-                        <Lock size={10} /> SECURITY PIN
-                      </p>
-                      <p className="text-base font-black text-orange-900 font-mono tracking-wider mt-0.5 uppercase">
-                        {tagData.securityCode}
-                      </p>
+              {(() => {
+                const isAsset = tagData.category === 'Luggage' || tagData.category === 'Bag' || tagData.category === 'Item' || tagData.category === 'Other';
+                return (
+                  <>
+                    <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#2874f0] flex items-center justify-center">
+                          <Car size={18} />
+                        </div>
+                        <div>
+                          <h2 className="text-sm font-black text-gray-900">{isAsset ? 'Protected Asset / Item Details' : 'Protected Asset / Vehicle Details'}</h2>
+                          <p className="text-[11px] text-gray-500">Asset linked to this safety sticker</p>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 border ${
+                        tagData.isRegistered
+                          ? 'bg-green-50 text-green-700 border-green-200'
+                          : 'bg-amber-50 text-amber-700 border-amber-200'
+                      }`}>
+                        <Lock size={11} className={tagData.isRegistered ? 'text-green-600' : 'text-amber-600'} />
+                        {tagData.isRegistered ? 'Locked & Protected' : 'Setup Pending'}
+                      </span>
                     </div>
-                  )}
-                </div>
-              )}
 
-              <div className="text-[11px] text-gray-500 flex items-center gap-1.5 pt-1">
-                <Lock size={12} className="text-gray-400" />
-                <span>Vehicle plate number is permanently locked to prevent unauthorized sticker transfers.</span>
-              </div>
+                    {!tagData.isRegistered ? (
+                      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                          <p className="font-bold text-amber-900 text-xs">{isAsset ? 'Item' : 'Asset'} Link & Activation Pending</p>
+                          <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
+                            Link your {isAsset ? 'item details' : 'asset registration number'} and 2 emergency contacts to activate instant scan and call privacy.
+                          </p>
+                        </div>
+                        <Link
+                          to={`/register/${tagData.currentTagId}`}
+                          className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-lg text-xs shrink-0 shadow-xs text-center transition-colors"
+                        >
+                          + Link {isAsset ? 'Item' : 'Asset'} Now
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className={`grid grid-cols-2 gap-3 ${tagData.securityCode ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
+                        <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl col-span-1">
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{isAsset ? 'TYPE / BRAND' : 'BRAND / MAKE'}</p>
+                          <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.brand}</p>
+                        </div>
+                        <div className="bg-[#f8fafc] border border-gray-200/70 p-3.5 rounded-xl col-span-1">
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{isAsset ? 'DESCRIPTION / NAME' : 'MODEL / NAME'}</p>
+                          <p className="text-sm font-black text-gray-900 mt-1">{tagData.vehicle.name}</p>
+                        </div>
+                        <div className="bg-purple-50/70 border border-purple-200 p-3.5 rounded-xl col-span-2 sm:col-span-1">
+                          <p className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">{isAsset ? 'UNIQUE ID' : 'PLATE / ID'}</p>
+                          <p className="text-base font-black text-purple-950 font-mono tracking-wider mt-0.5 uppercase">
+                            {tagData.vehicle.plate}
+                          </p>
+                        </div>
+                        {tagData.securityCode && (
+                          <div className="bg-orange-50 border border-orange-200 p-3.5 rounded-xl col-span-2 sm:col-span-1">
+                            <p className="text-[10px] font-bold text-orange-700 uppercase tracking-wider flex items-center gap-1">
+                              <Lock size={10} /> SECURITY PIN
+                            </p>
+                            <p className="text-base font-black text-orange-900 font-mono tracking-wider mt-0.5 uppercase">
+                              {tagData.securityCode}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="text-[11px] text-gray-500 flex items-center gap-1.5 pt-1">
+                      <Lock size={12} className="text-gray-400" />
+                      <span>{isAsset ? 'Unique asset ID is permanently locked to prevent unauthorized sticker transfers.' : 'Asset ID is permanently locked to prevent unauthorized sticker transfers.'}</span>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             {/* 2. DESIGNATED EMERGENCY CONTACTS */}
@@ -802,6 +809,14 @@ export default function TagDetails() {
                         />
                       </div>
 
+                      {/* Security PIN below QR */}
+                      {(c.securityCode || c.pin || tagData.securityCode) && (
+                        <div className="inline-flex items-center gap-1.5 bg-orange-50 border border-orange-200 text-orange-900 text-xs px-3 py-1.5 rounded-lg font-mono font-bold">
+                          <Lock size={12} className="text-orange-600" />
+                          Security PIN: <strong>{c.securityCode || c.pin || tagData.securityCode}</strong>
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-2 gap-2 pt-1">
                         <Link
                           to={`/q/${c.publicToken || c.copyCode}`}
@@ -929,7 +944,7 @@ export default function TagDetails() {
             <div className="bg-[#2874f0] text-white px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Edit3 size={18} />
-                <h3 className="text-base font-bold">Update Kit & Vehicle Details ({tagData.kitId})</h3>
+                <h3 className="text-base font-bold">Update Kit & Asset Details ({tagData.kitId})</h3>
               </div>
               <button
                 onClick={() => setIsEditModalOpen(false)}
@@ -948,7 +963,7 @@ export default function TagDetails() {
               )}
 
               <div className="space-y-3">
-                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-1">1. Vehicle Information</h4>
+                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-1">1. Asset / Item Information</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-gray-600 font-bold mb-1">Brand / Make</label>
@@ -1031,7 +1046,6 @@ export default function TagDetails() {
                       className="w-full border border-gray-300 rounded-lg p-2 font-mono"
                     />
                   </div>
-                </div>
                 </div>
               </div>
 

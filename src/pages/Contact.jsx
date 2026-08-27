@@ -49,7 +49,7 @@ export default function Contact() {
         subject: formData.subject || 'General Inquiry',
         message: formData.message.trim(),
       });
-      if (res.success || res.status === 200) {
+      if (res.success === true || (res.success !== false && res.status === 200)) {
         showToast.success(res.message || 'Your inquiry has been submitted successfully! Our team will contact you soon.');
         setFormData({ name: '', email: '', phone: '', subject: 'General Inquiry', message: '' });
       } else {
