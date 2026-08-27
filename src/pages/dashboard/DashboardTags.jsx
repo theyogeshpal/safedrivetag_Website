@@ -85,15 +85,16 @@ export default function DashboardTags() {
           .filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
 
         if (activeList.length > 0) {
-          // Group copies belonging to the same product / kit into 1 single tag card
-          const kitMap = new Map();
+          // Each QR copy gets its own separate card — DO NOT group by orderId/orderNumber
+          // because 2 QRs from the same order must show as 2 separate cards
           activeList.forEach((q, idx) => {
             const vBrand = q.vehicleBrand || q.vehicle?.vehicleBrand || '';
             const vModel = q.vehicleName || q.vehicle?.vehicleName || '';
             const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : (q.qrFor ? `${q.qrFor} Safety Tag` : 'My Tag');
             const vPlate = q.vehicleNumber || q.vehicle?.vehicleNumber || q.plateNumber || '';
             const token = q.publicToken || q.token || q.copyCode || q._id || `SD00${idx + 1}`;
-            const baseKey = q.orderId || q.orderNumber || q.kitId || q.productId || (q.copyCode ? q.copyCode.replace(/C\d+$/i, '') : token);
+            // Use copyCode or publicToken as unique key — ensures each QR = 1 card
+            const uniqueKey = q.copyCode || q.publicToken || q._id || `tag-${idx}`;
 
             const eContacts = Array.isArray(q.emergencyContacts) && q.emergencyContacts.length > 0
               ? q.emergencyContacts
@@ -104,42 +105,33 @@ export default function DashboardTags() {
                       ...(q.emergencyContact2 ? [{ name: q.emergencyContact2.name || 'Secondary Contact', number: q.emergencyContact2.phone || q.emergencyContact2.number }] : [])
                     ]);
 
-            if (!kitMap.has(baseKey)) {
-              kitMap.set(baseKey, {
-                id: q.copyCode || baseKey,
-                kitId: baseKey,
-                publicToken: token,
-                primaryToken: token,
-                copyCode: q.copyCode || token,
-                copies: [q],
-                productId: q.productId || 'SafeDrive Smart Safety Kit',
-                name: q.user?.name || res.user?.name || currentUser?.name || 'Owner',
-                phone: q.user?.phone || res.user?.phone || currentUser?.phone || '',
-                emergencyContact: eContacts[0]?.number || eContacts[0]?.phone || null,
-                emergencyContacts: eContacts,
-                whatsapp: q.whatsappNumber || q.user?.phone || res.user?.phone || currentUser?.phone,
-                vehicleNumber: vPlate,
-                vehicleName: vTitle,
-                vehicleType: q.qrFor || q.vehicleType || q.vehicle?.vehicleType || 'General',
-                status: (q.status || 'ACTIVE').toLowerCase(),
-                qrType: q.qrType || 'PHYSICAL',
-                securityCode: q.securityCode || q.pin || res.securityCode || res.pin || null,
-                registeredAt: q.createdAt?.split('T')[0] || q.registeredAt || new Date().toISOString().split('T')[0],
-                callBalance: q.callBalance ?? q.wallet?.callBalance ?? 10,
-                messageBalance: q.messageBalance ?? q.wallet?.messageBalance ?? 20,
-                scansCount: q.scansCount ?? 0,
-                callMaskingEnabled: q.callMaskingEnabled !== false,
-                whatsappAlertsEnabled: q.whatsappAlertsEnabled !== false,
-              });
-            } else {
-              const existing = kitMap.get(baseKey);
-              existing.copies.push(q);
-              if (!existing.vehicleNumber && vPlate) existing.vehicleNumber = vPlate;
-              if (vTitle && (!existing.vehicleName || existing.vehicleName === 'My Tag')) existing.vehicleName = vTitle;
-            }
+            finalTagsList.push({
+              id: uniqueKey,
+              kitId: uniqueKey,
+              publicToken: token,
+              primaryToken: token,
+              copyCode: q.copyCode || token,
+              copies: [q],
+              productId: q.productId || 'SafeDrive Smart Safety Kit',
+              name: q.user?.name || res.user?.name || currentUser?.name || 'Owner',
+              phone: q.user?.phone || res.user?.phone || currentUser?.phone || '',
+              emergencyContact: eContacts[0]?.number || eContacts[0]?.phone || null,
+              emergencyContacts: eContacts,
+              whatsapp: q.whatsappNumber || q.user?.phone || res.user?.phone || currentUser?.phone,
+              vehicleNumber: vPlate,
+              vehicleName: vTitle,
+              vehicleType: q.qrFor || q.vehicleType || q.vehicle?.vehicleType || 'General',
+              status: (q.status || 'ACTIVE').toLowerCase(),
+              qrType: q.qrType || 'PHYSICAL',
+              securityCode: q.securityCode || q.pin || null,
+              registeredAt: q.createdAt?.split('T')[0] || q.registeredAt || new Date().toISOString().split('T')[0],
+              callBalance: q.callBalance ?? q.wallet?.callBalance ?? 10,
+              messageBalance: q.messageBalance ?? q.wallet?.messageBalance ?? 20,
+              scansCount: q.scansCount ?? 0,
+              callMaskingEnabled: q.callMaskingEnabled !== false,
+              whatsappAlertsEnabled: q.whatsappAlertsEnabled !== false,
+            });
           });
-
-          finalTagsList = Array.from(kitMap.values());
         }
       }
 
