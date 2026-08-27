@@ -103,9 +103,9 @@ export default function DashboardTransactions() {
               <h2 className="text-lg sm:text-xl font-bold text-[#212121]">
                 Payment Transactions & Invoices
               </h2>
-              <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
+              {/* <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
                 {transactions.length} Total
-              </span>
+              </span> */}
             </div>
             <p className="text-xs text-[#878787] mt-0.5">
               Secure ledger of all QR kit orders, booster quota renewals, and payment receipts
