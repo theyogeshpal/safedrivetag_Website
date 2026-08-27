@@ -147,13 +147,11 @@ export default function DashboardTransactions() {
           <div className="p-2.5">
             <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Total Amount Paid</p>
             <p className="text-xl font-black text-gray-900 mt-0.5">₹{totalSpent.toLocaleString('en-IN')}</p>
-            <span className="text-[10px] text-emerald-600 font-bold">18% GST Inclusive</span>
           </div>
 
           <div className="p-2.5 border-l border-gray-200/70">
             <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Successful Payments</p>
             <p className="text-xl font-black text-emerald-600 mt-0.5">{successCount}</p>
-            <span className="text-[10px] text-gray-500 font-medium">100% Settled</span>
           </div>
 
           <div className="p-2.5 border-l border-gray-200/70">
