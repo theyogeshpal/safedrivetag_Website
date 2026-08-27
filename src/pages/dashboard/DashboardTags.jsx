@@ -632,7 +632,7 @@ export default function DashboardTags() {
                       )}
 
                       <Link
-                        to={`/dashboard/tag/${tag.primaryToken || tag.publicToken || tag.id}`}
+                        to={`/dashboard/tag/${tag.kitId || tag.copyCode || tag.primaryToken || tag.id}`}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs text-center"
                       >
                         <Eye size={13} /> View Kit Details
