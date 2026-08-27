@@ -474,7 +474,13 @@ export default function QRScan() {
         
         {/* Top Back Navigation */}
         <button 
-          onClick={() => navigate(-1)} 
+          onClick={() => {
+            if (window.history.state && window.history.state.idx > 0) {
+              navigate(-1);
+            } else {
+              navigate('/');
+            }
+          }}
           className="flex items-center text-xs font-bold text-gray-500 hover:text-black transition-colors cursor-pointer"
         >
           <ArrowLeft size={16} className="mr-1" /> Back
