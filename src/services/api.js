@@ -182,104 +182,21 @@ export const api = {
 
   getUserTransactions: async () => {
     try {
-      const res = await apiRequest('/user/ledger');
-      
-      // If backend returns the specific new format with subscriptions and wallets
-      if (res.success && (res.subscriptions || res.wallets)) {
-        let synthTransactions = [];
-        let index = 0;
-        
-        if (Array.isArray(res.subscriptions)) {
-          res.subscriptions.forEach(sub => {
-            synthTransactions.push({
-              id: sub.paymentId || `SUB-${sub._id || Date.now()}`,
-              orderNumber: sub._id || `SUB-ORD-${index++}`,
-              amount: Number(sub.amount || 299),
-              currency: 'INR',
-              paymentMethod: 'Subscription / Gateway',
-              status: sub.status || 'SUCCESS',
-              date: sub.startDate || sub.createdAt || new Date().toISOString(),
-              productName: sub.planName || 'SafeDrive Subscription',
-            });
-          });
-        }
-        
-        if (Array.isArray(res.wallets)) {
-          res.wallets.forEach(wall => {
-            if (wall.totalCallsPurchased > 0 || wall.totalMessagesPurchased > 0) {
-              synthTransactions.push({
-                id: `WALL-${wall._id || Date.now()}`,
-                orderNumber: wall._id || `WALL-ORD-${index++}`,
-                amount: Number(wall.amount || 0), // Default to 0 if we don't know the wallet purchase price
-                currency: 'INR',
-                paymentMethod: 'Wallet Topup',
-                status: 'SUCCESS',
-                date: wall.updatedAt || wall.createdAt || new Date().toISOString(),
-                productName: 'Quota Topup (Calls/Messages)',
-              });
-            }
-          });
-        }
-        
-      // If we still found no synthesized transactions from the wallet/sub, but res has generic transactions
-      if (synthTransactions.length === 0 && Array.isArray(res.transactions || res.ledger || res.data)) {
-         const rawTxns = res.transactions || res.ledger || res.data || [];
-         synthTransactions = rawTxns.map((txn, idx) => ({
-           id: txn.paymentId || txn.transactionId || txn.id || `TXN-RZP-${(txn.orderNumber || txn._id || '').toString().replace(/\D/g, '').slice(-8) || (Date.now() - idx * 864000).toString().slice(-8)}`,
-           orderNumber: txn.orderNumber || txn._id || `ORD-2026-${idx + 101}`,
-           amount: Number(txn.totalAmount || txn.amount || txn.price) || 299,
-           currency: txn.currency || 'INR',
-           paymentMethod: txn.paymentMethod || 'Razorpay Gateway',
-           paymentGateway: 'Razorpay',
-           status: txn.status || txn.paymentStatus || 'SUCCESS',
-           date: txn.createdAt || txn.date || txn.updatedAt || new Date().toISOString(),
-           productName: txn.productName || txn.title || 'SafeDrive Safety Kit',
-           customerName: txn.customerName || '',
-           customerPhone: txn.customerPhone || '',
-           orderData: txn,
-         }));
-      }
-      
-      if (synthTransactions.length > 0) {
-        return { success: true, transactions: synthTransactions };
-      }
-    }
-
-    // If res had a standard array of transactions but not returned yet
-    if (res && res.success && Array.isArray(res.transactions || res.data || res.ledger)) {
-      const rawTxns = res.transactions || res.ledger || res.data || [];
-      return {
-        success: true,
-        transactions: rawTxns.map((txn, idx) => ({
-           id: txn.paymentId || txn.transactionId || txn.id || `TXN-RZP-${(txn.orderNumber || txn._id || '').toString().replace(/\D/g, '').slice(-8) || (Date.now() - idx * 864000).toString().slice(-8)}`,
-           orderNumber: txn.orderNumber || txn._id || `ORD-2026-${idx + 101}`,
-           amount: Number(txn.totalAmount || txn.amount || txn.price) || 299,
-           currency: txn.currency || 'INR',
-           paymentMethod: txn.paymentMethod || 'Razorpay Gateway',
-           paymentGateway: 'Razorpay',
-           status: txn.status || txn.paymentStatus || 'SUCCESS',
-           date: txn.createdAt || txn.date || txn.updatedAt || new Date().toISOString(),
-           productName: txn.productName || txn.title || 'SafeDrive Safety Kit',
-           customerName: txn.customerName || '',
-           customerPhone: txn.customerPhone || '',
-           orderData: txn,
-        }))
-      };
-    }
-      
-      // Fallback: build from orders
+      // Temporarily bypassing /user/ledger as requested by user
+      // Fetching directly from /user/orders to populate the transactions list
       const ordersRes = await apiRequest('/user/orders');
+      
       if (ordersRes.success && Array.isArray(ordersRes.orders)) {
         const transactions = ordersRes.orders.map((ord, idx) => ({
-          id: ord.paymentId || ord.transactionId || `TXN-RZP-${(ord.orderNumber || ord._id || '').toString().replace(/\D/g, '').slice(-8) || (Date.now() - idx * 86400000).toString().slice(-8)}`,
+          id: ord.paymentId || ord.transactionId || `TXN-RZP-${(ord.orderNumber || ord._id || '').toString().replace(/\D/g, '').slice(-8) || (Date.now() - idx * 864000).toString().slice(-8)}`,
           orderNumber: ord.orderNumber || ord._id || `ORD-2026-${idx + 101}`,
           amount: Number(ord.totalAmount || ord.amount || ord.price) || 299,
           currency: 'INR',
-          paymentMethod: ord.paymentMethod || 'Razorpay Gateway (UPI / Cards)',
+          paymentMethod: ord.paymentMethod || 'Razorpay Gateway',
           paymentGateway: 'Razorpay',
           status: ord.paymentStatus || 'SUCCESS',
           date: ord.createdAt || ord.date || new Date(Date.now() - idx * 86400000).toISOString(),
-          productName: ord.productName || ord.title || 'SafeDrive Smart Vehicle QR Safety Kit',
+          productName: ord.productName || ord.title || 'SafeDrive Smart Safety Kit',
           customerName: ord.customerName || '',
           customerPhone: ord.customerPhone || '',
           orderData: ord,
@@ -287,7 +204,7 @@ export const api = {
         return { success: true, transactions };
       }
       
-      return res;
+      return { success: false, message: 'Could not load transaction orders' };
     } catch (e) {
       console.log('Synthesize transactions error', e);
       return { success: false };
