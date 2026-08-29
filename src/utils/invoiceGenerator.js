@@ -286,17 +286,13 @@ export const downloadInvoicePdf = (order, currentUser) => {
       <body>
         
         <!-- SafeDrive Watermark -->
-        <div class="watermark-container">
-          <img class="watermark-logo" src="${logoUrl}" alt="" onerror="this.style.display='none'" />
-          <div class="watermark-title">SAFEDRIVE</div>
-          <div class="watermark-subtitle">PAID & VERIFIED</div>
-        </div>
-
         <div class="invoice-box">
-          <!-- Header Row -->
+          <img src="${logoUrl}" class="watermark-bg" alt="" />
+          
+          <!-- Brand & Header Details -->
           <div class="header-row">
-            <div>
-              <div class="brand-header">
+            <div class="brand-header">
+              <div style="margin-right: 12px;">
                 <img src="${logoUrl}" alt="SafeDrive Logo" class="brand-logo-img" onerror="this.style.display='none'" />
               </div>
               <div class="company-info">
@@ -329,7 +325,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
               <div class="col-heading">Shipping Address:</div>
               <div class="customer-name">${customerName}</div>
               <div style="word-break: break-word;">${shippingAddressText}</div>
-              <div style="color: #15803d; font-weight: 700; margin-top: 3px;">${isDigital ? 'Instant Digital Pass Delivery (Activated)' : 'Express Pan-India Shipping (Dispatched)'}</div>
+              <div style="color: #15803d; font-weight: 700; margin-top: 3px;">${isDigital ? 'Digital Delivery (Activated)' : 'Shipping (Dispatched)'}</div>
             </div>
           </div>
 

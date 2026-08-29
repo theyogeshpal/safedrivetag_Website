@@ -138,30 +138,31 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
         </div>
 
         {/* Printable Area Container */}
-        <div className="p-6 sm:p-8 overflow-y-auto flex-1 bg-white text-gray-900 text-xs">
+        <div className="p-6 sm:p-8 overflow-y-auto flex-1 bg-white text-gray-900 text-xs relative">
           <div id="printable-invoice" ref={invoiceRef} className="space-y-6">
             
-            {/* 1. Company & Invoice Header */}
-            <div className="flex justify-between items-start pb-5 border-b-2 border-orange-500">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-7 h-7 rounded-lg bg-orange-500 text-white flex items-center justify-center font-black text-sm">
-                    SD
-                  </div>
-                  <span className="text-xl font-black tracking-tight text-gray-900">SafeDrive-Tag</span>
-                </div>
-                <p className="text-[11px] text-orange-600 font-bold uppercase tracking-wider">Smart Vehicle Privacy Solutions</p>
-                <p className="text-[11px] text-gray-500 mt-1 leading-tight">
-                  <strong>SafeDrive Tag</strong><br />
-                  Email: support@safedrivetag.com | Web: safedrivetag.com
-                </p>
-              </div>
+            {/* Watermark Logo */}
+            <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
+              <img src="/logos/primary.jpeg" alt="Watermark" className="w-80 h-auto grayscale" />
+            </div>
 
+            {/* 1. Header (Company & Invoice Meta) */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b-[3px] border-orange-500 pb-5 mb-5 relative z-10">
+              <div className="flex items-center gap-3 mb-4 md:mb-0">
+                <div className="w-16 h-16 bg-white rounded-lg border border-gray-100 flex items-center justify-center overflow-hidden shrink-0 shadow-xs p-1.5">
+                  <img src="/logos/primary.jpeg" alt="Logo" className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-gray-900 tracking-tight leading-tight">SafeDrive Tag</h3>
+                  <p className="text-xs text-gray-500 mt-1 font-medium">support@safedrivetag.com</p>
+                  <p className="text-xs text-gray-500 font-medium">www.safedrivetag.com</p>
+                </div>
+              </div>
               <div className="text-right">
-                <span className="inline-block bg-orange-50 text-orange-700 border border-orange-200 text-[10px] font-black px-2.5 py-1 rounded-md uppercase mb-2">
+                <span className="inline-block bg-orange-50 text-orange-700 border-2 border-orange-200 px-3 py-1 rounded-lg text-xs font-black uppercase mb-2 tracking-wide">
                   Tax Invoice
                 </span>
-                <p className="font-mono font-bold text-gray-900 text-xs">{invoiceNo}</p>
+                <p className="text-gray-500 text-[11px] font-medium">Invoice No: <strong className="text-gray-800">{invoiceNo}</strong></p>
                 <p className="text-gray-500 text-[11px] mt-0.5">Date: {invoiceDate}</p>
                 <p className="text-gray-500 text-[11px]">Order: <strong className="text-gray-800 font-mono">{order.id}</strong></p>
                 <p className="text-gray-500 text-[11px]">Payment: <strong className="text-green-600 font-bold">PAID (Razorpay)</strong></p>
@@ -169,7 +170,7 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
             </div>
 
             {/* 2. Billing & Shipping Address */}
-            <div className="grid grid-cols-2 gap-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+            <div className="grid grid-cols-2 gap-6 bg-gray-50 p-4 rounded-xl border border-gray-100 relative z-10">
               <div>
                 <h4 className="font-extrabold text-gray-500 uppercase tracking-wider text-[10px] pb-1 border-b border-gray-200 mb-2">
                   Billed To (Customer):
@@ -188,12 +189,12 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
                 <p className="text-gray-600 text-[11px] mt-0.5 leading-relaxed">
                   {order.statusDesc?.replace('Delivery to: ', '') || currentUser?.address || 'Plot 55, Sector 10, Noida, Uttar Pradesh - 201301'}
                 </p>
-                <p className="text-gray-600 text-[11px] font-bold text-green-700 mt-1">Delivery: Express Pan-India (Dispatched)</p>
+                <p className="text-gray-600 text-[11px] font-bold text-green-700 mt-1">Delivery: {isDigital ? 'Digital Delivery (Activated)' : 'Shipping (Dispatched)'}</p>
               </div>
             </div>
 
             {/* 3. Items Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto relative z-10">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-100/80 text-gray-700 font-extrabold text-[11px]">
