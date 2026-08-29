@@ -50,17 +50,25 @@ class ErrorBoundary extends React.Component {
     return { hasError: true };
   }
   componentDidCatch(error, errorInfo) {
-    if (error.message && (error.message.includes('Failed to fetch dynamically imported module') || error.message.includes('Importing a module script failed'))) {
+    const lastCrash = sessionStorage.getItem('sd_last_crash');
+    const now = Date.now();
+    
+    // Auto-refresh once if it crashes
+    if (!lastCrash || now - parseInt(lastCrash) > 5000) {
+      sessionStorage.setItem('sd_last_crash', now.toString());
       window.location.reload();
+    } else {
+      // If it crashes repeatedly in a loop, fallback to safe home route automatically
+      window.location.replace('/');
     }
   }
   render() {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-xl font-bold mb-2">Applying SafeDrive Updates...</h2>
-          <p className="text-sm text-gray-500 mb-6">Please refresh the page to continue.</p>
-          <button onClick={() => window.location.reload()} className="bg-orange-500 text-white px-6 py-2 rounded-xl font-bold">Refresh Now</button>
+          <RefreshCw size={32} className="text-[#fb641b] animate-spin mb-4" style={{ animationDuration: '1s' }} />
+          <h2 className="text-xl font-bold mb-2 text-gray-900">Restoring Connection...</h2>
+          <p className="text-sm text-gray-500 mb-6">Automatically redirecting you to a safe page.</p>
         </div>
       );
     }
