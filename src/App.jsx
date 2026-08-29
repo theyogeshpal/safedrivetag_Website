@@ -1,5 +1,6 @@
 import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { RefreshCw } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -32,15 +33,10 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Branded Fast Fallback Skeleton
 const RouteFallback = () => (
-  <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
-    <div className="relative w-16 h-16 mb-4">
-      <div className="absolute inset-0 rounded-2xl bg-blue-500/20 animate-ping" />
-      <div className="relative w-16 h-16 bg-[#2874f0] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25">
-        <div className="w-7 h-7 border-3 border-white border-t-transparent rounded-full animate-spin" />
-      </div>
-    </div>
-    <h3 className="text-sm font-black text-gray-800">Loading SafeDrive...</h3>
-    <p className="text-[11px] text-gray-500 mt-1">Please wait while we secure your connection</p>
+  <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center gap-3">
+    <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
+    <h3 className="text-sm font-bold text-[#1a2a4a]">Loading SafeDrive...</h3>
+    <p className="text-[11px] text-gray-500">Please wait while we secure your connection</p>
   </div>
 );
 

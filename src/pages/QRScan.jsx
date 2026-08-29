@@ -383,9 +383,9 @@ export default function QRScan() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f4f7fb] flex flex-col items-center justify-center p-4">
-        <RefreshCw className="w-8 h-8 text-[#2874f0] animate-spin mb-3" />
-        <p className="text-sm font-bold text-gray-700">Connecting to SafeDrive Security Bridge...</p>
+      <div className="min-h-screen bg-[#f4f7fb] flex flex-col items-center justify-center p-4 gap-3">
+        <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
+        <p className="text-sm font-bold text-[#1a2a4a]">Connecting to SafeDrive bridge...</p>
       </div>
     );
   }

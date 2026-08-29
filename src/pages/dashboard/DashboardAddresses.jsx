@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Edit3, X, CheckCircle2 } from 'lucide-react';
+import { MapPin, Edit3, X, CheckCircle2, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import DashboardLayout from './DashboardLayout';
@@ -129,10 +129,8 @@ export default function DashboardAddresses() {
         <div className="space-y-4 max-w-2xl">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-10 gap-3">
-              <div className="relative w-10 h-10 mb-1">
-                <div className="w-10 h-10 border-4 border-[#fb641b]/20 border-t-[#fb641b] rounded-full animate-spin"></div>
-              </div>
-              <p className="text-xs font-bold text-gray-500">Loading delivery addresses...</p>
+              <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
+              <p className="text-sm font-bold text-[#1a2a4a]">Loading delivery addresses...</p>
             </div>
           ) : addresses.length === 0 ? (
             <div className="py-8 text-center border-2 border-dashed border-gray-200 rounded-lg">

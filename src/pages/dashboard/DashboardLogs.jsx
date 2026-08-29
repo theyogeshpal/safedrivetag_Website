@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, ShieldCheck, Phone, MessageCircle, MapPin, Lock, Plus } from 'lucide-react';
+import { Activity, ShieldCheck, Phone, MessageCircle, MapPin, Lock, Plus, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import DashboardLayout from './DashboardLayout';
@@ -85,9 +85,9 @@ export default function DashboardLogs() {
         </div>
 
         {loading ? (
-          <div className="py-12 text-center">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-xs text-gray-500">Loading activity logs...</p>
+          <div className="flex flex-col items-center justify-center py-12 gap-3">
+            <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
+            <p className="text-sm font-bold text-[#1a2a4a]">Loading activity logs...</p>
           </div>
         ) : !hasActiveTags ? (
           <div className="py-12 px-4 text-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50/80 max-w-2xl mx-auto my-4 shadow-sm">

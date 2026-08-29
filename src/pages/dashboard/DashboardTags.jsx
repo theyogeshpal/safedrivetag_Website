@@ -18,7 +18,8 @@ import {
   Bike, 
   Briefcase, 
   Truck,
-  QrCode 
+  QrCode,
+  RefreshCw
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
@@ -336,12 +337,10 @@ export default function DashboardTags() {
   if (isLoadingDashboard) {
     return (
       <DashboardLayout currentTab="tags" pageTitle="My SafeDrive-Tags">
-        <div className="flex flex-col items-center justify-center py-32 gap-5">
-          <div className="relative w-12 h-12 mb-2">
-            <div className="w-12 h-12 border-4 border-[#fb641b]/20 border-t-[#fb641b] rounded-full animate-spin"></div>
-          </div>
+        <div className="flex flex-col items-center justify-center py-32 gap-3">
+          <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
           <p className="text-sm font-bold text-[#1a2a4a] tracking-wide text-center">
-            Loading owner dashboard &amp; active tags...
+            Loading owner dashboard & active tags...
           </p>
         </div>
       </DashboardLayout>
@@ -409,11 +408,9 @@ export default function DashboardTags() {
 
         {/* Tags List */}
         {isLoadingDashboard ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="relative w-12 h-12 mb-2">
-              <div className="w-12 h-12 border-4 border-[#fb641b]/20 border-t-[#fb641b] rounded-full animate-spin"></div>
-            </div>
-            <p className="text-sm font-bold text-[#1a2a4a]">Loading owner dashboard &amp; active tags...</p>
+          <div className="flex flex-col items-center justify-center py-20 gap-3">
+            <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
+            <p className="text-sm font-bold text-[#1a2a4a]">Loading owner dashboard & active tags...</p>
           </div>
         ) : userTags.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-8 sm:p-12 text-center flex flex-col items-center justify-center mt-4">

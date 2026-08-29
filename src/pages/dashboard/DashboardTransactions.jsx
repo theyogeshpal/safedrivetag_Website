@@ -169,9 +169,9 @@ export default function DashboardTransactions() {
 
         {/* Transactions Table */}
         {isLoading ? (
-          <div className="py-12 text-center">
-            <div className="w-10 h-10 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-xs font-bold text-gray-700">Loading Transaction Ledger...</p>
+          <div className="flex flex-col items-center justify-center py-12 gap-3">
+            <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
+            <p className="text-sm font-bold text-[#1a2a4a]">Loading transaction ledger...</p>
           </div>
         ) : filteredTransactions.length === 0 ? (
           <div className="py-16 text-center border border-dashed border-gray-300 rounded-2xl bg-gray-50/50">
