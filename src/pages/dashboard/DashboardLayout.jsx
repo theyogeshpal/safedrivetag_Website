@@ -20,6 +20,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { customSwal, showNoActiveTagAlert, showConfirmDialog, showToast } from '../../utils/swal';
+import PageLoader from '../../components/PageLoader';
 
 export default function DashboardLayout({ children, currentTab, pageTitle, saveSuccessMsg }) {
   const navigate = useNavigate();
@@ -139,25 +140,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
 
   // 1. Animated Full Screen Dashboard Loader
   if (isInitializingAuth || (isLoadingAuth && !currentUser)) {
-    return (
-      <div className="min-h-screen bg-[#f1f3f6] flex flex-col items-center justify-center p-6 text-center pt-24">
-        <div className="relative w-20 h-20 mb-5">
-          <div className="absolute inset-0 rounded-3xl bg-[#2874f0]/20 animate-ping" />
-          <div className="relative w-20 h-20 bg-gradient-to-tr from-[#2874f0] to-blue-600 rounded-3xl flex items-center justify-center shadow-xl shadow-blue-500/30">
-            <QrCode className="w-10 h-10 text-white animate-pulse" />
-          </div>
-        </div>
-        <h2 className="text-lg sm:text-xl font-black text-gray-900 mb-1.5">
-          Loading Your SafeDrive Account...
-        </h2>
-        <p className="text-xs text-gray-500 max-w-sm mx-auto font-medium leading-relaxed">
-          Verifying security session and fetching your active vehicle tags, live quotas, and recent activity...
-        </p>
-        <div className="mt-5 w-48 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-          <div className="h-full bg-[#2874f0] rounded-full animate-pulse w-3/4" />
-        </div>
-      </div>
-    );
+    return <PageLoader text="Loading Your SafeDrive Account..." fullScreen={true} />;
   }
 
   // 2. Unauthenticated State
