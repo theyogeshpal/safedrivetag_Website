@@ -199,9 +199,8 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
                   <tr className="bg-gray-100/80 text-gray-700 font-extrabold text-[11px]">
                     <th className="py-2.5 px-3 text-left rounded-l-lg">#</th>
                     <th className="py-2.5 px-3 text-left">Item Description</th>
-                    <th className="py-2.5 px-3 text-center">HSN</th>
                     <th className="py-2.5 px-3 text-center">Qty</th>
-                    <th className="py-2.5 px-3 text-right">Taxable (₹)</th>
+                    <th className="py-2.5 px-3 text-right">Unit (₹)</th>
                     <th className="py-2.5 px-3 text-right rounded-r-lg">Total (₹)</th>
                   </tr>
                 </thead>
@@ -210,12 +209,10 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
                     <td className="py-3 px-3 font-bold text-gray-400">1</td>
                     <td className="py-3 px-3">
                       <p className="font-black text-gray-900 text-xs">{itemTitle}</p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">{itemSubtitle}</p>
                     </td>
-                    <td className="py-3 px-3 text-center font-mono text-gray-500 text-[11px]">{hsnCode}</td>
                     <td className="py-3 px-3 text-center font-bold text-gray-900">{quantity}</td>
-                    <td className="py-3 px-3 text-right font-medium text-gray-800">₹{unitBasePrice.toFixed(2)}</td>
-                    <td className="py-3 px-3 text-right font-black text-gray-900">₹{baseAmount.toFixed(2)}</td>
+                    <td className="py-3 px-3 text-right font-medium text-gray-800">₹{(totalAmount / quantity).toFixed(2)}</td>
+                    <td className="py-3 px-3 text-right font-black text-gray-900">₹{totalAmount.toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -225,22 +222,6 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
             <div className="flex justify-end pt-2">
               <table className="w-64 text-xs border-collapse">
                 <tbody>
-                  <tr>
-                    <td className="py-1.5 px-2 text-gray-600">Taxable Value:</td>
-                    <td className="py-1.5 px-2 text-right font-semibold text-gray-900">₹{baseAmount.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-1.5 px-2 text-gray-600">CGST (9%):</td>
-                    <td className="py-1.5 px-2 text-right font-semibold text-gray-900">₹{cgst.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-1.5 px-2 text-gray-600">SGST (9%):</td>
-                    <td className="py-1.5 px-2 text-right font-semibold text-gray-900">₹{sgst.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-1.5 px-2 text-gray-600">Shipping & Handling:</td>
-                    <td className="py-1.5 px-2 text-right font-bold text-green-600">FREE</td>
-                  </tr>
                   <tr className="border-t-2 border-b-2 border-gray-900">
                     <td className="py-2.5 px-2 font-black text-gray-900 text-sm">Total Paid:</td>
                     <td className="py-2.5 px-2 text-right font-black text-gray-900 text-base">₹{totalAmount.toFixed(2)}</td>

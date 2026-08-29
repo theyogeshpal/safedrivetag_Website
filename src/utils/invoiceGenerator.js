@@ -338,24 +338,21 @@ export const downloadInvoicePdf = (order, currentUser) => {
             <thead>
               <tr>
                 <th style="width: 5%;">#</th>
-                <th style="width: 50%;">Item Description</th>
-                <th style="width: 15%; text-align: center;">HSN</th>
+                <th style="width: 55%;">Item Description</th>
                 <th style="width: 10%; text-align: center;">Qty</th>
-                <th style="width: 10%; text-align: right;">Unit (₹)</th>
-                <th style="width: 10%; text-align: right;">Total (₹)</th>
+                <th style="width: 15%; text-align: right;">Unit (₹)</th>
+                <th style="width: 15%; text-align: right;">Total (₹)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td style="font-weight: bold; color: #9ca3af;">1</td>
                 <td>
-                  <strong style="color: #111827; font-size: 12.5px;">${itemTitle} (₹${Math.round(totalAmount / quantity).toLocaleString('en-IN')} / per kit)</strong><br />
-                  <span style="font-size: 10px; color: #6b7280;">${itemSubtitle}</span>
+                  <strong style="color: #111827; font-size: 12.5px;">${itemTitle}</strong>
                 </td>
-                <td class="text-center" style="font-family: monospace; color: #4b5563;">${hsnCode}</td>
                 <td class="text-center" style="font-weight: 800;">${quantity}</td>
-                <td class="text-right">₹${unitBasePrice.toFixed(2)}</td>
-                <td class="text-right" style="font-weight: 800;">₹${baseAmount.toFixed(2)}</td>
+                <td class="text-right">₹${(totalAmount / quantity).toFixed(2)}</td>
+                <td class="text-right" style="font-weight: 800;">₹${totalAmount.toFixed(2)}</td>
               </tr>
             </tbody>
           </table>
@@ -364,22 +361,6 @@ export const downloadInvoicePdf = (order, currentUser) => {
           <div class="totals-table-container">
             <table class="totals-table">
               <tbody>
-                <tr>
-                  <td>Taxable Base Amount:</td>
-                  <td class="text-right" style="font-weight: 600;">₹${baseAmount.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td>CGST (9%):</td>
-                  <td class="text-right" style="font-weight: 600;">₹${cgst.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td>SGST (9%):</td>
-                  <td class="text-right" style="font-weight: 600;">₹${sgst.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td>Pan-India Express Shipping:</td>
-                  <td class="text-right" style="color: #15803d; font-weight: 800;">FREE</td>
-                </tr>
                 <tr class="total-highlight-row">
                   <td>Total Amount Paid:</td>
                   <td class="text-right">₹${totalAmount.toFixed(2)}</td>
