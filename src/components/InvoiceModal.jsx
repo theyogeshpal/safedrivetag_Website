@@ -14,15 +14,42 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
 
   if (!order) return null;
 
-  const invoiceNo = `INV-2026-${order.id?.toString().replace(/\D/g, '').slice(-4) || '8912'}`;
-  const invoiceDate = order.date || new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-  const totalAmount = Number(order.price) || 299;
+  const invoiceNo = order.invoiceNumber || `INV-2026-${order.id?.toString().replace(/\D/g, '').slice(-4) || '8912'}`;
+  const rawDate = order.createdAt || order.orderDate || order.date;
+  const invoiceDate = rawDate ? new Date(rawDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   
-  // GST Calculation (18% Inclusive: Base = Total / 1.18)
-  const baseAmount = Math.round((totalAmount / 1.18) * 100) / 100;
-  const totalGst = Math.round((totalAmount - baseAmount) * 100) / 100;
+  const quantity = Math.max(1, Number(order.quantity) || 1);
+  const totalAmount = Number(order.price || order.totalAmount || order.amount) || 299;
+  
+  let totalGst = 0;
+  if (order.gstAmount !== undefined && Number(order.gstAmount) > 0) {
+    totalGst = Number(order.gstAmount);
+  } else if (order.gst !== undefined && Number(order.gst) > 0) {
+    totalGst = Number(order.gst);
+  } else {
+    totalGst = totalAmount - (totalAmount / 1.18);
+  }
+  
   const cgst = Math.round((totalGst / 2) * 100) / 100;
   const sgst = Math.round((totalGst / 2) * 100) / 100;
+
+  const baseAmount = Math.round((totalAmount - (cgst + sgst)) * 100) / 100;
+  const unitBasePrice = Math.round((baseAmount / quantity) * 100) / 100;
+
+  const isDigital = order.qrType === 'DIGITAL' || (order.productName || order.title || '').toLowerCase().includes('digital');
+  
+  let rawTitle = String(order.productName || order.title || order.item || 'SafeDrive Smart Safety Tag');
+  rawTitle = rawTitle.replace(/luggege/i, 'Luggage');
+  const itemTitle = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1);
+  
+  const itemSubtitle = order.description || (isDigital 
+    ? 'Instant Printable QR Safety Pass + 1-Year Cloud Calling Bridge & WhatsApp Alerts'
+    : '3M Waterproof Reflective QR Stickers + 1-Year Cloud Calling Bridge & Instant WhatsApp Alerts');
+
+  const hsnCode = isDigital ? '9983' : '8523';
+  
+  const customerState = order.state || currentUser?.state || 'N/A';
+  const placeOfSupply = `${customerState}`.toUpperCase();
 
   const handlePrint = () => {
     const printContent = document.getElementById('printable-invoice');
@@ -125,9 +152,7 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
                 </div>
                 <p className="text-[11px] text-orange-600 font-bold uppercase tracking-wider">Smart Vehicle Privacy Solutions</p>
                 <p className="text-[11px] text-gray-500 mt-1 leading-tight">
-                  SafeDrive Technologies Pvt. Ltd.<br />
-                  GSTIN: 07AABCS1429B1Z8 | CIN: U72900DL2024PTC39281<br />
-                  Tower 4, Sector 62, Noida, UP - 201301<br />
+                  <strong>SafeDrive Tag</strong><br />
                   Email: support@safedrivetag.com | Web: safedrivetag.com
                 </p>
               </div>
@@ -184,15 +209,13 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
                   <tr>
                     <td className="py-3 px-3 font-bold text-gray-400">1</td>
                     <td className="py-3 px-3">
-                      <p className="font-black text-gray-900 text-xs">{order.title || 'SafeDrive Smart Vehicle QR Kit'}</p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">
-                        Reflective 3M stickers + 1-Year Cloud Calling Bridge & WhatsApp alert quota included
-                      </p>
+                      <p className="font-black text-gray-900 text-xs">{itemTitle}</p>
+                      <p className="text-[10px] text-gray-500 mt-0.5">{itemSubtitle}</p>
                     </td>
-                    <td className="py-3 px-3 text-center font-mono text-gray-500 text-[11px]">8523</td>
-                    <td className="py-3 px-3 text-center font-bold text-gray-900">1</td>
-                    <td className="py-3 px-3 text-right font-medium text-gray-800">₹{baseAmount.toFixed(2)}</td>
-                    <td className="py-3 px-3 text-right font-black text-gray-900">₹{totalAmount.toFixed(2)}</td>
+                    <td className="py-3 px-3 text-center font-mono text-gray-500 text-[11px]">{hsnCode}</td>
+                    <td className="py-3 px-3 text-center font-bold text-gray-900">{quantity}</td>
+                    <td className="py-3 px-3 text-right font-medium text-gray-800">₹{unitBasePrice.toFixed(2)}</td>
+                    <td className="py-3 px-3 text-right font-black text-gray-900">₹{baseAmount.toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>

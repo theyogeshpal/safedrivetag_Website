@@ -21,8 +21,8 @@ export const downloadInvoicePdf = (order, currentUser) => {
   const customerPhone = order.customerPhone || order.phone || currentUser?.phone || '9876543210';
   const customerEmail = order.customerEmail || order.email || currentUser?.email || 'support@safedrivetag.com';
   
-  const customerState = order.state || currentUser?.state || 'Uttar Pradesh';
-  const placeOfSupply = `${customerState} (09)`;
+  const customerState = order.state || currentUser?.state || 'N/A';
+  const placeOfSupply = `${customerState}`.toUpperCase();
 
   // Resolve Shipping Address
   let shippingAddressText = order.shippingAddress;
@@ -300,9 +300,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
                 <img src="${logoUrl}" alt="SafeDrive Logo" class="brand-logo-img" onerror="this.style.display='none'" />
               </div>
               <div class="company-info">
-                <strong>SafeDrive Technologies Pvt. Ltd.</strong><br />
-                GSTIN: 07AABCS1429B1Z8 | CIN: U72900DL2024PTC39281<br />
-                Tower 4, Sector 62, Noida, UP - 201301<br />
+                <strong style="font-size: 13px;">SafeDrive Tag</strong><br />
                 Email: support@safedrivetag.com | Web: safedrivetag.com
               </div>
             </div>
@@ -357,7 +355,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
                 <td class="text-center" style="font-family: monospace; color: #4b5563;">${hsnCode}</td>
                 <td class="text-center" style="font-weight: 800;">${quantity}</td>
                 <td class="text-right">₹${unitBasePrice.toFixed(2)}</td>
-                <td class="text-right" style="font-weight: 800;">₹${totalAmount.toFixed(2)}</td>
+                <td class="text-right" style="font-weight: 800;">₹${baseAmount.toFixed(2)}</td>
               </tr>
             </tbody>
           </table>
