@@ -684,13 +684,19 @@ export default function Checkout() {
                 <h2 className="text-xl font-black text-black mb-6">Order Summary</h2>
                 
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-20 h-20 rounded-2xl bg-black/5 overflow-hidden border border-black/10 shrink-0">
-                    <img 
-                      src={selectedProduct.imageUrl || '/images/safedrive-tag-final.png'} 
-                      alt={selectedProduct.title || 'Product'} 
-                      className="w-full h-full object-cover" 
-                    />
-                  </div>
+                  {selectedProduct.imageUrl && selectedProduct.imageUrl !== '/images/safedrive-tag-final.png' && (
+                    <div className="w-20 h-20 rounded-2xl bg-black/5 overflow-hidden border border-black/10 shrink-0 flex items-center justify-center p-2 bg-white">
+                      <img 
+                        src={selectedProduct.imageUrl} 
+                        alt={selectedProduct.title || 'Product'} 
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className="flex-1">
                     <h3 className="font-black text-sm text-black line-clamp-1">{selectedProduct.title || selectedProduct.name}</h3>
                     <p className="text-xs text-black/50 mb-1">{selectedProduct.description?.slice(0, 45)}...</p>
