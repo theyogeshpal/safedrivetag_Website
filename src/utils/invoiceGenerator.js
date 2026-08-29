@@ -40,30 +40,38 @@ export const downloadInvoicePdf = (order, currentUser) => {
   }
 
   // 3. Dynamic Product Details & Pricing
-  const isDigital = order.productType === 'DIGITAL' || 
-                    order.qrType === 'DIGITAL' || 
-                    order.productName?.toLowerCase().includes('digital') || 
-                    order.title?.toLowerCase().includes('digital');
-
-  const itemTitle = order.productName || order.title || order.name || 'SafeDrive Smart Vehicle QR Safety Kit';
+  const isDigital = order.qrType === 'DIGITAL' || (order.productName || order.title || '').toLowerCase().includes('digital');
+  
+  // Fix spelling mistakes and format product name cleanly
+  let rawTitle = String(order.productName || order.title || order.item || 'SafeDrive Smart Safety Tag');
+  rawTitle = rawTitle.replace(/luggege/i, 'Luggage');
+  const itemTitle = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1);
+  
   const itemSubtitle = order.description || (isDigital 
     ? 'Instant Printable QR Safety Pass + 1-Year Cloud Calling Bridge & WhatsApp Alerts'
     : '3M Waterproof Reflective QR Stickers + 1-Year Cloud Calling Bridge & Instant WhatsApp Alerts');
 
+  const hsnCode = isDigital ? '9983' : '8523';
+
   const quantity = Math.max(1, Number(order.quantity) || 1);
   const totalAmount = Number(order.totalAmount || order.amount || order.price) || 299;
   
-  // Dynamic GST Calculation (Use backend GST if available, else 0)
+  // Dynamic GST Calculation (Use backend GST if available, else assume 18% inclusive GST for legitimate B2C Tax Invoices)
   let totalGst = 0;
-  if (order.gstAmount !== undefined || order.gst !== undefined) {
-    totalGst = Number(order.gstAmount || order.gst || 0);
+  if (order.gstAmount !== undefined && Number(order.gstAmount) > 0) {
+    totalGst = Number(order.gstAmount);
+  } else if (order.gst !== undefined && Number(order.gst) > 0) {
+    totalGst = Number(order.gst);
+  } else {
+    // If no GST is explicitly provided by the backend, extract inclusive 18% GST (9% CGST + 9% SGST)
+    totalGst = totalAmount - (totalAmount / 1.18);
   }
   
   const cgst = Math.round((totalGst / 2) * 100) / 100;
   const sgst = Math.round((totalGst / 2) * 100) / 100;
 
   // Base amount is total minus GST
-  const baseAmount = Math.round((totalAmount - totalGst) * 100) / 100;
+  const baseAmount = Math.round((totalAmount - (cgst + sgst)) * 100) / 100;
   const unitBasePrice = Math.round((baseAmount / quantity) * 100) / 100;
 
   // 4. Dynamic Payment Gateway Info
@@ -346,7 +354,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
                   <strong style="color: #111827; font-size: 12.5px;">${itemTitle} (₹${Math.round(totalAmount / quantity).toLocaleString('en-IN')} / per kit)</strong><br />
                   <span style="font-size: 10px; color: #6b7280;">${itemSubtitle}</span>
                 </td>
-                <td class="text-center" style="font-family: monospace; color: #4b5563;">8523</td>
+                <td class="text-center" style="font-family: monospace; color: #4b5563;">${hsnCode}</td>
                 <td class="text-center" style="font-weight: 800;">${quantity}</td>
                 <td class="text-right">₹${unitBasePrice.toFixed(2)}</td>
                 <td class="text-right" style="font-weight: 800;">₹${totalAmount.toFixed(2)}</td>

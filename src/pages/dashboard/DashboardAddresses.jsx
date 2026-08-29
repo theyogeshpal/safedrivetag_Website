@@ -9,63 +9,69 @@ export default function DashboardAddresses() {
   const [addresses, setAddresses] = useState([]);
   const [editingAddress, setEditingAddress] = useState(null);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadAddress = async () => {
-      // 1. Check local storage
-      const userId = currentUser?._id || currentUser?.id || currentUser?.phone || 'guest';
-      let cached = null;
+      setIsLoading(true);
       try {
-        cached = JSON.parse(localStorage.getItem(`safedrive_addresses_${userId}`) || 'null');
-      } catch (e) {
-        console.error(e);
-      }
+        // 1. Check local storage
+        const userId = currentUser?._id || currentUser?.id || currentUser?.phone || 'guest';
+        let cached = null;
+        try {
+          cached = JSON.parse(localStorage.getItem(`safedrive_addresses_${userId}`) || 'null');
+        } catch (e) {
+          console.error(e);
+        }
 
-      if (Array.isArray(cached) && cached.length > 0) {
-        setAddresses(cached);
-        return;
-      }
+        if (Array.isArray(cached) && cached.length > 0) {
+          setAddresses(cached);
+          return;
+        }
 
-      // 2. Fetch from orders
-      try {
-        const ordersRes = await api.getUserOrders();
-        if (ordersRes.success && ordersRes.orders && ordersRes.orders.length > 0) {
-          const ord = ordersRes.orders[0];
-          const parsed = {
-            id: 'addr_purchase_1',
-            name: ord.customerName || currentUser?.name || 'Customer',
-            phone: ord.customerPhone || currentUser?.phone || '',
-            pincode: ord.pincode || ord.shippingAddress?.split('-')?.[1]?.trim() || '243001',
-            locality: ord.city || 'Civil Lines',
-            address: ord.shippingAddress || ord.deliveryAddress || 'Delivery Address Provided During Purchase',
-            city: ord.city || 'Bareilly',
-            state: ord.state || 'Uttar Pradesh',
+        // 2. Fetch from orders
+        try {
+          const ordersRes = await api.getUserOrders();
+          if (ordersRes.success && ordersRes.orders && ordersRes.orders.length > 0) {
+            const ord = ordersRes.orders[0];
+            const parsed = {
+              id: 'addr_purchase_1',
+              name: ord.customerName || currentUser?.name || 'Customer',
+              phone: ord.customerPhone || currentUser?.phone || '',
+              pincode: ord.pincode || ord.shippingAddress?.split('-')?.[1]?.trim() || '243001',
+              locality: ord.city || 'Civil Lines',
+              address: ord.shippingAddress || ord.deliveryAddress || 'Delivery Address Provided During Purchase',
+              city: ord.city || 'Bareilly',
+              state: ord.state || 'Uttar Pradesh',
+              addressType: 'HOME',
+              isDefault: true,
+            };
+            setAddresses([parsed]);
+            localStorage.setItem(`safedrive_addresses_${userId}`, JSON.stringify([parsed]));
+            return;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+
+        // 3. Fallback to currentUser profile
+        if (currentUser?.deliveryAddress || currentUser?.address) {
+          const addr = {
+            id: 'addr_profile_1',
+            name: currentUser.name || 'Customer',
+            phone: currentUser.phone || '',
+            pincode: '243001',
+            locality: 'Civil Lines',
+            address: currentUser.deliveryAddress || currentUser.address,
+            city: 'Bareilly',
+            state: 'Uttar Pradesh',
             addressType: 'HOME',
             isDefault: true,
           };
-          setAddresses([parsed]);
-          localStorage.setItem(`safedrive_addresses_${userId}`, JSON.stringify([parsed]));
-          return;
+          setAddresses([addr]);
         }
-      } catch (e) {
-        console.error(e);
-      }
-
-      // 3. Fallback to currentUser profile
-      if (currentUser?.deliveryAddress || currentUser?.address) {
-        const addr = {
-          id: 'addr_profile_1',
-          name: currentUser.name || 'Customer',
-          phone: currentUser.phone || '',
-          pincode: '243001',
-          locality: 'Civil Lines',
-          address: currentUser.deliveryAddress || currentUser.address,
-          city: 'Bareilly',
-          state: 'Uttar Pradesh',
-          addressType: 'HOME',
-          isDefault: true,
-        };
-        setAddresses([addr]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -121,7 +127,18 @@ export default function DashboardAddresses() {
 
         {/* Address Cards List */}
         <div className="space-y-4 max-w-2xl">
-          {addresses.map((addr) => (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-10 gap-3">
+              <div className="relative w-10 h-10 mb-1">
+                <div className="w-10 h-10 border-4 border-[#fb641b]/20 border-t-[#fb641b] rounded-full animate-spin"></div>
+              </div>
+              <p className="text-xs font-bold text-gray-500">Loading delivery addresses...</p>
+            </div>
+          ) : addresses.length === 0 ? (
+            <div className="py-8 text-center border-2 border-dashed border-gray-200 rounded-lg">
+              <p className="text-sm text-gray-500 font-medium">No saved addresses found.</p>
+            </div>
+          ) : addresses.map((addr) => (
             <div
               key={addr.id}
               className="border border-gray-200 rounded-sm p-4 sm:p-5 relative bg-[#fcfcfc] space-y-3"
