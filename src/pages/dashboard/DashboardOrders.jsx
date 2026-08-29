@@ -235,13 +235,21 @@ export default function DashboardOrders() {
                         />
                       </div>
                       <div>
-                        <h4 className="font-bold text-sm text-gray-900">{ord.productName || ord.title || 'SafeDrive Smart Safety Tag'}</h4>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          {ord.qrFor && <span className="text-orange-600 font-semibold mr-2">🏷 For {ord.qrFor}</span>}
-                          Quantity: <strong>{qty} Units</strong>
-                          {' · '}Rate: <strong>₹{unitPrice} / kit set</strong>
-                          {' · '}Subtotal: <strong>₹{unitPrice} × {qty} = ₹{ord.totalAmount || ord.amount || 299}</strong>
-                        </p>
+                        <h4 className="font-black text-sm text-gray-900 capitalize">
+                          {String(ord.productName || ord.title || 'SafeDrive Smart Safety Tag').replace(/luggege/i, 'Luggage')}
+                        </h4>
+                        <div className="flex flex-wrap items-center text-[11px] text-gray-600 mt-1.5 gap-2">
+                          {ord.qrFor && (
+                            <span className="inline-flex items-center gap-1 text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded font-bold border border-orange-100 uppercase tracking-wide text-[10px]">
+                              🏷️ For {ord.qrFor}
+                            </span>
+                          )}
+                          <span className="bg-gray-50 px-2 py-0.5 rounded border border-gray-100">Qty: <strong>{qty}</strong></span>
+                          <span className="bg-gray-50 px-2 py-0.5 rounded border border-gray-100">Rate: <strong>₹{unitPrice}</strong></span>
+                          <span className="bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-bold border border-emerald-100">
+                            Total: ₹{ord.totalAmount || ord.amount || (unitPrice * qty)}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
