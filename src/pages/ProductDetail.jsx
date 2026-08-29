@@ -183,14 +183,36 @@ export default function ProductDetail() {
           {/* Images Gallery - Strictly Backend Images */}
           <div className="md:w-1/2 flex flex-col gap-4">
             <div className="w-full aspect-square rounded-2xl overflow-hidden bg-orange-50/20 border border-black/5 relative group flex items-center justify-center p-4 bg-white">
-              <img 
-                src={(product.images && product.images.length > 0 && product.images[activeImage || 0]) || '/images/safedrive-tag-final.png'} 
-                alt={product.name} 
-                onError={(e) => {
-                  e.currentTarget.src = '/images/safedrive-tag-final.png';
-                }}
-                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
-              />
+              {(!product.images || product.images.length === 0 || product.images[0] === '/images/safedrive-tag-final.png') ? (
+                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50/50 rounded-2xl min-h-[300px]">
+                  <div className="w-20 h-20 bg-white rounded-full shadow-sm flex items-center justify-center mb-4 border border-gray-100">
+                    <QrCode size={40} className="text-orange-400/80" />
+                  </div>
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    {isDigitalProduct ? 'Digital Pass' : 'Safety Tag'}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <img 
+                    src={product.images[activeImage || 0]} 
+                    alt={product.name} 
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                    }}
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
+                  />
+                  <div className="w-full h-full flex-col items-center justify-center bg-gray-50/50 rounded-2xl min-h-[300px] hidden" style={{display: 'none'}}>
+                    <div className="w-20 h-20 bg-white rounded-full shadow-sm flex items-center justify-center mb-4 border border-gray-100">
+                      <QrCode size={40} className="text-orange-400/80" />
+                    </div>
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                      {isDigitalProduct ? 'Digital Pass' : 'Safety Tag'}
+                    </span>
+                  </div>
+                </>
+              )}
               
               <span className={`absolute top-4 left-4 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg z-20 ${
                 isDigitalProduct ? 'bg-purple-600' : 'bg-green-500'

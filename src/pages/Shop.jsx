@@ -173,14 +173,36 @@ export default function Shop() {
                     <div 
                       className="relative bg-orange-50/40 rounded-2xl p-3 sm:p-4 border border-orange-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5 bg-white"
                     >
-                      <img 
-                        src={prod.imageUrl || '/images/safedrive-tag-final.png'} 
-                        alt={prod.title}
-                        onError={(e) => {
-                          e.currentTarget.src = '/images/safedrive-tag-final.png';
-                        }}
-                        className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500" 
-                      />
+                      {!prod.imageUrl || prod.imageUrl === '/images/safedrive-tag-final.png' ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50/50 rounded-xl">
+                          <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center mb-2 border border-gray-100">
+                            <QrCode size={32} className="text-orange-400/80" />
+                          </div>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                            {prod.qrType === 'DIGITAL' ? 'Digital Pass' : 'Safety Tag'}
+                          </span>
+                        </div>
+                      ) : (
+                        <>
+                          <img 
+                            src={prod.imageUrl} 
+                            alt={prod.title}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.nextElementSibling.style.display = 'flex';
+                            }}
+                            className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500" 
+                          />
+                          <div className="w-full h-full flex-col items-center justify-center bg-gray-50/50 rounded-xl hidden" style={{display: 'none'}}>
+                            <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center mb-2 border border-gray-100">
+                              <QrCode size={32} className="text-orange-400/80" />
+                            </div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                              {prod.qrType === 'DIGITAL' ? 'Digital Pass' : 'Safety Tag'}
+                            </span>
+                          </div>
+                        </>
+                      )}
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-end p-4 z-20 pointer-events-none">
                         <span className="text-white text-xs font-bold flex items-center gap-1.5">
