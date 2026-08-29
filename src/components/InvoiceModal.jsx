@@ -140,11 +140,6 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
         {/* Printable Area Container */}
         <div className="p-6 sm:p-8 overflow-y-auto flex-1 bg-white text-gray-900 text-xs relative">
           <div id="printable-invoice" ref={invoiceRef} className="space-y-6">
-            
-            {/* Watermark Logo */}
-            <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
-              <img src="/logos/primary.jpeg" alt="Watermark" className="w-80 h-auto grayscale" />
-            </div>
 
             {/* 1. Header (Company & Invoice Meta) */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b-[3px] border-orange-500 pb-5 mb-5 relative z-10">

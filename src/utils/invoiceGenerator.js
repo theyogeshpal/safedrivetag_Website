@@ -153,6 +153,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
             padding: 28px; 
             background: #ffffff;
             position: relative;
+            z-index: 1;
           }
           .header-row { 
             display: flex; 
@@ -285,9 +286,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
       </head>
       <body>
         
-        <!-- SafeDrive Watermark -->
         <div class="invoice-box">
-          <img src="${logoUrl}" class="watermark-bg" alt="" />
           
           <!-- Brand & Header Details -->
           <div class="header-row">
