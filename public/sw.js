@@ -37,9 +37,11 @@ messaging.onBackgroundMessage((payload) => {
     body: payload.notification?.body || payload.data?.message || 'New scan alert received regarding your vehicle.',
     icon: '/logos/primary.jpeg',
     badge: '/logos/primary.jpeg',
-    vibrate: [200, 100, 200, 100, 400],
+    vibrate: [500, 200, 500, 200, 500, 200, 500, 200, 500], // Long vibration pattern
     tag: 'safe-drive-alert',
     renotify: true,
+    requireInteraction: true, // Forces notification to stay on screen until dismissed
+    priority: 'high',
     data: payload.data || {},
     actions: [
       { action: 'open_dashboard', title: 'Open Dashboard ↗' }
