@@ -226,14 +226,22 @@ export default function DashboardOrders() {
                   {/* ── Product Info Row ── */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-4 border-b border-gray-100">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg border border-gray-200 overflow-hidden shrink-0 bg-white shadow-xs flex items-center justify-center">
-                        <img
-                          src={getProductImage(ord)}
-                          alt={ord.productName || 'Product'}
-                          onError={(e) => { e.currentTarget.src = DEFAULT_PRODUCT_IMG; }}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
+                      {(() => {
+                        const img = getProductImage(ord);
+                        return img !== DEFAULT_PRODUCT_IMG ? (
+                          <div className="w-12 h-12 rounded-lg border border-gray-200 overflow-hidden shrink-0 bg-white shadow-xs flex items-center justify-center p-1">
+                            <img
+                              src={img}
+                              alt={ord.productName || 'Product'}
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.parentElement.style.display = 'none';
+                              }}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        ) : null;
+                      })()}
                       <div>
                         <h4 className="font-black text-sm text-gray-900 capitalize">
                           {String(ord.productName || ord.title || 'SafeDrive Smart Safety Tag').replace(/luggege/i, 'Luggage')}
