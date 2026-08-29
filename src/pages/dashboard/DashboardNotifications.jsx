@@ -19,10 +19,8 @@ export default function DashboardNotifications() {
         if (res.success && res.notifications && res.notifications.length > 0) {
           const newTopId = res.notifications[0].id || res.notifications[0]._id;
           
-          // If this is a background poll and we detect a brand new notification, ring the bell continuously!
-          if (isBackgroundPoll && lastTopNotificationId && lastTopNotificationId !== newTopId) {
-            showEmergencyPushAlert(res.notifications[0].title, res.notifications[0].message);
-          }
+          // If this is a background poll, just sync the list silently
+          // Global push alert is now handled globally in AuthContext.jsx
           
           lastTopNotificationId = newTopId;
           setNotifications(res.notifications);
