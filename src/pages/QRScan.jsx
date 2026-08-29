@@ -50,6 +50,18 @@ export default function QRScan() {
   const [customReasonText, setCustomReasonText] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
+  
+  const [pushCooldown, setPushCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer;
+    if (pushCooldown > 0) {
+      timer = setInterval(() => {
+        setPushCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [pushCooldown]);
 
   // Default fallback reasons matching documentation
   const defaultFallbackReasons = [
@@ -216,6 +228,7 @@ export default function QRScan() {
       // 3. Show Toast & Status
       setActionSuccessMsg(res.message || `🔔 Push notification sent to vehicle owner regarding: "${reasonText}"`);
       showToast.success('🔔 Push Alert delivered to vehicle owner!');
+      setPushCooldown(30);
 
       setCustomReasonText('');
       setTimeout(() => setActionSuccessMsg(''), 5000);
@@ -645,11 +658,17 @@ export default function QRScan() {
               {/* Option 0: Send Push Notification */}
               <button
                 onClick={handleSendPushAlert}
-                disabled={actionLoading !== false}
+                disabled={actionLoading !== false || pushCooldown > 0}
                 className="w-full bg-[#d65a18] hover:bg-[#c25215] text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <BellRing size={18} />
-                <span>{actionLoading === 'push' ? 'Sending...' : '🔔 Send Instant Push Alert'}</span>
+                <span>
+                  {actionLoading === 'push' 
+                    ? 'Sending...' 
+                    : pushCooldown > 0 
+                      ? `🔔 Wait ${pushCooldown}s to Resend` 
+                      : '🔔 Send Instant Push Alert'}
+                </span>
               </button>
 
               {/* Row: Call and WhatsApp */}
