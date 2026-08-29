@@ -413,23 +413,7 @@ export default function DashboardTags() {
             <p className="text-sm font-bold text-[#1a2a4a]">Loading owner dashboard & active tags...</p>
           </div>
         ) : userTags.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-8 sm:p-12 text-center flex flex-col items-center justify-center mt-4">
-            <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center text-orange-500 mb-5">
-              <QrCode size={40} />
-            </div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">No Active Safety Tags Found</h3>
-            <p className="text-sm text-gray-500 max-w-md mx-auto mb-8 leading-relaxed">
-              It looks like you haven't linked any SafeDrive vehicle tags yet. Get a new smart QR tag to unlock vehicle protection and private alerts.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/shop" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all">
-                🛒 Buy a Safety Tag
-              </Link>
-              <Link to="/register/SDT-FIRST" className="bg-white text-gray-700 hover:bg-gray-50 font-bold py-3 px-8 rounded-xl shadow-sm border border-gray-200 transition-all">
-                ⚡ Link Existing Tag
-              </Link>
-            </div>
-          </div>
+          <Navigate to="/dashboard/orders" replace />
         ) : (
           <div className="space-y-4">
             {userTags.map((tag) => {
