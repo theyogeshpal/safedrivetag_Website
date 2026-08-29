@@ -349,27 +349,16 @@ export default function RegisterTag() {
         ) : (
           <div>
             {/* Header Badge */}
-            <div className="flex items-center justify-between gap-4 mb-6 pb-6 border-b border-black/5">
-              <div>
-                <span className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 border border-orange-200/80 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
-                  <Sparkles size={13} className="text-orange-500" /> New Tag Activation
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-                  Link & Activate SafeDrive-Tag
-                </h1>
-                <p className="text-xs sm:text-sm text-black/60 font-medium mt-1">
-                  Step-by-step verification with 2 mandatory emergency SOS contacts for complete safety.
-                </p>
-              </div>
-
-              {/* Tag Token Pill */}
-              <div className="hidden sm:flex flex-col items-end">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-black/40">Tag Token</span>
-                <div className="flex items-center gap-1.5 bg-black/5 border border-black/10 px-3 py-1.5 rounded-xl text-xs font-mono font-black text-black">
-                  <QrCode size={14} className="text-orange-600" />
-                  <span>{token || 'SD-TAG'}</span>
-                </div>
-              </div>
+            <div className="mb-6 pb-6 border-b border-black/5">
+              <span className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 border border-orange-200/80 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                <Sparkles size={13} className="text-orange-500" /> New Tag Activation
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
+                Link & Activate SafeDrive-Tag
+              </h1>
+              <p className="text-xs sm:text-sm text-black/60 font-medium mt-1">
+                Step-by-step verification with 2 mandatory emergency SOS contacts for complete safety.
+              </p>
             </div>
 
             {/* 3-Step Wizard Progress Bar */}
