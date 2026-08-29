@@ -21,6 +21,7 @@ const RegisterTag = lazy(() => import('./pages/RegisterTag'));
 const TagDetails = lazy(() => import('./pages/TagDetails'));
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/dashboard/DashboardTags'));
+const DashboardIndex = lazy(() => import('./pages/dashboard/DashboardIndex'));
 const DashboardTags = lazy(() => import('./pages/dashboard/DashboardTags'));
 const DashboardOrders = lazy(() => import('./pages/dashboard/DashboardOrders'));
 const DashboardTransactions = lazy(() => import('./pages/dashboard/DashboardTransactions'));
@@ -56,16 +57,46 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-[50vh] flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Deploying Updates...</h2>
-          <p className="text-sm text-gray-600 mb-4">We are updating the app to the latest version.</p>
-          <button onClick={() => window.location.reload()} className="bg-[#2874f0] text-white px-6 py-2 rounded-lg font-bold">Refresh Now</button>
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+          <h2 className="text-xl font-bold mb-2">Applying SafeDrive Updates...</h2>
+          <p className="text-sm text-gray-500 mb-6">Please refresh the page to continue.</p>
+          <button onClick={() => window.location.reload()} className="bg-orange-500 text-white px-6 py-2 rounded-xl font-bold">Refresh Now</button>
         </div>
       );
     }
     return this.props.children;
   }
 }
+
+// Protected Route Wrapper
+const ProtectedRoute = ({ children }) => {
+  const { currentUser, isLoadingAuth } = useAuth();
+  
+  if (isLoadingAuth) {
+    return <RouteFallback />;
+  }
+  
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
+
+// Admin Route Wrapper
+const AdminRoute = ({ children }) => {
+  const { currentUser, isAdmin, isLoadingAuth } = useAuth();
+  
+  if (isLoadingAuth) {
+    return <RouteFallback />;
+  }
+  
+  if (!currentUser || !isAdmin()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
+};
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -107,7 +138,7 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   
                   {/* Modular User Dashboard Panel Routes */}
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<ProtectedRoute><DashboardIndex /></ProtectedRoute>} />
                   <Route path="/dashboard/tags" element={<DashboardTags />} />
                   <Route path="/dashboard/orders" element={<DashboardOrders />} />
                   <Route path="/dashboard/transactions" element={<DashboardTransactions />} />
