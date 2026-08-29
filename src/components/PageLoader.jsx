@@ -4,9 +4,10 @@ import { RefreshCw } from 'lucide-react';
 export default function PageLoader({ text = 'Loading...', fullScreen = true }) {
   if (!fullScreen) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center gap-3">
-        <RefreshCw size={28} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
-        <p className="text-xs font-bold text-[#1a2a4a]">{text}</p>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center gap-3">
+        <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
+        <h3 className="text-sm font-bold text-[#1a2a4a]">{text}</h3>
+        <p className="text-[11px] text-gray-500">Please wait while we secure your connection</p>
       </div>
     );
   }

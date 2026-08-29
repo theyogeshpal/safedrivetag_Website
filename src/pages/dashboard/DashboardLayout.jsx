@@ -138,9 +138,9 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
     }
   };
 
-  // 1. Animated Full Screen Dashboard Loader
+  // 1. Dashboard Layout Loader (Matches App RouteFallback for seamless UX)
   if (isInitializingAuth || (isLoadingAuth && !currentUser)) {
-    return <PageLoader text="Loading Your SafeDrive Account..." fullScreen={true} />;
+    return <PageLoader text="Loading SafeDrive..." fullScreen={false} />;
   }
 
   // 2. Unauthenticated State
