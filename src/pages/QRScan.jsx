@@ -677,7 +677,7 @@ export default function QRScan() {
                 <button
                   onClick={handleCallOwner}
                   disabled={actionLoading !== false}
-                  className="w-full bg-[#1e8b39] hover:bg-[#18752f] text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <Phone size={18} />
                   <span>{actionLoading === 'call' ? 'Connecting...' : 'Call Owner'}</span>
