@@ -41,7 +41,7 @@ const faqs = [
   { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
   { q: "Can I use SafeDrive-Tag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
   { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
-  { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weatherproof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
+  { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weather proof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
 ];
 
 export default function Home() {
@@ -338,7 +338,7 @@ export default function Home() {
                   { icon: <Smartphone className="text-orange-400" />, text: "Works Without Any App" },
                   { icon: <Shield className="text-emerald-400" />, text: "24/7 Reliable Service" },
                   { icon: <Zap className="text-orange-400" />, text: "Instant Call Routing" },
-                  { icon: <CheckCircle className="text-emerald-400" />, text: "Weatherproof Tags" },
+                  { icon: <CheckCircle className="text-emerald-400" />, text: "Weather proof Tags" },
                 ].map((item, j) => (
                   <div key={j} className="flex items-center gap-2.5 sm:gap-3 text-gray-300 font-bold uppercase tracking-wider text-xs sm:text-sm whitespace-nowrap">
                     <span>{item.icon}</span> {item.text}
@@ -365,7 +365,7 @@ export default function Home() {
             {/* Left Content */}
             <div className="max-w-xl mx-auto lg:max-w-none w-full">
               <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8 sm:mb-10 font-medium">
-                SafeDrive-Tag is a weatherproof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
+                SafeDrive-Tag is a weather proof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
               </p>
               
               {/* Stat Boxes */}
@@ -554,12 +554,12 @@ export default function Home() {
           
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
             {[
-              { icon: <Car size={34} className="text-blue-400 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", price: "From ₹399", color: "bg-orange-500" },
-              { icon: <Bike size={34} className="text-orange-400 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weatherproof tag.", price: "From ₹299", color: "bg-emerald-600" },
-              { icon: <Briefcase size={34} className="text-emerald-400 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", price: "From ₹249", color: "bg-emerald-600" },
-              { icon: <Car size={34} className="text-purple-400 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", price: "From ₹399", color: "bg-orange-500" },
-              { icon: <Car size={34} className="text-emerald-400 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", price: "From ₹299", color: "bg-emerald-600" },
-              { icon: <Truck size={34} className="text-amber-400 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", price: "From ₹399", color: "bg-orange-500" }
+              { icon: <Car size={34} className="text-blue-400 mb-2" />, title: "Cars & Sedans", desc: "Front & rear windshield tags.", color: "bg-orange-500" },
+              { icon: <Bike size={34} className="text-orange-400 mb-2" />, title: "2-Wheelers", desc: "Bikes & scooters weather proof tag.", color: "bg-emerald-600" },
+              { icon: <Briefcase size={34} className="text-emerald-400 mb-2" />, title: "Flight Luggage", desc: "Metallic tag with steel cable.", color: "bg-emerald-600" },
+              { icon: <Car size={34} className="text-purple-400 mb-2" />, title: "SUVs & MUVs", desc: "Heavy-duty reflective badges.", color: "bg-orange-500" },
+              { icon: <Car size={34} className="text-emerald-400 mb-2" />, title: "Autos & 3W", desc: "Commercial & taxi emergency tag.", color: "bg-emerald-600" },
+              { icon: <Truck size={34} className="text-amber-400 mb-2" />, title: "Trucks & Fleets", desc: "Commercial logistics & fleet tags.", color: "bg-orange-500" }
             ].map((v, i) => (
               <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-between transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/50 hover:bg-white/[0.08] hover:shadow-[0_10px_25px_rgba(16,185,129,0.15)] shadow-lg group">
                 <div>
@@ -567,9 +567,9 @@ export default function Home() {
                   <h3 className="font-black text-white text-xs sm:text-sm md:text-base mb-1">{v.title}</h3>
                   <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mb-3 sm:mb-4 leading-relaxed">{v.desc}</p>
                 </div>
-                <div className={`${v.color} text-white text-[9px] sm:text-[10px] font-black px-3 py-1 rounded-full tracking-wide shadow-xs`}>
-                  {v.price}
-                </div>
+                <Link to="/shop" className={`${v.color} text-white text-[10px] sm:text-[11px] font-black px-4 py-1.5 rounded-full tracking-wide shadow-xs hover:opacity-90 transition-opacity cursor-pointer inline-block`}>
+                  Buy Tag
+                </Link>
               </div>
             ))}
           </div>
