@@ -180,14 +180,14 @@ export default function Legal() {
     contentData.sections = [
       {
         heading: "1. Free Express Shipping Across India",
-        body: "We offer 100% Free Standard Courier Shipping on all prepaid orders across 28 states and 8 Union Territories in India with no minimum order value required."
+        body: "We offer 100% Free Standard Courier Shipping on all prepaid orders across 28 states and 8 Union Territories in India with minimum order of 299 and must be prepaid for cash on delivery shiping charges may apply."
       },
       {
         heading: "2. Dispatch & Delivery Timelines",
         body: "All physical kit orders are packed and dispatched swiftly from our central fulfillment hubs:",
         points: [
           "Dispatch Time: Orders placed before 2:00 PM IST are dispatched on the same business day. All other orders ship within 24 hours.",
-          "Metro Cities (Delhi NCR, Mumbai, Bengaluru, Hyderabad, Chennai, Kolkata, Pune): 2 to 3 business days.",
+          "Metro Cities (Delhi NCR, Mumbai, Bengaluru, Hyderabad, Chennai, Kolkata, Pune): 2 to 4 business days.",
           "Tier-2 & Tier-3 Cities and Towns: 3 to 5 business days.",
           "Remote & Hill Stations: 5 to 7 business days via India Post Speed Post."
         ]
