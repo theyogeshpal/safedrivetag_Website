@@ -324,7 +324,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
               <div class="col-heading">Shipping Address:</div>
               <div class="customer-name">${customerName}</div>
               <div style="word-break: break-word;">${shippingAddressText}</div>
-              <div style="color: #15803d; font-weight: 700; margin-top: 3px;">${isDigital ? 'Digital Delivery (Activated)' : 'Shipping (Dispatched)'}</div>
+              <div style="color: #15803d; font-weight: 700; margin-top: 3px;">${isDigital ? 'Digital Delivery (Emailed)' : 'Shipping (Express)'}</div>
             </div>
           </div>
 

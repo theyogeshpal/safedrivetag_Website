@@ -357,28 +357,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                     </Link>
                   )}
 
-                  {activeTagsCount === 0 ? (
-                    <button
-                      type="button"
-                      onClick={() => showNoActiveTagAlert(navigate)}
-                      className="w-full flex items-center justify-between py-1.5 text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed group text-left"
-                      title="No Active QR Tag - Activation Required"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <span>Scan & SOS Activity Logs</span>
-                        <Lock size={12} className="text-gray-400" />
-                      </span>
-                    </button>
-                  ) : (
-                    <Link
-                      to="/dashboard/logs"
-                      className={`block py-1.5 text-xs font-semibold transition-colors ${
-                        currentTab === 'logs' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
-                      }`}
-                    >
-                      Scan & SOS Activity Logs
-                    </Link>
-                  )}
+                  
                 </div>
               </div>
 

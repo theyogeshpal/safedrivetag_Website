@@ -229,7 +229,7 @@ export default function RegisterTag() {
       }
     }
 
-    // Strictly Validate 2 Mandatory Emergency Contacts
+    // Strictly Validate Emergency Contact 1
     const c1 = formData.emergencyContact1Number.replace(/\D/g, '');
     const c2 = formData.emergencyContact2Number.replace(/\D/g, '');
 
@@ -238,17 +238,12 @@ export default function RegisterTag() {
       return;
     }
 
-    if (!c2 || c2.length !== 10) {
-      setError('Please enter a valid 10-digit mobile number for Emergency SOS Contact 2.');
+    if (c2 && c1 === c2) {
+      setError('Emergency Contact 1 and Contact 2 must be different numbers.');
       return;
     }
 
-    if (c1 === c2) {
-      setError('Emergency Contact 1 and Contact 2 must be two different mobile numbers.');
-      return;
-    }
-
-    if (c1 === cleanPhone || c2 === cleanPhone) {
+    if (c1 === cleanPhone || (c2 && c2 === cleanPhone)) {
       setError('Emergency contacts must be different from your own registered phone number.');
       return;
     }
@@ -545,8 +540,8 @@ export default function RegisterTag() {
                   </div>
                 </div>
 
-                {/* 2. Item Category / Type */}
-                <div className="space-y-1.5">
+                {/* 2. Item Category / Type (Hidden) */}
+                <div className="space-y-1.5 hidden">
                   <label className="block text-xs font-bold text-black/80">
                     Category / Tag Type *
                   </label>
@@ -558,8 +553,6 @@ export default function RegisterTag() {
                       setFormData(prev => ({
                         ...prev,
                         vehicleType: newType,
-                        
-                        
                       }));
                     }}
                     className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:bg-white focus:border-emerald-500 transition-all text-black cursor-pointer"
@@ -667,23 +660,21 @@ export default function RegisterTag() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {/* Brand / Make */}
+                    <div className="grid grid-cols-1 gap-3">
+                      {/* Color */}
                       <div className="space-y-1">
                         <label className="block text-[11px] font-bold text-gray-700">
-                          Brand / Make (Optional)
+                          Color (Optional)
                         </label>
                         <input
                           type="text"
-                          placeholder="e.g. Safari, American Tourister, Wildcraft"
-                          name="vehicleBrand"
-                          value={formData.vehicleBrand}
+                          placeholder="e.g. Navy Blue, Black"
+                          name="vehicleColor"
+                          value={formData.vehicleColor}
                           onChange={handleFormChange}
                           className="w-full bg-white border border-purple-200 rounded-xl px-4 py-2.5 text-xs font-semibold outline-none focus:border-purple-500 text-gray-900 shadow-2xs"
                         />
                       </div>
-
-                      {/* Hidden Serial Code */}
                     </div>
                   </div>
                 )}
@@ -720,35 +711,7 @@ export default function RegisterTag() {
                   </select>
                 </div>
 
-                {/* 6. WhatsApp Checkbox */}
-                <label className="bg-emerald-50/80 border border-emerald-200/90 rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer hover:bg-emerald-50 transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={useSameWhatsApp}
-                    onChange={(e) => setUseSameWhatsApp(e.target.checked)}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-emerald-300 cursor-pointer shrink-0"
-                  />
-                  <span className="text-xs font-bold text-emerald-950">
-                    Use same mobile number (+91 {phone}) for WhatsApp alerts
-                  </span>
-                </label>
 
-                {!useSameWhatsApp && (
-                  <div className="space-y-1.5 animate-fade-up">
-                    <label className="block text-xs font-bold text-black/80">
-                      Alternate WhatsApp Number
-                    </label>
-                    <input
-                      type="tel"
-                      maxLength={10}
-                      placeholder="9876543210"
-                      name="whatsappNumber"
-                      value={formData.whatsappNumber}
-                      onChange={handleFormChange}
-                      className="w-full bg-gray-50/70 border border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:bg-white focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                )}
 
                 {/* 7. Emergency Contact 1 (Primary) */}
                 <div className="bg-gray-50/60 border border-black/10 rounded-2xl p-4 space-y-2.5">
@@ -782,11 +745,10 @@ export default function RegisterTag() {
                 {/* 8. Emergency Contact 2 (Secondary) */}
                 <div className="bg-gray-50/60 border border-black/10 rounded-2xl p-4 space-y-2.5">
                   <label className="block text-xs font-bold text-orange-600">
-                    Emergency Contact 2 (Secondary) *
+                    Emergency Contact 2 (Secondary - Optional)
                   </label>
                   <input
                     type="text"
-                    required
                     placeholder="Name (e.g. Father / Mother / Colleague)"
                     name="emergencyContact2Name"
                     value={formData.emergencyContact2Name}
@@ -798,7 +760,6 @@ export default function RegisterTag() {
                     <input
                       type="tel"
                       maxLength={10}
-                      required
                       placeholder="9876543210"
                       name="emergencyContact2Number"
                       value={formData.emergencyContact2Number}

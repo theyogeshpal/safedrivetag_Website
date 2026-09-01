@@ -192,8 +192,8 @@ export default function DashboardTransactions() {
             <table className="w-full text-left text-xs">
               <thead className="bg-gray-50/80 text-gray-700 font-bold border-b border-gray-200 uppercase text-[10px] tracking-wider">
                 <tr>
-                  <th className="py-3 px-4">Transaction / Payment ID</th>
-                  <th className="py-3 px-4">Order Ref & Product</th>
+                  <th className="py-3 px-4">Transaction / Order ID</th>
+                  <th className="py-3 px-4">Product Ref</th>
                   <th className="py-3 px-4">Date & Time</th>
                   <th className="py-3 px-4">Payment Method</th>
                   <th className="py-3 px-4">Amount</th>
@@ -211,25 +211,26 @@ export default function DashboardTransactions() {
                     hour: '2-digit',
                     minute: '2-digit',
                   }) : 'Recent';
+                  const displayId = t.orderNumber || t.id;
+                  const paymentMethodDisplay = (t.paymentMethod || '').toLowerCase().includes('cod') ? 'Cash on Delivery (COD)' : 'Online Payment';
 
                   return (
                     <tr key={t.id} className="hover:bg-gray-50/60 transition-colors">
                       <td className="py-3.5 px-4 font-mono font-bold text-gray-900">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-blue-600">{t.id}</span>
+                          <span className="text-blue-600">{displayId}</span>
                           <button
-                            onClick={() => handleCopy(t.id)}
+                            onClick={() => handleCopy(displayId)}
                             className="text-gray-400 hover:text-gray-700 cursor-pointer p-0.5"
-                            title="Copy Transaction ID"
+                            title="Copy ID"
                           >
-                            {copiedTxnId === t.id ? <Check size={12} className="text-green-600" /> : <Copy size={12} />}
+                            {copiedTxnId === displayId ? <Check size={12} className="text-green-600" /> : <Copy size={12} />}
                           </button>
                         </div>
                       </td>
 
                       <td className="py-3.5 px-4">
                         <div className="font-bold text-gray-900">{t.productName}</div>
-                        <div className="text-[11px] text-gray-500 font-mono">Ref: {t.orderNumber}</div>
                       </td>
 
                       <td className="py-3.5 px-4 text-gray-600 whitespace-nowrap">
@@ -242,7 +243,7 @@ export default function DashboardTransactions() {
                       <td className="py-3.5 px-4">
                         <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md font-semibold text-[11px]">
                           <CreditCard size={11} className="text-gray-500" />
-                          <span>{t.paymentMethod}</span>
+                          <span>{paymentMethodDisplay}</span>
                         </span>
                       </td>
 

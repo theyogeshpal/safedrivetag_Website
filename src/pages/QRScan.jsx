@@ -116,8 +116,10 @@ export default function QRScan() {
       ]);
 
       // 1. Process QR Info
+      let isLuggage = false;
       if (qrRes.status === 'fulfilled' && qrRes.value?.success) {
         const qr = qrRes.value;
+        isLuggage = qr.qrFor === 'Luggage' || qr.vehicleType === 'Luggage' || qr.vehicleType === 'Bag';
         if (qr.status === 'UNREGISTERED') {
           navigate(`/register/${token}`, { replace: true, state: { qrData: qr } });
           return;
@@ -137,16 +139,29 @@ export default function QRScan() {
         setError(qrRes.value?.message || 'Invalid or unknown QR code scanned.');
       }
 
+      // Prepare custom fallback reasons for Luggage
+      const luggageReasons = [
+        { _id: 'luggage_1', title: 'Found Lost Item', description: 'I found this item and want to return it.', iconKey: 'info', color: 'emerald', isOtherType: false, order: 1 },
+        { _id: 'luggage_2', title: 'Unsecured / Open', description: 'Zipper or lock is open.', iconKey: 'unlock', color: 'purple', isOtherType: false, order: 2 },
+        { _id: 'luggage_3', title: 'Others', description: 'Specify a custom message for the owner.', iconKey: 'other', color: 'indigo', isOtherType: true, order: 99 },
+      ];
+
+      const defaultReasons = isLuggage ? luggageReasons : defaultFallbackReasons;
+
       // 2. Process Scan Reasons
-      if (reasonsRes.status === 'fulfilled' && reasonsRes.value?.success && Array.isArray(reasonsRes.value.reasons) && reasonsRes.value.reasons.length > 0) {
+      if (isLuggage) {
+        // Force luggage reasons for luggage tags, bypass API
+        setScanReasons(luggageReasons);
+        setSelectedReasonId(luggageReasons[0]._id);
+      } else if (reasonsRes.status === 'fulfilled' && reasonsRes.value?.success && Array.isArray(reasonsRes.value.reasons) && reasonsRes.value.reasons.length > 0) {
         const activeReasons = reasonsRes.value.reasons.filter(r => r.isActive !== false).sort((a, b) => (a.order || 0) - (b.order || 0));
         setScanReasons(activeReasons);
         if (activeReasons.length > 0) {
           setSelectedReasonId(activeReasons[0]._id);
         }
       } else {
-        setScanReasons(defaultFallbackReasons);
-        setSelectedReasonId(defaultFallbackReasons[0]._id);
+        setScanReasons(defaultReasons);
+        setSelectedReasonId(defaultReasons[0]._id);
       }
 
     } catch (err) {
@@ -671,8 +686,8 @@ export default function QRScan() {
                 </span>
               </button>
 
-              {/* Row: Call and WhatsApp */}
-              <div className="grid grid-cols-2 gap-3">
+              {/* Row: Call */}
+              <div>
                 {/* Option B: Call Owner */}
                 <button
                   onClick={handleCallOwner}
@@ -681,16 +696,6 @@ export default function QRScan() {
                 >
                   <Phone size={18} />
                   <span>{actionLoading === 'call' ? 'Connecting...' : 'Call Owner'}</span>
-                </button>
-
-                {/* Option A: WhatsApp */}
-                <button
-                  onClick={handleSendWhatsAppMessage}
-                  disabled={actionLoading !== false}
-                  className="w-full bg-[#1e8b39] hover:bg-[#18752f] text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  <MessageSquare size={18} />
-                  <span>{actionLoading === 'whatsapp' ? 'Opening...' : 'WhatsApp'}</span>
                 </button>
               </div>
 

@@ -472,11 +472,11 @@ export default function DashboardTags() {
                           {tag.vehicleName || ((tag.vehicleType === 'Luggage' || tag.vehicleType === 'Bag' || tag.qrType === 'DIGITAL') ? 'Smart Item Tag' : 'Vehicle Tag')}
                         </h4>
                         <div className="flex flex-col items-start gap-1 mt-1">
-                          <p className="font-mono text-sm font-black text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-300 tracking-wider uppercase inline-block">
-                            {tag.vehicleNumber && !tag.vehicleNumber.includes('Unlinked') && !tag.vehicleNumber.includes('Ready') 
-                              ? tag.vehicleNumber 
-                              : 'ACTIVE PROTECTED'}
-                          </p>
+                          {tag.vehicleNumber && !tag.vehicleNumber.includes('Unlinked') && !tag.vehicleNumber.includes('Ready') && (
+                            <p className="font-mono text-sm font-black text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-300 tracking-wider uppercase inline-block">
+                              {tag.vehicleNumber}
+                            </p>
+                          )}
                           {(tag.vehicleType === 'Luggage' || tag.vehicleType === 'Bag' || tag.qrType === 'DIGITAL') && tag.securityCode && (
                             <p className="inline-flex items-center gap-1 font-mono text-xs font-black text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 tracking-wider">
                               <Lock size={12} /> PIN: {tag.securityCode}
@@ -500,26 +500,20 @@ export default function DashboardTags() {
                         <span className="text-gray-500 font-semibold text-[11px]">Calls Balance:</span>
                         <div className="font-black text-[#2874f0] text-sm flex items-center gap-1.5 mt-0.5">
                           <Phone size={12} />
-                          <span>{tag.callBalance ?? 10} Left</span>
-                          <span className="text-[11px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded border border-blue-200">
-                            Total: {tag.totalCalls || 10}
-                          </span>
+                          <span>{tag.callBalance ?? 10}/{tag.totalCalls || 10} Left</span>
                         </div>
                       </div>
                       <div className="border-l border-blue-200 pl-4 sm:pl-6">
-                        <span className="text-gray-500 font-semibold text-[11px]">WhatsApp / SMS:</span>
+                        <span className="text-gray-500 font-semibold text-[11px]">SMS Alerts:</span>
                         <div className="font-black text-emerald-600 text-sm flex items-center gap-1.5 mt-0.5">
                           <MessageCircle size={12} />
-                          <span>{tag.messageBalance ?? 20} Left</span>
-                          <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded border border-emerald-200">
-                            Total: {tag.totalMessages || 20}
-                          </span>
+                          <span>{tag.messageBalance ?? 20}/{tag.totalMessages || 20} Left</span>
                         </div>
                       </div>
                       <div className="border-l border-blue-200 pl-4 sm:pl-6">
                         <span className="text-gray-500 font-semibold text-[11px]">Validity Expiry:</span>
                         <div className="font-bold text-gray-800 text-xs mt-0.5">
-                          1 Year Active
+                          {tag.expiryDate ? new Date(tag.expiryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '1 Year from Activation'}
                         </div>
                       </div>
                     </div>
@@ -550,7 +544,7 @@ export default function DashboardTags() {
                         to={`/dashboard/tag/${tag.kitId || tag.copyCode || tag.primaryToken || tag.id}`}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs text-center"
                       >
-                        <Eye size={13} /> View Kit Details
+                        <Eye size={13} /> View Tag Details
                       </Link>
 
                       <button

@@ -74,7 +74,7 @@ export default function ProductDetail() {
             oldPrice: foundProduct.originalPrice || (foundProduct.price ? foundProduct.price + 200 : 499),
             rating: foundProduct.rating || 4.9,
             reviews: foundProduct.reviewsCount || 2340,
-            desc: foundProduct.description || 'Premium reflective and weatherproof SafeDrive QR stickers for complete privacy and vehicle security.',
+            desc: foundProduct.description || 'Premium reflective and weather proof SafeDrive QR stickers for complete privacy and vehicle security.',
             features: Array.isArray(foundProduct.features) && foundProduct.features.length > 0 
               ? foundProduct.features 
               : [

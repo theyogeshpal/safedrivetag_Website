@@ -50,6 +50,9 @@ export default function TagDetails() {
 
   // Modals
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isBoosterModalOpen, setIsBoosterModalOpen] = useState(false);
+  const [boosterPlans, setBoosterPlans] = useState([]);
+  const [loadingBooster, setLoadingBooster] = useState(false);
   const [editFormData, setEditFormData] = useState({
     name: '',
     phone: '',
@@ -117,6 +120,30 @@ export default function TagDetails() {
           (k) => k.copies?.some((c) => c.copyCode === id || c.publicToken === id) || k.productId === id
         );
       }
+
+  // Wait for initial render to fetch
+  useEffect(() => {
+    // We already fetch tagData in the main useEffect
+  }, []);
+
+  const openBoosterModal = async () => {
+    setIsBoosterModalOpen(true);
+    setLoadingBooster(true);
+    try {
+      // Simulate API fetch since there is no actual getBoosterPlans endpoint in api.js
+      setTimeout(() => {
+        setBoosterPlans([
+          { id: 1, name: 'Basic Booster', price: 49, calls: 50, sms: 100 },
+          { id: 2, name: 'Pro Booster', price: 99, calls: 150, sms: 300 },
+          { id: 3, name: 'Unlimited Booster', price: 199, calls: 500, sms: 1000 },
+        ]);
+        setLoadingBooster(false);
+      }, 800);
+    } catch (err) {
+      console.error(err);
+      setLoadingBooster(false);
+    }
+  };
 
       // Build unified Tag Details Model
       const userRegisteredStr = localStorage.getItem('safedrive_user_registered_tags');
@@ -795,11 +822,16 @@ export default function TagDetails() {
                     <div key={idx} className="bg-[#f8fafc] border border-gray-200 rounded-xl p-4 text-center space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="font-mono font-bold text-xs text-gray-800">
-                          Copy #{idx + 1}: <strong className="text-[#2874f0]">{c.copyCode}</strong>
+                          {tagData.copies.length > 1 ? `ID ${idx + 1}: ` : 'ID: '}<strong className="text-[#2874f0]">{c.copyCode}</strong>
                         </span>
-                        <span className="text-[9px] font-black uppercase bg-purple-100 text-purple-700 px-1.5 py-0.2 rounded border border-purple-200">
-                          {c.qrType || 'DIGITAL'}
-                        </span>
+                        <div className="flex gap-2">
+                          <Link to="/shop?replace=true" className="text-[9px] font-black uppercase bg-red-50 text-red-600 hover:bg-red-100 px-1.5 py-0.5 rounded border border-red-200 transition-colors">
+                            Replace Lost/Damaged
+                          </Link>
+                          <span className="text-[9px] font-black uppercase bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded border border-purple-200">
+                            {c.qrType || 'DIGITAL'}
+                          </span>
+                        </div>
                       </div>
 
                       {/* Scannable High-Res QR Code with Logo Badge */}
@@ -1152,6 +1184,49 @@ export default function TagDetails() {
 
             </form>
 
+          </div>
+        </div>
+      )}
+
+      {isBoosterModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 overflow-hidden">
+            <div className="bg-amber-500 text-white px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap size={18} />
+                <h3 className="text-base font-bold">Buy Booster Quota</h3>
+              </div>
+              <button onClick={() => setIsBoosterModalOpen(false)} className="text-white/80 hover:text-white cursor-pointer">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6">
+              {loadingBooster ? (
+                <div className="flex flex-col items-center justify-center py-10 space-y-3">
+                  <RefreshCw className="w-8 h-8 animate-spin text-amber-500" />
+                  <p className="font-bold text-gray-500">Loading booster plans...</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {boosterPlans.map((plan) => (
+                    <div key={plan.id} className="border border-gray-200 rounded-xl p-4 flex justify-between items-center bg-gray-50 hover:border-amber-400 transition-colors cursor-pointer">
+                      <div>
+                        <h4 className="font-black text-gray-900">{plan.name}</h4>
+                        <p className="text-xs font-bold text-gray-500 mt-1">
+                          {plan.calls} Calls + {plan.sms} SMS Alerts
+                        </p>
+                      </div>
+                      <Link to={`/shop?plan=${plan.id}`} className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-lg text-xs shadow-sm">
+                        Buy ₹{plan.price}
+                      </Link>
+                    </div>
+                  ))}
+                  <button onClick={() => setIsBoosterModalOpen(false)} className="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold py-2.5 rounded-lg text-sm mt-2">
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

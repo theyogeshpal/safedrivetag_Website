@@ -393,23 +393,25 @@ export default function DashboardOrders() {
                                       )}
                                     </div>
                                     <div className="grid grid-cols-2 gap-2 w-full">
-                                      <button
-                                        onClick={() => printDigitalPdfInColor({
-                                          ...ord,
-                                          title: ord.productName,
-                                          publicToken: copyToken,
-                                          securityCode: pin,
-                                          allocatedQRIds: undefined, // Fix: do not pass all QRs from the order
-                                          copies: [qr] // Fix: explicitly pass only this single QR
-                                        })}
-                                        className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 cursor-pointer"
-                                      >
-                                        <Printer size={12} /> Print Pass
-                                      </button>
+                                      {isDigital && (
+                                        <button
+                                          onClick={() => printDigitalPdfInColor({
+                                            ...ord,
+                                            title: ord.productName,
+                                            publicToken: copyToken,
+                                            securityCode: pin,
+                                            allocatedQRIds: undefined,
+                                            copies: [qr]
+                                          })}
+                                          className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                                        >
+                                          <Printer size={12} /> Print Pass
+                                        </button>
+                                      )}
                                       <Link
                                         to={`/q/${copyToken}`}
                                         target="_blank"
-                                        className="bg-white hover:bg-gray-50 text-purple-700 border border-purple-200 font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5"
+                                        className={`${isDigital ? '' : 'col-span-2'} bg-white hover:bg-gray-50 text-purple-700 border border-purple-200 font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5`}
                                       >
                                         <ExternalLink size={12} /> Test Scan
                                       </Link>
