@@ -33,46 +33,18 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
     async function checkActiveTags() {
       try {
         let count = 0;
-        const [dashRes, ordersRes] = await Promise.allSettled([
-          api.getDashboard(),
-          api.getUserOrders(),
-        ]);
+        const dashRes = await api.getDashboard();
 
-        if (dashRes.status === 'fulfilled' && dashRes.value?.success) {
-          const res = dashRes.value;
-          const rawList = Array.isArray(res.qrCodes) 
-            ? res.qrCodes 
-            : (Array.isArray(res.kits) ? res.kits : []);
+        if (dashRes && dashRes.success) {
+          const rawList = Array.isArray(dashRes.qrCodes) 
+            ? dashRes.qrCodes 
+            : (Array.isArray(dashRes.kits) ? dashRes.kits : []);
           const activeKits = rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
-          count = Math.max(count, res.stats?.activeQRs || 0, activeKits.length);
+          count = Math.max(count, dashRes.stats?.activeQRs || 0, activeKits.length);
         }
 
-        if (count === 0 && ordersRes.status === 'fulfilled' && ordersRes.value?.success && Array.isArray(ordersRes.value.orders)) {
-          for (const ord of ordersRes.value.orders) {
-            if (ord.isClaimed || ord.isActivated) {
-              count++;
-              continue;
-            }
-            if (Array.isArray(ord.allocatedQRIds)) {
-              for (const qr of ord.allocatedQRIds) {
-                if (qr.status === 'ACTIVE' || qr.isRegistered) {
-                  count++;
-                  break;
-                }
-                if (qr.publicToken || qr.copyCode) {
-                  try {
-                    const pubRes = await api.getPublicQrInfo(qr.publicToken || qr.copyCode);
-                    if (pubRes && pubRes.success && pubRes.status === 'ACTIVE') {
-                      count++;
-                      break;
-                    }
-                  } catch (e) {}
-                }
-              }
-            }
-          }
-        }
-
+        // Just rely on the dashboard API response.
+        // Nested looping over orders array with public API requests is too slow and removed to fix load times.
         setActiveTagsCount(count);
       } catch (err) {
         console.error('Error verifying active tags count', err);
