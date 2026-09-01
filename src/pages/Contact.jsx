@@ -9,10 +9,11 @@ export default function Contact() {
   const [openFaq, setOpenFaq] = useState(null);
 
   const faqs = [
-    { q: 'How do I activate my tag?', a: 'To activate your tag, simply scan it with your smartphone and follow the on-screen instructions to register your vehicle details.' },
-    { q: 'When will my order arrive?', a: 'Orders typically arrive within 3-5 business days depending on your location.' },
-    { q: 'Do you offer reseller partnerships?', a: 'Yes, we do! Please reach out to our sales team through the contact form above for more details.' },
-    { q: 'How do I transfer a tag to a new owner?', a: 'You can transfer ownership from your account dashboard by selecting the tag and choosing "Transfer Ownership".' }
+    { q: "What is SafeDrive-Tag?", a: "SafeDrive-Tag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
+    { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
+    { q: "Can I use SafeDrive-Tag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
+    { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
+    { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weather proof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
   ];
 
   const [formData, setFormData] = useState({
@@ -73,7 +74,7 @@ export default function Contact() {
         description="Questions about your safety tag, an order status, or a partnership? Reach out to our dedicated support team."
         badges={[
           { icon: <Headphones size={14} className="text-orange-500" />, label: 'Fast Response' },
-          { icon: <Clock size={14} className="text-blue-500" />, label: 'Mon-Sat 9AM - 8PM' },
+          { icon: <Clock size={14} className="text-blue-500" />, label: 'Mostly replies same day' },
           { icon: <ShieldCheck size={14} className="text-green-600" />, label: '100% Privacy Protected' }
         ]}
       />
@@ -187,7 +188,7 @@ export default function Contact() {
       {/* --- FAQ SECTION --- */}
       <section className="py-10 px-6">
         <div className="max-w-4xl mx-auto bg-white border border-black/10 rounded-3xl p-8 md:p-12 shadow-sm">
-          <h2 className="text-2xl font-black text-black mb-8 text-center">Common questions</h2>
+          <h2 className="text-2xl font-black text-black mb-8 text-center">FAQ</h2>
           <div className="space-y-3">
             {faqs.map((faq, index) => (
               <div

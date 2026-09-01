@@ -79,7 +79,7 @@ export default function About() {
           <div className="stats-img-wrapper">
             <div className="stats-img-blob" />
             <img
-              src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80"
+              src="/about-image.png"
               alt="Team"
               className="stats-img"
             />
@@ -100,10 +100,15 @@ export default function About() {
               { icon: <Wrench size={28} className="text-orange-500" />, iconBg: 'bg-orange-50 border-orange-200', title: 'Garages & Dealers', desc: 'Get co-branded tags for your customers to build long-term loyalty and recurring service revenue.' },
               { icon: <CircleParking size={28} className="text-emerald-600" />, iconBg: 'bg-emerald-50 border-emerald-200', title: 'Commercial Parking', desc: 'Manage parking chaos with ease. Contact wrong-parked vehicle owners instantly and privately.' },
             ].map(({ icon, iconBg, title, desc }) => (
-              <div key={title} className="solution-card hover-lift">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 border ${iconBg} shadow-inner`}>{icon}</div>
-                <h3 className="solution-title">{title}</h3>
-                <p className="value-desc">{desc}</p>
+              <div key={title} className="solution-card hover-lift flex flex-col items-start justify-between">
+                <div>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 border ${iconBg} shadow-inner`}>{icon}</div>
+                  <h3 className="solution-title">{title}</h3>
+                  <p className="value-desc mb-5">{desc}</p>
+                </div>
+                <Link to="/contact" className="mt-auto inline-flex items-center gap-1.5 text-xs font-bold text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 px-3.5 py-2 rounded-lg transition-colors border border-orange-200/50">
+                  Contact our team <ArrowRight size={12} />
+                </Link>
               </div>
             ))}
           </div>
