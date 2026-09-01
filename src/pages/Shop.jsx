@@ -247,9 +247,6 @@ export default function Shop() {
                           </span>
                         )}
                       </div>
-                      <div className="text-[11px] font-bold text-black/50 text-right">
-                        Renewal: <span className="text-orange-600 font-extrabold">₹{prod.renewalAmount || 199}/yr</span>
-                      </div>
                     </div>
 
                     {/* Features List */}

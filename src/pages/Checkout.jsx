@@ -13,7 +13,8 @@ import {
   FileText,
   Printer,
   Eye,
-  Download
+  Download,
+  Copy
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PageHero from '../components/PageHero';
@@ -59,7 +60,13 @@ export default function Checkout() {
   );
 
   const [quantity, setQuantity] = useState(location.state?.quantity || 1);
-  const totalAmount = selectedProduct.price * quantity;
+  const [paymentMode, setPaymentMode] = useState('ONLINE'); // 'ONLINE' or 'COD'
+  
+  const isDigitalProduct = selectedProduct.qrType === 'DIGITAL';
+  
+  const baseTotalAmount = selectedProduct.price * quantity;
+  const codFee = 59; // 50rs + 9gst
+  const totalAmount = paymentMode === 'COD' ? baseTotalAmount + codFee : baseTotalAmount;
 
   const [formData, setFormData] = useState({
     firstName: currentUser?.name?.split(' ')[0] || '',
@@ -318,6 +325,53 @@ export default function Checkout() {
         return;
       }
 
+      // If COD, bypass Razorpay gateway
+      if (paymentMode === 'COD') {
+        const completeRes = await api.completePurchase({
+          productId: resolvedProductId,
+          quantity: quantity || 1,
+          customerName: customerFullName,
+          customerPhone: cleanPhone,
+          customerEmail: formData.email.trim(),
+          shippingAddress: {
+            address: formData.address.trim(),
+            city: formData.city.trim(),
+            state: formData.state.trim() || 'Uttar Pradesh',
+            pincode: formData.pincode.trim(),
+          },
+          paymentMethod: 'COD',
+          razorpayOrderId: createRes.razorpayOrderId || createRes.orderId || `order_${Date.now()}`,
+          razorpayPaymentId: `pay_cod_${Date.now()}`,
+          razorpaySignature: 'cod_valid',
+          name: customerFullName,
+          phone: cleanPhone,
+          email: formData.email.trim(),
+          address: formData.address.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim() || 'Uttar Pradesh',
+          pincode: formData.pincode.trim(),
+          razorpay_payment_id: `pay_cod_${Date.now()}`,
+          razorpay_order_id: createRes.razorpayOrderId || createRes.orderId || `order_${Date.now()}`,
+          razorpay_signature: 'cod_valid',
+        });
+
+        if (completeRes.success) {
+          if (completeRes.token) setAuthToken(completeRes.token);
+          if (completeRes.user && setCurrentUser) setCurrentUser(completeRes.user);
+
+          setOrderSuccess({
+            orderNumber: completeRes.orderNumber || completeRes.orderId || `ORD-${Date.now().toString().slice(-6)}`,
+            customerName: customerFullName,
+            totalAmount,
+            shippingAddress: `${formData.address.trim()}, ${formData.city.trim()} - ${formData.pincode.trim()}`,
+          });
+        } else {
+          setError(completeRes.message || 'COD Order completion failed.');
+        }
+        setIsSubmitting(false);
+        return;
+      }
+
       const isScriptLoaded = await loadRazorpayScript();
 
       if (!isScriptLoaded || !window.Razorpay) {
@@ -488,46 +542,74 @@ export default function Checkout() {
               <CheckCircle2 size={44} />
             </div>
 
-            <span className="inline-block bg-green-50 text-green-700 font-mono font-bold text-xs px-3.5 py-1.5 rounded-full border border-green-200 mb-3">
-              Order Confirmed: {orderSuccess.orderNumber}
-            </span>
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="inline-block bg-green-50 text-green-700 font-mono font-bold text-xs px-3.5 py-1.5 rounded-full border border-green-200">
+                Order Confirmed: {orderSuccess.orderNumber}
+              </span>
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(orderSuccess.orderNumber);
+                  alert('Order ID copied to clipboard!');
+                }}
+                className="text-green-700 hover:text-green-900 bg-green-50 hover:bg-green-100 p-1.5 rounded-full border border-green-200 transition-colors"
+                title="Copy Order ID"
+              >
+                <Copy size={14} />
+              </button>
+            </div>
 
-            <h2 className="text-3xl font-black text-black tracking-tight mb-2">Payment Successful!</h2>
+            <h2 className="text-3xl font-black text-black tracking-tight mb-2">Order Successful!</h2>
             <p className="text-sm text-black/60 font-medium mb-6">
-              Thank you <strong>{orderSuccess.customerName}</strong>! Your order has been placed successfully via Razorpay. Your QR protection kit will be dispatched to your shipping address.
+              Thank you <strong>{orderSuccess.customerName}</strong>! Your order has been placed successfully. 
+              {isDigitalProduct ? ' Your digital pass is ready for download.' : ' Your QR protection kit will be dispatched to your shipping address.'}
             </p>
 
             <div className="bg-black/[0.02] border border-black/5 rounded-2xl p-5 mb-8 text-left space-y-2.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-black/50 font-bold">Total Amount Paid:</span>
+                <span className="text-black/50 font-bold">Total Amount:</span>
                 <span className="font-black text-black text-sm">₹{orderSuccess.totalAmount}</span>
               </div>
               {orderSuccess.paymentId && (
                 <div className="flex justify-between">
-                  <span className="text-black/50 font-bold">Razorpay Payment ID:</span>
+                  <span className="text-black/50 font-bold">Payment Ref:</span>
                   <span className="font-mono font-bold text-orange-600">{orderSuccess.paymentId}</span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span className="text-black/50 font-bold">Delivery Address:</span>
-                <span className="font-bold text-black max-w-xs text-right">{orderSuccess.shippingAddress}</span>
-              </div>
+              {!isDigitalProduct && (
+                <div className="flex justify-between">
+                  <span className="text-black/50 font-bold">Delivery Address:</span>
+                  <span className="font-bold text-black max-w-xs text-right">{orderSuccess.shippingAddress}</span>
+                </div>
+              )}
             </div>
 
-
-
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              {isDigitalProduct ? (
+                <button
+                  onClick={() => openDigitalPdf(selectedProduct)}
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-black px-8 py-3.5 rounded-xl shadow-lg shadow-purple-600/20 text-sm transition-all flex items-center justify-center gap-2"
+                >
+                  <Download size={18} /> Download Digital Pass
+                </button>
+              ) : (
+                <button
+                  onClick={() => downloadInvoicePdf({ 
+                    ...orderSuccess, 
+                    productName: selectedProduct.title || selectedProduct.name,
+                    price: orderSuccess.totalAmount,
+                    qty: quantity
+                  })}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-black px-8 py-3.5 rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-all flex items-center justify-center gap-2"
+                >
+                  <Download size={18} /> Download Invoice
+                </button>
+              )}
+              
               <Link 
                 to="/dashboard"
-                className="bg-green-500 hover:bg-green-600 text-white font-black px-8 py-3.5 rounded-xl shadow-lg shadow-green-500/20 text-sm transition-all"
+                className="bg-green-500 hover:bg-green-600 text-white font-black px-8 py-3.5 rounded-xl shadow-lg shadow-green-500/20 text-sm transition-all text-center flex items-center justify-center"
               >
-                Go to My Dashboard
-              </Link>
-              <Link 
-                to="/shop"
-                className="bg-black/5 hover:bg-black/10 text-black font-bold px-8 py-3.5 rounded-xl text-sm transition-all"
-              >
-                Continue Shopping
+                Go to Dashboard
               </Link>
             </div>
           </div>
@@ -549,7 +631,9 @@ export default function Checkout() {
               <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-black/5 space-y-5">
                 <div className="flex items-center gap-4 pb-4 border-b border-black/5">
                   <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-sm">1</div>
-                  <h2 className="text-xl font-black text-black">Delivery & Contact Details</h2>
+                  <h2 className="text-xl font-black text-black">
+                    {isDigitalProduct ? 'Contact Details' : 'Delivery & Contact Details'}
+                  </h2>
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -591,6 +675,7 @@ export default function Checkout() {
                       className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
                       placeholder="9876543210" 
                     />
+                    <p className="text-[10px] text-orange-600 font-bold ml-1 mt-1">Note: The same phone number must be used for tag activation.</p>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">Email Address *</label>
@@ -606,74 +691,114 @@ export default function Checkout() {
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">Street Address *</label>
-                  <input 
-                    type="text" 
-                    required
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
-                    placeholder="Plot 55, Sector 10, Main Road" 
-                  />
-                </div>
+                {!isDigitalProduct && (
+                  <>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">Street Address *</label>
+                      <input 
+                        type="text" 
+                        required
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
+                        placeholder="Plot 55, Sector 10, Main Road" 
+                      />
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">City *</label>
-                    <input 
-                      type="text" 
-                      required
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
-                      placeholder="Noida" 
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">State *</label>
-                    <input 
-                      type="text" 
-                      required
-                      name="state"
-                      value={formData.state}
-                      onChange={handleChange}
-                      className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
-                      placeholder="Uttar Pradesh" 
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">PIN Code *</label>
-                    <input 
-                      type="text" 
-                      maxLength={6}
-                      required
-                      name="pincode"
-                      value={formData.pincode}
-                      onChange={handleChange}
-                      className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
-                      placeholder="201301" 
-                    />
-                  </div>
-                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">City *</label>
+                        <input 
+                          type="text" 
+                          required
+                          name="city"
+                          value={formData.city}
+                          onChange={handleChange}
+                          className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
+                          placeholder="Noida" 
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">State *</label>
+                        <input 
+                          type="text" 
+                          required
+                          name="state"
+                          value={formData.state}
+                          onChange={handleChange}
+                          className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
+                          placeholder="Uttar Pradesh" 
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-black/70 uppercase tracking-wider ml-1">PIN Code *</label>
+                        <input 
+                          type="text" 
+                          maxLength={6}
+                          required
+                          name="pincode"
+                          value={formData.pincode}
+                          onChange={handleChange}
+                          className="w-full bg-black/[0.02] border border-black/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-orange-500 focus:bg-white transition-all font-semibold" 
+                          placeholder="201301" 
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
-              {/* Payment Methods Info Banner */}
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-black/5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center font-black">
-                    <CreditCard size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm text-black">Instant Secure Checkout</h3>
-                    <p className="text-xs text-black/50">UPI (GPay, PhonePe, Paytm), Cards, NetBanking, Wallets</p>
-                  </div>
+              {/* Payment Method Selector */}
+              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-black/5 space-y-4">
+                <div className="flex items-center gap-4 pb-4 border-b border-black/5">
+                  <div className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-black text-sm">2</div>
+                  <h2 className="text-xl font-black text-black">Payment Method</h2>
                 </div>
-                <span className="text-[11px] font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
-                  Razorpay
-                </span>
+                
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <label 
+                    className={`relative border-2 rounded-2xl p-4 flex flex-col cursor-pointer transition-all ${paymentMode === 'ONLINE' ? 'border-orange-500 bg-orange-50/50' : 'border-black/5 hover:border-black/10 bg-black/[0.02]'}`}
+                  >
+                    <input 
+                      type="radio" 
+                      name="paymentMode" 
+                      value="ONLINE" 
+                      checked={paymentMode === 'ONLINE'} 
+                      onChange={() => setPaymentMode('ONLINE')}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <CreditCard size={18} className={paymentMode === 'ONLINE' ? 'text-orange-500' : 'text-black/40'} />
+                        <span className="font-bold text-sm">Pay Online</span>
+                      </div>
+                      {paymentMode === 'ONLINE' && <CheckCircle2 size={18} className="text-orange-500" />}
+                    </div>
+                    <span className="text-[10px] text-black/50 font-medium">UPI, Cards, NetBanking, Wallets via Razorpay</span>
+                  </label>
+
+                  <label 
+                    className={`relative border-2 rounded-2xl p-4 flex flex-col cursor-pointer transition-all ${paymentMode === 'COD' ? 'border-orange-500 bg-orange-50/50' : 'border-black/5 hover:border-black/10 bg-black/[0.02]'}`}
+                  >
+                    <input 
+                      type="radio" 
+                      name="paymentMode" 
+                      value="COD" 
+                      checked={paymentMode === 'COD'} 
+                      onChange={() => setPaymentMode('COD')}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Truck size={18} className={paymentMode === 'COD' ? 'text-orange-500' : 'text-black/40'} />
+                        <span className="font-bold text-sm">Cash on Delivery</span>
+                      </div>
+                      {paymentMode === 'COD' && <CheckCircle2 size={18} className="text-orange-500" />}
+                    </div>
+                    <span className="text-[10px] text-black/50 font-medium">Extra ₹59 applied (₹50 COD + ₹9 GST)</span>
+                  </label>
+                </div>
               </div>
 
             </div>
@@ -699,6 +824,9 @@ export default function Checkout() {
                   )}
                   <div className="flex-1">
                     <h3 className="font-black text-sm text-black line-clamp-1">{selectedProduct.title || selectedProduct.name}</h3>
+                    <p className="text-[10px] text-orange-600 font-bold bg-orange-50 inline-block px-1.5 py-0.5 rounded border border-orange-100 mb-1">
+                      Type: {isDigitalProduct ? 'Instant Digital Pass' : 'Physical 3M Sticker Kit'}
+                    </p>
                     <p className="text-xs text-black/50 mb-1">{selectedProduct.description?.slice(0, 45)}...</p>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-black/60">Qty:</span>
@@ -709,18 +837,24 @@ export default function Checkout() {
                       </div>
                     </div>
                   </div>
-                  <div className="font-black text-lg text-black">₹{totalAmount}</div>
+                  <div className="font-black text-lg text-black">₹{baseTotalAmount}</div>
                 </div>
 
                 <div className="space-y-3 pt-5 border-t border-black/5 mb-6 text-xs">
                   <div className="flex justify-between text-black/60 font-medium">
                     <span>Subtotal ({quantity} item{quantity > 1 ? 's' : ''})</span>
-                    <span>₹{totalAmount}.00</span>
+                    <span>₹{baseTotalAmount}.00</span>
                   </div>
                   <div className="flex justify-between text-black/60 font-medium">
-                    <span>Express Pan-India Delivery</span>
-                    <span className="text-green-600 font-bold">FREE</span>
+                    <span>Express Delivery</span>
+                    <span className="text-green-600 font-bold">{isDigitalProduct ? 'INSTANT' : 'FREE'}</span>
                   </div>
+                  {paymentMode === 'COD' && (
+                    <div className="flex justify-between text-black/60 font-medium">
+                      <span>Cash on Delivery Fee</span>
+                      <span className="font-bold text-black">₹{codFee}.00</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-black/60 font-medium">
                     <span>1-Year Cloud Bridge Included</span>
                     <span className="text-green-600 font-bold">FREE</span>
@@ -729,7 +863,7 @@ export default function Checkout() {
 
                 <div className="flex justify-between items-end pt-5 border-t border-black/5 mb-6">
                   <div>
-                    <p className="text-xs text-black/50 font-bold mb-0.5">Total Amount</p>
+                    <p className="text-xs text-black/50 font-bold mb-0.5">Final Total Amount</p>
                     <p className="text-[11px] text-green-600 font-bold">100% Secure Checkout</p>
                   </div>
                   <div className="text-3xl font-black text-black">₹{totalAmount}</div>

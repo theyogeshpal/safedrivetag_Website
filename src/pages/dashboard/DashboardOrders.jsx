@@ -204,7 +204,7 @@ export default function DashboardOrders() {
                     <div className="flex items-center gap-2 flex-wrap">
                       {isDelivered && (
                         <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-black uppercase text-[10px] border border-green-300">
-                          ✓ Delivered
+                          ✓ {isDigital ? 'Fulfilled / Digital Pass Emailed' : 'Delivered'}
                         </span>
                       )}
                       {isPaid && (
@@ -253,7 +253,6 @@ export default function DashboardOrders() {
                             </span>
                           )}
                           <span className="bg-gray-50 px-2 py-0.5 rounded border border-gray-100">Qty: <strong>{qty}</strong></span>
-                          <span className="bg-gray-50 px-2 py-0.5 rounded border border-gray-100">Rate: <strong>₹{unitPrice}</strong></span>
                           <span className="bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-bold border border-emerald-100">
                             Total: ₹{ord.totalAmount || ord.amount || (unitPrice * qty)}
                           </span>

@@ -118,7 +118,11 @@ export default function RegisterTag() {
           otpInputRefs.current[0]?.focus();
         }, 100);
       } else {
-        setError(res.message || 'Failed to send OTP to this number. Please check the number and try again.');
+        let errorMessage = res.message || 'Failed to send OTP to this number. Please check the number and try again.';
+        if (errorMessage.toLowerCase().includes('pending order nahi mila') || errorMessage.toLowerCase().includes('is mobile number par')) {
+          errorMessage = 'Eligible Order Not Found: No pending QR Kit order found for this mobile number. Please check your registered purchase mobile number or place a new order on our website.';
+        }
+        setError(errorMessage);
       }
     } catch (err) {
       setError('Network error while sending OTP. Please check connection.');
