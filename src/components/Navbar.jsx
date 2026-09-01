@@ -66,7 +66,7 @@ export default function Navbar() {
     { to: '/', label: 'Home' },
     { to: '/about', label: 'About Us' },
     { to: '/shop', label: 'Store', badge: 'Popular' },
-    { to: '/contact', label: 'Contact' },
+    { to: '/contact', label: 'Contact Us' },
   ];
 
   const isHome = path === '/';
@@ -104,13 +104,16 @@ export default function Navbar() {
             <span className="text-gray-300 hidden sm:inline">
               Smart Vehicle QR Safety Tag at just <strong className="text-white font-bold">₹299</strong>
             </span>
+          </div>
+
             <span className="text-emerald-400 font-bold flex items-center gap-1 text-[10px] sm:text-[11px]">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
               Pan-India Delivery
             </span>
-          </div>
-
           {/* Center / Highlight: Privacy Guarantee */}
+
+          {/* Right: Support & Quick Links */}
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0 text-[10px] sm:text-xs">
           <div className="hidden lg:flex items-center gap-3 text-gray-400">
             <span className="flex items-center gap-1 text-emerald-400 font-semibold">
               <ShieldCheck size={13} className="text-emerald-400" /> 100% Privacy Protected
@@ -121,15 +124,12 @@ export default function Navbar() {
             </span>
           </div>
 
-          {/* Right: Support & Quick Links */}
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0 text-[10px] sm:text-xs">
+            <span className="text-gray-600">•</span>
             <a 
               href="mailto:safedrivetag@gmail.com" 
               className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"
             >
-              <Mail size={11} className="text-orange-400" />
-              <span className="hidden xs:inline text-gray-400">Support:</span>
-              <span className="font-semibold text-white tracking-wide">safedrivetag@gmail.com</span>
+              <span className="font-semibold text-white tracking-wide">Works in Emergencies</span>
             </a>
           </div>
 

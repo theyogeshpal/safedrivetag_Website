@@ -27,7 +27,7 @@ export default function Legal() {
     { path: '/privacy', label: 'Privacy Policy', icon: Shield },
     { path: '/terms', label: 'Terms of Service', icon: FileText },
     { path: '/refund', label: 'Refund & Cancellation', icon: RefreshCw },
-    { path: '/shipping', label: 'Shipping Info', icon: Truck },
+    { path: '/shipping', label: 'Shipping Policy', icon: Truck },
   ];
 
   let contentData = {
@@ -136,17 +136,17 @@ export default function Legal() {
     contentData.title = 'Refund & Cancellation Policy';
     contentData.icon = <RefreshCw className="w-8 h-8 text-green-500" />;
     contentData.badge = '🔄 100% SATISFACTION & 30-DAY GUARANTEE';
-    contentData.intro = 'We take immense pride in crafting the highest quality weatherproof vehicle safety tags. If you are not completely satisfied with your order or if your tag arrives damaged, our transparent refund and replacement policy ensures complete peace of mind.';
+    contentData.intro = 'We take immense pride in crafting the highest quality weather proof vehicle safety tags. If you are not completely satisfied with your order or if your tag arrives damaged, our transparent refund and replacement policy ensures complete peace of mind.';
     contentData.sections = [
       {
-        heading: "1. 30-Day Money-Back Guarantee",
+        heading: "1. 7-Day Money-Back Guarantee",
         body: "If for any reason you are not satisfied with your SafeDrive-Tag physical kit, you can request a return and refund within 30 days from the date of delivery."
       },
       {
-        heading: "2. Free Instant Replacement for Damaged Items (DOA)",
-        body: "If your tag arrives folded, torn, or defective during postal transit, we will dispatch a brand-new replacement kit at zero extra cost within 24 hours.",
+        heading: "2. Free Replacement for Damaged Items",
+        body: "If your tag arrives folded, torn, or defective during postal transit, we will dispatch a brand-new replacement kit at zero extra cost within 24-48 hours.",
         points: [
-          "Simply send a photo of the damaged package/tag via WhatsApp or email to safedrivetag@gmail.com.",
+          "Simply send a photo of the damaged package/tag via Email to safedrivetag@gmail.com.",
           "No complicated return shipping is required for defective tags — your replacement will be dispatched immediately."
         ]
       },
@@ -154,7 +154,7 @@ export default function Legal() {
         heading: "3. Order Cancellation Before Dispatch",
         body: "You can cancel your order any time prior to shipment dispatch for an immediate 100% full refund.",
         points: [
-          "To cancel, email safedrivetag@gmail.com or use the Order Management link with your Order ID.",
+          "To cancel, email safedrivetag@gmail.com.",
           "Prepaid cancellations are refunded immediately to your original payment method (UPI, Card, Net Banking)."
         ]
       },
@@ -162,8 +162,8 @@ export default function Legal() {
         heading: "4. Return Eligibility & Process",
         body: "To be eligible for a standard return:",
         points: [
-          "The tag must be unpeeled, unused, and in its original backing sleeve and packaging.",
-          "Once your return package is received at our fulfillment center, our quality team inspects it within 24 hours.",
+          "The tag must remain unpeeled, unused, not yet registered or activated, and intact in its original backing sleeve and packaging.",
+          "Once your return package is received at our fulfillment center, our quality team inspects it within 24-48 hours.",
           "Approved refunds are automatically credited back to your original source of payment within 5 to 7 working days."
         ]
       },
@@ -316,7 +316,7 @@ export default function Legal() {
                 to="/contact" 
                 className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-xs font-black px-5 py-2.5 rounded-xl text-center shadow-md transition-all whitespace-nowrap"
               >
-                Contact Support
+                Contact Us
               </Link>
             </div>
           </div>

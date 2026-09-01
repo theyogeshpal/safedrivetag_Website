@@ -72,9 +72,10 @@ export default function Footer() {
         <div className="col-span-1 lg:col-span-2">
           <h4 className="font-extrabold text-white mb-5 uppercase tracking-wider text-xs sm:text-sm">Company</h4>
           <ul className="space-y-3.5 text-sm font-medium">
+            <FooterLink to="/" label="Home" />
             <FooterLink to="/about" label="About Us" />
-            <FooterLink to="/shop" label="Shop Tags" />
-            <FooterLink to="/contact" label="Contact" />
+            <FooterLink to="/shop" label="Store" />
+            <FooterLink to="/contact" label="Contact Us" />
           </ul>
         </div>
 

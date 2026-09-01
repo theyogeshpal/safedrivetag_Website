@@ -139,7 +139,7 @@ export default function Shop() {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black/5 hover:bg-black/10 text-black font-bold px-6 py-3.5 rounded-2xl text-xs sm:text-sm border border-black/10 transition-all"
               >
                 <Headphones size={15} />
-                <span>Contact Support</span>
+                <span>Contact Us</span>
               </Link>
             </div>
           </div>
