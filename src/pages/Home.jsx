@@ -3,6 +3,7 @@ import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, Ch
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
+import { BsQuestion } from 'react-icons/bs';
 
 const liveStats = [
   { 
@@ -14,14 +15,14 @@ const liveStats = [
   },
   { 
     tag: "RATING", 
-    value: "4.8 ★ User Rating", 
+    value: "4.9 ★ User Rating", 
     desc: "From over 50,000+ verified customer reviews", 
     icon: <Star size={18} className="fill-amber-400 text-amber-400" />,
     badgeBg: "bg-gradient-to-r from-amber-500 to-orange-500"
   },
   { 
     tag: "TOTAL SCANS", 
-    value: "2.4M+ All Time", 
+    value: "5000+ All Time", 
     desc: "Masked calls & emergency contacts bridged successfully", 
     icon: <QrCode size={18} className="text-orange-500" />,
     badgeBg: "bg-gradient-to-r from-orange-600 to-amber-600"
@@ -184,15 +185,15 @@ export default function Home() {
                   const el = document.getElementById('how-it-works');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="animate-watch-btn-glow border p-2.5 sm:p-3 px-5 sm:px-6 rounded-2xl sm:rounded-3xl transition-all flex items-center justify-center sm:justify-start gap-3.5 cursor-pointer text-left shrink-0 active:scale-[0.98]"
+                className=" border p-2.5 sm:p-3 px-5 sm:px-6 rounded-2xl sm:rounded-3xl transition-all flex items-center justify-center sm:justify-start gap-3.5 cursor-pointer text-left shrink-0 active:scale-[0.98]"
               >
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center animate-watch-btn-icon shrink-0">
-                  <Play size={15} className="animate-watch-btn-play ml-0.5" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 bg-orange-400 text-white rounded-full flex items-center justify-center shrink-0">
+                  <Play size={15} className=" ml-0.5" />
                 </div>
 
                 <div>
-                  <div className="font-extrabold text-sm sm:text-base leading-tight animate-watch-btn-title">Watch Video</div>
-                  <div className="text-[11px] font-medium animate-watch-btn-subtitle">See how it works</div>
+                  <div className="font-extrabold text-sm sm:text-base leading-tight ">Live Demo</div>
+                  <div className="text-[11px] font-medium ">See how it works</div>
                 </div>
               </button>
             </div>
@@ -261,12 +262,12 @@ export default function Home() {
               {/* Top Two-Way Privacy Card (Emerald Green) */}
               <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 flex items-start gap-3.5">
                 <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                  <Lock size={18} />
+                  <BsQuestion size={18} />
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-sm text-gray-900 mb-0.5">100% Two-Way Number Masking</h4>
+                  <h4 className="font-extrabold text-sm text-gray-900 mb-0.5">Blocked a driveway or parked in a tight spot?</h4>
                   <p className="text-[11px] text-gray-600 leading-snug font-medium">
-                    With SafeDrive-Tag's two-way masking, you can give out your phone number, and you can text them back. Complete anonymity.
+                     With SafeDrive-Tag's two-way masking, anyone can alert you about your vehicle instantly
                   </p>
                 </div>
               </div>
@@ -311,8 +312,8 @@ export default function Home() {
                     <Zap size={18} />
                   </div>
                   <div>
-                    <p className="text-xs font-extrabold text-gray-900">Instant Masked Cloud Call</p>
-                    <p className="text-[10px] text-gray-500 font-medium">WhatsApp Alert &bull; Call & Text Forwarding</p>
+                    <p className="text-xs font-extrabold text-gray-900">instant Notifications</p>
+                    <p className="text-[10px] text-gray-500 font-medium">Message & Alerts Forwarding</p>
                   </div>
                 </div>
                 <span className="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs">
@@ -370,7 +371,7 @@ export default function Home() {
               {/* Stat Boxes */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {[
-                  { val: "1200+", lbl: "Vehicles Protected", color: "text-orange-500" },
+                  { val: "9.5L+", lbl: "Vehicles Protected", color: "text-orange-500" },
                   { val: "5000+", lbl: "Scans Completed", color: "text-emerald-600" },
                   { val: "4.9★", lbl: "User Rating", color: "text-amber-500" },
                   { val: "100%", lbl: "Privacy Guaranteed", color: "text-emerald-600" }
