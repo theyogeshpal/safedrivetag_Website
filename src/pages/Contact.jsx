@@ -9,9 +9,9 @@ export default function Contact() {
   const [openFaq, setOpenFaq] = useState(null);
 
   const faqs = [
-    { q: "What is SafeDrive-Tag?", a: "SafeDrive-Tag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
+    { q: "What is safedrivetag?", a: "safedrivetag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
     { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
-    { q: "Can I use SafeDrive-Tag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
+    { q: "Can I use safedrivetag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
     { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
     { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weather proof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
   ];

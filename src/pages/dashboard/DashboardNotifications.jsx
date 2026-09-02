@@ -28,7 +28,7 @@ export default function DashboardNotifications() {
           setNotifications([
             {
               id: 1,
-              title: 'Welcome to SafeDrive-Tag Protection',
+              title: 'Welcome to safedrivetag Protection',
               message: 'Your account is live. You will receive private vehicle alerts whenever someone scans your QR pass.',
               time: 'Just now',
               read: true,

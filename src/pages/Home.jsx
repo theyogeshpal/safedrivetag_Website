@@ -37,9 +37,9 @@ const liveStats = [
 ];
 
 const faqs = [
-  { q: "What is SafeDrive-Tag?", a: "SafeDrive-Tag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
+  { q: "What is safedrivetag?", a: "safedrivetag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
   { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
-  { q: "Can I use SafeDrive-Tag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
+  { q: "Can I use safedrivetag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
   { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
   { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weather proof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
 ];
@@ -109,13 +109,13 @@ export default function Home() {
             {/* Headline with Dual Orange & Green Highlights */}
             <h1 className="text-3xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.14] tracking-tight">
               Stay reachable in emergencies,<br className="hidden sm:inline" />
-              <span className="text-orange-500"> stay safe.</span>
+              <span className="text-orange-500"> stay safe</span>
               <span className="text-emerald-600"> stay private.</span>
             </h1>
 
             {/* Description */}
             <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-lg font-medium">
-              SafeDrive-Tag is the next-generation smart QR emergency contact tag for your vehicles and travel luggage. Protect your car, bike, and bags without ever exposing your private phone number.
+              safedrivetag is the next-generation smart QR emergency contact tag for your vehicles and travel luggage. Protect your car, bike, and bags without ever exposing your private phone number.
             </p>
 
             {/* 1. Top 3-Value Props Bar with Orange & Green Harmony */}
@@ -267,7 +267,7 @@ export default function Home() {
                 <div>
                   <h4 className="font-extrabold text-sm text-gray-900 mb-0.5">Blocked a driveway or parked in a tight spot?</h4>
                   <p className="text-[11px] text-gray-600 leading-snug font-medium">
-                     With SafeDrive-Tag's two-way masking, anyone can alert you about your vehicle instantly
+                     With safedrivetag's two-way masking, anyone can alert you about your vehicle instantly
                   </p>
                 </div>
               </div>
@@ -285,7 +285,7 @@ export default function Home() {
 
                 <img 
                   src="/hero-car.png" 
-                  alt="SafeDrive-Tag on Car" 
+                  alt="safedrivetag on Car" 
                   decoding="async"
                   className="w-full max-w-[340px] object-contain drop-shadow-xl" 
                 />
@@ -358,14 +358,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-10 md:mb-16">
             <span className="text-emerald-600 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">About</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">What is SafeDrive-Tag?</h2>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">What is safedrivetag?</h2>
           </div>
           
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="max-w-xl mx-auto lg:max-w-none w-full">
               <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8 sm:mb-10 font-medium">
-                SafeDrive-Tag is a weather proof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
+                safedrivetag is a weather proof QR code tag for your vehicle that lets anyone contact you instantly without revealing your phone number. When someone scans the QR code with their phone camera, you receive a WhatsApp-SMS alert within seconds. Perfect for parking issues, emergencies, or when someone needs to reach you about your bike, auto, car, SUV, or truck.
               </p>
               
               {/* Stat Boxes */}
@@ -387,12 +387,12 @@ export default function Home() {
             {/* Right Content: The Visual Tag with Pointers */}
             <div className="relative flex justify-center items-center py-8 sm:py-12 lg:py-12 w-full max-w-xl mx-auto">
               
-              {/* The Official SafeDrive-Tag Sticker Card */}
+              {/* The Official safedrivetag Sticker Card */}
               <div className="relative w-full rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-gray-200 bg-white group transition-transform duration-300">
                 {/* Sticker Template Image */}
                 <img 
-                  src="/images/safedrive-tag-final.png" 
-                  alt="SafeDrive-Tag Vehicle QR Sticker" 
+                  src="/images/safedrivetag-final.png" 
+                  alt="safedrivetag Vehicle QR Sticker" 
                   loading="lazy"
                   decoding="async"
                   className="w-full h-auto object-contain block select-none" 
@@ -551,7 +551,7 @@ export default function Home() {
             <span className="text-emerald-400 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-3 block">One QR for all your needs</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">Cars. Bikes. Luggage. Backpacks.</h2>
             <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto font-medium">
-              SafeDrive-Tag protects your daily commute vehicles and your travel luggage — with instant emergency and lost bag recovery QR alerts.
+              safedrivetag protects your daily commute vehicles and your travel luggage — with instant emergency and lost bag recovery QR alerts.
             </p>
           </div>
           
@@ -697,7 +697,7 @@ export default function Home() {
           <div className="text-center md:text-left mb-6 md:mb-0 animate-fade-up">
             <h2 className="text-emerald-600 font-black tracking-widest text-xs sm:text-sm uppercase mb-2 sm:mb-4">Support</h2>
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 mb-4 sm:mb-6">Got Questions?</h3>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 sm:mb-8 font-medium">Everything you need to know about SafeDrive-Tag. If you can't find your answer, our support team is just a click away.</p>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 sm:mb-8 font-medium">Everything you need to know about safedrivetag. If you can't find your answer, our support team is just a click away.</p>
             <div className="relative rounded-[2rem] overflow-hidden border border-gray-200/90 shadow-md hidden md:flex flex-col items-center justify-center bg-white p-8 min-h-[260px] text-center">
               <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 shadow-inner border border-emerald-100">
                 <ShieldCheck size={32} />

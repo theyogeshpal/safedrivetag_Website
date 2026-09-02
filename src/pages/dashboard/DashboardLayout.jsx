@@ -122,7 +122,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
   const menuItems = [
     { id: 'orders', label: 'My Orders', path: '/dashboard/orders', icon: <Package size={16} /> },
     { id: 'transactions', label: 'Transactions', path: '/dashboard/transactions', icon: <Receipt size={16} /> },
-    { id: 'tags', label: 'My SafeDrive-Tags', path: '/dashboard/tags', icon: <QrCode size={16} />, requiresTag: true },
+    { id: 'tags', label: 'My safedrivetags', path: '/dashboard/tags', icon: <QrCode size={16} />, requiresTag: true },
     { id: 'logs', label: 'Activity Logs', path: '/dashboard/logs', icon: <Activity size={16} />, requiresTag: true },
     { id: 'profile', label: 'Profile Info', path: '/dashboard/profile', icon: <User size={16} /> },
     { id: 'addresses', label: 'Addresses', path: '/dashboard/addresses', icon: <MapPin size={16} /> },
@@ -294,7 +294,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                       title="No Active QR Tag - Activation Required"
                     >
                       <span className="flex items-center gap-1.5">
-                        <span>My SafeDrive-Tags</span>
+                        <span>My safedrivetags</span>
                         <Lock size={12} className="text-gray-400" />
                       </span>
                       <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">
@@ -308,7 +308,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                         currentTab === 'tags' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
                       }`}
                     >
-                      My SafeDrive-Tags
+                      My safedrivetags
                     </Link>
                   )}
 

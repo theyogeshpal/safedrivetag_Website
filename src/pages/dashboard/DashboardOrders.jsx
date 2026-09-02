@@ -40,7 +40,7 @@ export default function DashboardOrders() {
   const [expandedQRs, setExpandedQRs] = useState({}); // { copyCode: true/false }
   const [productsMap, setProductsMap] = useState({});
 
-  const DEFAULT_PRODUCT_IMG = '/images/safedrive-tag-final.png';
+  const DEFAULT_PRODUCT_IMG = '/images/safedrivetag-final.png';
 
   const loadOrders = useCallback(async () => {
     setIsLoadingOrders(true);

@@ -15,7 +15,7 @@ export const customSwal = Swal.mixin({
 
 export const showNoActiveTagAlert = (navigate) => {
   return customSwal.fire({
-    title: 'No Active SafeDrive-Tag Found!',
+    title: 'No Active safedrivetag Found!',
     html: `
       <div style="text-align: left; font-size: 13px; color: #4b5563; line-height: 1.6;">
         <p style="margin-bottom: 12px;">

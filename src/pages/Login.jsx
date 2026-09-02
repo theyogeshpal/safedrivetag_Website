@@ -223,7 +223,7 @@ export default function Login() {
                   <span>End-to-End Encrypted & Privacy Protected</span>
                 </div>
                 <div>
-                  New Tag Owner? <Link to="/shop" className="text-orange-600 font-bold hover:underline">Get a SafeDrive-Tag</Link>
+                  New Tag Owner? <Link to="/shop" className="text-orange-600 font-bold hover:underline">Get a safedrivetag</Link>
                 </div>
               </div>
             </form>

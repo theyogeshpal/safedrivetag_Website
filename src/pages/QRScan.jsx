@@ -462,7 +462,7 @@ export default function QRScan() {
             Invalid or Unknown QR Code
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
-            {error || 'This QR code is invalid, deactivated, or not recognized by SafeDrive-Tag.'}
+            {error || 'This QR code is invalid, deactivated, or not recognized by safedrivetag.'}
           </p>
 
           <div className="pt-2 flex flex-col gap-2.5">

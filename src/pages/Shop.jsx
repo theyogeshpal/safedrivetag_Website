@@ -159,7 +159,7 @@ export default function Shop() {
                     <div 
                       className="relative bg-orange-50/40 rounded-2xl p-3 sm:p-4 border border-orange-100/80 h-48 sm:h-52 flex items-center justify-center overflow-hidden mb-5 bg-white"
                     >
-                      {!prod.imageUrl || prod.imageUrl === '/images/safedrive-tag-final.png' ? (
+                      {!prod.imageUrl || prod.imageUrl === '/images/safedrivetag-final.png' ? (
                         <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50/50 rounded-xl">
                           <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center mb-2 border border-gray-100">
                             <QrCode size={32} className="text-orange-400/80" />

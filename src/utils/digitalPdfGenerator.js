@@ -25,7 +25,7 @@ export const generateDigitalPdfHtml = (item = {}) => {
     item.image || 
     item.imageUrl || 
     (Array.isArray(item.images) && item.images[0]) || 
-    '/images/safedrive-tag-final.png';
+    '/images/safedrivetag-final.png';
 
   const cardsHtml = copiesList.map((c, index) => {
     const copyToken = c.publicToken || c.token || c.copyCode || token;
@@ -431,7 +431,7 @@ export const downloadQrPng = (item = {}) => {
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = '11.5px -apple-system, BlinkMacSystemFont, sans-serif';
-      ctx.fillText('Official SafeDrive-Tag • https://safedrivetag-website.vercel.app', 300, 725);
+      ctx.fillText('Official safedrivetag • https://safedrivetag-website.vercel.app', 300, 725);
 
       // Trigger Download
       const a = document.createElement('a');

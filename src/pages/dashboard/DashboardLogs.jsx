@@ -97,7 +97,7 @@ export default function DashboardLogs() {
             <span className="inline-block bg-amber-100 text-amber-800 text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full mb-3 border border-amber-200">
               🔒 Activity Logs Disabled — Activation Required
             </span>
-            <h3 className="text-xl font-black text-[#212121] tracking-tight">No Active SafeDrive-Tag</h3>
+            <h3 className="text-xl font-black text-[#212121] tracking-tight">No Active safedrivetag</h3>
             <p className="text-xs sm:text-sm text-[#878787] max-w-md mx-auto mt-2 mb-6 leading-relaxed font-medium">
               Activity and scan logs are locked because there is no activated QR safety tag registered to this account. Once a tag is activated, live scan audits and voice bridge logs will appear here.
             </p>

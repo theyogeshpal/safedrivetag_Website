@@ -260,7 +260,7 @@ export default function DashboardTags() {
   // Full page loader while checking QR activation status
   if (isLoadingDashboard) {
     return (
-      <DashboardLayout currentTab="tags" pageTitle="My SafeDrive-Tags">
+      <DashboardLayout currentTab="tags" pageTitle="My safedrivetags">
         <div className="flex flex-col items-center justify-center py-32 gap-3">
           <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
           <p className="text-sm font-bold text-[#1a2a4a] tracking-wide text-center">
@@ -272,7 +272,7 @@ export default function DashboardTags() {
   }
 
   return (
-    <DashboardLayout currentTab="tags" pageTitle="My SafeDrive-Tags" saveSuccessMsg={saveSuccessMsg}>
+    <DashboardLayout currentTab="tags" pageTitle="My safedrivetags" saveSuccessMsg={saveSuccessMsg}>
       <div className="bg-white rounded-sm shadow-sm border border-gray-200/80 p-4 sm:p-6 space-y-6">
         
         {/* Header Title + Actions */}
@@ -280,7 +280,7 @@ export default function DashboardTags() {
           <div>
             <div className="flex items-center gap-2.5">
               <h2 className="text-lg sm:text-xl font-bold text-[#212121]">
-                My SafeDrive-Tags
+                My safedrivetags
               </h2>
               <span className="bg-blue-50 text-[#2874f0] text-xs font-bold px-2 py-0.5 rounded border border-blue-200">
                 {userTags.length} Registered
@@ -618,7 +618,7 @@ export default function DashboardTags() {
 
             <div className="p-6">
               <div className="relative inline-block mx-auto max-w-[340px] w-full rounded-2xl overflow-hidden shadow-xl border border-gray-100 mb-4 qr-canvas-download">
-                <img src="/images/safedrive-tag-final.png" alt="Digital Pass Card" className="w-full h-auto block" />
+                <img src="/images/safedrivetag-final.png" alt="Digital Pass Card" className="w-full h-auto block" />
                 <div className="absolute top-[50%] left-[75%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex flex-col items-center">
                   <QRCodeSVG
                     value={`https://safedrivetag-website.vercel.app/q/${qrModalTag.publicToken || qrModalTag.id}`}

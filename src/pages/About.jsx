@@ -13,7 +13,7 @@ export default function About() {
         badge="📖 OUR MISSION & STORY"
         title="Privacy Shouldn't Cost You"
         highlightText="A Phone Call."
-        description="SafeDrive-Tag started with a simple frustration: leaving your phone number on vehicle dashboards or luggage tags meant spam, scams, and zero privacy. We built an instant smart QR bridge that connects people without exposing numbers."
+        description="safedrivetag started with a simple frustration: leaving your phone number on vehicle dashboards or luggage tags meant spam, scams, and zero privacy. We built an instant smart QR bridge that connects people without exposing numbers."
         badges={[
           { icon: <Shield size={14} className="text-green-600" />, label: '100% Number Masked' },
           { icon: <Users size={14} className="text-orange-500" />, label: '9.5 Lakh+ Active Users' },
@@ -120,7 +120,7 @@ export default function About() {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-multiply" />
         <div className="relative z-10 max-w-3xl mx-auto">
           <h2 className="text-3xl sm:text-5xl font-black text-white mb-3">Be part of the 9.5 lakh.</h2>
-          <p className="text-orange-100 text-base sm:text-lg mb-8 max-w-lg mx-auto font-medium">Get your SafeDrive-Tag today and drive with ultimate privacy & peace of mind.</p>
+          <p className="text-orange-100 text-base sm:text-lg mb-8 max-w-lg mx-auto font-medium">Get your safedrivetag today and drive with ultimate privacy & peace of mind.</p>
           <Link to="/shop" className="inline-flex items-center gap-2.5 bg-white text-gray-950 px-8 py-4 rounded-full font-black text-base hover:scale-105 transition-transform shadow-2xl">
             <span className="text-orange-600 font-black">Buy the Safe Tag</span> <ArrowRight size={20} className="text-emerald-600" />
           </Link>

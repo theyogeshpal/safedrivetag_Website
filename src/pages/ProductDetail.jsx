@@ -184,7 +184,7 @@ export default function ProductDetail() {
           {/* Images Gallery - Strictly Backend Images */}
           <div className="md:w-1/2 flex flex-col gap-4">
             <div className="w-full aspect-square rounded-2xl overflow-hidden bg-orange-50/20 border border-black/5 relative group flex items-center justify-center p-4 bg-white">
-              {(!product.images || product.images.length === 0 || product.images[0] === '/images/safedrive-tag-final.png') ? (
+              {(!product.images || product.images.length === 0 || product.images[0] === '/images/safedrivetag-final.png') ? (
                 <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50/50 rounded-2xl min-h-[300px]">
                   <div className="w-20 h-20 bg-white rounded-full shadow-sm flex items-center justify-center mb-4 border border-gray-100">
                     <QrCode size={40} className="text-orange-400/80" />

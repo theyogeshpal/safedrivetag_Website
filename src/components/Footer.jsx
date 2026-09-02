@@ -23,7 +23,7 @@ export default function Footer() {
 
   return isScanPage ? (
     <footer className="bg-[#060910] text-gray-500 py-6 text-center text-[10px] font-medium border-t border-white/10">
-      <p>Secured by SafeDrive-Tag &copy; {new Date().getFullYear()}</p>
+      <p>Secured by safedrivetag &copy; {new Date().getFullYear()}</p>
     </footer>
   ) : (
     <footer className="relative bg-[#060910] text-gray-300 pt-10 pb-8 overflow-hidden border-t border-white/10">
@@ -41,13 +41,13 @@ export default function Footer() {
           >
             <img 
               src="/logos/primary.jpeg" 
-              alt="SafeDrive-Tag Logo" 
+              alt="safedrivetag Logo" 
               className="h-10 sm:h-12 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105" 
               style={{ maxHeight: '48px', width: 'auto' }}
             />
           </Link>
           <p className="text-sm text-gray-400 mb-0 font-medium leading-relaxed max-w-sm">
-            SafeDrive-Tag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. Shielding vehicles in wrong parking & emergency situations.
+            safedrivetag — Smart QR emergency contacts for vehicles. Protect your car, preserve your privacy. Shielding vehicles in wrong parking & emergency situations.
           </p>
         </div>
 
@@ -106,7 +106,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 font-medium text-center md:text-left gap-4">
-        <p>&copy; {new Date().getFullYear()} SafeDrive-Tag. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} safedrivetag. All rights reserved.</p>
         <div className="flex gap-6">
           <Link to="/privacy" className="hover:text-orange-400 transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="hover:text-orange-400 transition-colors">Terms of Service</Link>

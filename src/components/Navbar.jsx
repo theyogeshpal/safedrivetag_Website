@@ -145,7 +145,7 @@ export default function Navbar() {
           <Link to="/" className="flex items-center shrink-0 relative z-50 cursor-pointer group py-0.5">
             <img 
               src="/logos/primary.jpeg" 
-              alt="SafeDrive-Tag" 
+              alt="safedrivetag" 
               className="h-10 sm:h-16 md:h-18 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
               style={{ maxHeight: 'calc(clamp(42px, 8vw, 76px))', width: 'auto' }}
             />
@@ -293,7 +293,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <img 
               src="/logos/primary.jpeg" 
-              alt="SafeDrive-Tag" 
+              alt="safedrivetag" 
               className="h-10 sm:h-11 w-auto object-contain" 
               style={{ maxHeight: '46px', width: 'auto' }}
             />

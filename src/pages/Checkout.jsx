@@ -55,7 +55,7 @@ export default function Checkout() {
       originalPrice: 499,
       quantity: location.state?.quantity || 1,
       qrType: 'PHYSICAL',
-      imageUrl: '/images/safedrive-tag-final.png',
+      imageUrl: '/images/safedrivetag-final.png',
     }
   );
 
@@ -425,7 +425,7 @@ export default function Checkout() {
         key: createRes.keyId || createRes.key || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_6kz5nGEzi8uXRw',
         amount: createRes.amount || totalAmount * 100,
         currency: createRes.currency || 'INR',
-        name: 'SafeDrive-Tag',
+        name: 'safedrivetag',
         description: selectedProduct.title || 'Car Safety Kit Protection',
         image: '/logos/primary.jpeg',
         order_id: createRes.razorpayOrderId || createRes.orderId,
@@ -809,7 +809,7 @@ export default function Checkout() {
                 <h2 className="text-xl font-black text-black mb-6">Order Summary</h2>
                 
                 <div className="flex items-center gap-4 mb-6">
-                  {selectedProduct.imageUrl && selectedProduct.imageUrl !== '/images/safedrive-tag-final.png' && (
+                  {selectedProduct.imageUrl && selectedProduct.imageUrl !== '/images/safedrivetag-final.png' && (
                     <div className="w-20 h-20 rounded-2xl bg-black/5 overflow-hidden border border-black/10 shrink-0 flex items-center justify-center p-2 bg-white">
                       <img 
                         src={selectedProduct.imageUrl} 

@@ -285,7 +285,7 @@ export default function Admin() {
                       <div>
                         <div className="w-full aspect-video rounded-2xl bg-slate-50 overflow-hidden mb-4 border border-slate-100 relative">
                           <img 
-                            src={prod.imageUrl || '/images/safedrive-tag-final.png'} 
+                            src={prod.imageUrl || '/images/safedrivetag-final.png'} 
                             alt={prod.title} 
                             className="w-full h-full object-cover" 
                           />

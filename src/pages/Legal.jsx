@@ -43,7 +43,7 @@ export default function Legal() {
     contentData.title = 'Privacy Policy';
     contentData.icon = <Shield className="w-8 h-8 text-orange-500" />;
     contentData.badge = '🔒 100% TWO-WAY PRIVACY & DATA PROTECTION';
-    contentData.intro = 'At SafeDrive-Tag, your privacy and personal safety are the foundational pillars of our platform. This Privacy Policy outlines how your personal information is securely collected, processed, and safeguarded when using our smart QR tags, mobile web bridges, and emergency routing infrastructure.';
+    contentData.intro = 'At safedrivetag, your privacy and personal safety are the foundational pillars of our platform. This Privacy Policy outlines how your personal information is securely collected, processed, and safeguarded when using our smart QR tags, mobile web bridges, and emergency routing infrastructure.';
     contentData.sections = [
       {
         heading: "1. Information We Collect",
@@ -57,11 +57,11 @@ export default function Legal() {
       },
       {
         heading: "2. Proprietary Two-Way Number Masking",
-        body: "SafeDrive-Tag operates on zero-knowledge telephony bridges designed to eliminate spam, harassment, and phone number leakage.",
+        body: "safedrivetag operates on zero-knowledge telephony bridges designed to eliminate spam, harassment, and phone number leakage.",
         points: [
           "Complete Caller Anonymity: When a bystander scans your QR code and initiates a call, their phone number is never revealed to you.",
           "Complete Owner Anonymity: Your personal mobile number is never visible to the person scanning your tag. All voice calls are routed through a secure cloud virtual relay.",
-          "WhatsApp Privacy Alerts: When someone triggers a Wrong Parking or Emergency alert, notifications arrive from the official verified SafeDrive-Tag business gateway."
+          "WhatsApp Privacy Alerts: When someone triggers a Wrong Parking or Emergency alert, notifications arrive from the official verified safedrivetag business gateway."
         ]
       },
       {
@@ -84,18 +84,18 @@ export default function Legal() {
       },
       {
         heading: "5. Compliance & Grievance Redressal",
-        body: "In accordance with the Information Technology Act, 2000 and the Digital Personal Data Protection (DPDP) Act, our appointed Grievance Officer can be contacted at: safedrivetag@gmail.com | SafeDrive-Tag Legal Compliance Cell, India."
+        body: "In accordance with the Information Technology Act, 2000 and the Digital Personal Data Protection (DPDP) Act, our appointed Grievance Officer can be contacted at: safedrivetag@gmail.com | safedrivetag Legal Compliance Cell, India."
       }
     ];
   } else if (path === '/terms') {
     contentData.title = 'Terms of Service';
     contentData.icon = <FileText className="w-8 h-8 text-orange-500" />;
     contentData.badge = '📜 USER TERMS & SERVICE AGREEMENT';
-    contentData.intro = 'These Terms of Service govern your access to and usage of SafeDrive-Tag products, QR codes, website (safedrivetag.in / safedrivetag.com), and associated cloud telephony bridge services. By purchasing, activating, or scanning a tag, you accept these terms in full.';
+    contentData.intro = 'These Terms of Service govern your access to and usage of safedrivetag products, QR codes, website (safedrivetag.in / safedrivetag.com), and associated cloud telephony bridge services. By purchasing, activating, or scanning a tag, you accept these terms in full.';
     contentData.sections = [
       {
         heading: "1. Acceptance & Service Description",
-        body: "SafeDrive-Tag provides intelligent QR emergency contact stickers, metallic luggage tags, and cloud communication bridges that allow vehicle owners and travelers to remain reachable without sharing their private phone numbers."
+        body: "safedrivetag provides intelligent QR emergency contact stickers, metallic luggage tags, and cloud communication bridges that allow vehicle owners and travelers to remain reachable without sharing their private phone numbers."
       },
       {
         heading: "2. Account Registration & User Obligations",
@@ -108,7 +108,7 @@ export default function Legal() {
       },
       {
         heading: "3. Acceptable Use Policy",
-        body: "The SafeDrive-Tag network is engineered for vehicle safety, parking assistance, and emergency response. You strictly agree not to:",
+        body: "The safedrivetag network is engineered for vehicle safety, parking assistance, and emergency response. You strictly agree not to:",
         points: [
           "Use the platform for harassment, stalking, spamming, unsolicited marketing, or abusive communications.",
           "Attempt to reverse-engineer, decompile, or tamper with our QR routing algorithms or server endpoints.",
@@ -119,17 +119,17 @@ export default function Legal() {
         heading: "4. Telephony Infrastructure & Service Availability",
         body: "We strive to maintain a 99.9% uptime target across our cloud routing and notification servers. However, voice call connectivity and SMS delivery speed may depend on third-party telecom carrier networks (Jio, Airtel, Vi, BSNL) and local cellular coverage.",
         points: [
-          "SafeDrive-Tag is not liable for carrier-level network downtimes or cellular outages beyond our direct operational control.",
+          "safedrivetag is not liable for carrier-level network downtimes or cellular outages beyond our direct operational control.",
           "In high-traffic emergency events, WhatsApp and SMS alerts are dispatched concurrently to ensure redundancy."
         ]
       },
       {
         heading: "5. Intellectual Property & Brand Trademarks",
-        body: "The SafeDrive-Tag name, logo, sticker graphic artwork, user interface designs, and proprietary QR routing workflows are the exclusive intellectual property of SafeDrive-Tag. Unauthorized duplication or commercial imitation is strictly prohibited."
+        body: "The safedrivetag name, logo, sticker graphic artwork, user interface designs, and proprietary QR routing workflows are the exclusive intellectual property of safedrivetag. Unauthorized duplication or commercial imitation is strictly prohibited."
       },
       {
         heading: "6. Limitation of Liability & Governing Law",
-        body: "SafeDrive-Tag operates as a communication medium and does not assume custody of your vehicle or property. SafeDrive-Tag is not liable for vehicle damages caused by third parties, towing, or parking violations. These terms are governed under the Laws of India, subject to exclusive court jurisdiction in India."
+        body: "safedrivetag operates as a communication medium and does not assume custody of your vehicle or property. safedrivetag is not liable for vehicle damages caused by third parties, towing, or parking violations. These terms are governed under the Laws of India, subject to exclusive court jurisdiction in India."
       }
     ];
   } else if (path === '/refund') {
@@ -140,7 +140,7 @@ export default function Legal() {
     contentData.sections = [
       {
         heading: "1. 7-Day Money-Back Guarantee",
-        body: "If for any reason you are not satisfied with your SafeDrive-Tag physical kit, you can request a return and refund within 30 days from the date of delivery."
+        body: "If for any reason you are not satisfied with your safedrivetag physical kit, you can request a return and refund within 30 days from the date of delivery."
       },
       {
         heading: "2. Free Replacement for Damaged Items",
@@ -176,7 +176,7 @@ export default function Legal() {
     contentData.title = 'Shipping & Delivery Policy';
     contentData.icon = <Truck className="w-8 h-8 text-green-500" />;
     contentData.badge = '🚚 PAN-INDIA FREE FAST COURIER DELIVERY';
-    contentData.intro = 'We partner with India’s leading express logistics networks to ensure your SafeDrive-Tag safety kit arrives safely at your doorstep in top condition.';
+    contentData.intro = 'We partner with India’s leading express logistics networks to ensure your safedrivetag safety kit arrives safely at your doorstep in top condition.';
     contentData.sections = [
       {
         heading: "1. Free Express Shipping Across India",
@@ -202,7 +202,7 @@ export default function Legal() {
       },
       {
         heading: "5. Safe & Tamper-Proof Packaging",
-        body: "Every SafeDrive-Tag kit is sealed in industrial moisture-proof, bubble-padded envelopes with protective rigid card backing to prevent any bending or folding during transit."
+        body: "Every safedrivetag kit is sealed in industrial moisture-proof, bubble-padded envelopes with protective rigid card backing to prevent any bending or folding during transit."
       },
       {
         heading: "6. Non-Delivery & Address Corrections",
@@ -266,7 +266,7 @@ export default function Legal() {
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-gray-950 tracking-tight">{contentData.title}</h2>
-              <p className="text-xs text-gray-500 font-medium mt-0.5">Official SafeDrive-Tag Legal & Customer Protection Document</p>
+              <p className="text-xs text-gray-500 font-medium mt-0.5">Official safedrivetag Legal & Customer Protection Document</p>
             </div>
           </div>
 
@@ -328,7 +328,7 @@ export default function Legal() {
               <span>Email: <a href="mailto:safedrivetag@gmail.com" className="text-orange-600 font-bold hover:underline">safedrivetag@gmail.com</a></span>
             </div>
             <div>
-              &copy; {currentYear} SafeDrive-Tag. All rights reserved.
+              &copy; {currentYear} safedrivetag. All rights reserved.
             </div>
           </div>
 
