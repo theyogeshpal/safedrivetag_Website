@@ -48,5 +48,5 @@ export default function DashboardIndex() {
     };
   }, [currentUser, navigate]);
 
-  return <PageLoader text="Connecting to SafeDrive Security..." />;
+  return null;
 }
