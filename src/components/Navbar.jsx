@@ -66,7 +66,6 @@ export default function Navbar() {
     { to: '/', label: 'Home' },
     { to: '/about', label: 'About Us' },
     { to: '/shop', label: 'Store', badge: 'Popular' },
-    { to: '/membership', label: 'Membership' },
     { to: '/how-to-use', label: 'How to Use' },
     { to: '/contact', label: 'Contact Us' },
   ];
