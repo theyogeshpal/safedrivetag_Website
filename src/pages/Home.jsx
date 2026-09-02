@@ -110,7 +110,7 @@ export default function Home() {
             <h1 className="text-3xl sm:text-5xl lg:text-[56px] font-black text-gray-950 leading-[1.14] tracking-tight">
               Stay reachable in emergencies,<br className="hidden sm:inline" />
               <span className="text-orange-500"> stay safe.</span>
-              <span className="text-emerald-600"> Stay private.</span>
+              <span className="text-emerald-600"> stay private.</span>
             </h1>
 
             {/* Description */}

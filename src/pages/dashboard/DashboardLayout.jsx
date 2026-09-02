@@ -24,36 +24,19 @@ import PageLoader from '../../components/PageLoader';
 
 export default function DashboardLayout({ children, currentTab, pageTitle, saveSuccessMsg }) {
   const navigate = useNavigate();
-  const { currentUser, logout, isInitializingAuth, isLoadingAuth } = useAuth();
+  const { currentUser, logout, isInitializingAuth, isLoadingAuth, dashboardData } = useAuth();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isPwaInstalled, setIsPwaInstalled] = useState(false);
-  const [activeTagsCount, setActiveTagsCount] = useState(0);
-
-  useEffect(() => {
-    async function checkActiveTags() {
-      try {
-        let count = 0;
-        const dashRes = await api.getDashboard();
-
-        if (dashRes && dashRes.success) {
-          const rawList = Array.isArray(dashRes.qrCodes) 
-            ? dashRes.qrCodes 
-            : (Array.isArray(dashRes.kits) ? dashRes.kits : []);
-          const activeKits = rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
-          count = Math.max(count, dashRes.stats?.activeQRs || 0, activeKits.length);
-        }
-
-        // Just rely on the dashboard API response.
-        // Nested looping over orders array with public API requests is too slow and removed to fix load times.
-        setActiveTagsCount(count);
-      } catch (err) {
-        console.error('Error verifying active tags count', err);
-      }
-    }
-    if (currentUser) {
-      checkActiveTags();
-    }
-  }, [currentUser]);
+  
+  // Calculate active tags from cached AuthContext dashboardData
+  const activeTagsCount = React.useMemo(() => {
+    if (!dashboardData || !dashboardData.success) return 0;
+    const rawList = Array.isArray(dashboardData.qrCodes) 
+      ? dashboardData.qrCodes 
+      : (Array.isArray(dashboardData.kits) ? dashboardData.kits : []);
+    const activeKits = rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
+    return Math.max(0, dashboardData.stats?.activeQRs || 0, activeKits.length);
+  }, [dashboardData]);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {

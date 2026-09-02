@@ -24,7 +24,6 @@ import {
   Headphones
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import PageHero from '../components/PageHero';
 import api from '../services/api';
 
 export default function Shop() {
@@ -78,21 +77,8 @@ export default function Shop() {
   return (
     <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900">
 
-      {/* --- HERO / HEADER BANNER --- */}
-      <PageHero
-        badge="🏷️ OFFICIAL SAFEDRIVE STORE"
-        title="Protect Your Vehicles & Bags with"
-        highlightText="Smart QR Safety Kits"
-        description="Choose your safety kit. Instant masked calling, WhatsApp direct alerts, plate verification security & 1-year free cloud quota included."
-        badges={[
-          { icon: <ShieldCheck size={14} className="text-green-600" />, label: 'Masked Call Bridge' },
-          { icon: <Zap size={14} className="text-orange-500" />, label: 'Instant Activation' },
-          { icon: <Truck size={14} className="text-blue-500" />, label: 'Free Pan-India Delivery' }
-        ]}
-      />
-
       {/* --- PRODUCT CARDS SECTION (DYNAMIC FROM API) --- */}
-      <section className="relative z-20 -mt-6 sm:-mt-8 px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="relative z-20 pt-8 sm:pt-12 px-4 sm:px-6 max-w-7xl mx-auto">
         
         {/* State 1: Loading Skeleton */}
         {isLoading && (

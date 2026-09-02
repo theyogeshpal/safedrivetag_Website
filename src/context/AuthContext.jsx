@@ -145,41 +145,8 @@ export function AuthProvider({ children }) {
     fetchDashboard();
   };
 
-  // Global Notification Polling (ensures push alerts ring on ANY page, not just Notifications page)
-  useEffect(() => {
-    if (!currentUser) return;
-    
-    let intervalId;
-    let lastTopNotificationId = sessionStorage.getItem('sd_global_last_noti_id');
-
-    const pollGlobalNotifications = async () => {
-      try {
-        const { default: globalApi } = await import('../services/api');
-        const res = await globalApi.getUserNotifications();
-        if (res.success && res.notifications && res.notifications.length > 0) {
-          const newTopId = res.notifications[0].id || res.notifications[0]._id;
-          
-          if (lastTopNotificationId && lastTopNotificationId !== newTopId) {
-            const { showEmergencyPushAlert } = await import('../utils/swal');
-            showEmergencyPushAlert(res.notifications[0].title, res.notifications[0].message);
-          }
-          
-          lastTopNotificationId = newTopId;
-          sessionStorage.setItem('sd_global_last_noti_id', newTopId);
-        }
-      } catch(e) { 
-        // ignore polling errors
-      }
-    };
-
-    // Delay the first check slightly to let initial app mount finish
-    setTimeout(pollGlobalNotifications, 2000);
-
-    // Poll every 10 seconds globally
-    intervalId = setInterval(pollGlobalNotifications, 10000);
-
-    return () => clearInterval(intervalId);
-  }, [currentUser]);
+  // Global Notification Polling has been removed to reduce redundant API calls across all pages.
+  // Notifications will now only be fetched when explicitly needed (e.g., on the Notifications page).
 
   return (
     <AuthContext.Provider
