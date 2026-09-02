@@ -224,11 +224,11 @@ export default function Home() {
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100/80 border border-gray-200/50 flex items-center justify-center shrink-0">
                       {liveStats[currentNewsIndex].icon}
                     </div>
-                    <div className="min-w-0 flex-1 truncate">
-                      <div className="font-black text-xs sm:text-base text-gray-950 truncate tracking-tight">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-black text-xs sm:text-sm text-gray-950 tracking-tight leading-tight">
                         {liveStats[currentNewsIndex].value}
                       </div>
-                      <p className="text-[10px] sm:text-xs text-gray-500 font-medium truncate">
+                      <p className="text-[10px] sm:text-[11px] text-gray-500 font-medium leading-snug mt-0.5 whitespace-normal">
                         {liveStats[currentNewsIndex].desc}
                       </p>
                     </div>
