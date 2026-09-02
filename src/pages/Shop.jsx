@@ -78,7 +78,7 @@ export default function Shop() {
     <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900">
 
       {/* --- PRODUCT CARDS SECTION (DYNAMIC FROM API) --- */}
-      <section className="relative z-20 pt-8 sm:pt-12 px-4 sm:px-6 max-w-7xl mx-auto">
+      <section className="relative z-20 pt-28 sm:pt-36 px-4 sm:px-6 max-w-7xl mx-auto">
         
         {/* State 1: Loading Skeleton */}
         {isLoading && (
