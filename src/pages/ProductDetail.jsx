@@ -14,7 +14,8 @@ import {
   PackageOpen,
   Eye,
   Printer,
-  Sparkles
+  Sparkles,
+  QrCode
 } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import PageLoader from '../components/PageLoader';
