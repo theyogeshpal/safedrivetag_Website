@@ -11,6 +11,7 @@ import Home from './pages/Home';
 
 // Lazy-loaded routes for ultra-fast initial bundle & snappy UX
 const Shop = lazy(() => import('./pages/Shop'));
+const Membership = lazy(() => import('./pages/Membership'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const ProductDetail = lazy(() => import('./pages/ProductDetail'));
@@ -135,6 +136,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/shop" element={<Shop />} />
+                  <Route path="/membership" element={<Membership />} />
                   <Route path="/shop/product/:id" element={<ProductDetail />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/about" element={<About />} />
