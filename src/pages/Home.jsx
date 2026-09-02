@@ -388,7 +388,7 @@ export default function Home() {
             <div className="relative flex justify-center items-center py-8 sm:py-12 lg:py-12 w-full max-w-xl mx-auto">
               
               {/* The Official SafeDrive-Tag Sticker Card */}
-              <div className="relative w-full rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-gray-200 bg-white group transition-transform duration-300 hover:scale-[1.02]">
+              <div className="relative w-full rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-gray-200 bg-white group transition-transform duration-300">
                 {/* Sticker Template Image */}
                 <img 
                   src="/images/safedrive-tag-final.png" 
@@ -410,7 +410,7 @@ export default function Home() {
                 >
                   <div className="w-full h-full flex items-center justify-center p-1 sm:p-2.5">
                     <QRCodeSVG 
-                      value="https://safedrivetag.in"
+                      value="https://safedrivetag.com"
                       size={180}
                       level="H"
                       includeMargin={false}
@@ -427,6 +427,9 @@ export default function Home() {
                 </div>
                 <div className="w-0.5 h-6 bg-orange-400"></div>
                 <div className="w-2.5 h-2.5 bg-orange-400 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)]"></div>
+              </div>
+              <div className="absolute top-[11.6%] left-104 hidden lg:flex flex-col items-center animate-fade-up z-20">
+                  154264
               </div>
 
               <div className="absolute -top-6 right-[6%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '100ms' }}>
