@@ -119,13 +119,11 @@ export default function Navbar() {
             <span className="flex items-center gap-1 text-emerald-400 font-semibold">
               <ShieldCheck size={13} className="text-emerald-400" /> 100% Privacy Protected
             </span>
-            <span className="text-gray-600">•</span>
             <span className="flex items-center gap-1 text-orange-400 font-semibold">
               <PhoneCall size={12} className="text-orange-400" /> 2-Way Number Masking
             </span>
           </div>
 
-            <span className="text-gray-600">•</span>
             <a 
               href="mailto:safedrivetag@gmail.com" 
               className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"
