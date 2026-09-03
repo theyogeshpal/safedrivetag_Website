@@ -58,14 +58,18 @@ export default function HowToUse() {
           ))}
         </div>
 
-        {/* Video / Visual Placeholder Section */}
-        <div className="max-w-5xl mx-auto bg-gray-900 rounded-[2rem] p-2 mb-20 shadow-2xl relative overflow-hidden group">
-          <div className="aspect-video bg-gray-800 rounded-[1.5rem] flex flex-col items-center justify-center text-center p-6 border border-gray-700 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
-            
-            <PlayCircle size={64} className="text-white/80 mb-4 group-hover:text-orange-500 transition-colors cursor-pointer group-hover:scale-110 duration-300 relative z-10" />
-            <h3 className="text-2xl font-black text-white mb-2 relative z-10">Watch the Setup Guide</h3>
-            <p className="text-gray-400 font-medium relative z-10">See how easy it is to set up your SafeDrive Tag in this 60-second video.</p>
+        {/* Setup Guide Video Section */}
+        <div className="max-w-5xl mx-auto bg-gray-900 rounded-[2rem] p-2 mb-20 shadow-2xl relative overflow-hidden">
+          <div className="aspect-video bg-black rounded-[1.5rem] flex items-center justify-center border border-gray-700 relative overflow-hidden">
+            <video 
+              controls 
+              playsInline
+              className="w-full h-full object-contain"
+              preload="metadata"
+            >
+              <source src="/video/in_want_ki_isme_bolkar_batana.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
 
