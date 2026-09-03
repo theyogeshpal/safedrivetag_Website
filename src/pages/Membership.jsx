@@ -35,7 +35,7 @@ export default function Membership() {
     <div className="bg-[#FAF8F5] min-h-screen pt-28 sm:pt-36 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-up">
+        <div className="text-center max-w-3xl mx-auto mb-12 animate-fade-up">
           <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
             <Heart size={32} className="fill-red-500" />
           </div>
@@ -45,6 +45,17 @@ export default function Membership() {
           <p className="text-lg text-gray-600 font-medium leading-relaxed">
             When you purchase a SafeDrive Tag, you don't just get a product—you become a part of our family. Here are all the exclusive benefits you unlock as a member.
           </p>
+        </div>
+
+        <div className="flex justify-center px-4 mb-16 animate-fade-up" style={{ animationDelay: '100ms' }}>
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-emerald-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <img 
+              src="/images/membership-card.jpg" 
+              alt="SafeDrive Membership Card" 
+              className="relative w-full max-w-2xl rounded-2xl shadow-2xl border border-gray-100 transform group-hover:scale-[1.02] transition-transform duration-500 object-contain"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">

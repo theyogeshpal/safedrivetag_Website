@@ -80,7 +80,7 @@ export default function Contact() {
       />
 
       {/* --- MAIN CONTENT --- */}
-      <section className="pb-20 px-6 relative z-10">
+      <section className="pt-8 md:pt-12 pb-20 px-6 relative z-10">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-[1fr_1.5fr] gap-12">
 
           {/* Contact Methods */}
