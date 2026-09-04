@@ -6,6 +6,9 @@ import { FaInstagram, FaFacebookF, FaLinkedinIn, FaYoutube, FaXTwitter } from 'r
 export default function Footer() {
   const location = useLocation();
   const isScanPage = location.pathname.startsWith('/scan');
+  const isSellerPage = location.pathname.startsWith('/seller');
+
+  if (isSellerPage) return null;
 
   const FooterLink = ({ to, label, isExternal = false }) => (
     <li>
@@ -101,6 +104,12 @@ export default function Footer() {
             <a href="https://www.youtube.com/@SafeDriveTag" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">
               <FaYoutube className="w-4 h-4" />
             </a>
+          </div>
+          
+          <div className="mt-6">
+            <Link to="/seller" className="inline-flex items-center justify-center bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all border border-white/10 shadow-sm">
+              Seller Login
+            </Link>
           </div>
         </div>
       </div>

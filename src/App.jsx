@@ -13,6 +13,7 @@ import Home from './pages/Home';
 const Shop = lazy(() => import('./pages/Shop'));
 const Membership = lazy(() => import('./pages/Membership'));
 const HowToUse = lazy(() => import('./pages/HowToUse'));
+const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const ProductDetail = lazy(() => import('./pages/ProductDetail'));
@@ -139,6 +140,7 @@ function App() {
                   <Route path="/shop" element={<Shop />} />
                   <Route path="/membership" element={<Membership />} />
                   <Route path="/how-to-use" element={<HowToUse />} />
+                  <Route path="/seller" element={<SellerDashboard />} />
                   <Route path="/shop/product/:id" element={<ProductDetail />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/about" element={<About />} />
