@@ -138,15 +138,6 @@ export default function Navbar() {
                 <PhoneCall size={12} className="text-orange-400" /> 2-Way Number Masking
               </span>
             </div>
-
-            <a
-              href={import.meta.env.VITE_RESELLER_DOMAIN}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"
-            >
-              <span className="font-bold text-white tracking-wide bg-white/10 px-2 py-0.5 rounded-md hover:bg-white/20 transition-all">Partner Login</span>
-            </a>
           </div>
 
         </div>
