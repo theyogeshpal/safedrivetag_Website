@@ -18,11 +18,6 @@ export default function Membership() {
       icon: <Zap className="text-amber-500 w-8 h-8" />,
       title: "Early Access to Features",
       description: "Get early beta access to our newest app features and updates before they are rolled out to the public."
-    },
-    {
-      icon: <ShieldCheck className="text-blue-500 w-8 h-8" />,
-      title: "Damage Replacement Guarantee",
-      description: "If your tag gets damaged or fades within the first 6 months, we'll send a replacement absolutely free."
     }
   ];
 
