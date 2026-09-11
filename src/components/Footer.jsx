@@ -63,8 +63,6 @@ export default function Footer() {
             <FooterLink to="/shop" label="Store" />
             <FooterLink to="/membership" label="Membership" />
             <FooterLink to="/how-to-use" label="How to Use" />
-            <FooterLink to="/become-partner" label="Become a Partner" />
-            <FooterLink to="/partner-plans" label="Partner Plans" />
             <FooterLink to="/contact" label="Contact Us" />
           </ul>
         </div>

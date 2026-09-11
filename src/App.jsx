@@ -13,8 +13,6 @@ import Home from './pages/Home';
 const Shop = lazy(() => import('./pages/Shop'));
 const Membership = lazy(() => import('./pages/Membership'));
 const HowToUse = lazy(() => import('./pages/HowToUse'));
-const BecomePartner = lazy(() => import('./pages/BecomePartner'));
-const PartnerPlans = lazy(() => import('./pages/PartnerPlans'));
 const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -143,8 +141,6 @@ function App() {
                   <Route path="/shop" element={<Shop />} />
                   <Route path="/membership" element={<Membership />} />
                   <Route path="/how-to-use" element={<HowToUse />} />
-                  <Route path="/become-partner" element={<BecomePartner />} />
-                  <Route path="/partner-plans" element={<PartnerPlans />} />
                   <Route path="/seller" element={<SellerDashboard />} />
                   <Route path="/shop/product/:id" element={<ProductDetail />} />
                   <Route path="/checkout" element={<Checkout />} />
