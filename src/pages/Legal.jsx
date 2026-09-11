@@ -143,7 +143,7 @@ export default function Legal() {
         body: "If for any reason you are not satisfied with your safedrivetag physical kit, you can request a return and refund within 30 days from the date of delivery."
       },
       {
-        heading: "2. Free Replacement for Damaged Items",
+        heading: "2. Replacement for Damaged Items",
         body: "If your tag arrives folded, torn, or defective during postal transit, we will dispatch a brand-new replacement kit at zero extra cost within 24-48 hours.",
         points: [
           "Simply send a photo of the damaged package/tag via Email to safedrivetag@gmail.com.",

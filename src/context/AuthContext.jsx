@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import api, { getAuthToken, setAuthToken } from '../services/api';
+import { showEmergencyPushAlert } from '../utils/swal';
 
 const AuthContext = createContext();
 
@@ -11,7 +12,7 @@ export function AuthProvider({ children }) {
       const savedUser = localStorage.getItem(STORAGE_KEY_USER);
       if (savedUser) return JSON.parse(savedUser);
       // Fallback: If token exists in localStorage, initialize user
-      const token = localStorage.getItem('safedrive_token');
+      const token = localStorage.getItem('safe_drive_user_token');
       if (token) {
         return { name: 'SafeDrive Customer', phone: '' };
       }

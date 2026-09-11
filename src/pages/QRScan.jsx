@@ -51,17 +51,26 @@ export default function QRScan() {
   const [actionLoading, setActionLoading] = useState(false);
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
   
+  const [globalSettings, setGlobalSettings] = useState({ pushCooldown: 30, callCooldown: 60, messageCooldown: 30, sosCooldown: 60 });
   const [pushCooldown, setPushCooldown] = useState(0);
+  const [callCooldown, setCallCooldown] = useState(0);
+  const [messageCooldown, setMessageCooldown] = useState(0);
+  const [sosCooldown, setSosCooldown] = useState(0);
 
   useEffect(() => {
-    let timer;
-    if (pushCooldown > 0) {
-      timer = setInterval(() => {
-        setPushCooldown((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [pushCooldown]);
+    let pushTimer, callTimer, messageTimer, sosTimer;
+    if (pushCooldown > 0) pushTimer = setInterval(() => setPushCooldown((prev) => prev - 1), 1000);
+    if (callCooldown > 0) callTimer = setInterval(() => setCallCooldown((prev) => prev - 1), 1000);
+    if (messageCooldown > 0) messageTimer = setInterval(() => setMessageCooldown((prev) => prev - 1), 1000);
+    if (sosCooldown > 0) sosTimer = setInterval(() => setSosCooldown((prev) => prev - 1), 1000);
+    
+    return () => {
+      clearInterval(pushTimer);
+      clearInterval(callTimer);
+      clearInterval(messageTimer);
+      clearInterval(sosTimer);
+    };
+  }, [pushCooldown, callCooldown, messageCooldown, sosCooldown]);
 
   // Default fallback reasons matching documentation
   const defaultFallbackReasons = [
@@ -112,7 +121,7 @@ export default function QRScan() {
     try {
       const [qrRes, reasonsRes] = await Promise.allSettled([
         api.getPublicQrInfo(token),
-        api.getScanReasons(),
+        api.getScanReasons(token),
       ]);
 
       // 1. Process QR Info
@@ -126,6 +135,9 @@ export default function QRScan() {
         }
 
         setQrData(qr);
+        if (qr.settings) {
+          setGlobalSettings(qr.settings);
+        }
         if (qr.status === 'ACTIVE' && !qr.requiresVerification) {
           setIsVerified(true);
           setVerifiedVehicleInfo({
@@ -149,11 +161,7 @@ export default function QRScan() {
       const defaultReasons = isLuggage ? luggageReasons : defaultFallbackReasons;
 
       // 2. Process Scan Reasons
-      if (isLuggage) {
-        // Force luggage reasons for luggage tags, bypass API
-        setScanReasons(luggageReasons);
-        setSelectedReasonId(luggageReasons[0]._id);
-      } else if (reasonsRes.status === 'fulfilled' && reasonsRes.value?.success && Array.isArray(reasonsRes.value.reasons) && reasonsRes.value.reasons.length > 0) {
+      if (reasonsRes.status === 'fulfilled' && reasonsRes.value?.success && Array.isArray(reasonsRes.value.reasons) && reasonsRes.value.reasons.length > 0) {
         const activeReasons = reasonsRes.value.reasons.filter(r => r.isActive !== false).sort((a, b) => (a.order || 0) - (b.order || 0));
         setScanReasons(activeReasons);
         if (activeReasons.length > 0) {
@@ -243,7 +251,7 @@ export default function QRScan() {
       // 3. Show Toast & Status
       setActionSuccessMsg(res.message || `🔔 Push notification sent to vehicle owner regarding: "${reasonText}"`);
       showToast.success('🔔 Push Alert delivered to vehicle owner!');
-      setPushCooldown(30);
+      setPushCooldown(globalSettings.pushCooldown);
 
       setCustomReasonText('');
       setTimeout(() => setActionSuccessMsg(''), 5000);
@@ -284,6 +292,32 @@ export default function QRScan() {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const requireLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        customSwal.fire({
+          title: 'Location Required',
+          text: 'Geolocation is not supported by your browser.',
+          icon: 'warning'
+        });
+        reject(new Error("No Geolocation"));
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve(position.coords),
+          (error) => {
+            customSwal.fire({
+              title: 'Location Permission Denied',
+              text: 'You must allow location access to send an SOS. Please enable location permissions in your browser settings.',
+              icon: 'error'
+            });
+            reject(error);
+          },
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+      }
+    });
   };
 
   // STEP 5 - OPTION B: CALL VEHICLE OWNER (MASKED)
@@ -331,6 +365,7 @@ export default function QRScan() {
 
       if (res.success) {
         setActionSuccessMsg('Connecting to owner... Please wait.');
+        setCallCooldown(globalSettings.callCooldown);
       }
     } catch (err) {
       console.error(err);
@@ -340,69 +375,159 @@ export default function QRScan() {
     }
   };
 
-  // STEP 5 - OPTION C: EMERGENCY ALERT (LIVE GPS LOCATION)
-  const handleEmergencySOS = async () => {
-    setActionLoading('sos');
-    setActionSuccessMsg('');
+  // STEP 5 - OPTION C: MESSAGE VEHICLE OWNER (MASKED)
+  const handleSendMessageOwner = async () => {
+    const reasonText = getSelectedReasonText();
 
-    const sendSosPayload = async (coords) => {
-      try {
-        const payload = {
-          latitude: coords?.latitude || 26.8467,
-          longitude: coords?.longitude || 80.9462,
-          mapsLink: coords ? `https://maps.google.com/?q=${coords.latitude},${coords.longitude}` : 'Location shared via GPS',
-          reason: getSelectedReasonText(),
-          last4Digits: plateInput || '0000',
-        };
-
-        const res = await api.triggerEmergency(token, payload);
-        if (res.success) {
-          setActionSuccessMsg(res.message || '🚨 Emergency SOS sent to 2 contacts via SMS and WhatsApp!');
-          showToast.success('🚨 Emergency SOS broadcasted!');
-        } else {
-          setActionSuccessMsg('🚨 Emergency SOS alert broadcasted to registered family contacts.');
-          showToast.success('🚨 Emergency SOS alert sent!');
-        }
-        setTimeout(() => setActionSuccessMsg(''), 5000);
-      } catch (err) {
-        showToast.error('Error broadcasting emergency SOS.');
-      } finally {
-        setActionLoading(false);
+    const { value: senderPhone, isConfirmed } = await customSwal.fire({
+      title: 'Enter Your Mobile Number',
+      text: 'We need your number to message the owner securely.',
+      input: 'tel',
+      inputPlaceholder: 'Enter 10-digit mobile number',
+      inputAttributes: { maxlength: 10, pattern: '[0-9]*' },
+      showCancelButton: true,
+      confirmButtonText: 'Send Message',
+      confirmButtonColor: '#1e8b39',
+      cancelButtonText: 'Cancel',
+      inputValidator: (value) => {
+        if (!value) return 'Please enter your mobile number!';
+        if (value.length < 10) return 'Please enter a valid 10-digit number!';
       }
-    };
+    });
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          sendSosPayload({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        () => {
-          sendSosPayload(null);
-        },
-        { timeout: 5000 }
-      );
-    } else {
-      sendSosPayload(null);
+    if (!isConfirmed || !senderPhone) return;
+
+    setActionLoading('message');
+    setActionSuccessMsg('');
+    try {
+      const cleanPhone = String(senderPhone).replace(/\D/g, '');
+      const payload = {
+        callerPhone: cleanPhone,
+        scannerPhone: cleanPhone,
+        reason: reasonText,
+        last4Digits: plateInput || '',
+        last4: plateInput || '',
+        message: reasonText
+      };
+      const res = await api.sendMessage(token, payload);
+      
+      customSwal.fire({
+        title: res.success ? 'Message Sent' : 'Message Failed',
+        html: `<p style="font-size: 14px;">${res.message || 'Notification sent successfully.'}</p>`,
+        icon: res.success ? 'success' : 'error',
+        confirmButtonColor: '#1e8b39'
+      });
+
+      if (res.success) {
+        setActionSuccessMsg('Message sent successfully!');
+        setMessageCooldown(globalSettings.messageCooldown);
+      }
+    } catch (err) {
+      console.error(err);
+      showToast.error('Failed to send message.');
+    } finally {
+      setActionLoading(false);
     }
   };
 
-  // Helper for Render Icons
+  // STEP 5 - OPTION D: EMERGENCY ALERT (LIVE GPS LOCATION)
+  const handleEmergencySOS = async () => {
+    let coords;
+    try {
+      coords = await requireLocation();
+    } catch {
+      return; // Abort if location is denied
+    }
+
+    const { value: formValues, isConfirmed } = await customSwal.fire({
+      title: 'Emergency SOS Alert',
+      html: `
+        <p style="font-size: 14px; color: #555; margin-bottom: 10px;">Please provide your number and a reason for this SOS.</p>
+        <input id="swal-input-phone" type="tel" class="swal2-input" placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]*" style="margin-top: 5px;">
+        <input id="swal-input-reason" type="text" class="swal2-input" placeholder="Why are you sending SOS?" style="margin-top: 10px;">
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Send SOS',
+      confirmButtonColor: '#dc2626',
+      cancelButtonText: 'Cancel',
+      focusConfirm: false,
+      preConfirm: () => {
+        const phone = document.getElementById('swal-input-phone').value;
+        const reason = document.getElementById('swal-input-reason').value;
+        if (!phone || phone.length < 10) {
+          customSwal.showValidationMessage('Please enter a valid 10-digit mobile number!');
+          return false;
+        }
+        if (!reason.trim()) {
+          customSwal.showValidationMessage('Please enter a reason for the SOS!');
+          return false;
+        }
+        return { phone, reason: reason.trim() };
+      }
+    });
+
+    if (!isConfirmed || !formValues) return;
+
+    setActionLoading('sos');
+    setActionSuccessMsg('');
+
+    try {
+      const cleanPhone = String(formValues.phone).replace(/\D/g, '');
+      const payload = {
+        latitude: coords ? coords.latitude : null,
+        longitude: coords ? coords.longitude : null,
+        mapsLink: coords ? `https://maps.google.com/?q=${coords.latitude},${coords.longitude}` : null,
+        reason: formValues.reason,
+        last4Digits: plateInput || '0000',
+        callerPhone: cleanPhone,
+        scannerPhone: cleanPhone
+      };
+
+      const res = await api.triggerEmergency(token, payload);
+      if (res.success) {
+        setActionSuccessMsg(res.message || '🚨 Emergency SOS sent to 2 contacts via SMS and WhatsApp!');
+        showToast.success('🚨 Emergency SOS broadcasted!');
+      } else {
+        setActionSuccessMsg('🚨 Emergency SOS alert broadcasted to registered family contacts.');
+        showToast.success('🚨 Emergency SOS alert sent!');
+      }
+      setSosCooldown(globalSettings.sosCooldown);
+      setTimeout(() => setActionSuccessMsg(''), 5000);
+    } catch (err) {
+      showToast.error('Error broadcasting emergency SOS.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const renderReasonIcon = (iconKey) => {
-    switch (iconKey?.toLowerCase()) {
+    if (!iconKey) return <MessageSquare size={18} className="text-indigo-500" />;
+
+    switch (iconKey.toLowerCase()) {
       case 'ban':
+      case 'no-parking':
+      case 'wrong parking':
         return <Ban size={18} className="text-rose-500" />;
       case 'alert':
+      case 'warning':
         return <AlertTriangle size={18} className="text-amber-500" />;
       case 'unlock':
+      case 'open':
         return <Unlock size={18} className="text-purple-500" />;
       case 'car':
+      case 'parking':
+      case 'vehicle':
         return <Car size={18} className="text-blue-500" />;
+      case 'info':
+        return <Info size={18} className="text-emerald-500" />;
+      case 'shield':
+        return <ShieldCheck size={18} className="text-green-500" />;
       case 'other':
-      default:
+      case 'others':
+      case 'message':
         return <MessageSquare size={18} className="text-indigo-500" />;
+      default:
+        return <span className="text-[18px] leading-none">{iconKey}</span>;
     }
   };
 
@@ -484,8 +609,8 @@ export default function QRScan() {
     );
   }
 
-  const isVehicle = qrData?.isVehicle !== false && qrData?.qrFor !== 'Luggage' && qrData?.vehicleType !== 'Luggage' && !qrData?.qrFor?.toLowerCase().includes('digital pass');
-  const itemCategory = qrData?.qrFor || qrData?.vehicleType || (isVehicle ? 'Vehicle' : 'Item');
+  const isVehicle = qrData?.isVehicle !== false && qrData?.qrFor !== 'Luggage' && qrData?.vehicleType !== 'Luggage' && !qrData?.qrFor?.toLowerCase()?.includes('digital pass');
+  const itemCategory = qrData?.qrFor || (isVehicle ? 'Vehicle' : 'Item');
 
   return (
     <div className="bg-[#f4f7fb] min-h-screen pt-32 sm:pt-32 lg:pt-36 pb-16 px-4 font-sans text-gray-900 relative">
@@ -655,7 +780,7 @@ export default function QRScan() {
                   </div>
                   <textarea
                     rows={2}
-                    placeholder="Type your custom message here (e.g. Your bag was found at Gate 3, please collect it...)"
+                    placeholder={`Type your custom message here (e.g. Your ${itemCategory.toLowerCase()} is parked/placed incorrectly, please check...)`}
                     value={customReasonText}
                     onChange={(e) => setCustomReasonText(e.target.value)}
                     className="w-full bg-gray-50 border border-gray-300 focus:border-[#2874f0] focus:bg-white rounded-xl p-3 text-xs outline-none resize-none font-medium transition-all shadow-2xs"
@@ -686,27 +811,55 @@ export default function QRScan() {
                 </span>
               </button>
 
-              {/* Row: Call */}
-              <div>
+              {/* Row: Call & Message */}
+              <div className="flex flex-col sm:flex-row gap-3">
                 {/* Option B: Call Owner */}
                 <button
                   onClick={handleCallOwner}
-                  disabled={actionLoading !== false}
+                  disabled={actionLoading !== false || callCooldown > 0}
                   className="w-full bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <Phone size={18} />
-                  <span>{actionLoading === 'call' ? 'Connecting...' : 'Call Owner'}</span>
+                  <span>
+                    {actionLoading === 'call' 
+                      ? 'Connecting...' 
+                      : callCooldown > 0 
+                        ? `Wait ${callCooldown}s to Call` 
+                        : 'Call Owner'}
+                  </span>
+                </button>
+
+                {/* Option C: Message Owner */}
+                <button
+                  onClick={handleSendMessageOwner}
+                  disabled={actionLoading !== false || messageCooldown > 0}
+                  className="w-full bg-[#1e8b39] hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  <MessageSquare size={18} />
+                  <span>
+                    {actionLoading === 'message' 
+                      ? 'Sending...' 
+                      : messageCooldown > 0 
+                        ? `Wait ${messageCooldown}s to Msg` 
+                        : 'Message Owner'}
+                  </span>
                 </button>
               </div>
 
               {/* Option C: Emergency SOS */}
               <button
                 onClick={handleEmergencySOS}
-                disabled={actionLoading !== false}
+                disabled={actionLoading !== false || sosCooldown > 0}
                 className="w-full bg-[#fff0f0] border border-[#ffcdcd] text-[#c90000] hover:bg-[#ffe5e5] font-bold py-3.5 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <AlertTriangle size={18} />
-                <span>{actionLoading === 'sos' ? 'Sending...' : '🚨 Critical Accident Emergency SOS'}</span>
+                <span>
+                  {actionLoading === 'sos' 
+                    ? 'Sending...' 
+                    : sosCooldown > 0 
+                      ? `Wait ${sosCooldown}s to Send SOS` 
+                      : '🚨 Critical Accident Emergency SOS'}
+                </span>
               </button>
 
             </div>

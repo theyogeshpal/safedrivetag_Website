@@ -1,8 +1,10 @@
+import axios from 'axios';
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://safedrive-backend-phqx.onrender.com/api';
 
 export const getAuthToken = () => {
   try {
-    return localStorage.getItem('safedrive_token') || '';
+    return localStorage.getItem('safe_drive_user_token') || '';
   } catch {
     return '';
   }
@@ -11,9 +13,9 @@ export const getAuthToken = () => {
 export const setAuthToken = (token) => {
   try {
     if (token) {
-      localStorage.setItem('safedrive_token', token);
+      localStorage.setItem('safe_drive_user_token', token);
     } else {
-      localStorage.removeItem('safedrive_token');
+      localStorage.removeItem('safe_drive_user_token');
     }
   } catch (e) {
     console.error('Failed to save auth token', e);
@@ -28,24 +30,19 @@ async function apiRequest(endpoint, options = {}) {
     ...options.headers,
   };
 
-  const config = {
-    ...options,
-    headers,
-  };
-
-  if (config.body && typeof config.body === 'object' && !(config.body instanceof FormData)) {
-    config.body = JSON.stringify(config.body);
-  }
-
   try {
-    const res = await fetch(`${BASE_URL}${endpoint}`, config);
-    const data = await res.json();
-    return data;
+    const res = await axios({
+      url: `${BASE_URL}${endpoint}`,
+      method: options.method || 'GET',
+      headers,
+      data: options.body,
+    });
+    return res.data;
   } catch (err) {
-    console.error(`API Error on [${config.method || 'GET'} ${endpoint}]:`, err);
+    console.error(`API Error on [${options.method || 'GET'} ${endpoint}]:`, err);
     return {
       success: false,
-      message: err.message || 'Network error, please check connection.',
+      message: err.response?.data?.message || err.message || 'Network error, please check connection.',
     };
   }
 }
@@ -178,11 +175,12 @@ export const api = {
 
   getUserOrders: () => apiRequest('/user/orders'),
 
-  getUserNotifications: async () => {
+  getUserNotifications: async (page = 1, limit = 10) => {
     try {
       const [notifRes, dashRes] = await Promise.allSettled([
-        apiRequest('/user/notifications'),
-        apiRequest('/user/dashboard')
+        apiRequest(`/user/notifications?page=${page}&limit=${limit}`),
+        // Only fetch dashboard for legacy scans if on page 1, to save bandwidth
+        page === 1 ? apiRequest('/user/dashboard') : Promise.resolve({ value: { success: false } })
       ]);
 
       let allNotifications = [];
@@ -217,10 +215,16 @@ export const api = {
       allNotifications.sort((a, b) => new Date(b.time) - new Date(a.time));
 
       if (allNotifications.length > 0) {
-        return { success: true, notifications: allNotifications };
+        return { 
+          success: true, 
+          notifications: allNotifications,
+          totalPages: notifRes.value?.totalPages || 1,
+          currentPage: notifRes.value?.currentPage || page,
+          totalCount: notifRes.value?.totalCount || allNotifications.length
+        };
       }
 
-      return { success: true, notifications: [] };
+      return { success: true, notifications: [], totalPages: 1, currentPage: page, totalCount: 0 };
     } catch (e) {
       console.error('Synthesize notifications error', e);
       return { success: false };
@@ -306,6 +310,9 @@ export const api = {
   // =========================================================================
   // MODULE 6: PUBLIC QR SCAN, ACTIVATION & MASKED CALL
   // =========================================================================
+  getPublicSettings: () => apiRequest('/public/settings'),
+  getPublicFaqs: () => apiRequest('/public/faqs'),
+
   getPublicQrInfo: (token) => apiRequest(`/public/qr/${token}`),
 
   sendActivationOtp: (phoneOrData) => {

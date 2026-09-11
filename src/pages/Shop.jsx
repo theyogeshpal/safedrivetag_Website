@@ -30,6 +30,7 @@ export default function Shop() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('PHYSICAL');
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -74,12 +75,56 @@ export default function Shop() {
     });
   };
 
+  const filteredProducts = products.filter(prod => {
+    if (prod.isActive === false) return false;
+    if (activeTab === 'ALL') return true;
+    if (activeTab === 'DIGITAL') return prod.qrType === 'DIGITAL';
+    if (activeTab === 'PHYSICAL') return prod.qrType !== 'DIGITAL';
+    return true;
+  });
+
   return (
     <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900">
 
       {/* --- PRODUCT CARDS SECTION (DYNAMIC FROM API) --- */}
       <section className="relative z-20 pt-28 sm:pt-36 px-4 sm:px-6 max-w-7xl mx-auto">
         
+        {/* --- TABS SECTION --- */}
+        <div className="flex justify-center mb-10 sm:mb-12">
+          <div className="bg-white p-1.5 rounded-full inline-flex shadow-sm border border-black/5 relative z-30">
+            <button
+              onClick={() => setActiveTab('PHYSICAL')}
+              className={`px-5 sm:px-8 py-2.5 rounded-full text-[11px] sm:text-sm font-black transition-all ${
+                activeTab === 'PHYSICAL'
+                  ? 'bg-orange-500 text-white shadow-md'
+                  : 'text-black/60 hover:text-black hover:bg-black/5'
+              }`}
+            >
+              Physical Kits
+            </button>
+            <button
+              onClick={() => setActiveTab('DIGITAL')}
+              className={`px-5 sm:px-8 py-2.5 rounded-full text-[11px] sm:text-sm font-black transition-all ${
+                activeTab === 'DIGITAL'
+                  ? 'bg-orange-500 text-white shadow-md'
+                  : 'text-black/60 hover:text-black hover:bg-black/5'
+              }`}
+            >
+              Digital Passes
+            </button>
+            <button
+              onClick={() => setActiveTab('ALL')}
+              className={`px-5 sm:px-8 py-2.5 rounded-full text-[11px] sm:text-sm font-black transition-all ${
+                activeTab === 'ALL'
+                  ? 'bg-orange-500 text-white shadow-md'
+                  : 'text-black/60 hover:text-black hover:bg-black/5'
+              }`}
+            >
+              All Tags
+            </button>
+          </div>
+        </div>
+
         {/* State 1: Loading Skeleton */}
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
@@ -95,7 +140,7 @@ export default function Shop() {
         )}
 
         {/* State 2: No Products Found */}
-        {!isLoading && products.length === 0 && (
+        {!isLoading && filteredProducts.length === 0 && (
           <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl shadow-black/5 border border-black/5 text-center max-w-2xl mx-auto animate-fade-up">
             <div className="w-20 h-20 bg-orange-100 text-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-inner">
               <PackageOpen size={40} />
@@ -132,9 +177,9 @@ export default function Shop() {
         )}
 
         {/* State 3: Products Available */}
-        {!isLoading && products.length > 0 && (
+        {!isLoading && filteredProducts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
-            {products.map((prod, idx) => {
+            {filteredProducts.map((prod, idx) => {
               const discountPercent = prod.originalPrice && prod.price
                 ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)
                 : 0;
@@ -254,13 +299,22 @@ export default function Shop() {
                   </div>
 
                   {/* CTA Button */}
-                  <button
-                    onClick={(e) => handleOrderNow(e, prod)}
-                    className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(249,115,22,0.25)] transition-all text-xs sm:text-sm cursor-pointer hover:scale-[1.01]"
-                  >
-                    <span>Order Now — ₹{prod.price}</span>
-                    <ArrowRight size={15} />
-                  </button>
+                  {prod.inStock === false ? (
+                    <button
+                      disabled
+                      className="w-full bg-slate-200 text-slate-500 font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 cursor-not-allowed text-xs sm:text-sm"
+                    >
+                      <span>Out of Stock</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => handleOrderNow(e, prod)}
+                      className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(249,115,22,0.25)] transition-all text-xs sm:text-sm cursor-pointer hover:scale-[1.01]"
+                    >
+                      <span>Order Now — ₹{prod.price}</span>
+                      <ArrowRight size={15} />
+                    </button>
+                  )}
 
                 </div>
               );

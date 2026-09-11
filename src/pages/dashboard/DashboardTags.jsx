@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { 
-  Plus, 
-  Eye, 
-  Trash2, 
-  Edit3, 
-  Phone, 
-  MessageCircle, 
-  Shield, 
-  Copy, 
-  Check, 
-  Lock, 
-  X, 
-  Printer, 
-  Download, 
-  Car, 
-  Bike, 
-  Briefcase, 
+import {
+  Plus,
+  Eye,
+  Trash2,
+  Edit3,
+  Phone,
+  MessageCircle,
+  Shield,
+  Copy,
+  Check,
+  Lock,
+  X,
+  Printer,
+  Download,
+  Car,
+  Bike,
+  Briefcase,
   Truck,
   QrCode,
   RefreshCw
@@ -44,16 +44,16 @@ export default function DashboardTags() {
 
   const [copiedId, setCopiedId] = useState(null);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [packages, setPackages] = useState([]);
+  const [buyingPackage, setBuyingPackage] = useState(null);
+  const [buyLoading, setBuyLoading] = useState(false);
 
   // Modals
-  const [editingTag, setEditingTag] = useState(null);
+
   const [qrModalTag, setQrModalTag] = useState(null);
 
-  // Link Tag Form State
-  const [newTagId, setNewTagId] = useState('');
-  const [newVehicleName, setNewVehicleName] = useState('');
-  const [newVehicleNumber, setNewVehicleNumber] = useState('');
-  const [newVehicleType, setNewVehicleType] = useState('Car');
+
 
   const showNotification = (msg) => {
     showToast.success(msg);
@@ -66,21 +66,59 @@ export default function DashboardTags() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const fetchPackages = async () => {
+    try {
+      const res = await api.getPackages();
+      if (res.success) {
+        setPackages(res.packages || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const handleBuyBooster = async (pkg) => {
+    setBuyingPackage(pkg);
+    setBuyLoading(true);
+    try {
+      const firstQrId = userTags[0]?.copies?.[0]?._id || userTags[0]?.id;
+      if (!firstQrId) {
+        alert("You need an active tag to buy a booster.");
+        setBuyLoading(false);
+        return;
+      }
+      const res = await api.buyQuota({ packageId: pkg._id, qrId: firstQrId });
+      if (res.success) {
+        alert(`Order created for ₹${pkg.price}. Payment gateway connected!`);
+        setShowBuyModal(false);
+        loadDashboardData();
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to initiate booster payment.');
+    } finally {
+      setBuyLoading(false);
+    }
+  };
+
   const loadDashboardData = useCallback(async () => {
     setIsLoadingDashboard(true);
     try {
       // Clear legacy mock/test local cache if any
       try {
         localStorage.removeItem('safedrive_registered_tags');
-      } catch (e) {}
+      } catch (e) { }
 
       let finalTagsList = [];
 
       const res = await api.getDashboard();
       if (res.success) {
-        const rawList = Array.isArray(res.qrCodes) 
-          ? res.qrCodes 
-          : (Array.isArray(res.kits) ? res.kits : []);
+        const rawList = Array.isArray(res.qrCodes)
+          ? res.qrCodes
+          : (Array.isArray(res.kits) ? res.kits : (Array.isArray(res.qrs) ? res.qrs : []));
 
         const activeList = rawList
           .filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
@@ -94,7 +132,7 @@ export default function DashboardTags() {
             const vTitle = (vBrand || vModel) ? `${vBrand} ${vModel}`.trim() : (q.qrFor ? `${q.qrFor} Safety Tag` : 'My Tag');
             const vPlate = q.vehicleNumber || q.vehicle?.vehicleNumber || q.plateNumber || '';
             const token = q.publicToken || q.token || q.copyCode || q._id || `SD00${idx + 1}`;
-            
+
             // Unique key for the KIT. Remove C1, C2 etc from copyCode to find the parent Kit.
             // DO NOT use orderId, because 1 order can have multiple different kits!
             const baseKey = q.kitId || (q.copyCode ? q.copyCode.replace(/C\d+$/i, '') : token);
@@ -102,11 +140,11 @@ export default function DashboardTags() {
             const eContacts = Array.isArray(q.emergencyContacts) && q.emergencyContacts.length > 0
               ? q.emergencyContacts
               : (Array.isArray(q.vehicle?.emergencyContacts) && q.vehicle.emergencyContacts.length > 0
-                  ? q.vehicle.emergencyContacts
-                  : [
-                      ...(q.emergencyContact1 ? [{ name: q.emergencyContact1.name || 'Primary Contact', number: q.emergencyContact1.phone || q.emergencyContact1.number }] : []),
-                      ...(q.emergencyContact2 ? [{ name: q.emergencyContact2.name || 'Secondary Contact', number: q.emergencyContact2.phone || q.emergencyContact2.number }] : [])
-                    ]);
+                ? q.vehicle.emergencyContacts
+                : [
+                  ...(q.emergencyContact1 ? [{ name: q.emergencyContact1.name || 'Primary Contact', number: q.emergencyContact1.phone || q.emergencyContact1.number }] : []),
+                  ...(q.emergencyContact2 ? [{ name: q.emergencyContact2.name || 'Secondary Contact', number: q.emergencyContact2.phone || q.emergencyContact2.number }] : [])
+                ]);
 
             if (!kitMap.has(baseKey)) {
               kitMap.set(baseKey, {
@@ -216,9 +254,7 @@ export default function DashboardTags() {
         vehicleBrand: editingTag.vehicleBrand || '',
         vehicleName: editingTag.vehicleName || '',
         emergencyContacts: sosList,
-        emergencyContact1: sosList[0] ? { name: sosList[0].name, phone: sosList[0].number || sosList[0].phone } : undefined,
-        emergencyContact2: sosList[1] ? { name: sosList[1].name, phone: sosList[1].number || sosList[1].phone } : undefined,
-        whatsappNumber: editingTag.whatsapp,
+        emergencyContacts: sosList
       });
     } catch (err) {
       console.error(err);
@@ -229,7 +265,7 @@ export default function DashboardTags() {
     loadDashboardData();
   };
 
- 
+
   const handleDownloadQrPng = (tag) => {
     const canvas = document.createElement('canvas');
     canvas.width = 600;
@@ -274,7 +310,7 @@ export default function DashboardTags() {
   return (
     <DashboardLayout currentTab="tags" pageTitle="My safedrivetags" saveSuccessMsg={saveSuccessMsg}>
       <div className="bg-white rounded-sm shadow-sm border border-gray-200/80 p-4 sm:p-6 space-y-6">
-        
+
         {/* Header Title + Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-gray-100">
           <div>
@@ -292,7 +328,7 @@ export default function DashboardTags() {
           </div>
 
           <div className="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
-          
+
             <Link
               to="/shop"
               className="bg-[#fb641b] hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-md text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all text-center"
@@ -315,6 +351,9 @@ export default function DashboardTags() {
               {dashboardStats.totalCallsLeft ?? userTags.reduce((sum, t) => sum + (t.callBalance || 0), 0)}
             </p>
             <span className="text-[10px] text-blue-600 font-medium">Voice Bridge Balance</span>
+            {userTags.length > 0 && (
+              <button onClick={() => setShowBuyModal(true)} className="mt-1 text-[10px] text-white bg-blue-600 px-2 py-1 rounded w-full">+ Buy Booster</button>
+            )}
           </div>
           <div className="p-2.5 border-l border-gray-200/70">
             <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Remaining Alerts</p>
@@ -322,6 +361,9 @@ export default function DashboardTags() {
               {dashboardStats.totalMessagesLeft ?? userTags.reduce((sum, t) => sum + (t.messageBalance || 0), 0)}
             </p>
             <span className="text-[10px] text-emerald-600 font-medium">WhatsApp / SMS</span>
+            {userTags.length > 0 && (
+              <button onClick={() => setShowBuyModal(true)} className="mt-1 text-[10px] text-white bg-emerald-600 px-2 py-1 rounded w-full">+ Buy Booster</button>
+            )}
           </div>
           <div className="p-2.5 border-l border-gray-200/70">
             <p className="text-[11px] text-[#878787] font-semibold uppercase tracking-wider">Active Monitoring</p>
@@ -337,7 +379,14 @@ export default function DashboardTags() {
             <p className="text-sm font-bold text-[#1a2a4a]">Loading owner dashboard & active tags...</p>
           </div>
         ) : userTags.length === 0 ? (
-          <Navigate to="/dashboard/orders" replace />
+          <div className="flex flex-col items-center justify-center py-20 gap-3 bg-white rounded-sm border border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+            <QrCode size={48} className="text-gray-300" />
+            <p className="text-lg font-bold text-gray-600">No Active Tags</p>
+            <p className="text-sm text-gray-400">You don't have any active SafeDrive tags yet.</p>
+            <Link to="/shop" className="mt-3 bg-[#fb641b] text-white px-5 py-2 rounded-md font-bold text-sm hover:bg-orange-600 transition-colors">
+              Buy a Tag
+            </Link>
+          </div>
         ) : (
           <div className="space-y-4">
             {userTags.map((tag) => {
@@ -347,39 +396,54 @@ export default function DashboardTags() {
                   key={tag.id}
                   className="bg-white rounded-sm border border-gray-200 hover:border-gray-300 transition-all p-4 sm:p-5 relative shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
                 >
-                  {/* Top Row: Tag ID + Status Pill */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-100">
+                  {/* Top Row: Test Scan + Actions */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
                     <div className="flex items-center gap-2.5">
-                      <span className="px-2.5 py-1 bg-blue-50 text-[#2874f0] font-mono font-bold text-xs rounded border border-blue-200 flex items-center gap-1.5">
-                        <QrCode size={13} /> {tag.id}
-                      </span>
-                      <button
-                        onClick={() => handleCopy(tag.id)}
-                        className="text-gray-400 hover:text-[#2874f0] p-1 rounded hover:bg-gray-100 transition-colors cursor-pointer"
-                        title="Copy Tag ID"
+                      <Link
+                        to={`/q/${tag.publicToken || tag.id}`}
+                        target="_blank"
+                        className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#2874f0] font-bold text-xs rounded border border-blue-200 flex items-center gap-1.5 transition-colors"
                       >
-                        {copiedId === tag.id ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
-                      </button>
+                        <QrCode size={13} /> Test Public QR Scan Page
+                      </Link>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                        isActive 
-                          ? 'bg-green-50 text-green-700 border border-green-200' 
-                          : 'bg-gray-100 text-gray-500 border border-gray-200'
-                      }`}>
-                        <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
-                        {isActive ? 'Active Protection' : 'Paused'}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        {tag.scansCount || 0} Scans
-                      </span>
+                    <div className="flex items-center gap-2">
+                      {tag.qrType === 'DIGITAL' && (
+                        <button
+                          onClick={() => printDigitalPdfInColor({
+                            ...tag,
+                            allocatedQRIds: undefined,
+                            copies: tag.copies?.length > 0 ? [tag.copies[0]] : [tag],
+                            title: tag.vehicleName || tag.title,
+                            publicToken: tag.primaryToken || tag.publicToken || tag.id,
+                            vehicleNumber: tag.vehicleNumber,
+                            securityCode: tag.securityCode || tag.pin || tag.securityPin
+                          })}
+                          className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 p-2 sm:px-3 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                          title="Print Badge"
+                        >
+                          <Printer size={16} className="sm:w-[13px] sm:h-[13px]" />
+                          <span className="hidden sm:inline">Print Badge</span>
+                        </button>
+                      )}
+
+                      <Link
+                        to={`/dashboard/tag/${tag.kitId || tag.copyCode || tag.primaryToken || tag.id}`}
+                        className="bg-[#2874f0] hover:bg-blue-700 text-white p-2 sm:px-3 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                        title="View Tag Details"
+                      >
+                        <Eye size={16} className="sm:w-[13px] sm:h-[13px]" />
+                        <span className="hidden sm:inline">View Tag Details</span>
+                      </Link>
+
+
                     </div>
                   </div>
 
                   {/* Middle Row: Vehicle & Contact Specs */}
                   <div className="flex flex-col py-3">
-                    
+
                     {/* Vehicle Detail */}
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 rounded bg-gray-100 text-[#2874f0] flex items-center justify-center flex-shrink-0">
@@ -407,9 +471,30 @@ export default function DashboardTags() {
                             </p>
                           )}
                         </div>
-                        <span className="block text-[11px] text-gray-400 font-medium mt-1">
-                          Type: {tag.vehicleType || 'Car'}
-                        </span>
+                        <div className="flex items-center flex-wrap gap-2 text-[11px] font-medium mt-1.5">
+                          <span className="text-gray-500">Type: {tag.vehicleType || 'Car'}</span>
+                          <span className="text-gray-300">•</span>
+                          <span className="text-gray-600 flex items-center gap-1">
+                            Tag ID: <strong className="font-mono text-[#2874f0]">{tag.id}</strong>
+                            <button
+                              onClick={() => handleCopy(tag.id)}
+                              className="text-gray-400 hover:text-[#2874f0] p-0.5 rounded hover:bg-gray-100 transition-colors cursor-pointer"
+                              title="Copy Tag ID"
+                            >
+                              {copiedId === tag.id ? <Check size={12} className="text-green-600" /> : <Copy size={12} />}
+                            </button>
+                          </span>
+                          <span className="text-gray-300">•</span>
+                          <span className="text-gray-600 font-bold">{tag.scansCount || 0} Scans</span>
+                          <span className="text-gray-300">•</span>
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${isActive
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : 'bg-gray-100 text-gray-500 border border-gray-200'
+                            }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
+                            {isActive ? 'Active Protection' : 'Paused'}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -443,50 +528,7 @@ export default function DashboardTags() {
                     </div>
                   </div>
 
-                  {/* Bottom Row: Actions Bar (Responsive Grid on Mobile, Flex on Desktop) */}
-                  <div className="pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
-                    <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
 
-                      {tag.qrType === 'DIGITAL' && (
-                        <button
-                          onClick={() => printDigitalPdfInColor({ 
-                            ...tag,
-                            allocatedQRIds: undefined, // Force generator to strictly use tag.copies
-                            copies: tag.copies?.length > 0 ? [tag.copies[0]] : [tag], // FORCE exactly 1 copy to print
-                            title: tag.vehicleName || tag.title, 
-                            publicToken: tag.primaryToken || tag.publicToken || tag.id, 
-                            vehicleNumber: tag.vehicleNumber,
-                            securityCode: tag.securityCode || tag.pin || tag.securityPin
-                          })}
-                          className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
-                        >
-                          <Printer size={13} /> Print Badge
-                        </button>
-                      )}
-
-                      <Link
-                        to={`/dashboard/tag/${tag.kitId || tag.copyCode || tag.primaryToken || tag.id}`}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs text-center"
-                      >
-                        <Eye size={13} /> View Tag Details
-                      </Link>
-
-                      <button
-                        onClick={() => setEditingTag(tag)}
-                        className="col-span-2 sm:col-span-1 sm:ml-auto bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2.5 sm:py-1.5 rounded-md text-sm sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-gray-200 shadow-sm"
-                      >
-                        <Edit3 size={14} /> Update Details
-                      </button>
-                    </div>
-
-                    <Link
-                      to={`/q/${tag.publicToken || tag.id}`}
-                      target="_blank"
-                      className="text-xs font-bold text-[#2874f0] hover:underline flex items-center gap-1 shrink-0 pt-1 sm:pt-0"
-                    >
-                      Test Public QR Scan Page
-                    </Link>
-                  </div>
 
                 </div>
               );
@@ -499,106 +541,7 @@ export default function DashboardTags() {
       {/* ======================================================== */}
       {/* MODAL 1: LINK NEW TAG MODAL */}
       {/* ======================================================== */}
-   
-      {/* ======================================================== */}
-      {/* MODAL 2: EDIT TAG MODAL (LOCKED VEHICLE NUMBER) */}
-      {/* ======================================================== */}
-      {editingTag && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">
-          <div className="bg-white rounded-sm max-w-md w-full shadow-2xl border border-gray-200 overflow-hidden">
-            <div className="bg-[#2874f0] text-white px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Edit3 size={18} />
-                <h3 className="text-base font-bold">Edit Tag Details ({editingTag.id})</h3>
-              </div>
-              <button
-                onClick={() => setEditingTag(null)}
-                className="text-white/80 hover:text-white cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-            </div>
 
-            <form onSubmit={handleSaveEdit} className="p-6 space-y-4 text-xs">
-              <div>
-                <label className="block text-gray-700 font-bold uppercase mb-1">Owner Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={editingTag.name}
-                  onChange={(e) => setEditingTag({ ...editingTag, name: e.target.value })}
-                  className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2 text-sm outline-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] text-gray-500 font-bold uppercase mb-1">Asset / Item Model</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingTag.vehicleName}
-                    onChange={(e) => setEditingTag({ ...editingTag, vehicleName: e.target.value })}
-                    className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2 text-sm outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-bold uppercase mb-1 flex items-center justify-between">
-                    <span>Plate Number</span>
-                    <span className="text-[10px] text-gray-400 font-normal flex items-center gap-0.5 lowercase">
-                      <Lock size={10} /> locked
-                    </span>
-                  </label>
-                  <div className="w-full bg-gray-100 border border-gray-300 text-gray-700 rounded-sm px-3 py-2 text-sm font-mono font-bold select-none cursor-not-allowed uppercase flex items-center justify-between">
-                    <span>{editingTag.vehicleNumber || 'LOCKED'}</span>
-                    <Lock size={13} className="text-gray-400" />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold uppercase mb-1">Emergency SOS Phone Number</label>
-                <input
-                  type="tel"
-                  required
-                  pattern="[0-9]{10}"
-                  value={editingTag.emergencyContact}
-                  onChange={(e) => setEditingTag({ ...editingTag, emergencyContact: e.target.value.replace(/\D/g, '') })}
-                  className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2 text-sm outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold uppercase mb-1">WhatsApp Alert Phone Number</label>
-                <input
-                  type="tel"
-                  required
-                  pattern="[0-9]{10}"
-                  value={editingTag.whatsapp}
-                  onChange={(e) => setEditingTag({ ...editingTag, whatsapp: e.target.value.replace(/\D/g, '') })}
-                  className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2 text-sm outline-none"
-                />
-              </div>
-
-              <div className="pt-3 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setEditingTag(null)}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2.5 rounded-sm text-xs cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-sm text-xs shadow-sm cursor-pointer uppercase"
-                >
-                  SAVE CHANGES
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* ======================================================== */}
       {/* MODAL 3: QR CODE BADGE PREVIEW MODAL */}
@@ -649,8 +592,8 @@ export default function DashboardTags() {
                 </button>
                 {qrModalTag.qrType === 'DIGITAL' && (
                   <button
-                    onClick={() => printDigitalPdfInColor({ 
-                      ...qrModalTag, 
+                    onClick={() => printDigitalPdfInColor({
+                      ...qrModalTag,
                       allocatedQRIds: undefined,
                       copies: qrModalTag.copies?.length > 0 ? [qrModalTag.copies[0]] : [qrModalTag]
                     })}
@@ -667,6 +610,50 @@ export default function DashboardTags() {
                   <Eye size={14} /> Open Live Scan Test Page
                 </Link>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showBuyModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+              <div>
+                <h3 className="font-black text-lg text-slate-900">Add Quota Booster</h3>
+                <p className="text-xs text-slate-500">Top-up your voice call & instant notification quotas</p>
+              </div>
+              <button
+                onClick={() => setShowBuyModal(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+              {packages.map((pkg) => (
+                <div
+                  key={pkg._id}
+                  className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-[#1E8A38] p-4 rounded-2xl transition flex justify-between items-center shadow-xs"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="font-black text-sm text-slate-900">{pkg.name}</h4>
+                    </div>
+                    <p className="text-xs text-slate-600 font-medium flex flex-wrap items-center gap-1.5">
+                      <span>₹{pkg.price}</span>
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => handleBuyBooster(pkg)}
+                    disabled={buyLoading}
+                    className="bg-[#1E8A38] hover:bg-[#16702c] text-white font-black px-4 py-2.5 rounded-xl text-xs shadow-sm transition active:scale-95 cursor-pointer disabled:opacity-50 shrink-0 ml-3"
+                  >
+                    Buy ₹{pkg.price}
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         </div>

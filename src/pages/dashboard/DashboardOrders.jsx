@@ -202,14 +202,28 @@ export default function DashboardOrders() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
+                      {ord.paymentMethod === 'COD' && (
+                        <span className="px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 font-black uppercase text-[10px] border border-orange-200">
+                          Cash on Delivery (COD)
+                        </span>
+                      )}
+                      {ord.deliveryStatus && (
+                        <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-black uppercase text-[10px] border border-blue-200">
+                          Status: {ord.deliveryStatus}
+                        </span>
+                      )}
                       {isDelivered && (
                         <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-black uppercase text-[10px] border border-green-300">
                           ✓ {isDigital ? 'Fulfilled / Digital Pass Emailed' : 'Delivered'}
                         </span>
                       )}
-                      {isPaid && (
-                        <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-black uppercase text-[10px] border border-blue-200">
+                      {isPaid ? (
+                        <span className="px-2 py-0.5 rounded-full bg-green-50 text-green-700 font-black uppercase text-[10px] border border-green-200">
                           ✓ Paid
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-black uppercase text-[10px] border border-amber-200">
+                          ⏳ Pending Payment
                         </span>
                       )}
                       {pendingCount > 0 && (
@@ -218,7 +232,7 @@ export default function DashboardOrders() {
                         </span>
                       )}
                       <span className="text-gray-500 font-medium">
-                        TOTAL PAID: <span className="text-gray-900 font-black text-sm">₹{ord.totalAmount || ord.amount || 299}</span>
+                        TOTAL: <span className="text-gray-900 font-black text-sm">₹{ord.totalAmount || ord.amount || 299}</span>
                       </span>
                     </div>
                   </div>
@@ -468,15 +482,39 @@ export default function DashboardOrders() {
               <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-xl border border-blue-200">
                 <CheckCircle2 size={20} className="text-green-600 shrink-0" />
                 <div>
-                  <p className="font-bold text-gray-900">Order Dispatched &amp; In Transit</p>
-                  <p className="text-[11px] text-gray-500">Estimated Delivery: Within 3–4 Business Days via Bluedart / Delhivery</p>
+                  <p className="font-bold text-gray-900">
+                    {trackingModalOrder.deliveryStatus === 'DELIVERED' ? 'Order Delivered' : 
+                     trackingModalOrder.deliveryStatus === 'OUT_FOR_DELIVERY' ? 'Out for Delivery' :
+                     trackingModalOrder.deliveryStatus === 'SHIPPED' ? 'Order Shipped' :
+                     trackingModalOrder.deliveryStatus === 'DISPATCHED' ? 'Order Dispatched' : 'Order Processing'}
+                  </p>
+                  <p className="text-[11px] text-gray-500">
+                    {trackingModalOrder.courierPartner ? `Courier: ${trackingModalOrder.courierPartner}` : 'Estimated Delivery: 3-4 Business Days'}
+                    {trackingModalOrder.trackingNumber && ` | AWB: ${trackingModalOrder.trackingNumber}`}
+                  </p>
+                  {trackingModalOrder.trackingLink && (
+                    <a href={trackingModalOrder.trackingLink} target="_blank" rel="noreferrer" className="text-[10px] text-blue-600 font-bold hover:underline inline-block mt-1 mr-3">
+                      Track on Courier Website ↗
+                    </a>
+                  )}
+                  {trackingModalOrder.courierPartner === 'Post Office' && trackingModalOrder.shippingLabelUrl && (
+                    <a href={trackingModalOrder.shippingLabelUrl} target="_blank" rel="noreferrer" className="text-[10px] text-orange-600 font-bold hover:underline inline-block mt-1">
+                      View Receipt / Label ↗
+                    </a>
+                  )}
                 </div>
               </div>
               <div className="space-y-2 border-l-2 border-blue-500 pl-4 ml-2">
-                <p className="font-bold text-gray-800">1. Order Placed &amp; Confirmed</p>
-                <p className="font-bold text-gray-800">2. Printed with High-Resolution Laminate</p>
-                <p className="font-bold text-[#2874f0]">3. Handed to Courier Partner</p>
-                <p className="text-gray-400 font-medium">4. Out for Delivery</p>
+                <p className="font-bold text-gray-800">✓ Order Placed &amp; Confirmed</p>
+                <p className={`font-bold ${['DISPATCHED', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED'].includes(trackingModalOrder.deliveryStatus) ? 'text-gray-800' : 'text-[#2874f0]'}`}>
+                  {['DISPATCHED', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED'].includes(trackingModalOrder.deliveryStatus) ? '✓ ' : ''}Printed &amp; Packed
+                </p>
+                <p className={`font-bold ${['SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED'].includes(trackingModalOrder.deliveryStatus) ? 'text-gray-800' : (['DISPATCHED'].includes(trackingModalOrder.deliveryStatus) ? 'text-[#2874f0]' : 'text-gray-400 font-medium')}`}>
+                  {['SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED'].includes(trackingModalOrder.deliveryStatus) ? '✓ ' : ''}Handed to Courier Partner
+                </p>
+                <p className={`font-bold ${['DELIVERED'].includes(trackingModalOrder.deliveryStatus) ? 'text-gray-800' : (['OUT_FOR_DELIVERY'].includes(trackingModalOrder.deliveryStatus) ? 'text-[#2874f0]' : 'text-gray-400 font-medium')}`}>
+                  {['DELIVERED'].includes(trackingModalOrder.deliveryStatus) ? '✓ ' : ''}Out for Delivery
+                </p>
               </div>
               <button
                 onClick={() => setTrackingModalOrder(null)}

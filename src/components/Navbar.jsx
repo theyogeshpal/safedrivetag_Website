@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Menu, 
-  X, 
-  User, 
-  LogIn, 
-  LayoutDashboard, 
-  LogOut, 
-  ChevronDown, 
-  ShieldCheck, 
+import {
+  Menu,
+  X,
+  User,
+  LogIn,
+  LayoutDashboard,
+  LogOut,
+  ChevronDown,
+  ShieldCheck,
   Sparkles,
   ShoppingBag,
   PhoneCall,
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { showConfirmDialog, showToast } from '../utils/swal';
+import api from '../services/api';
 
 export default function Navbar() {
   const location = useLocation();
@@ -29,7 +30,22 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [offerText, setOfferText] = useState('Smart Vehicle QR Safety Tag at just ₹299');
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.getPublicSettings();
+        if (res.success && res.settings?.websiteOfferText) {
+          setOfferText(res.settings.websiteOfferText);
+        }
+      } catch (err) {
+        console.error('Failed to fetch public settings', err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -90,45 +106,47 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 transition-all duration-200 pointer-events-auto bg-white border-b border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-      
+
       {/* ======================================================== */}
       {/* 0. TOP SUB-HEADER ANNOUNCEMENT & HELPLINE BAR */}
       {/* ======================================================== */}
       <div className="bg-gradient-to-r from-gray-950 via-slate-900 to-gray-950 text-white border-b border-gray-800 text-[10px] sm:text-[11px] font-medium">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1 sm:py-1.5 flex items-center justify-between gap-2 sm:gap-4">
-          
+
           {/* Left: Special Launch Offer Pill */}
           <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
             <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[9px] sm:text-[10px] uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full shrink-0 shadow-xs">
               🔥 Offer
             </span>
             <span className="text-gray-300 hidden sm:inline">
-              Smart Vehicle QR Safety Tag at just <strong className="text-white font-bold">₹299</strong>
+              {offerText}
             </span>
           </div>
 
-            <span className="text-emerald-400 font-bold flex items-center gap-1 text-[10px] sm:text-[11px]">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
-              Pan-India Delivery
-            </span>
+          <span className="text-emerald-400 font-bold flex items-center gap-1 text-[10px] sm:text-[11px]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
+            Pan-India Delivery
+          </span>
           {/* Center / Highlight: Privacy Guarantee */}
 
           {/* Right: Support & Quick Links */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0 text-[10px] sm:text-xs">
-          <div className="hidden lg:flex items-center gap-3 text-gray-400">
-            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
-              <ShieldCheck size={13} className="text-emerald-400" /> 100% Privacy Protected
-            </span>
-            <span className="flex items-center gap-1 text-orange-400 font-semibold">
-              <PhoneCall size={12} className="text-orange-400" /> 2-Way Number Masking
-            </span>
-          </div>
+            <div className="hidden lg:flex items-center gap-3 text-gray-400">
+              <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                <ShieldCheck size={13} className="text-emerald-400" /> 100% Privacy Protected
+              </span>
+              <span className="flex items-center gap-1 text-orange-400 font-semibold">
+                <PhoneCall size={12} className="text-orange-400" /> 2-Way Number Masking
+              </span>
+            </div>
 
-            <a 
-              href="mailto:safedrivetag@gmail.com" 
+            <a
+              href={import.meta.env.VITE_RESELLER_DOMAIN}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"
             >
-              <span className="font-semibold text-white tracking-wide">Works in Emergencies</span>
+              <span className="font-bold text-white tracking-wide bg-white/10 px-2 py-0.5 rounded-md hover:bg-white/20 transition-all">Partner Login</span>
             </a>
           </div>
 
@@ -137,15 +155,15 @@ export default function Navbar() {
 
       {/* Main Navbar Row */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between relative z-50 py-1.5 sm:py-2.5">
-        
+
         {/* ======================================================== */}
         {/* 1. BRAND LOGO */}
         {/* ======================================================== */}
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/" className="flex items-center shrink-0 relative z-50 cursor-pointer group py-0.5">
-            <img 
-              src="/logos/primary.jpeg" 
-              alt="safedrivetag" 
+            <img
+              src="/logos/primary.jpeg"
+              alt="safedrivetag"
               className="h-10 sm:h-16 md:h-18 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
               style={{ maxHeight: 'calc(clamp(42px, 8vw, 76px))', width: 'auto' }}
             />
@@ -162,11 +180,10 @@ export default function Navbar() {
               <Link
                 key={to}
                 to={to}
-                className={`relative py-2 text-sm transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
-                  isActive
+                className={`relative py-2 text-sm transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${isActive
                     ? 'text-gray-950 font-extrabold after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-orange-500 after:rounded-full'
                     : 'text-gray-600 hover:text-gray-950 font-semibold'
-                }`}
+                  }`}
               >
                 <span>{label}</span>
                 {badge && (
@@ -183,7 +200,7 @@ export default function Navbar() {
         {/* 3. RIGHT ACTIONS & USER MENU */}
         {/* ======================================================== */}
         <div className="flex items-center gap-2.5 sm:gap-6 relative z-50">
-          
+
           {/* User Logged In Profile Pill */}
           {currentUser ? (
             <div className="relative hidden md:block" ref={dropdownRef}>
@@ -280,35 +297,34 @@ export default function Navbar() {
       {/* 4. MOBILE MENU OVERLAY & SIDEBAR */}
       {/* ======================================================== */}
       {menuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden animate-fade-in"
           onClick={() => setMenuOpen(false)}
         />
       )}
 
-      <div className={`fixed top-0 left-0 h-full w-[300px] max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
-        menuOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div className={`fixed top-0 left-0 h-full w-[300px] max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${menuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50/50">
           <div className="flex items-center">
-            <img 
-              src="/logos/primary.jpeg" 
-              alt="safedrivetag" 
-              className="h-10 sm:h-11 w-auto object-contain" 
+            <img
+              src="/logos/primary.jpeg"
+              alt="safedrivetag"
+              className="h-10 sm:h-11 w-auto object-contain"
               style={{ maxHeight: '46px', width: 'auto' }}
             />
           </div>
-          <button 
-            onClick={() => setMenuOpen(false)} 
+          <button
+            onClick={() => setMenuOpen(false)}
             className="text-gray-400 hover:text-gray-900 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
             aria-label="Close menu"
           >
             <X size={20} />
           </button>
         </div>
-        
+
         <div className="flex flex-col gap-2 p-5 flex-1 overflow-y-auto">
-          
+
           {/* User Account Info on Mobile */}
           {currentUser ? (
             <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/80 rounded-2xl p-4 mb-2 shadow-2xs">
@@ -348,11 +364,10 @@ export default function Navbar() {
                 key={to}
                 to={to}
                 onClick={() => setMenuOpen(false)}
-                className={`text-sm font-bold py-2.5 px-3.5 rounded-xl transition-colors flex items-center justify-between ${
-                  path === to 
-                    ? 'bg-orange-50 text-orange-600 font-black' 
+                className={`text-sm font-bold py-2.5 px-3.5 rounded-xl transition-colors flex items-center justify-between ${path === to
+                    ? 'bg-orange-50 text-orange-600 font-black'
                     : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                }`}
+                  }`}
               >
                 <span>{label}</span>
                 {badge && (
@@ -384,11 +399,11 @@ export default function Navbar() {
               </button>
             </div>
           )}
-          
+
           {/* Bottom Actions */}
           <div className="mt-auto pt-4 border-t border-gray-100 space-y-2.5">
-            <Link 
-              to="/shop" 
+            <Link
+              to="/shop"
               onClick={() => setMenuOpen(false)}
               className="bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 text-white px-5 py-3 rounded-xl font-black text-xs text-center flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25"
             >

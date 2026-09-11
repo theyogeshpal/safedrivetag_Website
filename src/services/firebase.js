@@ -12,6 +12,8 @@ const firebaseConfig = {
   measurementId: "G-KECG86S5MN"
 };
 
+const VAPID_KEY = "BCc2xzV1Pcu6gow45ZxMwwukmHD-A_hR2Mf-QJ8hTn2HEk0Qk9Z5g5Q4vkc9Vb_bJrf4QD53KJldm-hctH1VugY";
+
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 
 export const initFirebaseMessaging = async () => {
@@ -39,7 +41,7 @@ export const initFirebaseMessaging = async () => {
         if (event.data && event.data.type === 'PLAY_RINGTONE') {
           const title = event.data.payload?.notification?.title || event.data.payload?.data?.title || '🚨 Vehicle QR Alert';
           const body = event.data.payload?.notification?.body || event.data.payload?.data?.message || 'New vehicle scan event detected!';
-          showEmergencyPushAlert(title, body);
+          showEmergencyPushAlert(title, body, event.data.payload?.data || {});
         }
       });
     }
@@ -49,7 +51,7 @@ export const initFirebaseMessaging = async () => {
       console.log('[Foreground FCM Message Received]:', payload);
       const title = payload.notification?.title || payload.data?.title || '🚨 Vehicle QR Alert';
       const body = payload.notification?.body || payload.data?.message || 'New scan received on your SafeDrive pass!';
-      showEmergencyPushAlert(title, body);
+      showEmergencyPushAlert(title, body, payload.data || {});
     });
 
     // Auto-fetch token if permission is already granted so backend knows where to push
@@ -83,10 +85,17 @@ export const requestFcmToken = async () => {
     const messaging = getMessaging(app);
     let swReg;
     if ('serviceWorker' in navigator) {
-      swReg = await navigator.serviceWorker.ready;
+      swReg = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Service Worker timeout')), 3000))
+      ]).catch(e => {
+        console.warn('Service worker not ready in time:', e);
+        return undefined;
+      });
     }
 
     const currentToken = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
       serviceWorkerRegistration: swReg,
     });
 
@@ -95,16 +104,17 @@ export const requestFcmToken = async () => {
       try {
         localStorage.setItem('safedrive_fcm_token', currentToken);
         // Send token to backend so it knows where to send push notifications
-        import('./api').then(({ default: api }) => {
-          api.registerFcmToken(currentToken).catch(err => {
-            alert('Failed to save FCM token to backend: ' + err.message);
-            console.log('Failed to save FCM token to backend', err);
-          });
+        import('./api').then(({ default: api, getAuthToken }) => {
+          if (getAuthToken()) {
+            api.registerFcmToken(currentToken).catch(err => {
+              console.log('FCM token backend registration failed:', err.message);
+            });
+          }
         });
       } catch (e) {}
       return currentToken;
     } else {
-      alert('Failed to generate FCM Token. Check VAPID keys or Firebase config.');
+      console.log('Failed to generate FCM Token. Check VAPID keys or Firebase config.');
     }
     return null;
   } catch (err) {

@@ -35,17 +35,17 @@ export default function Footer() {
       <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 relative z-10">
-        
+
         {/* Brand Column */}
         <div className="col-span-2 lg:col-span-4 pr-0 lg:pr-4">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="w-full sm:w-auto flex sm:inline-flex items-center justify-center mb-4 bg-white p-2.5 sm:px-3 sm:py-2 rounded-2xl sm:rounded-3xl shadow-md border border-white/10 group hover:shadow-lg transition-all"
           >
-            <img 
-              src="/logos/primary.jpeg" 
-              alt="safedrivetag Logo" 
-              className="h-10 sm:h-12 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105" 
+            <img
+              src="/logos/primary.jpeg"
+              alt="safedrivetag Logo"
+              className="h-10 sm:h-12 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
               style={{ maxHeight: '48px', width: 'auto' }}
             />
           </Link>
@@ -87,7 +87,7 @@ export default function Footer() {
               <a href="mailto:safedrivetag@gmail.com" className="text-gray-400 hover:text-orange-400 transition-colors break-all">safedrivetag@gmail.com</a>
             </li>
           </ul>
-          
+
           <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
             <a href="https://www.instagram.com/safedrivetag/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 text-gray-300 border border-white/10 shadow-2xs flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:-translate-y-1 transition-all">
               <FaInstagram className="w-4 h-4" />
@@ -105,11 +105,14 @@ export default function Footer() {
               <FaYoutube className="w-4 h-4" />
             </a>
           </div>
-          
-          <div className="mt-6">
-            <Link to="/seller" className="inline-flex items-center justify-center bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all border border-white/10 shadow-sm">
-              Seller Login
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link to="/become-reseller" className="inline-flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+              Become a Reseller
             </Link>
+            <a href={import.meta.env.VITE_RESELLER_DOMAIN} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all border border-white/10 shadow-sm">
+              Reseller Login
+            </a>
           </div>
         </div>
       </div>

@@ -69,24 +69,16 @@ export default function ProductDetail() {
 
           setProduct({
             _id: foundProduct._id || id,
-            name: foundProduct.title || foundProduct.name || 'SafeDrive Vehicle Protection Kit',
-            sub: foundProduct.description || 'Smart QR Vehicle Safety Kit with Instant Cloud Call Bridge',
-            price: foundProduct.price || 299,
-            oldPrice: foundProduct.originalPrice || (foundProduct.price ? foundProduct.price + 200 : 499),
-            rating: foundProduct.rating || 4.9,
-            reviews: foundProduct.reviewsCount || 2340,
-            desc: foundProduct.description || 'Premium reflective and weather proof SafeDrive QR stickers for complete privacy and vehicle security.',
-            features: Array.isArray(foundProduct.features) && foundProduct.features.length > 0 
-              ? foundProduct.features 
-              : [
-                  'Instant Masked Voice Calling to Owner (Zero Phone Number Exposure)',
-                  'Direct WhatsApp Emergency Broadcast Alert',
-                  'High-Grade Reflective Waterproof 3M Vinyl Stickers',
-                  '1-Year Free Cloud Relay Bridge Included',
-                  'Anti-Harassment 4-Digit Plate Protection'
-                ],
+            name: foundProduct.title || foundProduct.name || '',
+            price: foundProduct.price || 0,
+            oldPrice: foundProduct.originalPrice || 0,
+            rating: foundProduct.rating || 0,
+            reviews: foundProduct.reviewsCount || foundProduct.soldCount || 0,
+            desc: foundProduct.description || '',
+            features: Array.isArray(foundProduct.features) ? foundProduct.features : [],
             images: backendImages,
             qrType: foundProduct.qrType || 'PHYSICAL',
+            inStock: foundProduct.inStock !== false,
           });
         } else {
           setError('Product not found in catalog.');
@@ -112,7 +104,7 @@ export default function ProductDetail() {
           productId: product._id,
           _id: product._id,
           title: product.name,
-          description: product.sub,
+          description: product.desc,
           price: product.price,
           originalPrice: product.oldPrice,
           imageUrl: product.images?.[0] || '',
@@ -166,7 +158,6 @@ export default function ProductDetail() {
       <PageHero
         badge="🏷️ OFFICIAL PRODUCT STORE"
         title={product.name}
-        description={product.sub}
       >
         {/* Breadcrumb inside Hero */}
         <div className="flex items-center justify-center gap-2 text-xs text-white/60 font-bold uppercase tracking-wider pt-1">
@@ -277,17 +268,25 @@ export default function ProductDetail() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-black text-black mb-2 tracking-tight">{product.name}</h1>
-            <p className="text-base sm:text-lg text-black/50 font-medium mb-4">{product.sub}</p>
+            {product.desc && (
+              <p className="text-base sm:text-lg text-black/50 font-medium mb-4">{product.desc}</p>
+            )}
             
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex items-center bg-orange-50 px-3 py-1 rounded-full border border-orange-100">
-                <Star className="w-4 h-4 fill-orange-500 text-orange-500 mr-1" />
-                <span className="text-sm font-bold text-orange-700">{product.rating}</span>
+            {(product.rating > 0 || product.reviews > 0) && (
+              <div className="flex items-center gap-3 mb-6">
+                {product.rating > 0 && (
+                  <div className="flex items-center bg-orange-50 px-3 py-1 rounded-full border border-orange-100">
+                    <Star className="w-4 h-4 fill-orange-500 text-orange-500 mr-1" />
+                    <span className="text-sm font-bold text-orange-700">{product.rating}</span>
+                  </div>
+                )}
+                {product.reviews > 0 && (
+                  <span className="text-sm font-medium text-black/40 underline decoration-black/20 underline-offset-4">
+                    {product.reviews.toLocaleString()} verified buyers
+                  </span>
+                )}
               </div>
-              <span className="text-sm font-medium text-black/40 underline decoration-black/20 underline-offset-4">
-                {product.reviews.toLocaleString()} verified buyers
-              </span>
-            </div>
+            )}
 
             {/* Price Box */}
             <div className="flex items-end gap-3 mb-6 bg-black/[0.02] border border-black/5 p-4 rounded-2xl">
@@ -305,17 +304,19 @@ export default function ProductDetail() {
             <p className="text-black/70 text-sm leading-relaxed mb-6 font-medium">{product.desc}</p>
 
             {/* Included Features List */}
-            <div className="bg-white rounded-2xl p-5 border border-black/5 mb-6 shadow-sm">
-              <h3 className="font-bold text-black mb-3 uppercase tracking-wider text-xs">What's included in this kit</h3>
-              <ul className="space-y-2.5">
-                {product.features.map((f, index) => (
-                  <li key={index} className="flex items-start gap-2.5 text-black/80 font-semibold text-xs sm:text-sm">
-                    <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {product.features && product.features.length > 0 && (
+              <div className="bg-white rounded-2xl p-5 border border-black/5 mb-6 shadow-sm">
+                <h3 className="font-bold text-black mb-3 uppercase tracking-wider text-xs">What's included in this kit</h3>
+                <ul className="space-y-2.5">
+                  {product.features.map((f, index) => (
+                    <li key={index} className="flex items-start gap-2.5 text-black/80 font-semibold text-xs sm:text-sm">
+                      <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Quantity Selector & Buy Now Button */}
             <div className="flex flex-col sm:flex-row gap-4 mt-auto">
@@ -337,14 +338,24 @@ export default function ProductDetail() {
                 </button>
               </div>
               
-              <button 
-                type="button"
-                onClick={handleBuyNow}
-                className="flex-1 bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-base transition-all shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:-translate-y-0.5 cursor-pointer"
-              >
-                <span>Buy Now — ₹{product.price * qty}</span>
-                <ArrowRight size={18} />
-              </button>
+              {product.inStock === false ? (
+                <button 
+                  type="button"
+                  disabled
+                  className="flex-1 bg-slate-200 text-slate-500 flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-base cursor-not-allowed"
+                >
+                  <span>Out of Stock</span>
+                </button>
+              ) : (
+                <button 
+                  type="button"
+                  onClick={handleBuyNow}
+                  className="flex-1 bg-gradient-to-r from-orange-500 via-orange-600 to-emerald-600 hover:from-orange-600 hover:to-emerald-500 text-white flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-base transition-all shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:-translate-y-0.5 cursor-pointer"
+                >
+                  <span>Buy Now — ₹{product.price * qty}</span>
+                  <ArrowRight size={18} />
+                </button>
+              )}
             </div>
 
             {/* Trust Badges */}

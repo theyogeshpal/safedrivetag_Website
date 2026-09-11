@@ -33,7 +33,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
     if (!dashboardData || !dashboardData.success) return 0;
     const rawList = Array.isArray(dashboardData.qrCodes) 
       ? dashboardData.qrCodes 
-      : (Array.isArray(dashboardData.kits) ? dashboardData.kits : []);
+      : (Array.isArray(dashboardData.kits) ? dashboardData.kits : (Array.isArray(dashboardData.qrs) ? dashboardData.qrs : []));
     const activeKits = rawList.filter(q => q.status === 'ACTIVE' || q.isRegistered || q.status === 'active');
     return Math.max(0, dashboardData.stats?.activeQRs || 0, activeKits.length);
   }, [dashboardData]);
@@ -122,7 +122,7 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
   const menuItems = [
     { id: 'orders', label: 'My Orders', path: '/dashboard/orders', icon: <Package size={16} /> },
     { id: 'transactions', label: 'Transactions', path: '/dashboard/transactions', icon: <Receipt size={16} /> },
-    { id: 'tags', label: 'My safedrivetags', path: '/dashboard/tags', icon: <QrCode size={16} />, requiresTag: true },
+    { id: 'tags', label: 'My safedrivetags', path: '/dashboard/tags', icon: <QrCode size={16} /> },
     { id: 'logs', label: 'Activity Logs', path: '/dashboard/logs', icon: <Activity size={16} />, requiresTag: true },
     { id: 'profile', label: 'Profile Info', path: '/dashboard/profile', icon: <User size={16} /> },
     { id: 'addresses', label: 'Addresses', path: '/dashboard/addresses', icon: <MapPin size={16} /> },
@@ -286,31 +286,14 @@ export default function DashboardLayout({ children, currentTab, pageTitle, saveS
                   <span>SMART TAGS & SAFETY</span>
                 </div>
                 <div className="space-y-1 pl-7">
-                  {activeTagsCount === 0 ? (
-                    <button
-                      type="button"
-                      onClick={() => showNoActiveTagAlert(navigate)}
-                      className="w-full flex items-center justify-between py-1.5 text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed group text-left"
-                      title="No Active QR Tag - Activation Required"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <span>My safedrivetags</span>
-                        <Lock size={12} className="text-gray-400" />
-                      </span>
-                      <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">
-                        Disabled
-                      </span>
-                    </button>
-                  ) : (
-                    <Link
-                      to="/dashboard/tags"
-                      className={`block py-1.5 text-xs font-semibold transition-colors ${
-                        currentTab === 'tags' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
-                      }`}
-                    >
-                      My safedrivetags
-                    </Link>
-                  )}
+                  <Link
+                    to="/dashboard/tags"
+                    className={`block py-1.5 text-xs font-semibold transition-colors ${
+                      currentTab === 'tags' ? 'text-[#2874f0] font-bold' : 'text-[#212121] hover:text-[#2874f0]'
+                    }`}
+                  >
+                    My safedrivetags
+                  </Link>
 
                   
                 </div>

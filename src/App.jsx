@@ -23,6 +23,7 @@ const QRScan = lazy(() => import('./pages/QRScan'));
 const RegisterTag = lazy(() => import('./pages/RegisterTag'));
 const TagDetails = lazy(() => import('./pages/TagDetails'));
 const Login = lazy(() => import('./pages/Login'));
+const BecomeReseller = lazy(() => import('./pages/BecomeReseller'));
 const Dashboard = lazy(() => import('./pages/dashboard/DashboardTags'));
 const DashboardIndex = lazy(() => import('./pages/dashboard/DashboardIndex'));
 const DashboardTags = lazy(() => import('./pages/dashboard/DashboardTags'));
@@ -150,6 +151,7 @@ function App() {
                   <Route path="/refund" element={<Legal />} />
                   <Route path="/shipping" element={<Legal />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/become-reseller" element={<BecomeReseller />} />
                   
                   {/* Modular User Dashboard Panel Routes */}
                   <Route path="/dashboard" element={<ProtectedRoute><DashboardIndex /></ProtectedRoute>} />

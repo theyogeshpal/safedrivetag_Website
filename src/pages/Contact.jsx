@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, ChevronRight, ChevronDown, Clock, ShieldCheck, Headphones, Send, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
@@ -7,14 +7,25 @@ import { showToast } from '../utils/swal';
 
 export default function Contact() {
   const [openFaq, setOpenFaq] = useState(null);
+  const [faqs, setFaqs] = useState([]);
+  const [faqsLoading, setFaqsLoading] = useState(true);
 
-  const faqs = [
-    { q: "What is safedrivetag?", a: "safedrivetag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
-    { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
-    { q: "Can I use safedrivetag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
-    { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
-    { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weather proof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
-  ];
+  useEffect(() => {
+    fetchFaqs();
+  }, []);
+
+  const fetchFaqs = async () => {
+    try {
+      const res = await api.getPublicFaqs();
+      if (res.success && res.faqs) {
+        setFaqs(res.faqs);
+      }
+    } catch (err) {
+      console.error('Failed to load FAQs:', err);
+    } finally {
+      setFaqsLoading(false);
+    }
+  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -190,25 +201,33 @@ export default function Contact() {
         <div className="max-w-4xl mx-auto bg-white border border-black/10 rounded-3xl p-8 md:p-12 shadow-sm">
           <h2 className="text-2xl font-black text-black mb-8 text-center">FAQ</h2>
           <div className="space-y-3">
-            {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="rounded-xl bg-white border border-black/5 transition-colors overflow-hidden"
-              >
-                <button
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="flex items-center w-full justify-between p-5 hover:bg-black/5 group transition-colors text-left"
-                >
-                  <span className="font-bold text-black/80 group-hover:text-black">{faq.q}</span>
-                  <ChevronDown className={`w-5 h-5 text-black/40 group-hover:text-orange-500 transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`} />
-                </button>
-                <div
-                  className={`px-5 text-black/60 font-medium overflow-hidden transition-all duration-300 ${openFaq === index ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}
-                >
-                  {faq.a}
-                </div>
+            {faqsLoading ? (
+              <div className="flex justify-center items-center py-10">
+                <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
               </div>
-            ))}
+            ) : faqs.length === 0 ? (
+              <div className="text-center py-10 text-black/40">No FAQs available.</div>
+            ) : (
+              faqs.map((faq, index) => (
+                <div
+                  key={faq._id || index}
+                  className="rounded-xl bg-white border border-black/5 transition-colors overflow-hidden"
+                >
+                  <button
+                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                    className="flex items-center w-full justify-between p-5 hover:bg-black/5 group transition-colors text-left"
+                  >
+                    <span className="font-bold text-black/80 group-hover:text-black">{faq.question}</span>
+                    <ChevronDown className={`w-5 h-5 text-black/40 group-hover:text-orange-500 transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`} />
+                  </button>
+                  <div
+                    className={`px-5 text-black/60 font-medium overflow-hidden transition-all duration-300 ${openFaq === index ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}
+                  >
+                    {faq.answer}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

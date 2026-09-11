@@ -81,7 +81,8 @@ export const downloadInvoicePdf = (order, currentUser) => {
                     order.transactionId || 
                     `pay_${orderId.toString().replace(/\D/g, '').slice(-8) || 'online'}`;
   
-  const paymentStatus = order.paymentStatus || 'PAID (Razorpay)';
+  const paymentStatus = order.paymentStatus || order.status || 'PAID (Razorpay)';
+  const isPending = paymentStatus.toString().toUpperCase() === 'PENDING';
 
   const logoUrl = window.location.origin + '/logos/primary.jpeg';
 
@@ -306,7 +307,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
                 <strong>Invoice Date:</strong> ${invoiceDate}<br />
                 <strong>Order ID:</strong> <span style="font-family: monospace; font-weight: bold;">${orderId}</span><br />
                 <strong>Payment ID:</strong> <span style="font-family: monospace; font-size: 10.5px; color: #4b5563;">${paymentId}</span><br />
-                <strong>Payment Status:</strong> <span style="color: #16a34a; font-weight: 800;">${paymentStatus}</span>
+                <strong>Payment Status:</strong> <span style="color: ${isPending ? '#f59e0b' : '#16a34a'}; font-weight: 800;">${paymentStatus}</span>
               </div>
             </div>
           </div>
@@ -373,7 +374,7 @@ export const downloadInvoicePdf = (order, currentUser) => {
               3. For support or warranty claims: https://safedrivetag.com/contact
             </div>
             <div style="text-align: center;">
-              <div class="stamp-badge">✓ PAID & VERIFIED<br /><span style="font-size: 8px;">SAFEDRIVE AUTH</span></div>
+              ${!isPending ? `<div class="stamp-badge">✓ PAID & VERIFIED<br /><span style="font-size: 8px;">SAFEDRIVE AUTH</span></div>` : `<div class="stamp-badge" style="color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.05);">⏳ PAYMENT PENDING<br /><span style="font-size: 8px;">AWAITING CONFIRMATION</span></div>`}
               <div style="font-size: 9px; color: #9ca3af; margin-top: 3px;">Billing Authority</div>
             </div>
           </div>

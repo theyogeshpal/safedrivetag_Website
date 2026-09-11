@@ -61,6 +61,7 @@ export default function Checkout() {
 
   const [quantity, setQuantity] = useState(location.state?.quantity || 1);
   const [paymentMode, setPaymentMode] = useState('ONLINE'); // 'ONLINE' or 'COD'
+  const [isCODEnabled, setIsCODEnabled] = useState(true);
   
   const isDigitalProduct = selectedProduct.qrType === 'DIGITAL';
   
@@ -74,9 +75,9 @@ export default function Checkout() {
     phone: currentUser?.phone || '',
     email: currentUser?.email || '',
     address: currentUser?.address || '',
-    city: '',
-    state: 'Uttar Pradesh',
-    pincode: '',
+    city: currentUser?.city || '',
+    state: currentUser?.state || 'Uttar Pradesh',
+    pincode: currentUser?.pincode || '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -116,6 +117,15 @@ export default function Checkout() {
         } catch (e) {
           console.error('Error fetching default checkout product', e);
         }
+      }
+
+      try {
+        const landingRes = await api.getLandingData();
+        if (landingRes.success && landingRes.features) {
+          setIsCODEnabled(landingRes.features.isCODEnabled !== false);
+        }
+      } catch (e) {
+        console.error('Error fetching landing data for COD settings', e);
       }
     }
     syncBackendProducts();
@@ -160,6 +170,12 @@ export default function Checkout() {
 
     setIsSubmitting(true);
     try {
+      if (currentUser) {
+        // Direct payment flow for logged-in users
+        await openRazorpayPayment();
+        return;
+      }
+
       // Send Name, Email, and Mobile to POST /purchase/send-otp
       const otpPayload = {
         name: customerFullName,
@@ -778,26 +794,28 @@ export default function Checkout() {
                     <span className="text-[10px] text-black/50 font-medium">UPI, Cards, NetBanking, Wallets via Razorpay</span>
                   </label>
 
-                  <label 
-                    className={`relative border-2 rounded-2xl p-4 flex flex-col cursor-pointer transition-all ${paymentMode === 'COD' ? 'border-orange-500 bg-orange-50/50' : 'border-black/5 hover:border-black/10 bg-black/[0.02]'}`}
-                  >
-                    <input 
-                      type="radio" 
-                      name="paymentMode" 
-                      value="COD" 
-                      checked={paymentMode === 'COD'} 
-                      onChange={() => setPaymentMode('COD')}
-                      className="sr-only"
-                    />
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Truck size={18} className={paymentMode === 'COD' ? 'text-orange-500' : 'text-black/40'} />
-                        <span className="font-bold text-sm">Cash on Delivery</span>
+                  {isCODEnabled && (
+                    <label 
+                      className={`relative border-2 rounded-2xl p-4 flex flex-col cursor-pointer transition-all ${paymentMode === 'COD' ? 'border-orange-500 bg-orange-50/50' : 'border-black/5 hover:border-black/10 bg-black/[0.02]'}`}
+                    >
+                      <input 
+                        type="radio" 
+                        name="paymentMode" 
+                        value="COD" 
+                        checked={paymentMode === 'COD'} 
+                        onChange={() => setPaymentMode('COD')}
+                        className="sr-only"
+                      />
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Truck size={18} className={paymentMode === 'COD' ? 'text-orange-500' : 'text-black/40'} />
+                          <span className="font-bold text-sm">Cash on Delivery</span>
+                        </div>
+                        {paymentMode === 'COD' && <CheckCircle2 size={18} className="text-orange-500" />}
                       </div>
-                      {paymentMode === 'COD' && <CheckCircle2 size={18} className="text-orange-500" />}
-                    </div>
-                    <span className="text-[10px] text-black/50 font-medium">Extra ₹59 applied (₹50 COD + ₹9 GST)</span>
-                  </label>
+                      <span className="text-[10px] text-black/50 font-medium">Extra ₹59 applied (₹50 COD + ₹9 GST)</span>
+                    </label>
+                  )}
                 </div>
               </div>
 

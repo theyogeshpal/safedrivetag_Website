@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, ShieldCheck, Smartphone, CheckCircle2, Send, Zap, Volume2, BellRing } from 'lucide-react';
+import { Bell, ShieldCheck, Smartphone, CheckCircle2, Send, Zap, Volume2, BellRing, MapPin } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 import { showToast, customSwal, playNotificationBellSound, showEmergencyPushAlert } from '../../utils/swal';
 import { requestFcmToken } from '../../services/firebase';
@@ -7,6 +7,9 @@ import { requestFcmToken } from '../../services/firebase';
 export default function DashboardNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   React.useEffect(() => {
     let lastTopNotificationId = null;
@@ -14,13 +17,19 @@ export default function DashboardNotifications() {
     const fetchNotifications = async (isBackgroundPoll = false) => {
       try {
         const { default: api } = await import('../../services/api');
-        const res = await api.getUserNotifications();
+        const res = await api.getUserNotifications(page, 10);
         
         if (res.success && res.notifications && res.notifications.length > 0) {
+          if (!isBackgroundPoll) {
+            setTotalPages(res.totalPages || 1);
+            setTotalCount(res.totalCount || 0);
+          }
           const newTopId = res.notifications[0].id || res.notifications[0]._id;
           
-          // If this is a background poll, just sync the list silently
-          // Global push alert is now handled globally in AuthContext.jsx
+          if (isBackgroundPoll && lastTopNotificationId && newTopId !== lastTopNotificationId) {
+             const latest = res.notifications[0];
+             showEmergencyPushAlert(latest.title || '🚨 Alert', latest.message || 'New notification received.', latest.metadata || {});
+          }
           
           lastTopNotificationId = newTopId;
           setNotifications(res.notifications);
@@ -43,15 +52,8 @@ export default function DashboardNotifications() {
     };
 
     // Initial fetch
-    fetchNotifications(false);
-
-    // Live polling every 10 seconds for real-time ring
-    const pollInterval = setInterval(() => {
-      fetchNotifications(true);
-    }, 10000);
-
-    return () => clearInterval(pollInterval);
-  }, []);
+    fetchNotifications();
+  }, [page]);
 
   const [isTesting, setIsTesting] = useState(false);
 
@@ -80,7 +82,10 @@ export default function DashboardNotifications() {
             let shown = false;
             if ('serviceWorker' in navigator) {
               try {
-                const reg = await navigator.serviceWorker.ready;
+                const reg = await Promise.race([
+                  navigator.serviceWorker.ready,
+                  new Promise((_, reject) => setTimeout(() => reject(new Error('SW ready timeout')), 2000))
+                ]);
                 await reg.showNotification('🚨 SafeDrive Vehicle Alert (TEST)', {
                   body: 'Firebase Cloud Messaging is active! You will receive alerts here.',
                   icon: '/logos/primary.jpeg',
@@ -89,8 +94,7 @@ export default function DashboardNotifications() {
                 });
                 shown = true;
               } catch (swErr) {
-                alert('Service Worker Error: ' + swErr.message);
-                console.log('SW Notification failed, falling back', swErr);
+                console.log('SW Notification failed, falling back to Native', swErr);
               }
             }
             if (!shown) {
@@ -197,13 +201,86 @@ export default function DashboardNotifications() {
                     })()}
                   </span>
                 </div>
-                <p className="text-gray-600 pl-4 leading-relaxed font-medium">
+                <div className="text-gray-600 pl-4 leading-relaxed font-medium">
                   {n.message || n.body}
-                </p>
+                  {n.metadata?.tagName && (
+                    <div className="mt-2 bg-gray-50 border border-gray-100 rounded-lg p-2.5 text-[11px] grid grid-cols-2 gap-2 text-gray-700">
+                      <div><span className="font-bold text-gray-900">Type:</span> {n.metadata.qrType || 'Tag'}</div>
+                      <div><span className="font-bold text-gray-900">Asset:</span> {n.metadata.tagName}</div>
+                      {n.metadata.mapsLink && (
+                        <div className="col-span-2 pt-1 border-t border-gray-200/60 mt-1">
+                          <a 
+                            href={n.metadata.mapsLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 hover:bg-red-100 border border-red-100 font-bold px-3 py-1.5 rounded-md transition-colors w-max shadow-xs"
+                          >
+                            <MapPin size={12} />
+                            Find Location
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             ))
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between bg-white px-4 py-3 border border-gray-200 rounded-lg mt-4 sm:px-6">
+            <div className="flex flex-1 justify-between sm:hidden">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing page <span className="font-medium">{page}</span> of <span className="font-medium">{totalPages}</span>
+                  {totalCount > 0 && <span> ({totalCount} total notifications)</span>}
+                </p>
+              </div>
+              <div>
+                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                  >
+                    <span className="sr-only">Previous</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                  >
+                    <span className="sr-only">Next</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </DashboardLayout>

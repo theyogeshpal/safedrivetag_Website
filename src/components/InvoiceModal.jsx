@@ -38,6 +38,8 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
 
   const isDigital = order.qrType === 'DIGITAL' || (order.productName || order.title || '').toLowerCase().includes('digital');
   
+  const paymentStatus = order.paymentStatus || order.status || 'PAID (Razorpay)';
+  const isPending = paymentStatus.toString().toUpperCase() === 'PENDING';
   let rawTitle = String(order.productName || order.title || order.item || 'SafeDrive Smart Safety Tag');
   rawTitle = rawTitle.replace(/luggege/i, 'Luggage');
   const itemTitle = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1);
@@ -160,7 +162,7 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
                 <p className="text-gray-500 text-[11px] font-medium">Invoice No: <strong className="text-gray-800">{invoiceNo}</strong></p>
                 <p className="text-gray-500 text-[11px] mt-0.5">Date: {invoiceDate}</p>
                 <p className="text-gray-500 text-[11px]">Order: <strong className="text-gray-800 font-mono">{order.id}</strong></p>
-                <p className="text-gray-500 text-[11px]">Payment: <strong className="text-green-600 font-bold">PAID (Razorpay)</strong></p>
+                <p className="text-gray-500 text-[11px]">Payment: <strong className={isPending ? "text-amber-500 font-bold" : "text-green-600 font-bold"}>{paymentStatus}</strong></p>
               </div>
             </div>
 
@@ -236,9 +238,15 @@ export default function InvoiceModal({ order, currentUser, onClose }) {
               </div>
 
               <div className="text-center pl-4">
-                <div className="border-2 border-green-600 text-green-700 font-black text-[9px] uppercase px-3 py-1.5 rounded tracking-wider mb-1 rotate-[-2deg]">
-                  ✓ PAID & VERIFIED
-                </div>
+                {!isPending ? (
+                  <div className="border-2 border-green-600 text-green-700 font-black text-[9px] uppercase px-3 py-1.5 rounded tracking-wider mb-1 rotate-[-2deg] bg-green-50/50">
+                    ✓ PAID & VERIFIED
+                  </div>
+                ) : (
+                  <div className="border-2 border-amber-500 text-amber-600 font-black text-[9px] uppercase px-3 py-1.5 rounded tracking-wider mb-1 rotate-[-2deg] bg-amber-50/50">
+                    ⏳ PAYMENT PENDING
+                  </div>
+                )}
                 <p className="text-[9px] text-gray-400 font-bold">SafeDrive Billing Dept</p>
               </div>
             </div>

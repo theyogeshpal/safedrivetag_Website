@@ -2,7 +2,7 @@
 importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
 
-const CACHE_NAME = 'safedrivetag-v1';
+const CACHE_NAME = 'safedrivetag-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -57,6 +57,41 @@ messaging.onBackgroundMessage((payload) => {
 
   return self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+// Handle Notification Click (For PWA and Desktop)
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  
+  const payload = {
+    notification: {
+      title: event.notification.title,
+      body: event.notification.body
+    },
+    data: event.notification.data || {}
+  };
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // If a window is already open, focus it and trigger popup
+      for (const client of clientList) {
+        if (client.url.includes('/') && 'focus' in client) {
+          client.postMessage({ type: 'PLAY_RINGTONE', payload });
+          return client.focus();
+        }
+      }
+      // If no window is open, open a new one to the dashboard
+      if (self.clients.openWindow) {
+        return self.clients.openWindow('/dashboard').then(client => {
+          // Give the client a little time to load before sending the message
+          setTimeout(() => {
+            if (client) client.postMessage({ type: 'PLAY_RINGTONE', payload });
+          }, 2000);
+        });
+      }
+    })
+  );
+});
+
 
 // Install Event
 self.addEventListener('install', (event) => {

@@ -49,27 +49,28 @@ export default function TagDetails() {
   const [copiedToken, setCopiedToken] = useState(null);
 
   // Modals
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isBoosterModalOpen, setIsBoosterModalOpen] = useState(false);
   const [boosterPlans, setBoosterPlans] = useState([]);
   const [loadingBooster, setLoadingBooster] = useState(false);
-  const [editFormData, setEditFormData] = useState({
-    name: '',
-    phone: '',
-    whatsappNumber: '',
-    vehicleBrand: '',
-    vehicleName: '',
-    vehicleNumber: '',
-    vehicleType: 'Car',
-    address: '',
-    emergencyContact1Name: '',
-    emergencyContact1Number: '',
-    emergencyContact2Name: '',
-    emergencyContact2Number: '',
-  });
 
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [updateMsg, setUpdateMsg] = useState('');
+  const openBoosterModal = async () => {
+    setIsBoosterModalOpen(true);
+    setLoadingBooster(true);
+    try {
+      // Simulate API fetch since there is no actual getBoosterPlans endpoint in api.js
+      setTimeout(() => {
+        setBoosterPlans([
+          { id: 1, name: 'Basic Booster', price: 49, calls: 50, sms: 100 },
+          { id: 2, name: 'Pro Booster', price: 99, calls: 150, sms: 300 },
+          { id: 3, name: 'Unlimited Booster', price: 199, calls: 500, sms: 1000 },
+        ]);
+        setLoadingBooster(false);
+      }, 800);
+    } catch (err) {
+      console.error(err);
+      setLoadingBooster(false);
+    }
+  };
 
   // Fetch full details for this tag/kit
   const loadTagData = useCallback(async () => {
@@ -115,35 +116,15 @@ export default function TagDetails() {
 
       // 3. Process Dashboard info
       let dashKit = null;
-      if (dashResSettled.status === 'fulfilled' && dashResSettled.value?.success && dashResSettled.value.kits) {
-        dashKit = dashResSettled.value.kits.find(
-          (k) => k.copies?.some((c) => c.copyCode === id || c.publicToken === id) || k.productId === id
+      if (dashResSettled.status === 'fulfilled' && dashResSettled.value?.success) {
+        const rawList = Array.isArray(dashResSettled.value.qrCodes) 
+          ? dashResSettled.value.qrCodes 
+          : (Array.isArray(dashResSettled.value.kits) ? dashResSettled.value.kits : (Array.isArray(dashResSettled.value.qrs) ? dashResSettled.value.qrs : []));
+          
+        dashKit = rawList.find(
+          (k) => k.copies?.some((c) => c.copyCode === id || c.publicToken === id) || k.productId === id || k.publicToken === id || k._id === id || k.copyCode === id
         );
       }
-
-  // Wait for initial render to fetch
-  useEffect(() => {
-    // We already fetch tagData in the main useEffect
-  }, []);
-
-  const openBoosterModal = async () => {
-    setIsBoosterModalOpen(true);
-    setLoadingBooster(true);
-    try {
-      // Simulate API fetch since there is no actual getBoosterPlans endpoint in api.js
-      setTimeout(() => {
-        setBoosterPlans([
-          { id: 1, name: 'Basic Booster', price: 49, calls: 50, sms: 100 },
-          { id: 2, name: 'Pro Booster', price: 99, calls: 150, sms: 300 },
-          { id: 3, name: 'Unlimited Booster', price: 199, calls: 500, sms: 1000 },
-        ]);
-        setLoadingBooster(false);
-      }, 800);
-    } catch (err) {
-      console.error(err);
-      setLoadingBooster(false);
-    }
-  };
 
       // Build unified Tag Details Model
       const userRegisteredStr = localStorage.getItem('safedrive_user_registered_tags');
@@ -405,53 +386,6 @@ export default function TagDetails() {
     setTimeout(() => setCopiedToken(null), 2000);
   };
 
-  const handleSaveUpdate = async (e) => {
-    e.preventDefault();
-    setIsUpdating(true);
-    setUpdateMsg('');
-
-    try {
-      const updatedEmergencyContacts = [
-        {
-          name: editFormData.emergencyContact1Name.trim() || 'Primary Contact',
-          number: editFormData.emergencyContact1Number.replace(/\D/g, ''),
-        },
-        {
-          name: editFormData.emergencyContact2Name.trim() || 'Secondary Contact',
-          number: editFormData.emergencyContact2Number.replace(/\D/g, ''),
-        },
-      ];
-
-      const payload = {
-        name: editFormData.name || '',
-        email: editFormData.email || '',
-        whatsappNumber: (editFormData.whatsappNumber || '').replace(/\D/g, ''),
-        address: editFormData.address || '',
-        city: editFormData.city || '',
-        state: editFormData.state || '',
-        pincode: editFormData.pincode || '',
-        emergencyContacts: updatedEmergencyContacts
-      };
-
-      // Call backend API PUT /user/qr/:id/details
-      try {
-        await api.updateUserQrDetails(id, payload);
-      } catch (apiErr) {
-        console.warn('Backend details update warning:', apiErr);
-      }
-
-      setUpdateMsg('Details updated successfully!');
-      setTimeout(() => {
-        setIsEditModalOpen(false);
-        setUpdateMsg('');
-        loadTagData();
-      }, 1000);
-    } catch (err) {
-      setUpdateMsg('Update failed. Please try again.');
-    } finally {
-      setIsUpdating(false);
-    }
-  };
 
   if (loading) {
     return <PageLoader text="Loading SafeDrive Smart Kit Details..." />;
@@ -461,9 +395,9 @@ export default function TagDetails() {
     return (
       <div className="min-h-screen bg-[#f4f7fb] pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 text-center">
         <h2 className="text-xl font-bold text-gray-800">Tag Details Not Found</h2>
-        <Link to="/dashboard" className="mt-4 inline-block bg-[#2874f0] text-white px-5 py-2 rounded text-xs font-bold">
-          &larr; Return to Dashboard
-        </Link>
+        <button onClick={() => navigate(-1)} className="mt-4 inline-block bg-[#2874f0] text-white px-5 py-2 rounded text-xs font-bold cursor-pointer">
+          &larr; Go Back
+        </button>
       </div>
     );
   }
@@ -477,19 +411,13 @@ export default function TagDetails() {
         {/* TOP NAVIGATION BAR */}
         {/* ======================================================== */}
         <div className="flex items-center justify-between">
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center gap-1.5 bg-white hover:bg-gray-50 border border-gray-200 px-4 py-2 rounded-lg text-xs font-bold text-gray-700 shadow-2xs transition-all"
-          >
-            <ArrowLeft size={14} /> Back to Dashboard
-          </Link>
-
           <button
-            onClick={() => setIsEditModalOpen(true)}
-            className="inline-flex items-center gap-1.5 bg-[#2874f0] hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all cursor-pointer"
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1.5 bg-white hover:bg-gray-50 border border-gray-200 px-4 py-2 rounded-lg text-xs font-bold text-gray-700 shadow-2xs transition-all cursor-pointer"
           >
-            <Edit3 size={14} /> Update Details
+            <ArrowLeft size={14} /> Go Back
           </button>
+
         </div>
 
         {/* ======================================================== */}
@@ -976,217 +904,6 @@ export default function TagDetails() {
         </div>
 
       </div>
-
-      {/* ======================================================== */}
-      {/* UPDATE DETAILS MODAL */}
-      {/* ======================================================== */}
-      {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 overflow-hidden">
-            
-            <div className="bg-[#2874f0] text-white px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Edit3 size={18} />
-                <h3 className="text-base font-bold">Update Kit & Asset Details ({tagData.kitId})</h3>
-              </div>
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="text-white/80 hover:text-white cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveUpdate} className="p-6 space-y-4 text-xs max-h-[80vh] overflow-y-auto">
-              
-              {updateMsg && (
-                <div className="bg-green-50 text-green-700 border border-green-200 p-2.5 rounded-lg text-center font-bold">
-                  {updateMsg}
-                </div>
-              )}
-
-              <div className="space-y-3">
-                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-1">1. Asset / Item Information</h4>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Brand / Make</label>
-                    <input
-                      type="text"
-                      required
-                      value={editFormData.vehicleBrand}
-                      onChange={(e) => setEditFormData({ ...editFormData, vehicleBrand: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-bold"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Model / Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={editFormData.vehicleName}
-                      onChange={(e) => setEditFormData({ ...editFormData, vehicleName: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-bold"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-gray-600 font-bold mb-1 flex items-center justify-between">
-                    <span>Vehicle Plate Number</span>
-                    <span className="text-[10px] text-gray-400 font-normal flex items-center gap-0.5">
-                      <Lock size={10} /> Permanently Locked
-                    </span>
-                  </label>
-                  <div className="w-full bg-gray-100 border border-gray-300 text-gray-700 rounded-lg p-2 font-mono font-black uppercase text-sm select-none cursor-not-allowed flex items-center justify-between">
-                    <span>{editFormData.vehicleNumber || tagData.vehicle.plate || 'LOCKED'}</span>
-                    <Lock size={14} className="text-gray-400" />
-                  </div>
-                  <p className="text-[10px] text-gray-400 mt-1">Vehicle plate number is permanently locked to prevent unauthorized sticker transfers.</p>
-                </div>
-              </div>
-
-              <div className="space-y-3 pt-2">
-                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-1">2. Emergency SOS Contacts</h4>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Contact 1 Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={editFormData.emergencyContact1Name}
-                      onChange={(e) => setEditFormData({ ...editFormData, emergencyContact1Name: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-bold"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Contact 1 Phone</label>
-                    <input
-                      type="tel"
-                      maxLength={10}
-                      required
-                      value={editFormData.emergencyContact1Number}
-                      onChange={(e) => setEditFormData({ ...editFormData, emergencyContact1Number: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Contact 2 Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={editFormData.emergencyContact2Name}
-                      onChange={(e) => setEditFormData({ ...editFormData, emergencyContact2Name: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-bold"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Contact 2 Phone</label>
-                    <input
-                      type="tel"
-                      maxLength={10}
-                      required
-                      value={editFormData.emergencyContact2Number}
-                      onChange={(e) => setEditFormData({ ...editFormData, emergencyContact2Number: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-mono"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3 pt-2">
-                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-1">3. Owner Profile & Address</h4>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Full Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={editFormData.name || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-bold"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Email Address</label>
-                    <input
-                      type="email"
-                      value={editFormData.email || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-mono"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-gray-600 font-bold mb-1">WhatsApp Alerts</label>
-                    <input
-                      type="tel"
-                      maxLength={10}
-                      required
-                      value={editFormData.whatsappNumber || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, whatsappNumber: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-mono"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-gray-600 font-bold mb-1">Address / Street</label>
-                    <textarea
-                      rows="2"
-                      value={editFormData.address || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 text-xs font-medium resize-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">City</label>
-                    <input
-                      type="text"
-                      value={editFormData.city || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-medium"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">State</label>
-                    <input
-                      type="text"
-                      value={editFormData.state || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, state: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-medium"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 font-bold mb-1">Pincode</label>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={editFormData.pincode || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, pincode: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg p-2 font-mono"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2.5 rounded-lg cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isUpdating}
-                  className="flex-1 bg-[#2874f0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg shadow-sm cursor-pointer"
-                >
-                  {isUpdating ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-
-            </form>
-
-          </div>
-        </div>
-      )}
 
       {isBoosterModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-up">
