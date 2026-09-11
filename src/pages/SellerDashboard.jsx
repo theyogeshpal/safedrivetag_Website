@@ -36,7 +36,12 @@ export default function SellerDashboard() {
     customerPhone: '',
     vehicleType: 'Car',
     vehicleNumber: '',
-    emergencyContact1: ''
+    vehicleBrand: '',
+    vehicleName: '',
+    emergencyContact1Name: '',
+    emergencyContact1Number: '',
+    emergencyContact2Name: '',
+    emergencyContact2Number: ''
   });
   const [activationStatus, setActivationStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -130,7 +135,7 @@ export default function SellerDashboard() {
     e.preventDefault();
     setActivationStatus({ type: '', message: '' });
     
-    if (!formData.qrId || !formData.customerName || !formData.customerPhone || !formData.vehicleNumber || !formData.emergencyContact1) {
+    if (!formData.qrId || !formData.customerName || !formData.customerPhone || !formData.emergencyContact1Number) {
       setActivationStatus({ type: 'error', message: 'Please fill all required fields.' });
       return;
     }
@@ -157,7 +162,12 @@ export default function SellerDashboard() {
           customerPhone: '',
           vehicleType: 'Car',
           vehicleNumber: '',
-          emergencyContact1: ''
+          vehicleBrand: '',
+          vehicleName: '',
+          emergencyContact1Name: '',
+          emergencyContact1Number: '',
+          emergencyContact2Name: '',
+          emergencyContact2Number: ''
         });
         fetchSellerData(sellerId); // Refresh stats
       } else {
@@ -409,7 +419,7 @@ export default function SellerDashboard() {
 
               <div className="grid md:grid-cols-2 gap-5">
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase ml-1">Vehicle Type</label>
+                  <label className="text-xs font-bold text-gray-700 uppercase ml-1">Vehicle/Item Type *</label>
                   <select
                     value={formData.vehicleType}
                     onChange={(e) => setFormData({...formData, vehicleType: e.target.value})}
@@ -417,34 +427,118 @@ export default function SellerDashboard() {
                   >
                     <option value="Car">Car</option>
                     <option value="Bike">Bike / Scooter</option>
-                    <option value="Commercial">Commercial Vehicle</option>
-                    <option value="Other">Other (Luggage/Bag)</option>
+                    <option value="Truck">Truck</option>
+                    <option value="Commercial / Truck">Commercial / Truck</option>
+                    <option value="General">General (Non-Vehicle)</option>
+                    <option value="Luggage">Luggage / Bag</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase ml-1">Vehicle Number *</label>
-                  <input 
-                    type="text" 
-                    required
-                    value={formData.vehicleNumber}
-                    onChange={(e) => setFormData({...formData, vehicleNumber: e.target.value.toUpperCase()})}
-                    className="w-full mt-1.5 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 focus:bg-white outline-none transition-all font-semibold uppercase"
-                    placeholder="DL 01 AB 1234"
-                  />
-                </div>
+                {['Car', 'Bike', 'Truck', 'Commercial / Truck'].includes(formData.vehicleType) ? (
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase ml-1">Vehicle Registration Number *</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={formData.vehicleNumber}
+                      onChange={(e) => setFormData({...formData, vehicleNumber: e.target.value.toUpperCase()})}
+                      className="w-full mt-1.5 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 focus:bg-white outline-none transition-all font-semibold uppercase"
+                      placeholder="DL 01 AB 1234"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase ml-1">Item Title *</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={formData.vehicleName}
+                      onChange={(e) => setFormData({...formData, vehicleName: e.target.value})}
+                      className="w-full mt-1.5 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 focus:bg-white outline-none transition-all font-semibold"
+                      placeholder="e.g. VIP Suitcase / School Bag"
+                    />
+                  </div>
+                )}
               </div>
 
-              <div>
-                <label className="text-xs font-bold text-gray-700 uppercase ml-1">Emergency Contact Number *</label>
-                <input 
-                  type="tel" 
-                  maxLength={10}
-                  required
-                  value={formData.emergencyContact1}
-                  onChange={(e) => setFormData({...formData, emergencyContact1: e.target.value.replace(/\D/g, '')})}
-                  className="w-full mt-1.5 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 focus:bg-white outline-none transition-all font-semibold"
-                  placeholder="Family member's mobile number"
-                />
+              {['Car', 'Bike', 'Truck', 'Commercial / Truck'].includes(formData.vehicleType) && (
+                <div className="grid md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase ml-1">Vehicle Brand / Make *</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={formData.vehicleBrand}
+                      onChange={(e) => setFormData({...formData, vehicleBrand: e.target.value})}
+                      className="w-full mt-1.5 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 focus:bg-white outline-none transition-all font-semibold"
+                      placeholder="e.g. Hyundai, Tata, Honda"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase ml-1">Vehicle Model / Name *</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={formData.vehicleName}
+                      onChange={(e) => setFormData({...formData, vehicleName: e.target.value})}
+                      className="w-full mt-1.5 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 focus:bg-white outline-none transition-all font-semibold"
+                      placeholder="e.g. Creta, Swift, Activa"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 space-y-4">
+                <h4 className="text-sm font-black text-gray-800 border-b border-gray-200 pb-2">Emergency Contacts</h4>
+                
+                <div className="grid md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase ml-1">Contact 1 Name</label>
+                    <input 
+                      type="text" 
+                      value={formData.emergencyContact1Name}
+                      onChange={(e) => setFormData({...formData, emergencyContact1Name: e.target.value})}
+                      className="w-full mt-1.5 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 outline-none transition-all font-semibold"
+                      placeholder="Primary Contact (Optional)"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase ml-1">Contact 1 Mobile *</label>
+                    <input 
+                      type="tel" 
+                      maxLength={10}
+                      required
+                      value={formData.emergencyContact1Number}
+                      onChange={(e) => setFormData({...formData, emergencyContact1Number: e.target.value.replace(/\D/g, '')})}
+                      className="w-full mt-1.5 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 outline-none transition-all font-semibold"
+                      placeholder="10-digit number"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase ml-1">Contact 2 Name</label>
+                    <input 
+                      type="text" 
+                      value={formData.emergencyContact2Name}
+                      onChange={(e) => setFormData({...formData, emergencyContact2Name: e.target.value})}
+                      className="w-full mt-1.5 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 outline-none transition-all font-semibold"
+                      placeholder="Secondary Contact (Optional)"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase ml-1">Contact 2 Mobile</label>
+                    <input 
+                      type="tel" 
+                      maxLength={10}
+                      value={formData.emergencyContact2Number}
+                      onChange={(e) => setFormData({...formData, emergencyContact2Number: e.target.value.replace(/\D/g, '')})}
+                      className="w-full mt-1.5 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-orange-500 outline-none transition-all font-semibold"
+                      placeholder="Optional second number"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="pt-4">
