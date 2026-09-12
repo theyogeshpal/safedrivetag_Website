@@ -4,11 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
 import { BsQuestion } from 'react-icons/bs';
-
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 const liveStats = [
   { 
     tag: "TRUSTED USERS", 
-    value: "9.5L+ Across India", 
+    value: "75K+ Across India", 
     desc: "Protecting vehicles and luggage with smart QR tags", 
     icon: <Shield size={18} className="text-emerald-500" />,
     badgeBg: "bg-gradient-to-r from-emerald-600 to-teal-600"
@@ -22,7 +25,7 @@ const liveStats = [
   },
   { 
     tag: "TOTAL SCANS", 
-    value: "5000+ All Time", 
+    value: "2.5L+ All Time", 
     desc: "Masked calls & emergency contacts bridged successfully", 
     icon: <QrCode size={18} className="text-orange-500" />,
     badgeBg: "bg-gradient-to-r from-orange-600 to-amber-600"
@@ -51,6 +54,7 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
   const [activeStep, setActiveStep] = useState(1);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Auto-cycle live news ticker
   useEffect(() => {
@@ -79,7 +83,7 @@ export default function Home() {
   }, [navigate]);
 
   return (
-    <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
+    <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500 selection:text-white">
       
       {/* --- HERO SECTION --- */}
       <section className="relative flex items-center pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden bg-white w-full">
@@ -273,7 +277,7 @@ export default function Home() {
               </div>
 
               {/* Center Car Graphic with Interactive Tag Pointer */}
-              <div className="relative bg-gray-50/70 rounded-2xl p-4 pt-6 flex flex-col items-center justify-center overflow-hidden border border-gray-100">
+              <div className="relative bg-gray-50/70 rounded-2xl flex flex-col items-center justify-center overflow-hidden border border-gray-100">
                 {/* Floating QR Tag pointer badge */}
                 <div className="absolute top-3 right-6 flex items-center gap-1.5 z-20">
                   <div className="w-12 h-14 bg-white border border-gray-200 rounded-xl p-1 shadow-md flex flex-col items-center justify-center text-center">
@@ -284,14 +288,14 @@ export default function Home() {
                 </div>
 
                 <img 
-                  src="/hero-car.png" 
+                  src="/images/promotion1.jpeg" 
                   alt="safedrivetag on Car" 
                   decoding="async"
-                  className="w-full max-w-[340px] object-contain drop-shadow-xl" 
+                  className="w-full  object-contain drop-shadow-xl" 
                 />
 
                 {/* Dark Live QR Shield Pill with Emerald Green live dot */}
-                <div className="w-full max-w-[360px] bg-[#0c1427] text-white rounded-2xl p-3 flex items-center gap-3.5 border border-white/10 shadow-xl mt-2">
+                {/* <div className="w-full max-w-[360px] bg-[#0c1427] text-white rounded-2xl p-3 flex items-center gap-3.5 border border-white/10 shadow-xl mt-2">
                   <div className="w-10 h-10 bg-white rounded-xl p-1.5 shrink-0 flex items-center justify-center text-gray-950 shadow-xs">
                     <QrCode size={28} />
                   </div>
@@ -302,7 +306,7 @@ export default function Home() {
                     </div>
                     <div className="text-xs font-bold text-gray-100">Scan to Call Owner Privately</div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Bottom Cloud Bridge Status Card */}
@@ -371,8 +375,8 @@ export default function Home() {
               {/* Stat Boxes */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {[
-                  { val: "9.5L+", lbl: "Vehicles Protected", color: "text-orange-500" },
-                  { val: "5000+", lbl: "Scans Completed", color: "text-emerald-600" },
+                  { val: "75K+", lbl: "Vehicles Protected", color: "text-orange-500" },
+                  { val: "2.5L+", lbl: "Scans Completed", color: "text-emerald-600" },
                   { val: "4.9★", lbl: "User Rating", color: "text-amber-500" },
                   { val: "100%", lbl: "Privacy Guaranteed", color: "text-emerald-600" }
                 ].map((stat, i) => (
@@ -458,6 +462,44 @@ export default function Home() {
               
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* --- IMAGE SLIDER SECTION --- */}
+      <section className="py-12 bg-white w-full overflow-hidden border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            spaceBetween={20}
+            slidesPerView={1}
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+            loop={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            pagination={{ clickable: true }}
+            className="w-full pb-10"
+          >
+            {[1, 2, 3, 4].map((num) => (
+              <SwiperSlide key={num}>
+                <div 
+                  className="rounded-2xl overflow-hidden shadow-lg border border-gray-100 aspect-video relative group cursor-pointer"
+                  onClick={() => setSelectedImage(`/sliders/slide${num}.jpeg`)}
+                >
+                  <img
+                    src={`/sliders/slide${num}.jpeg`}
+                    alt={`Slide ${num}`}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </section>
 
@@ -741,6 +783,27 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {/* --- IMAGE MODAL --- */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm animate-fade-in"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 sm:top-8 sm:right-8 text-white bg-white/10 hover:bg-white/25 rounded-full p-2 transition-colors cursor-pointer"
+            onClick={() => setSelectedImage(null)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+          <img 
+            src={selectedImage} 
+            alt="Full size view" 
+            className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl scale-100 animate-zoom-in"
+            onClick={(e) => e.stopPropagation()} 
+          />
+        </div>
+      )}
       
     </div>
   );

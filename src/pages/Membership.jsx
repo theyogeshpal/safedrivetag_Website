@@ -5,11 +5,6 @@ import { Link } from 'react-router-dom';
 export default function Membership() {
   const benefits = [
     {
-      icon: <Cloud className="text-orange-500 w-8 h-8" />,
-      title: "Lifetime Free Cloud Profile",
-      description: "As a family member, you never pay for your vehicle's digital profile hosting. It stays online, free forever."
-    },
-    {
       icon: <Headphones className="text-emerald-500 w-8 h-8" />,
       title: "Priority WhatsApp Support",
       description: "Skip the queue. Get direct access to our priority WhatsApp support line for any assistance, 24/7."
@@ -23,11 +18,6 @@ export default function Membership() {
       icon: <Zap className="text-amber-500 w-8 h-8" />,
       title: "Early Access to Features",
       description: "Get early beta access to our newest app features and updates before they are rolled out to the public."
-    },
-    {
-      icon: <ShieldCheck className="text-blue-500 w-8 h-8" />,
-      title: "Damage Replacement Guarantee",
-      description: "If your tag gets damaged or fades within the first 6 months, we'll send a replacement absolutely free."
     }
   ];
 

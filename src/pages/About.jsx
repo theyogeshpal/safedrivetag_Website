@@ -6,7 +6,7 @@ import './About.css';
 
 export default function About() {
   return (
-    <div className="about-wrapper bg-white font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900">
+    <div className="about-wrapper bg-white font-sans text-black/90 min-h-screen selection:bg-orange-500 selection:text-white">
 
       {/* --- HERO / HEADER BANNER --- */}
       <PageHero

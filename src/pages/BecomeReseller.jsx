@@ -83,7 +83,7 @@ const BecomeReseller = () => {
               <ShieldCheck className="w-16 h-16 text-[#fb641b] mb-6" />
               <h2 className="text-3xl font-black mb-4 leading-tight">Partner With SafeDrive</h2>
               <p className="text-gray-400 font-medium mb-8 leading-relaxed">
-                Join our network of authorized resellers. Provide innovative vehicle safety tags to your customers and grow your business with our trusted platform.
+                Join our network of authorized partners. Provide innovative vehicle safety tags to your customers and grow your business with our trusted platform.
               </p>
 
               <ul className="space-y-4">
@@ -109,7 +109,7 @@ const BecomeReseller = () => {
 
           {/* Right Side: Registration Form */}
           <div className="lg:w-3/5 p-8 lg:p-12">
-            <h3 className="text-2xl font-black text-slate-900 mb-2">Create Reseller Account</h3>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Create Partner Account</h3>
             <p className="text-sm text-slate-500 font-medium mb-8">Fill in your details below. OTP verification is required to register.</p>
 
             {step === 1 ? (

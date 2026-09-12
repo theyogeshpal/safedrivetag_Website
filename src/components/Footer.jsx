@@ -40,13 +40,13 @@ export default function Footer() {
         <div className="col-span-2 lg:col-span-4 pr-0 lg:pr-4">
           <Link
             to="/"
-            className="w-full sm:w-auto flex sm:inline-flex items-center justify-center mb-4 bg-white p-2.5 sm:px-3 sm:py-2 rounded-2xl sm:rounded-3xl shadow-md border border-white/10 group hover:shadow-lg transition-all"
+            className="w-full sm:w-auto flex sm:inline-flex items-center justify-center mb-4 bg-white p-2.5 sm:px-3 sm:py-2 rounded-2xl sm:rounded-lg shadow-md border border-white/10 group hover:shadow-lg transition-all"
           >
             <img
-              src="/logos/primary.jpeg"
+              src="/logos/primary-footer.png"
               alt="safedrivetag Logo"
-              className="h-10 sm:h-12 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
-              style={{ maxHeight: '48px', width: 'auto' }}
+              className="h-30 sm:h-20 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+              style={{ maxHeight: '70px', width: 'auto' }}
             />
           </Link>
           <p className="text-sm text-gray-400 mb-0 font-medium leading-relaxed max-w-sm">
@@ -56,25 +56,30 @@ export default function Footer() {
 
         {/* Company Column (Side-by-Side on mobile) */}
         <div className="col-span-1 lg:col-span-2">
-          <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Company</h4>
+          <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Pages</h4>
           <ul className="space-y-3.5 text-sm font-medium">
             <FooterLink to="/" label="Home" />
             <FooterLink to="/about" label="About Us" />
             <FooterLink to="/shop" label="Store" />
-            <FooterLink to="/membership" label="Membership" />
-            <FooterLink to="/how-to-use" label="How to Use" />
+            {/* <FooterLink to="/how-to-use" label="How to Use" />
+            <FooterLink to="/become-partner" label="Partnership Benifits" /> */}
             <FooterLink to="/contact" label="Contact Us" />
+            <FooterLink to="/membership" label="Membership" />
+
           </ul>
         </div>
 
         {/* Legal Column (Side-by-Side on mobile) */}
         <div className="col-span-1 lg:col-span-3">
-          <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Legal</h4>
+          <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Quick Links</h4>
           <ul className="space-y-3.5 text-sm font-medium">
-            <FooterLink to="/privacy" label="Privacy Policy" />
-            <FooterLink to="/terms" label="Terms of Service" />
+            {/* <FooterLink to="/privacy" label="Privacy Policy" />
+            <FooterLink to="/terms" label="Terms of Service" /> */}
+            <FooterLink to="/how-to-use" label="How to Use" />
+            <FooterLink to="/become-partner" label="Partnership Benifits" />
             <FooterLink to="/refund" label="Refund Policy" />
             <FooterLink to="/shipping" label="Shipping Info" />
+            {/* <FooterLink to="/membership" label="Membership" /> */}
           </ul>
         </div>
 
@@ -108,10 +113,10 @@ export default function Footer() {
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link to="/become-reseller" className="inline-flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
-              Become a Reseller
+              Become a Partner
             </Link>
             <a href={import.meta.env.VITE_RESELLER_DOMAIN} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all border border-white/10 shadow-sm">
-              Reseller Login
+              Partner Login
             </a>
           </div>
         </div>
