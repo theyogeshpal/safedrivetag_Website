@@ -54,6 +54,7 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
   const [activeStep, setActiveStep] = useState(1);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Auto-cycle live news ticker
   useEffect(() => {
@@ -485,7 +486,10 @@ export default function Home() {
           >
             {[1, 2, 3, 4].map((num) => (
               <SwiperSlide key={num}>
-                <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-100 aspect-video relative group">
+                <div 
+                  className="rounded-2xl overflow-hidden shadow-lg border border-gray-100 aspect-video relative group cursor-pointer"
+                  onClick={() => setSelectedImage(`/sliders/slide${num}.jpeg`)}
+                >
                   <img
                     src={`/sliders/slide${num}.jpeg`}
                     alt={`Slide ${num}`}
@@ -779,6 +783,27 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {/* --- IMAGE MODAL --- */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm animate-fade-in"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 sm:top-8 sm:right-8 text-white bg-white/10 hover:bg-white/25 rounded-full p-2 transition-colors cursor-pointer"
+            onClick={() => setSelectedImage(null)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+          <img 
+            src={selectedImage} 
+            alt="Full size view" 
+            className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl scale-100 animate-zoom-in"
+            onClick={(e) => e.stopPropagation()} 
+          />
+        </div>
+      )}
       
     </div>
   );
