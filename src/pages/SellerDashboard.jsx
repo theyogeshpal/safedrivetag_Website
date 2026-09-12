@@ -92,19 +92,9 @@ export default function SellerDashboard() {
     e.preventDefault();
     setLoginError('');
     
-    // Default testing values
-    if (loginPhone === '7817095043' && otpValue === '123456') {
-      const testSeller = { sellerId: 'SELL-7817095043', name: 'Test Seller' };
-      setIsLoggedIn(true);
-      setSellerId(testSeller.sellerId);
-      setSellerName(testSeller.name);
-      localStorage.setItem('sellerSession', JSON.stringify(testSeller));
-      fetchSellerData(testSeller.sellerId);
-      return;
-    }
-    
-    // Mock general behavior
-    if (otpValue === '123456') {
+    // NOTE: This should integrate with a backend endpoint for actual OTP verification
+    // For now, any OTP format > 0 is considered valid for the mock frontend
+    if (otpValue && otpValue.length === 6) {
       const mockSeller = { sellerId: 'SELL-' + loginPhone, name: 'Authorized Seller' };
       setIsLoggedIn(true);
       setSellerId(mockSeller.sellerId);
@@ -112,7 +102,7 @@ export default function SellerDashboard() {
       localStorage.setItem('sellerSession', JSON.stringify(mockSeller));
       fetchSellerData(mockSeller.sellerId);
     } else {
-      setLoginError('Invalid OTP. For testing, please use 123456.');
+      setLoginError('Invalid OTP. Please enter a valid 6-digit code.');
     }
   };
 
@@ -214,7 +204,7 @@ export default function SellerDashboard() {
                   value={otpValue}
                   onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
                   className="w-full mt-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center text-lg focus:border-orange-500 outline-none transition-all font-bold tracking-[0.5em]"
-                  placeholder="123456"
+                  placeholder="Enter 6-digit OTP"
                 />
               </div>
             )}
