@@ -75,7 +75,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900 pb-20">
+    <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500 selection:text-white pb-20">
 
       {/* --- HERO --- */}
       <PageHero

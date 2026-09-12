@@ -8,7 +8,7 @@ import { BsQuestion } from 'react-icons/bs';
 const liveStats = [
   { 
     tag: "TRUSTED USERS", 
-    value: "9.5L+ Across India", 
+    value: "75K+ Across India", 
     desc: "Protecting vehicles and luggage with smart QR tags", 
     icon: <Shield size={18} className="text-emerald-500" />,
     badgeBg: "bg-gradient-to-r from-emerald-600 to-teal-600"
@@ -22,7 +22,7 @@ const liveStats = [
   },
   { 
     tag: "TOTAL SCANS", 
-    value: "5000+ All Time", 
+    value: "2.5L+ All Time", 
     desc: "Masked calls & emergency contacts bridged successfully", 
     icon: <QrCode size={18} className="text-orange-500" />,
     badgeBg: "bg-gradient-to-r from-orange-600 to-amber-600"
@@ -79,7 +79,7 @@ export default function Home() {
   }, [navigate]);
 
   return (
-    <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500/30 selection:text-orange-900">
+    <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500 selection:text-white">
       
       {/* --- HERO SECTION --- */}
       <section className="relative flex items-center pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden bg-white w-full">
@@ -371,8 +371,8 @@ export default function Home() {
               {/* Stat Boxes */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {[
-                  { val: "9.5L+", lbl: "Vehicles Protected", color: "text-orange-500" },
-                  { val: "5000+", lbl: "Scans Completed", color: "text-emerald-600" },
+                  { val: "75K+", lbl: "Vehicles Protected", color: "text-orange-500" },
+                  { val: "2.5L+", lbl: "Scans Completed", color: "text-emerald-600" },
                   { val: "4.9★", lbl: "User Rating", color: "text-amber-500" },
                   { val: "100%", lbl: "Privacy Guaranteed", color: "text-emerald-600" }
                 ].map((stat, i) => (

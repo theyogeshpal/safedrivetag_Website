@@ -84,7 +84,7 @@ export default function Shop() {
   });
 
   return (
-    <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500/30 selection:text-orange-900">
+    <div className="bg-[#FAF8F5] font-sans text-black/90 min-h-screen selection:bg-orange-500 selection:text-white">
 
       {/* --- PRODUCT CARDS SECTION (DYNAMIC FROM API) --- */}
       <section className="relative z-20 pt-28 sm:pt-36 px-4 sm:px-6 max-w-7xl mx-auto">
@@ -376,8 +376,8 @@ export default function Shop() {
             {[
               { icon: <Truck className="w-6 h-6 text-orange-500" />, label: 'Free Express', sub: 'Courier Delivery' },
               { icon: <CreditCard className="w-6 h-6 text-green-500" />, label: 'Cash on Delivery', sub: 'UPI & Cards Accepted' },
-              { icon: <RefreshCcw className="w-6 h-6 text-orange-500" />, label: '60-Day Easy', sub: 'Free Replacements' },
-              { icon: <Award className="w-6 h-6 text-amber-400" />, label: '9.5L+ Active', sub: 'Vehicles Protected' },
+              { icon: <RefreshCcw className="w-6 h-6 text-orange-500" />, label: '7-Day Easy', sub: 'Replacements' },
+              { icon: <Award className="w-6 h-6 text-amber-400" />, label: '75K+ Active', sub: 'Vehicles Protected' },
             ].map(({ icon, label, sub }) => (
               <div key={label} className="flex flex-col items-center text-center gap-2.5">
                 <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10">

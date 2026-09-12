@@ -152,7 +152,7 @@ export default function ProductDetail() {
   const isDigitalProduct = product.qrType === 'DIGITAL';
 
   return (
-    <div className="bg-[#FAF8F5] min-h-screen pb-24 selection:bg-orange-500/30 font-sans">
+    <div className="bg-[#FAF8F5] min-h-screen pb-24 selection:bg-orange-500 selection:text-white font-sans">
       
       {/* Hero Header */}
       <PageHero

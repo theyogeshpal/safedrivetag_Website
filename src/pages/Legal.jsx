@@ -212,7 +212,7 @@ export default function Legal() {
   }
 
   return (
-    <div className="bg-[#FAF8F5] min-h-screen pb-24 font-sans selection:bg-orange-500/30 selection:text-orange-900">
+    <div className="bg-[#FAF8F5] min-h-screen pb-24 font-sans selection:bg-orange-500 selection:text-white">
       
       {/* Hero Banner */}
       <PageHero

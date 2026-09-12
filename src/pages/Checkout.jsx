@@ -535,7 +535,7 @@ export default function Checkout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] font-sans pb-24 selection:bg-orange-500/30">
+    <div className="min-h-screen bg-[#FAF8F5] font-sans pb-24 selection:bg-orange-500 selection:text-white">
       
       {/* Header Banner */}
       <PageHero
