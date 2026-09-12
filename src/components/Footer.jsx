@@ -56,25 +56,27 @@ export default function Footer() {
 
         {/* Company Column (Side-by-Side on mobile) */}
         <div className="col-span-1 lg:col-span-2">
-          <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Company</h4>
+          <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Pages</h4>
           <ul className="space-y-3.5 text-sm font-medium">
             <FooterLink to="/" label="Home" />
             <FooterLink to="/about" label="About Us" />
             <FooterLink to="/shop" label="Store" />
             <FooterLink to="/membership" label="Membership" />
             <FooterLink to="/how-to-use" label="How to Use" />
+            <FooterLink to="/become-partner" label="Become a Partner" />
             <FooterLink to="/contact" label="Contact Us" />
           </ul>
         </div>
 
         {/* Legal Column (Side-by-Side on mobile) */}
         <div className="col-span-1 lg:col-span-3">
-          <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Legal</h4>
+          <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Quick Links</h4>
           <ul className="space-y-3.5 text-sm font-medium">
             <FooterLink to="/privacy" label="Privacy Policy" />
             <FooterLink to="/terms" label="Terms of Service" />
             <FooterLink to="/refund" label="Refund Policy" />
             <FooterLink to="/shipping" label="Shipping Info" />
+            <FooterLink to="/membership" label="Membership" />
           </ul>
         </div>
 
@@ -108,10 +110,10 @@ export default function Footer() {
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link to="/become-reseller" className="inline-flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
-              Become a Reseller
+              Become a Partner
             </Link>
             <a href={import.meta.env.VITE_RESELLER_DOMAIN} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all border border-white/10 shadow-sm">
-              Reseller Login
+              Partner Login
             </a>
           </div>
         </div>
