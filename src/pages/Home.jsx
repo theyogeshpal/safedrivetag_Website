@@ -4,7 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
 import { BsQuestion } from 'react-icons/bs';
-
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 const liveStats = [
   { 
     tag: "TRUSTED USERS", 
@@ -273,7 +276,7 @@ export default function Home() {
               </div>
 
               {/* Center Car Graphic with Interactive Tag Pointer */}
-              <div className="relative bg-gray-50/70 rounded-2xl p-4 pt-6 flex flex-col items-center justify-center overflow-hidden border border-gray-100">
+              <div className="relative bg-gray-50/70 rounded-2xl flex flex-col items-center justify-center overflow-hidden border border-gray-100">
                 {/* Floating QR Tag pointer badge */}
                 <div className="absolute top-3 right-6 flex items-center gap-1.5 z-20">
                   <div className="w-12 h-14 bg-white border border-gray-200 rounded-xl p-1 shadow-md flex flex-col items-center justify-center text-center">
@@ -284,14 +287,14 @@ export default function Home() {
                 </div>
 
                 <img 
-                  src="/hero-car.png" 
+                  src="/images/promotion1.jpeg" 
                   alt="safedrivetag on Car" 
                   decoding="async"
-                  className="w-full max-w-[340px] object-contain drop-shadow-xl" 
+                  className="w-full  object-contain drop-shadow-xl" 
                 />
 
                 {/* Dark Live QR Shield Pill with Emerald Green live dot */}
-                <div className="w-full max-w-[360px] bg-[#0c1427] text-white rounded-2xl p-3 flex items-center gap-3.5 border border-white/10 shadow-xl mt-2">
+                {/* <div className="w-full max-w-[360px] bg-[#0c1427] text-white rounded-2xl p-3 flex items-center gap-3.5 border border-white/10 shadow-xl mt-2">
                   <div className="w-10 h-10 bg-white rounded-xl p-1.5 shrink-0 flex items-center justify-center text-gray-950 shadow-xs">
                     <QrCode size={28} />
                   </div>
@@ -302,7 +305,7 @@ export default function Home() {
                     </div>
                     <div className="text-xs font-bold text-gray-100">Scan to Call Owner Privately</div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Bottom Cloud Bridge Status Card */}
@@ -458,6 +461,41 @@ export default function Home() {
               
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* --- IMAGE SLIDER SECTION --- */}
+      <section className="py-12 bg-white w-full overflow-hidden border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            spaceBetween={20}
+            slidesPerView={1}
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+            loop={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            pagination={{ clickable: true }}
+            className="w-full pb-10"
+          >
+            {[1, 2, 3, 4].map((num) => (
+              <SwiperSlide key={num}>
+                <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-100 aspect-video relative group">
+                  <img
+                    src={`/sliders/slide${num}.jpeg`}
+                    alt={`Slide ${num}`}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </section>
 
