@@ -61,10 +61,11 @@ export default function Footer() {
             <FooterLink to="/" label="Home" />
             <FooterLink to="/about" label="About Us" />
             <FooterLink to="/shop" label="Store" />
-            <FooterLink to="/membership" label="Membership" />
-            <FooterLink to="/how-to-use" label="How to Use" />
-            <FooterLink to="/become-partner" label="Become a Partner" />
+            {/* <FooterLink to="/how-to-use" label="How to Use" />
+            <FooterLink to="/become-partner" label="Partnership Benifits" /> */}
             <FooterLink to="/contact" label="Contact Us" />
+            <FooterLink to="/membership" label="Membership" />
+
           </ul>
         </div>
 
@@ -72,11 +73,13 @@ export default function Footer() {
         <div className="col-span-1 lg:col-span-3">
           <h4 className="font-extrabold text-white mb-3 uppercase tracking-wider text-xs sm:text-sm">Quick Links</h4>
           <ul className="space-y-3.5 text-sm font-medium">
-            <FooterLink to="/privacy" label="Privacy Policy" />
-            <FooterLink to="/terms" label="Terms of Service" />
+            {/* <FooterLink to="/privacy" label="Privacy Policy" />
+            <FooterLink to="/terms" label="Terms of Service" /> */}
+            <FooterLink to="/how-to-use" label="How to Use" />
+            <FooterLink to="/become-partner" label="Partnership Benifits" />
             <FooterLink to="/refund" label="Refund Policy" />
             <FooterLink to="/shipping" label="Shipping Info" />
-            <FooterLink to="/membership" label="Membership" />
+            {/* <FooterLink to="/membership" label="Membership" /> */}
           </ul>
         </div>
 
