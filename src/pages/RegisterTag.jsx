@@ -171,6 +171,16 @@ export default function RegisterTag() {
 
       if (res.success === true || (res.success !== false && res.status === 200)) {
         setIsPhoneVerified(true);
+        
+        if (res.user) {
+          if (res.user.name) setName(res.user.name);
+          setFormData(prev => ({
+            ...prev,
+            ownerAddress: res.user.address || prev.ownerAddress,
+            gender: res.user.gender || prev.gender
+          }));
+        }
+        
         if (res.token) {
           setAuthenticatedSession(res.token, res.user || { phone: cleanPhone, name });
         }

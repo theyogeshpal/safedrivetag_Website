@@ -196,9 +196,9 @@ export default function DashboardAddresses() {
                   <input
                     type="text"
                     required
+                    disabled
                     value={editingAddress.name}
-                    onChange={(e) => setEditingAddress({ ...editingAddress, name: e.target.value })}
-                    className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2 text-sm outline-none"
+                    className="w-full border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none bg-gray-100 text-gray-500 cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -206,10 +206,9 @@ export default function DashboardAddresses() {
                   <input
                     type="tel"
                     required
-                    pattern="[0-9]{10}"
+                    disabled
                     value={editingAddress.phone}
-                    onChange={(e) => setEditingAddress({ ...editingAddress, phone: e.target.value.replace(/\D/g, '') })}
-                    className="w-full border border-gray-300 focus:border-[#2874f0] rounded-sm px-3 py-2 text-sm outline-none"
+                    className="w-full border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none bg-gray-100 text-gray-500 cursor-not-allowed"
                   />
                 </div>
               </div>

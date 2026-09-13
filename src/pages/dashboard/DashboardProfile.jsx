@@ -135,6 +135,24 @@ export default function DashboardProfile() {
               </div>
             </div>
 
+            {/* Email Address Section */}
+            <div>
+              <label className="block text-xs font-semibold text-[#878787] mb-2">Email Address</label>
+              <div className="max-w-lg relative">
+                <input
+                  type="email"
+                  disabled={!isEditingPersonal}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="No email linked"
+                  className={`w-full border rounded-sm pl-9 pr-3 py-2 text-sm outline-none transition-colors ${
+                    isEditingPersonal ? 'border-[#2874f0] bg-white' : 'border-gray-200 bg-[#fafafa] text-gray-700'
+                  }`}
+                />
+                <Mail size={15} className="text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
             {isEditingPersonal && (
               <button
                 type="submit"
@@ -145,19 +163,6 @@ export default function DashboardProfile() {
               </button>
             )}
           </form>
-        </div>
-
-        {/* Email Address Section */}
-        <div className="pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-4 mb-2">
-            <h3 className="text-base font-bold text-[#212121]">Email Address</h3>
-          </div>
-          <div className="max-w-lg">
-            <div className="flex items-center gap-2 border border-gray-200 bg-[#fafafa] rounded-sm px-3 py-2 text-sm text-gray-700">
-              <Mail size={15} className="text-gray-400" />
-              <span>{currentUser?.email || 'No email linked'}</span>
-            </div>
-          </div>
         </div>
 
         {/* Mobile Number Section */}

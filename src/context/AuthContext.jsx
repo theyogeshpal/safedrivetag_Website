@@ -97,6 +97,9 @@ export function AuthProvider({ children }) {
   const sendOtp = async (phoneOrData) => {
     try {
       const res = await api.sendLoginOtp(phoneOrData);
+      if (res && res.otp) {
+        // Removed console.log for security
+      }
       return res;
     } catch (err) {
       return { success: false, message: 'Failed to send OTP. Please try again.' };
