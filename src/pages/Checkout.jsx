@@ -65,9 +65,15 @@ export default function Checkout() {
   
   const isDigitalProduct = selectedProduct.qrType === 'DIGITAL';
   
+  useEffect(() => {
+    if (isDigitalProduct) {
+      setPaymentMode('ONLINE');
+    }
+  }, [isDigitalProduct]);
+  
   const baseTotalAmount = selectedProduct.price * quantity;
   const codFee = 59; // 50rs + 9gst
-  const totalAmount = paymentMode === 'COD' ? baseTotalAmount + codFee : baseTotalAmount;
+  const totalAmount = (paymentMode === 'COD' && !isDigitalProduct) ? baseTotalAmount + codFee : baseTotalAmount;
 
   const [formData, setFormData] = useState({
     firstName: currentUser?.name?.split(' ')[0] || '',
@@ -342,7 +348,7 @@ export default function Checkout() {
       }
 
       // If COD, bypass Razorpay gateway
-      if (paymentMode === 'COD') {
+      if (paymentMode === 'COD' && !isDigitalProduct) {
         const completeRes = await api.completePurchase({
           productId: resolvedProductId,
           quantity: quantity || 1,
@@ -794,7 +800,7 @@ export default function Checkout() {
                     <span className="text-[10px] text-black/50 font-medium">UPI, Cards, NetBanking, Wallets via Razorpay</span>
                   </label>
 
-                  {isCODEnabled && (
+                  {isCODEnabled && !isDigitalProduct && (
                     <label 
                       className={`relative border-2 rounded-2xl p-4 flex flex-col cursor-pointer transition-all ${paymentMode === 'COD' ? 'border-orange-500 bg-orange-50/50' : 'border-black/5 hover:border-black/10 bg-black/[0.02]'}`}
                     >
@@ -867,7 +873,7 @@ export default function Checkout() {
                     <span>Express Delivery</span>
                     <span className="text-green-600 font-bold">{isDigitalProduct ? 'INSTANT' : 'FREE'}</span>
                   </div>
-                  {paymentMode === 'COD' && (
+                  {paymentMode === 'COD' && !isDigitalProduct && (
                     <div className="flex justify-between text-black/60 font-medium">
                       <span>Cash on Delivery Fee</span>
                       <span className="font-bold text-black">₹{codFee}.00</span>
@@ -896,7 +902,7 @@ export default function Checkout() {
                   ) : (
                     <>
                       <Lock size={18} />
-                      <span>Proceed to Verify & Pay ₹{totalAmount}</span>
+                      <span>{isDigitalProduct ? 'Pay & Activate' : (paymentMode === 'COD' ? 'Place COD Order' : 'Proceed to Verify & Pay')} ₹{totalAmount}</span>
                     </>
                   )}
                 </button>
