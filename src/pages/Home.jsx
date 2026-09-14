@@ -432,9 +432,6 @@ export default function Home() {
                 <div className="w-0.5 h-6 bg-orange-400"></div>
                 <div className="w-2.5 h-2.5 bg-orange-400 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)]"></div>
               </div>
-              <div className="absolute top-[11.6%] left-104 hidden lg:flex flex-col items-center animate-fade-up z-20">
-                  154264
-              </div>
 
               <div className="absolute -top-6 right-[6%] hidden lg:flex flex-col items-center animate-fade-up z-20" style={{ animationDelay: '100ms' }}>
                 <div className="bg-gray-900 text-emerald-400 text-[11px] sm:text-xs font-black px-3.5 py-1.5 rounded-full mb-1.5 border border-emerald-400/60 shadow-lg tracking-wide whitespace-nowrap">
