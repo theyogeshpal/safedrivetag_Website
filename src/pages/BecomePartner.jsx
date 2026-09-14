@@ -1,9 +1,19 @@
 import React from 'react';
-import { ShieldCheck, TrendingUp, Users, Store, Zap, Handshake, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, TrendingUp, Users, Store, Zap, Handshake, ArrowRight, CheckCircle2, PackageOpen, LayoutDashboard } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function BecomePartner() {
   const benefits = [
+    {
+      icon: <PackageOpen className="text-emerald-500 w-8 h-8" />,
+      title: "Ready to Sell Product",
+      desc: "Get a completely ready-to-sell, premium packaged product. No manufacturing, no R&D—just start selling."
+    },
+    {
+      icon: <LayoutDashboard className="text-orange-500 w-8 h-8" />,
+      title: "Dedicated Partner Dashboard",
+      desc: "Track your sales, manage your QR tag inventory, and monitor your earnings in real-time through your own partner portal."
+    },
     {
       icon: <TrendingUp className="text-emerald-500 w-8 h-8" />,
       title: "High Profit Margins",
