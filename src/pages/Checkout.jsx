@@ -873,10 +873,6 @@ export default function Checkout() {
                       <span className="font-bold text-black">₹{codFee}.00</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-black/60 font-medium">
-                    <span>1-Year Cloud Bridge Included</span>
-                    <span className="text-green-600 font-bold">FREE</span>
-                  </div>
                 </div>
 
                 <div className="flex justify-between items-end pt-5 border-t border-black/5 mb-6">
