@@ -409,25 +409,6 @@ export default function DashboardTags() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {tag.qrType === 'DIGITAL' && (
-                        <button
-                          onClick={() => printDigitalPdfInColor({
-                            ...tag,
-                            allocatedQRIds: undefined,
-                            copies: tag.copies?.length > 0 ? [tag.copies[0]] : [tag],
-                            title: tag.vehicleName || tag.title,
-                            publicToken: tag.primaryToken || tag.publicToken || tag.id,
-                            vehicleNumber: tag.vehicleNumber,
-                            securityCode: tag.securityCode || tag.pin || tag.securityPin
-                          })}
-                          className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 p-2 sm:px-3 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                          title="Print Badge"
-                        >
-                          <Printer size={16} className="sm:w-[13px] sm:h-[13px]" />
-                          <span className="hidden sm:inline">Print Badge</span>
-                        </button>
-                      )}
-
                       <Link
                         to={`/dashboard/tag/${tag.kitId || tag.copyCode || tag.primaryToken || tag.id}`}
                         className="bg-[#2874f0] hover:bg-blue-700 text-white p-2 sm:px-3 sm:py-1.5 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
@@ -590,18 +571,6 @@ export default function DashboardTags() {
                 >
                   <Download size={15} /> Download High-Res Badge (PNG)
                 </button>
-                {qrModalTag.qrType === 'DIGITAL' && (
-                  <button
-                    onClick={() => printDigitalPdfInColor({
-                      ...qrModalTag,
-                      allocatedQRIds: undefined,
-                      copies: qrModalTag.copies?.length > 0 ? [qrModalTag.copies[0]] : [qrModalTag]
-                    })}
-                    className="w-full bg-[#fb641b] hover:bg-orange-600 text-white font-bold py-2.5 rounded-sm text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-                  >
-                    <Printer size={15} /> Print Color Stickers (PDF)
-                  </button>
-                )}
                 <Link
                   to={`/q/${qrModalTag.publicToken || qrModalTag.id}`}
                   target="_blank"
