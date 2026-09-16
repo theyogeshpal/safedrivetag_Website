@@ -176,11 +176,6 @@ export default function Checkout() {
 
     setIsSubmitting(true);
     try {
-      if (currentUser) {
-        // Direct payment flow for logged-in users
-        await openRazorpayPayment();
-        return;
-      }
 
       // Send Name, Email, and Mobile to POST /purchase/send-otp
       const otpPayload = {
@@ -1004,3 +999,5 @@ export default function Checkout() {
     </div>
   );
 }
+
+
