@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase, ShieldCheck, TrendingUp, XCircle, Ban, AlertOctagon, Clock, CreditCard, Camera, Check } from 'lucide-react';
+import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, CheckCircle2, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase, ShieldCheck, TrendingUp, XCircle, Ban, AlertOctagon, Clock, CreditCard, Camera, Check } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
@@ -341,11 +341,9 @@ export default function Home() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9zdmc+')] opacity-30"></div>
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-center">
           <div className="flex items-center gap-2">
-            <span className="line-through text-white/70 font-bold text-lg sm:text-xl">₹999/-</span>
+            <span className="line-through text-white/70 font-bold text-lg sm:text-xl">₹499/-</span>
             <span className="font-black text-2xl sm:text-3xl tracking-tight text-white drop-shadow-md">Only ₹299/-</span>
           </div>
-          <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-white/50"></div>
-          <span className="font-bold text-sm sm:text-base tracking-wide uppercase">No subscription • Lifetime valid</span>
         </div>
       </div>
 
@@ -523,35 +521,36 @@ export default function Home() {
       <section className="py-16 md:py-24 px-4 sm:px-6 bg-white relative overflow-hidden border-b border-gray-100">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10 md:mb-16">
-            <span className="text-red-500 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 block">The Problem</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">What Happens <span className="text-red-500">WITHOUT</span> SafeDriveTag?</h2>
+            <span className="text-orange-500 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 block">The Problem</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">What Happens <span className="text-orange-500">WITHOUT</span> SafeDriveTag?</h2>
           </div>
 
           <div className="grid lg:grid-cols-4 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
               {[
-                { icon: <Ban className="text-red-500 mb-2" size={32} />, text: "Car Parked Wrongly" },
-                { icon: <AlertTriangle className="text-red-500 mb-2" size={32} />, text: "Accident / Emergency" },
-                { icon: <Car className="text-red-500 mb-2" size={32} />, text: "Headlights Left On" },
-                { icon: <Shield className="text-red-500 mb-2" size={32} />, text: "Vehicle Unlocked" },
-                { icon: <Truck className="text-red-500 mb-2" size={32} />, text: "Towing Danger" },
-                { icon: <Phone className="text-red-500 mb-2" size={32} />, text: "Number Displayed" },
-                { icon: <AlertOctagon className="text-red-500 mb-2" size={32} />, text: "Hit & Run" },
-                { icon: <Clock className="text-red-500 mb-2" size={32} />, text: "Wasting Time" },
+                { icon: <Ban className="text-orange-500 mb-2 sm:mb-3" size={28} />, text: "Car Parked Wrongly", desc: "No way to reach you if your car blocks others." },
+                { icon: <AlertTriangle className="text-orange-500 mb-2 sm:mb-3" size={28} />, text: "Accident / Emergency", desc: "Family remains unaware during critical situations." },
+                { icon: <Car className="text-orange-500 mb-2 sm:mb-3" size={28} />, text: "Headlights Left On", desc: "Battery drains out completely without warning." },
+                { icon: <Shield className="text-orange-500 mb-2 sm:mb-3" size={28} />, text: "Vehicle Unlocked", desc: "High risk of theft or unauthorized access." },
+                { icon: <Truck className="text-orange-500 mb-2 sm:mb-3" size={28} />, text: "Towing Danger", desc: "Vehicle gets towed before you even realize." },
+                { icon: <Phone className="text-orange-500 mb-2 sm:mb-3" size={28} />, text: "Number Displayed", desc: "Scammers & stalkers can misuse your number." },
+                { icon: <AlertOctagon className="text-orange-500 mb-2 sm:mb-3" size={28} />, text: "Hit & Run", desc: "Bystanders have no way to alert you instantly." },
+                { icon: <Clock className="text-orange-500 mb-2 sm:mb-3" size={28} />, text: "Wasting Time", desc: "Finding the owner takes hours in tight spots." },
               ].map((item, i) => (
-                <div key={i} className="border border-red-100 bg-red-50/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center text-center hover:border-red-300 transition-colors shadow-sm">
+                <div key={i} className="border border-orange-100 bg-orange-50/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-start text-center hover:border-orange-300 transition-colors shadow-sm group">
                   {item.icon}
-                  <span className="font-bold text-gray-900 text-xs sm:text-sm leading-tight">{item.text}</span>
+                  <span className="font-bold text-gray-900 text-sm sm:text-base leading-tight mb-1.5">{item.text}</span>
+                  <span className="text-[10px] sm:text-[11px] text-gray-500 font-medium leading-relaxed">{item.desc}</span>
                 </div>
               ))}
             </div>
 
             <div className="lg:col-span-1 flex justify-center lg:justify-end">
-              <div className="bg-red-500 text-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-red-500/30 text-center flex flex-col items-center justify-center max-w-sm w-full border-4 border-red-200">
+              <div className="bg-orange-500 text-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-orange-500/30 text-center flex flex-col items-center justify-center max-w-sm w-full border-4 border-orange-200">
                 <AlertOctagon size={64} className="mb-4 text-white drop-shadow-md" />
                 <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mb-2">Any<br/>Problem</h3>
                 <div className="w-12 h-1 bg-white/30 rounded-full my-3"></div>
-                <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none text-red-100">No<br/>Solution</h3>
+                <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none text-orange-100">No<br/>Solution</h3>
               </div>
             </div>
           </div>
@@ -568,23 +567,25 @@ export default function Home() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: "Wrong Parking", desc: "Blocked someone's driveway or parked in a tight spot? They can scan and alert you instantly instead of damaging your car or calling a tow truck.", color: "orange" },
-              { title: "Emergencies", desc: "If you meet with an unfortunate accident, bystanders can scan the tag to instantly inform your family members using emergency contacts.", color: "emerald" },
-              { title: "Headlights Left On", desc: "Forgot to turn off your headlights or left a window rolled down? Good samaritans can quickly warn you before your battery dies.", color: "orange" },
-              { title: "Lost Luggage", desc: "If you leave your bag in a cab, train or airport, the finder can scan the tag to arrange a safe return without knowing your real number.", color: "emerald" },
+              { title: "Critical Emergency", desc: "If you meet with an accident, bystanders can scan the tag to instantly inform your family members using emergency contacts.", img: "/images/emergency.png" },
+              { title: "Prevent Towing", desc: "Traffic police can easily contact you to move your vehicle before issuing a challan or towing it away.", img: "/images/towing.png" },
+              { title: "Avoid Scratches", desc: "Blocked someone's driveway? They can call you to move your car instead of scratching or damaging it in anger.", img: "/images/parking.png" },
+              { title: "Theft & Break-ins", desc: "Security guards or neighbors can alert you instantly if they notice suspicious activity around your parked car.", img: "/images/security.png" },
             ].map((sit, i) => (
-              <div key={i} className="bg-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-gray-200/50 border border-gray-100 hover:-translate-y-1.5 transition-transform group">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-5 ${sit.color === 'orange' ? 'bg-orange-50 text-orange-500' : 'bg-emerald-50 text-emerald-600'}`}>
-                  <Camera size={24} />
+              <div key={i} className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 border border-gray-100 hover:-translate-y-1.5 transition-transform group overflow-hidden flex flex-col">
+                <div className="w-full h-48 sm:h-52 overflow-hidden bg-gray-100">
+                  <img src={sit.img} alt={sit.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
-                <h3 className="text-xl font-black text-gray-900 mb-3">{sit.title}</h3>
-                <p className="text-gray-500 text-sm font-medium leading-relaxed">{sit.desc}</p>
+                <div className="p-6 sm:p-7 flex-1">
+                  <h3 className="text-xl font-black text-gray-900 mb-3">{sit.title}</h3>
+                  <p className="text-gray-500 text-sm font-medium leading-relaxed">{sit.desc}</p>
+                </div>
               </div>
             ))}
           </div>
           
           <div className="mt-12 text-center">
-             <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 border border-red-200 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold shadow-sm">
+             <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-600 border border-orange-200 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold shadow-sm">
                 <Shield size={16} /> Avoid towing, challans, and damages. Get your tag today!
              </div>
           </div>
@@ -853,7 +854,7 @@ export default function Home() {
               <p className="text-sm text-gray-500 font-medium mb-6">Premium 3M Weather-proof tag delivered to your doorstep.</p>
               <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-4xl sm:text-5xl font-black text-gray-900">₹299</span>
-                <span className="line-through text-gray-400 font-bold text-lg">₹999</span>
+                <span className="line-through text-gray-400 font-bold text-lg">₹499</span>
               </div>
               <ul className="space-y-3 mb-8">
                 {[
