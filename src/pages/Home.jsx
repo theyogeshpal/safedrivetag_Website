@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase, ShieldCheck, TrendingUp } from 'lucide-react';
+import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, ChevronDown, CheckCircle, Star, AlertTriangle, ArrowRight, Zap, Play, Briefcase, ShieldCheck, TrendingUp, XCircle, Ban, AlertOctagon, Clock, CreditCard, Camera, Check } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
@@ -335,6 +335,20 @@ export default function Home() {
         </div>
       </section>
 
+
+      {/* --- PRICING RIBBON --- */}
+      <div className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white overflow-hidden py-3 sm:py-4 relative z-20">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9zdmc+')] opacity-30"></div>
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-center">
+          <div className="flex items-center gap-2">
+            <span className="line-through text-white/70 font-bold text-lg sm:text-xl">₹999/-</span>
+            <span className="font-black text-2xl sm:text-3xl tracking-tight text-white drop-shadow-md">Only ₹299/-</span>
+          </div>
+          <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-white/50"></div>
+          <span className="font-bold text-sm sm:text-base tracking-wide uppercase">No subscription • Lifetime valid</span>
+        </div>
+      </div>
+
       {/* --- MARQUEE WITH DUAL ORANGE & GREEN ICONS --- */}
       <div className="w-full overflow-hidden">
         <div className="border-y border-neutral-800 bg-[#0c0f17] py-4 sm:py-5 overflow-hidden shadow-md relative z-20">
@@ -501,6 +515,79 @@ export default function Home() {
               </SwiperSlide>
             ))}
           </Swiper>
+        </div>
+      </section>
+
+
+      {/* --- WHAT HAPPENS WITHOUT SAFEDRIVETAG --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-white relative overflow-hidden border-b border-gray-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 md:mb-16">
+            <span className="text-red-500 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 block">The Problem</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">What Happens <span className="text-red-500">WITHOUT</span> SafeDriveTag?</h2>
+          </div>
+
+          <div className="grid lg:grid-cols-4 gap-8 lg:gap-12 items-center">
+            <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              {[
+                { icon: <Ban className="text-red-500 mb-2" size={32} />, text: "Car Parked Wrongly" },
+                { icon: <AlertTriangle className="text-red-500 mb-2" size={32} />, text: "Accident / Emergency" },
+                { icon: <Car className="text-red-500 mb-2" size={32} />, text: "Headlights Left On" },
+                { icon: <Shield className="text-red-500 mb-2" size={32} />, text: "Vehicle Unlocked" },
+                { icon: <Truck className="text-red-500 mb-2" size={32} />, text: "Towing Danger" },
+                { icon: <Phone className="text-red-500 mb-2" size={32} />, text: "Number Displayed" },
+                { icon: <AlertOctagon className="text-red-500 mb-2" size={32} />, text: "Hit & Run" },
+                { icon: <Clock className="text-red-500 mb-2" size={32} />, text: "Wasting Time" },
+              ].map((item, i) => (
+                <div key={i} className="border border-red-100 bg-red-50/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center text-center hover:border-red-300 transition-colors shadow-sm">
+                  {item.icon}
+                  <span className="font-bold text-gray-900 text-xs sm:text-sm leading-tight">{item.text}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="lg:col-span-1 flex justify-center lg:justify-end">
+              <div className="bg-red-500 text-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-red-500/30 text-center flex flex-col items-center justify-center max-w-sm w-full border-4 border-red-200">
+                <AlertOctagon size={64} className="mb-4 text-white drop-shadow-md" />
+                <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mb-2">Any<br/>Problem</h3>
+                <div className="w-12 h-1 bg-white/30 rounded-full my-3"></div>
+                <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none text-red-100">No<br/>Solution</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* --- REAL SITUATIONS SECTION --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#f8fafc] border-b border-gray-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 md:mb-14">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">4 Real Situations Where <span className="text-orange-500">SafeDriveTag</span> Protects You</h2>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "Wrong Parking", desc: "Blocked someone's driveway or parked in a tight spot? They can scan and alert you instantly instead of damaging your car or calling a tow truck.", color: "orange" },
+              { title: "Emergencies", desc: "If you meet with an unfortunate accident, bystanders can scan the tag to instantly inform your family members using emergency contacts.", color: "emerald" },
+              { title: "Headlights Left On", desc: "Forgot to turn off your headlights or left a window rolled down? Good samaritans can quickly warn you before your battery dies.", color: "orange" },
+              { title: "Lost Luggage", desc: "If you leave your bag in a cab, train or airport, the finder can scan the tag to arrange a safe return without knowing your real number.", color: "emerald" },
+            ].map((sit, i) => (
+              <div key={i} className="bg-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-gray-200/50 border border-gray-100 hover:-translate-y-1.5 transition-transform group">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-5 ${sit.color === 'orange' ? 'bg-orange-50 text-orange-500' : 'bg-emerald-50 text-emerald-600'}`}>
+                  <Camera size={24} />
+                </div>
+                <h3 className="text-xl font-black text-gray-900 mb-3">{sit.title}</h3>
+                <p className="text-gray-500 text-sm font-medium leading-relaxed">{sit.desc}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-12 text-center">
+             <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 border border-red-200 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold shadow-sm">
+                <Shield size={16} /> Avoid towing, challans, and damages. Get your tag today!
+             </div>
+          </div>
         </div>
       </section>
 
@@ -705,6 +792,111 @@ export default function Home() {
       {/* ======================================================== */}
       {/* --- THEMATIC LIGHT ZONE: TRUST, PRIVACY & FAQ SUPPORT --- */}
       {/* ======================================================== */}
+
+
+      {/* --- COMPARISON TABLE --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#f8fafc] border-y border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10 md:mb-14">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">Why Choose <span className="text-orange-500">SafeDriveTag?</span></h2>
+            <p className="text-gray-600 font-medium mt-3">Compare our features with standard solutions in the market.</p>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-200">
+            {/* Header Row */}
+            <div className="grid grid-cols-3 bg-gray-900 text-white p-4 sm:p-5">
+              <div className="col-span-1 font-black text-sm sm:text-base uppercase tracking-wider flex items-center">Feature</div>
+              <div className="col-span-1 font-black text-sm sm:text-base uppercase tracking-wider text-center text-orange-400">SafeDriveTag</div>
+              <div className="col-span-1 font-black text-sm sm:text-base uppercase tracking-wider text-center text-gray-400">Others</div>
+            </div>
+            
+            {/* Rows */}
+            {[
+              { label: "100% 2-Way Number Masking", us: true, others: false },
+              { label: "Zero App Installation", us: true, others: false },
+              { label: "Instant SMS & WhatsApp Alerts", us: true, others: true },
+              { label: "Lifetime Free Cloud Bridge", us: true, others: false },
+              { label: "Weather-proof Premium Tag", us: true, others: false },
+              { label: "No Annual Subscription", us: true, others: false },
+              { label: "Emergency Medical Contacts", us: true, others: false },
+            ].map((row, i) => (
+              <div key={i} className={`grid grid-cols-3 p-4 sm:p-5 border-t border-gray-100 items-center ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                <div className="col-span-1 font-bold text-gray-800 text-xs sm:text-sm">{row.label}</div>
+                <div className="col-span-1 flex justify-center">
+                  {row.us ? <CheckCircle className="text-emerald-500 w-5 h-5 sm:w-6 sm:h-6" /> : <XCircle className="text-red-400 w-5 h-5 sm:w-6 sm:h-6" />}
+                </div>
+                <div className="col-span-1 flex justify-center">
+                  {row.others ? <CheckCircle className="text-emerald-500 w-5 h-5 sm:w-6 sm:h-6" /> : <XCircle className="text-red-400 w-5 h-5 sm:w-6 sm:h-6" />}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* --- PRICING SECTION --- */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-white relative overflow-hidden" id="pricing">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 md:mb-16">
+            <span className="text-orange-500 font-bold tracking-widest text-xs sm:text-sm uppercase mb-2 block">Pricing</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-950 tracking-tight">Choose Your <span className="text-emerald-600">Protection</span></h2>
+            <p className="text-gray-600 font-medium mt-3">Pay once. Stay protected forever. No hidden charges.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            
+            {/* Card 1 */}
+            <div className="border border-gray-200 rounded-3xl p-6 sm:p-8 bg-white shadow-xl shadow-gray-200/50 relative overflow-hidden group hover:border-orange-500 transition-colors">
+              <div className="absolute top-0 right-0 bg-orange-500 text-white font-black text-[10px] sm:text-xs px-4 py-1 rounded-bl-xl uppercase tracking-wider shadow-sm">Popular</div>
+              <h3 className="text-2xl font-black text-gray-900 mb-2">Physical QR Kit</h3>
+              <p className="text-sm text-gray-500 font-medium mb-6">Premium 3M Weather-proof tag delivered to your doorstep.</p>
+              <div className="flex items-baseline gap-2 mb-6">
+                <span className="text-4xl sm:text-5xl font-black text-gray-900">₹299</span>
+                <span className="line-through text-gray-400 font-bold text-lg">₹999</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {[
+                  "Delivered in 3-5 days",
+                  "100% Privacy Preserved",
+                  "Instant WhatsApp Alerts",
+                  "Lifetime Valid"
+                ].map((ft, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-orange-500 shrink-0" /> {ft}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/shop" className="block w-full text-center bg-gray-900 hover:bg-black text-white font-black py-4 rounded-xl transition-all hover:-translate-y-1 shadow-lg shadow-gray-900/20">Buy Physical Kit</Link>
+            </div>
+
+            {/* Card 2 */}
+            <div className="border-2 border-emerald-500 rounded-3xl p-6 sm:p-8 bg-emerald-50/30 shadow-2xl shadow-emerald-500/20 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 bg-emerald-600 text-white font-black text-[10px] sm:text-xs px-4 py-1 rounded-bl-xl uppercase tracking-wider shadow-sm">Instant</div>
+              <h3 className="text-2xl font-black text-gray-900 mb-2">Digital Pass</h3>
+              <p className="text-sm text-gray-500 font-medium mb-6">Instantly download & print your QR. No waiting for delivery.</p>
+              <div className="flex items-baseline gap-2 mb-6">
+                <span className="text-4xl sm:text-5xl font-black text-gray-900">₹179</span>
+                <span className="line-through text-gray-400 font-bold text-lg">₹499</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {[
+                  "Instant Email Delivery",
+                  "High-res Print Ready PDF",
+                  "100% Privacy Preserved",
+                  "Lifetime Valid"
+                ].map((ft, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> {ft}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/shop" className="block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition-all hover:-translate-y-1 shadow-lg shadow-emerald-600/30">Get Digital Pass</Link>
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       {/* --- PART A: WHY US (CLEAN LIGHT SECTION) --- */}
       <section className="py-16 md:py-24 px-4 sm:px-6 bg-[#f8fafc] relative overflow-hidden border-t border-gray-100">
