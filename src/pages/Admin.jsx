@@ -20,7 +20,6 @@ import {
 import PageLoader from '../components/PageLoader';
 import api from '../services/api';
 import downloadInvoicePdf from '../utils/invoiceGenerator';
-import { openDigitalPdf, printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'products' | 'kits' | 'stats'
@@ -236,33 +235,13 @@ export default function Admin() {
                                   </span>
                                 </td>
                                 <td className="py-3 px-4 text-right">
-                                  <div className="flex items-center justify-end gap-1.5">
+                                  <div className="flex gap-2 justify-end">
                                     <button
                                       onClick={() => downloadInvoicePdf(orderItem)}
-                                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-lg text-[11px] flex items-center gap-1 cursor-pointer transition-colors"
-                                      title="Download Tax Invoice"
+                                      className="bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold px-3 py-1.5 rounded-lg text-[11px] flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
                                     >
-                                      <FileText size={12} /> Invoice
+                                      <FileText size={13} /> Invoice
                                     </button>
-
-                                    {isDigital && (
-                                      <>
-                                        <button
-                                          onClick={() => openDigitalPdf(orderItem)}
-                                          className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold px-2.5 py-1.5 rounded-lg text-[11px] flex items-center gap-1 cursor-pointer transition-colors"
-                                          title="Open Digital PDF"
-                                        >
-                                          <Eye size={12} /> Open PDF
-                                        </button>
-                                        <button
-                                          onClick={() => printDigitalPdfInColor(orderItem)}
-                                          className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-2.5 py-1.5 rounded-lg text-[11px] flex items-center gap-1 cursor-pointer transition-all shadow-xs"
-                                          title="Print Color PDF Sheet"
-                                        >
-                                          <Printer size={12} /> Print Color
-                                        </button>
-                                      </>
-                                    )}
                                   </div>
                                 </td>
                               </tr>
@@ -304,21 +283,6 @@ export default function Admin() {
                           <span className="text-sm text-slate-400 line-through">₹{prod.originalPrice}</span>
                         </div>
                       </div>
-
-                      <div className="pt-4 border-t border-slate-100 flex items-center gap-2">
-                        <button
-                          onClick={() => openDigitalPdf({ title: prod.title, publicToken: prod._id, qrType: 'DIGITAL' })}
-                          className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                        >
-                          <Eye size={13} /> Open PDF
-                        </button>
-                        <button
-                          onClick={() => printDigitalPdfInColor({ title: prod.title, publicToken: prod._id, qrType: 'DIGITAL' })}
-                          className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-orange-500/20 cursor-pointer"
-                        >
-                          <Printer size={13} /> Print Color
-                        </button>
-                      </div>
                     </div>
                   );
                 })}
@@ -356,32 +320,6 @@ export default function Admin() {
                         </p>
                       </div>
 
-                      <div className="pt-2 flex items-center gap-2">
-                        <button
-                          onClick={() => openDigitalPdf({ 
-                            ...kit,
-                            title: `${kit.vehicle?.vehicleBrand} ${kit.vehicle?.vehicleName}`, 
-                            publicToken: kit.copies?.[0]?.publicToken || kit.productId, 
-                            vehicleNumber: kit.vehicle?.vehicleNumber,
-                            securityCode: kit.securityCode || kit.pin || kit.copies?.[0]?.securityCode || kit.copies?.[0]?.pin
-                          })}
-                          className="flex-1 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1 cursor-pointer transition-colors"
-                        >
-                          <Eye size={12} /> View Badge PDF
-                        </button>
-                        <button
-                          onClick={() => printDigitalPdfInColor({ 
-                            ...kit,
-                            title: `${kit.vehicle?.vehicleBrand} ${kit.vehicle?.vehicleName}`, 
-                            publicToken: kit.copies?.[0]?.publicToken || kit.productId, 
-                            vehicleNumber: kit.vehicle?.vehicleNumber,
-                            securityCode: kit.securityCode || kit.pin || kit.copies?.[0]?.securityCode || kit.copies?.[0]?.pin
-                          })}
-                          className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1 cursor-pointer transition-colors shadow-xs"
-                        >
-                          <Printer size={12} /> Print Color
-                        </button>
-                      </div>
                     </div>
                   ))}
                 </div>

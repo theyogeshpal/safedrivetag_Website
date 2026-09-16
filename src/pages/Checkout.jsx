@@ -21,7 +21,7 @@ import PageHero from '../components/PageHero';
 import { useAuth } from '../context/AuthContext';
 import api, { setAuthToken } from '../services/api';
 import downloadInvoicePdf from '../utils/invoiceGenerator';
-import { openDigitalPdf, printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
+import confetti from 'canvas-confetti';
 
 // Helper to ensure Razorpay checkout script is loaded
 const loadRazorpayScript = () => {
@@ -606,14 +606,6 @@ export default function Checkout() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              {isDigitalProduct ? (
-                <button
-                  onClick={() => openDigitalPdf(selectedProduct)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-black px-8 py-3.5 rounded-xl shadow-lg shadow-purple-600/20 text-sm transition-all flex items-center justify-center gap-2"
-                >
-                  <Download size={18} /> Download Digital Pass
-                </button>
-              ) : (
                 <button
                   onClick={() => downloadInvoicePdf({ 
                     ...orderSuccess, 
@@ -625,7 +617,6 @@ export default function Checkout() {
                 >
                   <Download size={18} /> Download Invoice
                 </button>
-              )}
               
               <Link 
                 to="/dashboard"

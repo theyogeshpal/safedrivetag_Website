@@ -34,7 +34,7 @@ import {
 import { QRCodeSVG } from 'qrcode.react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
+
 import { customSwal, showToast } from '../utils/swal';
 import PageLoader from '../components/PageLoader';
 

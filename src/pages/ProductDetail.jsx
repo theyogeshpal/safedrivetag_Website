@@ -20,7 +20,7 @@ import {
 import PageHero from '../components/PageHero';
 import PageLoader from '../components/PageLoader';
 import api from '../services/api';
-import { openDigitalPdf, printDigitalPdfInColor } from '../utils/digitalPdfGenerator';
+
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -227,33 +227,8 @@ export default function ProductDetail() {
                 ))}
               </div>
             )}
-
-            {/* Digital Kit Preview Buttons */}
-            {isDigitalProduct && (
-              <div className="bg-purple-50/70 border border-purple-200/80 rounded-2xl p-4 space-y-2.5">
-                <div className="flex items-center gap-2 text-purple-900 font-bold text-xs">
-                  <Sparkles size={14} className="text-purple-600" />
-                  <span>Digital E-Kit: Instant Download & Print Ready</span>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => openDigitalPdf(product)}
-                    className="flex-1 bg-white hover:bg-purple-100/50 text-purple-800 border border-purple-300 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                  >
-                    <Eye size={13} /> Open PDF
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => printDigitalPdfInColor(product)}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-purple-600/20 cursor-pointer"
-                  >
-                    <Printer size={13} /> Print Color PDF
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
+
 
           {/* Product Info */}
           <div className="md:w-1/2 flex flex-col">
@@ -365,8 +340,8 @@ export default function ProductDetail() {
                   <Truck className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-black">{isDigitalProduct ? 'Instant Delivery' : 'Express Delivery'}</p>
-                  <p className="text-[11px] text-black/50">{isDigitalProduct ? 'Instant PDF In Dashboard' : '3-5 Days Across India'}</p>
+                  <p className="text-xs font-black text-black">{isDigitalProduct ? 'Instant Activation' : 'Express Delivery'}</p>
+                  <p className="text-[11px] text-black/50">{isDigitalProduct ? 'Available Instantly In Dashboard' : '3-5 Days Across India'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">

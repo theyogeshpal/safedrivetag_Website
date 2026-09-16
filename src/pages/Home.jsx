@@ -3,6 +3,7 @@ import { Shield, Smartphone, QrCode, Lock, BellRing, Phone, Car, Bike, Truck, Ch
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
 import { BsQuestion } from 'react-icons/bs';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
@@ -39,13 +40,7 @@ const liveStats = [
   }
 ];
 
-const faqs = [
-  { q: "What is safedrivetag?", a: "safedrivetag is a smart QR tag for your vehicles and travel luggage that lets anyone contact you without revealing your private phone number." },
-  { q: "How does the private calling work?", a: "Calls are routed through a secure masked bridge server — the caller never sees your real number." },
-  { q: "Can I use safedrivetag on my luggage and travel bags?", a: "Yes! We offer heavy-duty metallic luggage tags with braided steel cables. If your flight bag, suitcase or backpack is misplaced or left behind in a cab or train, anyone can scan it to privately connect with you." },
-  { q: "Do I need to download an app?", a: "No app needed. Anyone can scan the QR with their default phone camera." },
-  { q: "How do I stick it on my car or attach to bags?", a: "Car & bike tags come with industrial peel-and-stick weather proof adhesive. Luggage tags come with stainless steel braided loop cables for suitcases and backpacks." },
-];
+
 
 export default function Home() {
   const { currentUser } = useAuth();
@@ -55,6 +50,15 @@ export default function Home() {
   const [activeStep, setActiveStep] = useState(1);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [dynamicFaqs, setDynamicFaqs] = useState([]);
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      const res = await api.getPublicFaqs(true);
+      if (res.success) setDynamicFaqs(res.faqs);
+    };
+    fetchFaqs();
+  }, []);
 
   // Auto-cycle live news ticker
   useEffect(() => {
@@ -750,18 +754,18 @@ export default function Home() {
           </div>
 
           <div className="space-y-3 sm:space-y-4">
-            {faqs.map(({ q, a }, i) => (
+            {dynamicFaqs.map((faq, i) => (
               <div
                 key={i}
                 className={`bg-white rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-300 shadow-sm ${openFaq === i ? 'border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.12)] bg-orange-50/20' : 'border-gray-200/80 hover:border-gray-300'}`}
                 onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
               >
                 <div className="flex justify-between items-center px-5 sm:px-8 py-4 sm:py-6">
-                  <h4 className={`font-bold text-base sm:text-lg ${openFaq === i ? 'text-orange-600' : 'text-gray-900'}`}>{q}</h4>
+                  <h4 className={`font-bold text-base sm:text-lg ${openFaq === i ? 'text-orange-600' : 'text-gray-900'}`}>{faq.question}</h4>
                   <ChevronDown className={`w-5 h-5 transition-transform duration-300 shrink-0 ml-3 ${openFaq === i ? 'rotate-180 text-orange-500' : 'text-gray-400'}`} />
                 </div>
                 <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-40' : 'max-h-0'}`}>
-                  <p className="px-5 sm:px-8 pb-5 sm:pb-6 text-gray-600 text-xs sm:text-sm leading-relaxed font-medium">{a}</p>
+                  <p className="px-5 sm:px-8 pb-5 sm:pb-6 text-gray-600 text-xs sm:text-sm leading-relaxed font-medium">{faq.answer}</p>
                 </div>
               </div>
             ))}

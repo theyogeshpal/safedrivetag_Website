@@ -54,7 +54,7 @@ export default function Shop() {
   }, []);
 
   const handleProductClick = (prod) => {
-    navigate(`/shop/product/${prod._id}`);
+    navigate(`/shop/${prod.slug || prod._id}`);
   };
 
   const handleOrderNow = (e, prod) => {

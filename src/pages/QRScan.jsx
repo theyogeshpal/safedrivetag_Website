@@ -322,6 +322,15 @@ export default function QRScan() {
 
   // STEP 5 - OPTION B: CALL VEHICLE OWNER (MASKED)
   const handleCallOwner = async () => {
+    if (qrData?.status === 'EXPIRED' || qrData?.status === 'SUSPENDED' || qrData?.canCall === false) {
+      return customSwal.fire({
+        title: 'Call Unavailable',
+        text: 'Recharge not available at user side',
+        icon: 'error',
+        confirmButtonColor: '#e3342f'
+      });
+    }
+
     const reasonText = getSelectedReasonText();
 
     // Ask for caller's phone number
@@ -354,18 +363,21 @@ export default function QRScan() {
     setActionSuccessMsg('');
     try {
       const res = await api.initiateCall(token, callerPhone, reasonText, plateInput);
-      
-      // Just show the raw response in a popup for now as requested by user
-      customSwal.fire({
-        title: res.success ? 'API Response (Success)' : 'API Response (Failed)',
-        html: `<pre style="text-align: left; font-size: 12px; background: #f4f4f4; padding: 10px; border-radius: 5px;">${JSON.stringify(res, null, 2)}</pre>`,
-        icon: res.success ? 'success' : 'error',
-        confirmButtonColor: '#1e8b39'
-      });
-
       if (res.success) {
+        if (res.masked === false || res.provider === 'DIRECT') {
+          window.location.href = `tel:${res.targetPhone}`;
+        } else {
+          showToast.success('Call initiated securely.');
+        }
         setActionSuccessMsg('Connecting to owner... Please wait.');
-        setCallCooldown(globalSettings.callCooldown);
+        setCallCooldown(res.cooldownSeconds || globalSettings.callCooldown || 60);
+      } else {
+        customSwal.fire({
+          title: 'Call Failed',
+          text: res.message || 'Could not initiate call.',
+          icon: 'error',
+          confirmButtonColor: '#e3342f'
+        });
       }
     } catch (err) {
       console.error(err);
@@ -377,6 +389,15 @@ export default function QRScan() {
 
   // STEP 5 - OPTION C: MESSAGE VEHICLE OWNER (MASKED)
   const handleSendMessageOwner = async () => {
+    if (qrData?.status === 'EXPIRED' || qrData?.status === 'SUSPENDED' || qrData?.canMessage === false) {
+      return customSwal.fire({
+        title: 'Message Unavailable',
+        text: 'Recharge not available at user side',
+        icon: 'error',
+        confirmButtonColor: '#e3342f'
+      });
+    }
+
     const reasonText = getSelectedReasonText();
 
     const { value: senderPhone, isConfirmed } = await customSwal.fire({
@@ -573,7 +594,7 @@ export default function QRScan() {
   }
 
   // Error / Invalid QR Code Screen
-  if (error || !qrData || qrData.status !== 'ACTIVE') {
+  if (error || !qrData || !['ACTIVE', 'EXPIRED', 'SUSPENDED'].includes(qrData.status)) {
     return (
       <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 font-sans text-gray-900 flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-black/5 text-center space-y-4">

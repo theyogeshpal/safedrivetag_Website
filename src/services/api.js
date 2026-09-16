@@ -311,7 +311,7 @@ export const api = {
   // MODULE 6: PUBLIC QR SCAN, ACTIVATION & MASKED CALL
   // =========================================================================
   getPublicSettings: () => apiRequest('/public/settings'),
-  getPublicFaqs: () => apiRequest('/public/faqs'),
+  getPublicFaqs: (home = false) => apiRequest(`/public/faqs${home ? '?home=true' : ''}`),
 
   getPublicQrInfo: (token) => apiRequest(`/public/qr/${token}`),
 

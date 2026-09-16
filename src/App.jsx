@@ -144,7 +144,7 @@ function App() {
                   <Route path="/how-to-use" element={<HowToUse />} />
                   <Route path="/become-partner" element={<BecomePartner />} />
                   <Route path="/seller" element={<SellerDashboard />} />
-                  <Route path="/shop/product/:id" element={<ProductDetail />} />
+                  <Route path="/shop/:id" element={<ProductDetail />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
