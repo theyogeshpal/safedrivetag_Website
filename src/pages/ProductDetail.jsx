@@ -238,7 +238,7 @@ export default function ProductDetail() {
                   ? 'bg-purple-100 text-purple-700 border border-purple-200' 
                   : 'bg-orange-100 text-orange-700 border border-orange-200'
               }`}>
-                {isDigitalProduct ? '⚡ INSTANT DIGITAL PASS' : '📦 3M PHYSICAL STICKERS'}
+                {isDigitalProduct ? '⚡ INSTANT DIGITAL PASS' : '📦 PHYSICAL STICKERS'}
               </span>
             </div>
 
@@ -255,11 +255,7 @@ export default function ProductDetail() {
                     <span className="text-sm font-bold text-orange-700">{product.rating}</span>
                   </div>
                 )}
-                {product.reviews > 0 && (
-                  <span className="text-sm font-medium text-black/40 underline decoration-black/20 underline-offset-4">
-                    {product.reviews.toLocaleString()} verified buyers
-                  </span>
-                )}
+               
               </div>
             )}
 
@@ -276,7 +272,6 @@ export default function ProductDetail() {
               )}
             </div>
 
-            <p className="text-black/70 text-sm leading-relaxed mb-6 font-medium">{product.desc}</p>
 
             {/* Included Features List */}
             {product.features && product.features.length > 0 && (
