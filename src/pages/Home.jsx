@@ -101,12 +101,7 @@ export default function Home() {
           <div className="absolute top-1/2 left-1/4 w-[450px] h-[450px] bg-emerald-500/10 rounded-full blur-[110px]"></div>
           
           {/* 1. SEPARATE HERO BACKGROUND IMAGE TAG */}
-          <img 
-            src="/hero-bg.png" 
-            alt="Hero Background" 
-            decoding="async"
-            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-100 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl z-10" 
-          />
+          
 
           {/* Light Grid Overlay (Checkboxes/Grid Pattern) */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>

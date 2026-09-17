@@ -83,7 +83,7 @@ export default function BecomePartner() {
   ];
 
   return (
-    <div className="bg-[#f8f9fa] min-h-screen pt-36 sm:pt-44 pb-20 font-sans text-gray-900">
+    <div className="bg-[#FAF8F5] min-h-screen pt-36 sm:pt-44 pb-20 font-sans text-gray-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* Hero Section */}
@@ -92,7 +92,7 @@ export default function BecomePartner() {
             <div className="inline-block bg-orange-100 text-[#fb641b] font-bold px-4 py-1.5 rounded-full text-sm mb-6 border border-orange-200">
               SAFEDRIVE PARTNER PROGRAM
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight text-blue-950">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight text-gray-950">
               Grow Your Business. <br />
               <span className="text-[#fb641b]">Earn Real Profits.</span>
             </h1>
@@ -120,7 +120,7 @@ export default function BecomePartner() {
                   <p className="font-bold text-sm text-center text-orange-900">Premium Tags</p>
                </div>
                <div className="bg-white rounded-2xl p-4 shadow-xl border border-gray-100 flex flex-col items-center justify-center aspect-square transform translate-x-4 hover:translate-x-0 transition-all z-10">
-                  <LayoutDashboard className="w-16 h-16 text-blue-500 mb-3" />
+                  <LayoutDashboard className="w-16 h-16 text-emerald-500 mb-3" />
                   <p className="font-bold text-sm text-center">Partner Portal</p>
                </div>
                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 shadow-xl border border-emerald-200 flex flex-col items-center justify-center aspect-square transform translate-y-4 translate-x-4 hover:translate-y-0 transition-all">
@@ -133,15 +133,15 @@ export default function BecomePartner() {
 
         {/* Highlight Boxes */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
-          <div className="bg-[#eef2f6] rounded-2xl p-8 text-center border border-[#dce4ec]">
+          <div className="bg-orange-50 rounded-2xl p-8 text-center border border-orange-100">
             <h3 className="text-3xl font-black text-[#fb641b] mb-1">High</h3>
             <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">Profit Margins</p>
           </div>
-          <div className="bg-[#eef6f0] rounded-2xl p-8 text-center border border-[#dcecd8]">
+          <div className="bg-emerald-50 rounded-2xl p-8 text-center border border-emerald-100">
             <h3 className="text-3xl font-black text-[#16a34a] mb-1">Zero</h3>
             <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">Setup Cost</p>
           </div>
-          <div className="bg-[#fff3ec] rounded-2xl p-8 text-center border border-[#ffe0d1]">
+          <div className="bg-gray-50 rounded-2xl p-8 text-center border border-gray-200">
             <h3 className="text-3xl font-black text-[#fb641b] mb-1">24/7</h3>
             <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">Partner Support</p>
           </div>
@@ -151,7 +151,7 @@ export default function BecomePartner() {
         <div id="how-it-works" className="mb-24">
           <div className="text-center mb-10">
              <div className="inline-block bg-orange-100 text-[#fb641b] font-bold px-3 py-1 rounded-full text-xs mb-4">HOW IT WORKS</div>
-             <h2 className="text-3xl md:text-4xl font-black text-blue-950">
+             <h2 className="text-3xl md:text-4xl font-black text-gray-950">
                Steps to your <span className="text-[#fb641b]">first sale.</span>
              </h2>
              <p className="text-gray-500 font-medium mt-3">Start earning in just a few simple steps.</p>
@@ -164,7 +164,7 @@ export default function BecomePartner() {
                   {idx + 1}
                 </div>
                 <div>
-                  <h4 className="font-bold text-blue-950 text-lg">{step.title}</h4>
+                  <h4 className="font-bold text-gray-950 text-lg">{step.title}</h4>
                   <p className="text-gray-600 text-sm mt-1 leading-relaxed">{step.desc}</p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ export default function BecomePartner() {
         <div className="mb-24 bg-gray-50/50 py-12 rounded-3xl border border-gray-100">
            <div className="text-center mb-10">
              <div className="inline-block bg-emerald-100 text-[#16a34a] font-bold px-3 py-1 rounded-full text-xs mb-4">BENEFITS</div>
-             <h2 className="text-3xl md:text-4xl font-black text-blue-950">
+             <h2 className="text-3xl md:text-4xl font-black text-gray-950">
                Why partner with <span className="text-[#fb641b]">SafeDrive?</span>
              </h2>
              <p className="text-gray-500 font-medium mt-3">We provide everything you need to succeed.</p>
@@ -188,7 +188,7 @@ export default function BecomePartner() {
                 <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
                   {benefit.icon}
                 </div>
-                <h4 className="font-bold text-blue-950 mb-2">{benefit.title}</h4>
+                <h4 className="font-bold text-gray-950 mb-2">{benefit.title}</h4>
                 <p className="text-gray-500 text-sm leading-relaxed">{benefit.desc}</p>
               </div>
             ))}
@@ -198,8 +198,8 @@ export default function BecomePartner() {
         {/* Terms & Conditions (Who can partner) */}
         <div className="mb-24">
           <div className="text-center mb-10">
-             <div className="inline-block bg-blue-100 text-blue-600 font-bold px-3 py-1 rounded-full text-xs mb-4">ELIGIBILITY</div>
-             <h2 className="text-3xl md:text-4xl font-black text-blue-950">
+             <div className="inline-block bg-gray-100 text-gray-600 font-bold px-3 py-1 rounded-full text-xs mb-4">ELIGIBILITY</div>
+             <h2 className="text-3xl md:text-4xl font-black text-gray-950">
                Who can <span className="text-[#fb641b]">partner?</span>
              </h2>
              <p className="text-gray-500 font-medium mt-3">Flexible models for every business scale.</p>
@@ -213,7 +213,7 @@ export default function BecomePartner() {
                     <CheckCircle2 className="w-6 h-6 text-[#16a34a]" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-blue-950">{type.title}</h4>
+                    <h4 className="font-bold text-gray-950">{type.title}</h4>
                     <p className="text-gray-600 text-sm mt-1">{type.desc}</p>
                   </div>
                 </li>
@@ -224,7 +224,7 @@ export default function BecomePartner() {
 
         {/* CTA Section */}
         <div className="text-center bg-white border border-gray-200 rounded-3xl p-12 max-w-4xl mx-auto shadow-sm">
-          <h2 className="text-3xl md:text-4xl font-black text-blue-950 mb-4">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-950 mb-4">
             Ready to <span className="text-[#fb641b]">join?</span>
           </h2>
           <p className="text-gray-500 font-medium mb-8">
