@@ -90,7 +90,10 @@ export default function Home() {
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500 selection:text-white">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative flex items-center pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden bg-white w-full">
+      <section className="relative flex items-center pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden w-full min-h-[600px] lg:min-h-[700px]">
+        <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=2070&auto=format&fit=crop')" }}></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-white/95 via-white/70 to-transparent"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none"></div>
         {/* Background Graphic with Smooth Gradient Overlay */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-end">
           {/* Subtle Ambient Radial Glow (Dual Orange & Emerald Green) */}
@@ -102,7 +105,7 @@ export default function Home() {
             src="/hero-bg.png" 
             alt="Hero Background" 
             decoding="async"
-            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-15 lg:opacity-20 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl" 
+            className="w-full max-w-[650px] lg:max-w-[850px] object-contain opacity-100 translate-x-12 lg:translate-x-20 select-none pointer-events-none drop-shadow-2xl z-10" 
           />
 
           {/* Light Grid Overlay (Checkboxes/Grid Pattern) */}
