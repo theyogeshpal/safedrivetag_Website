@@ -83,7 +83,7 @@ export default function BecomePartner() {
   ];
 
   return (
-    <div className="bg-[#f8f9fa] min-h-screen pt-28 pb-20 font-sans text-gray-900">
+    <div className="bg-[#f8f9fa] min-h-screen pt-36 sm:pt-44 pb-20 font-sans text-gray-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* Hero Section */}
@@ -100,7 +100,7 @@ export default function BecomePartner() {
               Join India's fastest-growing smart vehicle safety network. Offer your customers peace of mind while enjoying high profit margins.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-              <Link to="/contact" className="bg-[#fb641b] hover:bg-[#e05615] text-white font-bold px-8 py-3.5 rounded-full transition-all shadow-lg w-full sm:w-auto text-center">
+              <Link to="/become-reseller" className="bg-[#fb641b] hover:bg-[#e05615] text-white font-bold px-8 py-3.5 rounded-full transition-all shadow-lg w-full sm:w-auto text-center">
                 Apply Now
               </Link>
               <a href="#how-it-works" className="bg-white hover:bg-gray-50 text-gray-800 font-bold px-8 py-3.5 rounded-full border border-gray-200 transition-all w-full sm:w-auto text-center shadow-sm">
@@ -237,7 +237,7 @@ export default function BecomePartner() {
             </a>
           </div>
 
-          <Link to="/contact" className="inline-block bg-[#fb641b] hover:bg-[#e05615] text-white font-bold px-10 py-4 rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+          <Link to="/become-reseller" className="inline-block bg-[#fb641b] hover:bg-[#e05615] text-white font-bold px-10 py-4 rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
             Apply Now
           </Link>
         </div>
