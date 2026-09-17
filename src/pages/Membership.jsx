@@ -41,7 +41,7 @@ export default function Membership() {
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-emerald-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
             <img 
-              src="/images/membership-card.jpg" 
+              src="/images/membership-card.png" 
               alt="SafeDrive Membership Card" 
               className="relative w-full max-w-2xl rounded-2xl shadow-2xl border border-gray-100 transform group-hover:scale-[1.02] transition-transform duration-500 object-contain"
             />
