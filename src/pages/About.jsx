@@ -2,11 +2,17 @@ import React from 'react';
 import { Lock, Handshake, MapPin, Building2, Wrench, CircleParking, ArrowRight, Star, Shield, Users, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
+import SEO from '../components/SEO';
 import './About.css';
 
 export default function About() {
   return (
     <div className="about-wrapper bg-white font-sans text-black/90 min-h-screen selection:bg-orange-500 selection:text-white">
+      <SEO 
+        title="About Us | SafeDriveTag"
+        description="SafeDriveTag provides smart QR communication tags for vehicles and luggage, helping people connect with owners while protecting personal contact information."
+        url="/about"
+      />
 
       {/* --- HERO / HEADER BANNER --- */}
       <PageHero

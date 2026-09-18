@@ -9,6 +9,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import SEO from '../components/SEO';
 const liveStats = [
   { 
     tag: "TRUSTED USERS", 
@@ -88,6 +89,11 @@ export default function Home() {
 
   return (
     <div className="bg-white font-sans text-black/80 overflow-x-hidden selection:bg-orange-500 selection:text-white">
+      <SEO 
+        title="Vehicle QR Tag for Cars, Bikes & Luggage | SafeDriveTag"
+        description="SafeDriveTag smart QR tags for cars, bikes and luggage. Let anyone contact the owner through a secure QR scan without revealing personal phone numbers."
+        url="/"
+      />
       
       {/* --- HERO SECTION --- */}
       <section className="relative flex items-center pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 overflow-hidden w-full min-h-[600px] lg:min-h-[700px]">

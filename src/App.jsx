@@ -25,6 +25,18 @@ const RegisterTag = lazy(() => import('./pages/RegisterTag'));
 const TagDetails = lazy(() => import('./pages/TagDetails'));
 const Login = lazy(() => import('./pages/Login'));
 const BecomeReseller = lazy(() => import('./pages/BecomeReseller'));
+
+// SEO Pages
+const VehicleQRTag = lazy(() => import('./pages/VehicleQRTag'));
+const CarQRTag = lazy(() => import('./pages/CarQRTag'));
+const BikeQRTag = lazy(() => import('./pages/BikeQRTag'));
+const LuggageQRTag = lazy(() => import('./pages/LuggageQRTag'));
+const ParkingQRTag = lazy(() => import('./pages/ParkingQRTag'));
+const EmergencyQRTag = lazy(() => import('./pages/EmergencyQRTag'));
+const PrivateContact = lazy(() => import('./pages/PrivateContact'));
+const FAQ = lazy(() => import('./pages/FAQ'));
+const Blog = lazy(() => import('./pages/Blog'));
+
 const Dashboard = lazy(() => import('./pages/dashboard/DashboardTags'));
 const DashboardIndex = lazy(() => import('./pages/dashboard/DashboardIndex'));
 const DashboardTags = lazy(() => import('./pages/dashboard/DashboardTags'));
@@ -142,6 +154,7 @@ function App() {
                   <Route path="/shop" element={<Shop />} />
                   <Route path="/membership" element={<Membership />} />
                   <Route path="/how-to-use" element={<HowToUse />} />
+                  <Route path="/how-it-works" element={<HowToUse />} />
                   <Route path="/become-partner" element={<BecomePartner />} />
                   <Route path="/seller" element={<SellerDashboard />} />
                   <Route path="/shop/:id" element={<ProductDetail />} />
@@ -154,6 +167,17 @@ function App() {
                   <Route path="/shipping" element={<Legal />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/become-reseller" element={<BecomeReseller />} />
+                  
+                  {/* SEO Pages */}
+                  <Route path="/vehicle-qr-tag" element={<VehicleQRTag />} />
+                  <Route path="/car-qr-tag" element={<CarQRTag />} />
+                  <Route path="/bike-qr-tag" element={<BikeQRTag />} />
+                  <Route path="/luggage-qr-tag" element={<LuggageQRTag />} />
+                  <Route path="/parking-qr-tag" element={<ParkingQRTag />} />
+                  <Route path="/vehicle-emergency-qr-tag" element={<EmergencyQRTag />} />
+                  <Route path="/contact-vehicle-owner-privately" element={<PrivateContact />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/blog" element={<Blog />} />
                   
                   {/* Modular User Dashboard Panel Routes */}
                   <Route path="/dashboard" element={<ProtectedRoute><DashboardIndex /></ProtectedRoute>} />

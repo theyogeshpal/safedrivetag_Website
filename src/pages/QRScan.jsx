@@ -25,6 +25,7 @@ import {
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../services/api';
 import { showToast, playNotificationBellSound, customSwal } from '../utils/swal';
+import { Helmet } from 'react-helmet-async';
 
 export default function QRScan() {
   const navigate = useNavigate();
@@ -558,6 +559,7 @@ export default function QRScan() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f4f7fb] flex flex-col items-center justify-center p-4 gap-3">
+        <Helmet><meta name="robots" content="noindex,nofollow" /></Helmet>
         <RefreshCw size={32} className="text-[#fb641b] animate-spin" style={{ animationDuration: '1.2s' }} />
         <p className="text-sm font-bold text-[#1a2a4a]">Connecting to SafeDrive bridge...</p>
       </div>
@@ -568,6 +570,7 @@ export default function QRScan() {
   if (qrData?.status === 'UNREGISTERED') {
     return (
       <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-12 px-4 font-sans text-black flex items-center justify-center">
+        <Helmet><meta name="robots" content="noindex,nofollow" /></Helmet>
         <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-black/5 text-center">
           <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Sparkles className="w-8 h-8" />
@@ -597,6 +600,7 @@ export default function QRScan() {
   if (error || !qrData || !['ACTIVE', 'EXPIRED', 'SUSPENDED'].includes(qrData.status)) {
     return (
       <div className="bg-[#f4f7fb] min-h-screen pt-36 sm:pt-40 lg:pt-44 pb-16 px-4 font-sans text-gray-900 flex items-center justify-center">
+        <Helmet><meta name="robots" content="noindex,nofollow" /></Helmet>
         <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-black/5 text-center space-y-4">
           <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-2">
             <AlertTriangle className="w-8 h-8 text-red-500" />
@@ -635,6 +639,7 @@ export default function QRScan() {
 
   return (
     <div className="bg-[#f4f7fb] min-h-screen pt-32 sm:pt-32 lg:pt-36 pb-16 px-4 font-sans text-gray-900 relative">
+      <Helmet><meta name="robots" content="noindex,nofollow" /></Helmet>
       
       {/* Toast Alert Notification */}
       {actionSuccessMsg && (
